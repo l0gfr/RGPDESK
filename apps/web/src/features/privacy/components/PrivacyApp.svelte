@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { createActivity, createWorkspace, evaluateWorkspace, CATALOG_VERSION, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
+  import { onMount, tick } from "svelte";
+  import { createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { assertLocalPassphrase } from "../../../lib/local-encryption";
   import { subscribeToSensitivePageLock } from "../../../lib/sensitive-page-lock";
   import { checkSession, PrivacyVault, PRIVACY_CHANNEL, type VaultItem, type VaultSession } from "../persistence/vault";
@@ -15,6 +15,9 @@
   import ActivityEditor from "./ActivityEditor.svelte";
   import OrganizationEditor from "./OrganizationEditor.svelte";
   import RelationsEditor from "./RelationsEditor.svelte";
+  import MissionOverview from "./MissionOverview.svelte";
+  import ActivityStarter from "./ActivityStarter.svelte";
+  import type { StartingPoint } from "../guidance";
 
   let ready = $state(false);
   let stale = $state(false);
@@ -30,14 +33,19 @@
   let restoreAcknowledged = $state(false);
   let selectedId = $state("");
   let restoreFile: File | null = $state(null);
+  let workspaceHeading: HTMLHeadingElement | undefined = $state();
   let fileInput: HTMLInputElement | undefined = $state();
   let wipeConfirmation = $state("");
   let showWipe = $state(false);
-  let panel: "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("register");
+  let panel: "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
   let missingOnly = $state(false);
   let registerRole = $state("");
   let findings = $derived(master ? evaluateWorkspace(master, new Date().toISOString().slice(0, 10)) : []);
   let editor: Activity | null = $state(null);
+  let editorExample: StartingPoint | undefined = $state();
+  let showStarters = $state(false);
+  let lastActivityId = $state("");
+  let actionActivityId = $state("");
   let backupRevision: number | null = $state(null);
   let vault: PrivacyVault | undefined;
   let epoch = "";
@@ -66,7 +74,10 @@
     busy = false;
     error = "";
     message = text;
-    panel = "register";
+    panel = "overview";
+    editorExample = undefined;
+    showStarters = false;
+    lastActivityId = actionActivityId = "";
   }
 
   async function run(action: (current: VaultSession) => Promise<void>) {
@@ -81,6 +92,13 @@
     } finally {
       if (!current.signal.aborted) busy = false;
     }
+  }
+
+  async function revealWorkspace(current: VaultSession) {
+    await tick();
+    checkSession(current);
+    workspaceHeading?.focus({ preventScroll: true });
+    workspaceHeading?.scrollIntoView({ block: "start" });
   }
 
   async function create() {
@@ -98,6 +116,7 @@
       records = await vault!.list();
       checkSession(current);
       message = fr.saved;
+      await revealWorkspace(current);
     });
   }
 
@@ -110,6 +129,7 @@
       phraseInput = "";
       master = opened;
       message = "Coffre ouvert sur cet appareil.";
+      await revealWorkspace(current);
     });
   }
 
@@ -122,10 +142,21 @@
     message = fr.saved;
   }
 
+  function startActivity(role: Activity["role"], example?: StartingPoint) {
+    if (!master || busy || master.activities.length >= 200) return;
+    editor = createActivity(master.id, crypto.randomUUID(), role);
+    editor.title = example?.title ?? "";
+    editorExample = example;
+    panel = "register";
+    showStarters = false;
+  }
+
   async function saveActivity(activity: Activity) {
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
       await persist(putActivity($state.snapshot(master), activity, master.revision, now()), current);
+      panel = "register";
+      lastActivityId = activity.id;
     });
   }
 
@@ -201,6 +232,7 @@
       records = await vault!.list();
       checkSession(current);
       message = "Sauvegarde restaurée et rechiffrée dans ce profil navigateur.";
+      await revealWorkspace(current);
     });
   }
 
@@ -246,26 +278,30 @@
 
   {#if master}
     <div class="desk-layout">
-    <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>VOTRE ESPACE</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) · Révision {master.revision}</small></div></div>
+    <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>VOTRE ESPACE</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
-      {#each [["register", "Registre"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
-        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null} onclick={() => panel = key as typeof panel}><Icon name={key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
-      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null} onclick={() => panel = key as typeof panel}><Icon name={key} /><span>{label}</span></button>{/each}</nav>
+      {#each [["overview", "Ma mission"], ["register", "Registre"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
+        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
+      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key} /><span>{label}</span></button>{/each}</nav>
       <div class="sidebar-security"><Icon name="shield" size={25} /><strong>Votre appareil. Votre coffre.</strong><p>Les informations restent ici. Pensez à votre sauvegarde chiffrée.</p></div>
     </aside><div class="desk-workspace">
-    <header class="workspace-heading"><div><p class="eyebrow">Dossier privé / révision {master.revision}</p><h1>{panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => lock()}><Icon name="lock" />Verrouiller le coffre</button></header>
-    <p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde de cette révision préparée pendant cette session. Vérifiez sa présence sur votre disque." : "Sauvegarde de la révision actuelle non confirmée dans cette session."}</p>
+    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => lock()}><Icon name="lock" />Verrouiller le coffre</button></header>
+    <p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>
     {#if editor}
-      <p class="help">Modifications en mémoire jusqu’à l’enregistrement. Verrouiller abandonne l’édition.</p>
-      {#key editor.id}<ActivityEditor initial={$state.snapshot(editor)} workspace={master} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
+      <p class="help">Enregistrez avant de quitter cette fiche. Le verrouillage abandonne les modifications non enregistrées.</p>
+      {#key editor.id}<ActivityEditor initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
+    {:else if panel === "overview"}
+      <MissionOverview workspace={master} {busy} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />
     {:else if panel === "register"}
-      <div class="metric-row"><div><span class="metric-icon"><Icon name="register" size={23} /></span><div><span class="metric-number">{master.activities.length.toString().padStart(2, "0")}</span><p>Activités documentées</p></div></div><div><span class="metric-icon"><Icon name="eye" size={23} /></span><div><span class="metric-number">{findings.length.toString().padStart(2, "0")}</span><p>Questions à examiner</p></div></div><div><span class="metric-icon"><Icon name="documents" size={23} /></span><div><span class="metric-number">{master.documents.length.toString().padStart(2, "0")}</span><p>Références reliées</p></div></div></div>
-      <section class="panel"><div class="section-heading"><div><p class="eyebrow">Documenter les traitements</p><h2>Votre registre</h2></div><span class="tag">Aucune conclusion automatique</span></div>
-        <p class="help">Décrivez les activités et ce qui reste inconnu. Le nombre de fiches ne mesure pas la conformité.</p>
-        <div class="actions"><button disabled={busy || master.activities.length >= 200} onclick={() => { if (master) editor = createActivity(master.id, crypto.randomUUID(), "controller"); }}>Ajouter une activité responsable</button><button class="secondary" disabled={busy || master.activities.length >= 200} onclick={() => { if (master) editor = createActivity(master.id, crypto.randomUUID(), "processor"); }}>Ajouter une activité sous-traitante</button></div>
-        {#if master.activities.length === 0}<div class="empty register-empty"><span class="icon-tile"><Icon name="register" size={35} /></span><h3>Ajoutez votre premier traitement.</h3><p>Adhésions, recrutement, relation client : décrivez un usage de données personnelles.<br />Renseignez ce que vous savez et laissez les questions ouvertes visibles.</p><button class="text-button" onclick={() => panel = "import"}>Découvrir un exemple de registre <Icon name="arrow" size={16} /></button></div>{/if}
+      {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button></div></aside>{/if}
+      {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}
+      {#if master.activities.length > 0}<div class="metric-row"><div><span class="metric-icon"><Icon name="register" size={23} /></span><div><span class="metric-number">{master.activities.length.toString().padStart(2, "0")}</span><p>Activités documentées</p></div></div><div><span class="metric-icon"><Icon name="eye" size={23} /></span><div><span class="metric-number">{findings.length.toString().padStart(2, "0")}</span><p>Questions à examiner</p></div></div><div><span class="metric-icon"><Icon name="documents" size={23} /></span><div><span class="metric-number">{master.documents.length.toString().padStart(2, "0")}</span><p>Références reliées</p></div></div></div>{/if}
+      <section class="panel"><div class="section-heading"><div><p class="eyebrow">Documenter les traitements</p><h2>Votre registre</h2></div><button class="text-button" disabled={busy} onclick={() => showStarters = !showStarters}>Choisir un point de départ</button></div>
+        <p class="help">Une fiche décrit une activité de votre organisme. Commencez avec les informations disponibles ; vous pourrez l’enrichir après chaque entretien.</p>
+        <div class="actions"><button disabled={busy || master.activities.length >= 200} onclick={() => { startActivity("controller"); }}>Ajouter une activité responsable</button><button class="secondary" disabled={busy || master.activities.length >= 200} onclick={() => { startActivity("processor"); }}>Ajouter une activité sous-traitante</button></div>
+        {#if master.activities.length === 0}<div class="empty register-empty"><span class="icon-tile"><Icon name="register" size={35} /></span><h3>Vous avez déjà un registre ?</h3><p>Vous pouvez reprendre un tableau existant au format CSV. Les fiches vous seront présentées avant leur ajout.</p><button class="text-button" onclick={() => panel = "import"}>Importer mon registre CSV <Icon name="arrow" size={16} /></button></div>{/if}
         <div class="filters"><label class="field">Type de registre<select aria-label="Type de registre" bind:value={registerRole}><option value="">Tous les rôles</option><option value="controller">Responsable</option><option value="processor">Sous-traitant</option></select></label><label class="check"><input type="checkbox" bind:checked={missingOnly} />Informations à compléter</label></div>
-        <ul class="records activity-records">{#each master.activities.filter((a) => (!registerRole || a.role === registerRole) && (!missingOnly || findings.some((f) => f.activityId === a.id))) as activity (activity.id)}<li><span class="record-icon"><Icon name="register" /></span><div class="grow"><strong>{activity.title}</strong><p>{activity.role === "controller" ? "Responsable" : "Sous-traitant"} · {activity.status === "draft" ? "Brouillon" : activity.status === "active" ? "Active, état déclaré" : "Archivée"}</p></div><button class="secondary" disabled={busy} onclick={() => editor = structuredClone($state.snapshot(activity))}>Modifier {activity.title}</button></li>{/each}</ul>
+        <ul class="records activity-records">{#each master.activities.filter((a) => (!registerRole || a.role === registerRole) && (!missingOnly || findings.some((f) => f.activityId === a.id))) as activity (activity.id)}<li><span class="record-icon"><Icon name="register" /></span><div class="grow"><strong>{activity.title}</strong><p>{activity.role === "controller" ? "Responsable" : "Sous-traitant"} · {activity.status === "draft" ? "Brouillon" : activity.status === "active" ? "Active, état déclaré" : "Archivée"}</p></div><button class="secondary" disabled={busy} onclick={() => { editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }}>Modifier {activity.title}</button></li>{/each}</ul>
       </section>
     {:else if panel === "organization"}
       {#key master.revision}<OrganizationEditor workspace={$state.snapshot(master)} {busy} onSave={(changes) => run(async (current) => { if (master) await persist(reviseWorkspace($state.snapshot(master), master.revision, now(), changes), current); })} />{/key}
@@ -278,15 +314,16 @@
     {:else if panel === "documents"}
       {#key master.revision}<DocumentsPanel workspace={$state.snapshot(master)} {busy} onSave={saveNext} />{/key}
     {:else if panel === "actions"}
-      {#key master.revision}<ActionsPanel workspace={$state.snapshot(master)} {busy} onSave={saveNext} />{/key}
+      {#key master.revision}<ActionsPanel workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} />{/key}
     {:else if panel === "delivery"}
       {#key master.revision}<DeliveryPanel workspace={$state.snapshot(master)} {busy} onDeliver={deliver} onDownload={downloadDelivery} />{/key}
     {:else}
       <section class="panel"><h2>Sauvegarde chiffrée</h2><p>Elle contient tout cet espace, y compris les notes internes. Elle sert à la restauration et n’est pas un dossier à partager avec un client.</p><p>La même phrase secrète sera nécessaire. Aucun service ne peut la récupérer pour vous.</p><button disabled={busy} onclick={downloadBackup}>Télécharger la sauvegarde chiffrée</button><p class="help">Pour tester la restauration, ouvrez RGPDESK sur un autre profil navigateur. Toute collision avec un espace existant est refusée.</p></section>
     {/if}
-    <p class="catalog-caption">Catalogue documentaire {CATALOG_VERSION} · Proposition sans revue juridique humaine.</p></div></div>
+    <p class="catalog-caption">Un doute pendant votre travail ? <a href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">Retrouver une explication dans le guide</a>.</p></div></div>
   {:else}
     <div class="welcome-hero"><header class="intro"><p class="eyebrow"><span class="eyebrow-line"></span>{fr.welcome.eyebrow}</p><h1>{fr.welcome.title}<br /><em>{fr.welcome.subtitle}<br />{fr.welcome.ending}</em></h1><p>{fr.welcome.description}</p><div class="actions hero-actions"><a class="button" href="#creer-registre">{fr.welcome.start} <Icon name="arrow" size={17} /></a><a class="button secondary" href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">{fr.welcome.guide}</a></div><div class="trust-row"><span><Icon name="lock" size={17} />Coffre chiffré</span><span><Icon name="shield" size={17} />Sans compte</span><span><Icon name="documents" size={17} />Partage choisi</span></div></header><RegisterPreview /></div>
+    <p class="business-entry"><Icon name="book" size={20} /><a href="/app/privacy/guide/#trames-metier" target="_blank" rel="noopener noreferrer">Préparer un entretien : 6 trames métier sourcées</a><span>Recrutement · RH · Clients · Associations · Contact · Prestations</span></p>
     <section class="use-cases" aria-label="Ce que vous pouvez faire avec RGPDESK">
       <article><span class="icon-tile"><Icon name="register" size={24} /></span><p class="eyebrow">01 / Décrire</p><h2>Un registre structuré.</h2><p>Une fiche par activité : pourquoi ces données, pour quelles personnes, avec quels intervenants et quelles mesures.</p></article>
       <article><span class="icon-tile"><Icon name="actions" size={24} /></span><p class="eyebrow">02 / Examiner</p><h2>Des suites concrètes.</h2><p>Repérez les informations à compléter, reliez vos références, attribuez des actions et consignez vos décisions.</p></article>

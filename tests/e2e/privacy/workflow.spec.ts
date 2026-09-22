@@ -31,16 +31,19 @@ async function create(page: Page, name = organization) {
   await page.getByLabel("Je comprends qu’une phrase perdue").check();
   await page.getByRole("button", { name: "Créer le coffre chiffré", exact: true }).click();
   await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Registre", exact: true }).click();
 }
 async function unlock(page: Page) {
   await page.getByRole("button", { name: "Ouvrir le coffre 1", exact: true }).click();
   await page.getByLabel("Phrase secrète du coffre", { exact: true }).fill(phrase);
   await page.getByRole("button", { name: "Déverrouiller", exact: true }).click();
   await expect(page.getByRole("heading", { name: organization, exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Registre", exact: true }).click();
 }
 async function activity(page: Page, role: "responsable" | "sous-traitante", title: string) {
   await page.getByRole("button", { name: `Ajouter une activité ${role}`, exact: true }).click();
   await page.getByLabel("Nom de l’activité", { exact: true }).fill(title);
+  await page.getByRole("button", { name: "Voir toute la fiche", exact: true }).click();
 }
 async function saveActivity(page: Page, title: string) {
   await page.getByRole("button", { name: "Enregistrer la fiche", exact: true }).click();
@@ -113,6 +116,7 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
   await expect(page.getByRole("button", { name: "Modifier Gestion des bénévoles fictifs", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Modifier Service SaaS fictif", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Modifier Gestion des bénévoles fictifs", exact: true }).click();
+  await page.getByRole("button", { name: "Voir toute la fiche", exact: true }).click();
   await expect(page.getByLabel("Notes internes", { exact: true })).toHaveValue("NEVER_LEAK_INTERNAL_NOTE_7D31");
   await page.getByRole("button", { name: "Annuler l’édition", exact: true }).click();
   await page.getByRole("button", { name: "Verrouiller le coffre", exact: true }).click();
@@ -135,6 +139,7 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
     await selectRestore(restored, bytes);
     await restored.getByRole("button", { name: "Restaurer dans ce navigateur", exact: true }).click();
     await expect(restored.getByRole("heading", { name: organization, exact: true })).toBeVisible();
+    await restored.getByRole("button", { name: "Registre", exact: true }).click();
     await expect(restored.getByRole("button", { name: "Modifier Gestion des bénévoles fictifs", exact: true })).toBeVisible();
     await expect(restored.getByRole("button", { name: "Modifier Service SaaS fictif", exact: true })).toBeVisible();
     expect(await restored.evaluate(() => (window as unknown as { privacyNetworkCalls: string[] }).privacyNetworkCalls)).toEqual([]);
@@ -207,8 +212,8 @@ test("manual lock during a save cannot reopen the page or commit the pending edi
   await page.getByRole("button", { name: "Verrouiller le coffre", exact: true }).click();
   await unlock(page);
   await expect(page.getByRole("button", { name: "Modifier Brouillon abandonné fictif", exact: true })).toHaveCount(0);
-  const revision = await page.getByText(/fiche\(s\) · Révision/).textContent();
-  expect(revision).toContain("Révision 1");
+  await page.getByRole("button", { name: "Verrouiller le coffre", exact: true }).click();
+  await expect(page.getByText("Révision 1", { exact: true })).toBeVisible();
 });
 
 test("idle and background deadlines clear unlocked fields and passwords", async ({ page }) => {

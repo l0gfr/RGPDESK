@@ -102,3 +102,26 @@ La documentation décrit la découverte des instructions et leur priorité. Le f
 Le HEAD disponible dans Codex, l'exécution des tests, le découplage réel des modules de stockage, les versions de schémas à réutiliser, les fichiers d'import CNIL/PIA réellement visés, la sécurité des adaptations, les règles calendaires et sectorielles, la revue du catalogue légal et la qualification des navigateurs.
 
 Aucun test du dépôt n'a été exécuté pendant cet examen. Aucune modification, branche, pull request, publication ou opération de déploiement n'a été effectuée sur BLACKPROOF.
+
+## Sources des trames métier
+
+Consultées le 22 septembre 2026. Les questions de préparation sont des propositions de travail RGPDESK, pas des questions officielles de la CNIL. Chaque question dans `business-guides.ts` possède sa référence et son repère de lecture. Aucun contenu n’est récupéré à distance à l’ouverture d’un coffre.
+
+| Référence | Document | Nature | Édition affichée dans la source |
+| --- | --- | --- | --- |
+| M-recruitment | [CNIL · Guide du recrutement](https://www.cnil.fr/sites/default/files/atoms/files/guide_-_recrutement.pdf) | Guide CNIL | 30 janvier 2023 |
+| M-staff | [CNIL · Référentiel de gestion du personnel](https://www.cnil.fr/sites/cnil/files/2023-09/referentiel_gestion_des_ressources_humaines.pdf) | Référentiel CNIL | Modifié le 23 mai 2022 |
+| M-staffRetention | [CNIL · Conservation des données RH](https://www.cnil.fr/sites/default/files/2026-04/referentiel_durees_de_conservation_gestion_des_ressources_humaines.pdf) | Référentiel CNIL distinguant textes obligatoires et recommandations | Mis à jour le 20 mai 2026 |
+| M-commercial | [CNIL · Référentiel des activités commerciales](https://www.cnil.fr/sites/cnil/files/atoms/files/referentiel_traitements-donnees-caractere-personnel_gestion-activites-commerciales.pdf) | Référentiel CNIL | Document consulté le 22 septembre 2026 |
+| M-communications | [CNIL · Messages aux clients et prospects](https://www.cnil.fr/fr/communication-electronique-quelles-regles) | Explications de la CNIL | 10 juin 2026 |
+| M-association | [CNIL · Guide pour les associations](https://www.cnil.fr/sites/default/files/atoms/files/cnil-guide_association.pdf) | Guide CNIL | Document consulté le 22 septembre 2026 |
+| M-collection | [CNIL · Formulaires de collecte](https://www.cnil.fr/fr/exemples-de-formulaire-de-collecte-de-donnees-caractere-personnel) | Exemples CNIL à adapter | 26 juillet 2019 |
+| M-information | [CNIL · Informer les personnes](https://www.cnil.fr/fr/informer-les-personnes) | Explications de la CNIL | 27 janvier 2020 |
+| M-processor | [CNIL · Relations avec un sous-traitant](https://www.cnil.fr/fr/responsable-de-traitement-et-sous-traitant-6-bonnes-pratiques-pour-respecter-les-donnees) | Rappels et bonnes pratiques CNIL | 8 juillet 2020 |
+| M-subcontracting | [CNIL · Sécurité de la sous-traitance](https://www.cnil.fr/fr/securite-gerer-la-sous-traitance) | Guide de sécurité CNIL | 14 mars 2024 |
+| M-access | [CNIL · Gérer les habilitations](https://www.cnil.fr/fr/securite-gerer-les-habilitations) | Guide de sécurité CNIL | Page consultée le 22 septembre 2026 |
+| M-retention | [CNIL · Cycle de vie et conservation](https://www.cnil.fr/fr/passer-laction/les-durees-de-conservation-des-donnees) | Explications de la CNIL | 2 avril 2026 |
+| M-principles | [RGPD · Principes et licéité](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre2) | Texte du règlement, reproduit par la CNIL | Articles 5, 6, 9 et 10 |
+| M-obligations | [RGPD · Responsable et sous-traitant](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4) | Texte du règlement, reproduit par la CNIL | Articles 28, 30 et 32 |
+
+Les référentiels ne remplacent pas l’examen des textes applicables et de leur champ. Le référentiel RH de conservation du 20 mai 2026 distingue explicitement les durées obligatoires et recommandées ; aucune valeur n’en est préremplie. Aucune revue juridique humaine n’est attribuée. Les exemples fictifs restent distingués des prescriptions.

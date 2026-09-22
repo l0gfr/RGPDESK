@@ -29,7 +29,20 @@ test("guide is readable without JavaScript and every local link and chapter reso
     await page.goto("/app/privacy/guide/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Un registre compris.");
     const chapters = page.getByRole("navigation", { name: "Sommaire du guide" }).getByRole("link");
-    await expect(chapters).toHaveCount(12);
+    await expect(chapters).toHaveCount(13);
+    await expect(page.locator(".business-chapter")).toHaveCount(6);
+    await page.locator("#entretien-recruitment summary").first().click();
+    await expect(page.locator("#entretien-recruitment .business-questions > li")).toHaveCount(6);
+    await expect(page.locator("#entretien-recruitment")).toContainText("Fiche 13");
+    for (const chapter of await page.locator(".business-chapter").all()) {
+      if (!(await chapter.locator(".business-questions").isVisible())) await chapter.locator("summary").first().click();
+      await expect(chapter.locator(".question-source")).toHaveCount(6);
+      for (const href of await chapter.locator(".question-source").evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href))) {
+        const source = new URL(href);
+        expect(source.protocol).toBe("https:");
+        expect(source.hostname).toBe("www.cnil.fr");
+      }
+    }
     const localLinks = await page.locator('a[href^="/"], a[href^="#"]').evaluateAll((elements) => elements.map((element) => (element as HTMLAnchorElement).getAttribute("href")!));
     for (const href of new Set(localLinks)) {
       if (href.startsWith("#")) {
@@ -44,7 +57,9 @@ test("guide is readable without JavaScript and every local link and chapter reso
       }
     }
     await expect(page.getByRole("article")).toContainText("La sauvegarde du serveur RGPDESK ne contient pas vos coffres.");
-    await expect(page.getByRole("article")).toContainText("sans revue juridique humaine");
+    await expect(page.getByRole("article")).toContainText("il ne remplace pas votre analyse");
+    await expect(page.locator("figure.guide-visual")).toHaveCount(4);
+    await expect(page.getByRole("article")).not.toContainText("qualification Firefox");
     await expect(page.locator("script, iframe, form")).toHaveCount(0);
   } finally {
     await context.close();

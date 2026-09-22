@@ -1,6 +1,7 @@
 <script lang="ts">
   let { name = "folder", size = 20 }: { name?: string; size?: number } = $props();
   const paths: Record<string, string> = {
+    overview: "M3 3h7v7H3ZM14 3h7v7h-7ZM3 14h7v7H3ZM14 14h7v7h-7Z",
     folder: "M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9H3Z",
     register: "M5 3h14v18H5ZM9 7h6M9 11h6M9 15h4M3 6h4M3 10h4M3 14h4M3 18h4",
     organization: "M4 21V7l8-4 8 4v14M8 21v-5h8v5M8 8h1M15 8h1M8 12h1M15 12h1M2 21h20",
@@ -19,5 +20,16 @@
     book: "M12 5v16M12 5C8 2 4 3 2 4v15c4-2 7-1 10 2 3-3 6-4 10-2V4c-4-2-7-1-10 1",
     check: "m5 12 4 4L19 6", chevron: "m9 5 7 7-7 7", key: "M14 8a5 5 0 1 1-5-5 5 5 0 0 1 5 5Zm-1 3 8 8v2h-3v-3h-3l-3-3",
   };
+  const accents: Record<string, string> = {
+    overview: "M3 3h7v7H3ZM14 14h7v7h-7Z", folder: "M3 8h18v13H3Z",
+    register: "M5 3h14v18H5Z", organization: "M4 8 12 3l8 5v13H4Z",
+    parties: "M13 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0M3 18c0-6 12-6 12 0v3H3Z",
+    systems: "M3 4h18v12H3Z", documents: "M5 3h9v6h5v12H5Z",
+    actions: "M2 2h9v8H2ZM2 10h9v8H2Z", import: "M4 15h16v6H4Z",
+    delivery: "M3 9 12 3l9 6v12H3Z", backup: "M3 3h4v6h10V3l4 4v14H3Z",
+    lock: "M5 10h14v11H5Z", shield: "m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6Z",
+    eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z",
+    clock: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0", book: "M12 5v16c3-3 6-4 10-2V4c-4-2-7-1-10 1",
+  };
 </script>
-<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="desk-icon"><path d={paths[name] ?? paths.folder} /></svg>
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="desk-icon">{#if accents[name]}<path d={accents[name]} fill="currentColor" fill-opacity=".16" stroke="none" />{/if}<path d={paths[name] ?? paths.folder} /></svg>

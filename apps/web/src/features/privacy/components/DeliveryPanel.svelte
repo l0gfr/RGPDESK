@@ -23,7 +23,8 @@
   onDestroy(() => { generation++; });
 </script>
 <section class="panel">
-  <div class="section-heading"><div><p class="eyebrow">Livraisons maîtrisées</p><h2>Partager ce que vous avez examiné.</h2></div><span class="icon-tile"><Icon name="delivery" size={28} /></span></div>
+  <div class="section-heading"><div><p class="eyebrow">Préparer votre restitution</p><h2>Partager ce que vous avez examiné.</h2></div><span class="icon-tile"><Icon name="delivery" size={28} /></span></div>
+  <p>À qui devez-vous remettre le registre et pour quel usage ? Définissez ce périmètre, choisissez les fiches, puis vérifiez ce que votre destinataire pourra lire.</p>
   <ol class="stepper" aria-label="Étapes du partage"><li class:current={!prepared}><span>1</span>Périmètre</li><li class:current={!!prepared}><span>2</span>Revue du contenu</li><li><span>3</span>Dossier & historique</li></ol>
   {#if error}<p class="notice error" role="alert">{error}</p>{/if}
   {#if !prepared}<form onsubmit={(e) => { e.preventDefault(); void prepare(); }}><fieldset disabled={busy || preparing}>
@@ -47,5 +48,5 @@
 </section>
 <section class="panel delivery-history"><div class="section-heading"><div><p class="eyebrow">Historique chiffré</p><h2>Les versions remises restent intactes.</h2></div><a class="button secondary" href="/app/privacy/verify/" target="_blank" rel="noreferrer noopener"><Icon name="shield" />Vérifier un dossier</a></div><p class="help">Instantanés historiques, sans mise à jour automatique. Un téléchargement préparé ne prouve pas sa réception par le destinataire.</p>
   {#if !workspace.deliveries.length}<p class="empty">Aucune livraison conservée pour le moment.</p>{/if}
-  <ul class="records">{#each workspace.deliveries as d}<li><span class="record-icon"><Icon name="delivery" /></span><div class="grow"><strong>{PROFILE_LABELS[d.profile]} · {d.recipient}</strong><p>{d.createdAt} · révision {d.revision} · {d.catalogVersion}</p></div><button disabled={busy} class="secondary" onclick={() => onDownload(d.id)}>Télécharger l’instantané</button></li>{/each}</ul>
+  <ul class="records">{#each workspace.deliveries as d}<li><span class="record-icon"><Icon name="delivery" /></span><div class="grow"><strong>{PROFILE_LABELS[d.profile]} · {d.recipient}</strong><p>{d.createdAt} · révision {d.revision}</p></div><button disabled={busy} class="secondary" onclick={() => onDownload(d.id)}>Télécharger l’instantané</button></li>{/each}</ul>
 </section>

@@ -4,9 +4,9 @@ export const fr = {
   welcome: {
     eyebrow: "Logiciel libre de registre RGPD",
     title: "Votre registre RGPD.",
-    subtitle: "Du premier traitement",
-    ending: "au dossier partagé.",
-    description: "Décrivez comment votre organisation utilise les données personnelles : adhésions, personnel, relation client… Tenez vos fiches de traitement, suivez les points à examiner et préparez un registre à transmettre après relecture.",
+    subtitle: "De l’entretien métier",
+    ending: "au dossier prêt à remettre.",
+    description: "Préparez vos échanges avec les équipes, décrivez leurs usages des données personnelles et gardez le fil des réponses à obtenir. Puis remettez un dossier relu, en gardant vos notes de travail privées.",
     start: "Commencer mon registre",
     guide: "Lire le guide",
   },

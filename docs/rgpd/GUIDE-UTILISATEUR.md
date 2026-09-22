@@ -12,15 +12,17 @@ La CNIL présente le registre comme un outil de recensement et d’analyse des t
 
 **Pas encore disponible :** gestion des demandes d’exercice de droits, registre des violations, calcul de leurs délais, AIPD guidée. Le logiciel ne scanne pas vos systèmes, ne supprime pas des données dans vos outils et n’envoie rien à une autorité. Il ne choisit aucune base légale, durée de conservation ou conclusion juridique.
 
+<figure class="guide-visual guide-route"><div class="visual-kicker">Le résultat de votre travail</div><div class="visual-cards"><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><circle cx="45" cy="31" r="16" fill="#fff" stroke="#354fd0" stroke-width="3"/><path d="M13 88V74c0-24 64-24 64 0v14Z" fill="#dce4ff" stroke="#354fd0" stroke-width="3"/><circle cx="87" cy="42" r="12" fill="#c9f2df" stroke="#236953" stroke-width="3"/><path d="M85 63c23 0 23 14 23 25H89" fill="#c9f2df" stroke="#236953" stroke-width="3"/></svg><h3>Un entretien préparé</h3><p>Les bonnes questions, avec le bon interlocuteur.</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="27" y="16" width="66" height="80" rx="8" fill="#d8e0ff" transform="rotate(8 60 56)"/><rect x="19" y="9" width="66" height="80" rx="8" fill="#fff" stroke="#354fd0" stroke-width="3"/><rect x="31" y="25" width="20" height="20" rx="5" fill="#d9e6ff"/><path d="M59 29h14M59 39h10M31 58h42M31 69h31" stroke="#354fd0" stroke-width="3" stroke-linecap="round"/><circle cx="86" cy="78" r="17" fill="#c9f2df"/><path d="m78 78 6 6 10-13" fill="none" stroke="#236953" stroke-width="3" stroke-linecap="round"/></svg><h3>Une fiche exploitable</h3><p>Les faits connus et les réponses encore à obtenir.</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><path d="M17 45 60 16l43 29v44H17Z" fill="#ffe6c7" stroke="#945216" stroke-width="3"/><rect x="33" y="9" width="54" height="63" rx="5" fill="#fff" stroke="#945216" stroke-width="3"/><path d="M43 24h33M43 36h25M17 45l43 31 43-31M17 89l31-22M103 89 72 67" stroke="#945216" fill="none" stroke-width="3" stroke-linecap="round"/></svg><h3>Un dossier à remettre</h3><p>Une sélection relue pour votre destinataire.</p></div></div><figcaption>RGPDESK relie ces étapes dans un même espace de travail.</figcaption></figure>
+
 ## 2. Votre premier registre, pas à pas
 
-Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emplacement pour vos sauvegardes. La qualification actuelle porte sur Chromium. Firefox et Safari restent à qualifier. Utilisez d’abord un exemple fictif pour découvrir le parcours.
+Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emplacement pour vos sauvegardes. Pour commencer, utilisez Chrome ou Edge à jour sur ordinateur. Choisissez une première activité simple à décrire et rassemblez vos informations avant de saisir des données.
 
 1. Ouvrez [le registre](/app/privacy/). Dans **Créer le registre de mon organisation**, renseignez le nom de l’organisme et deux fois votre phrase secrète. Le minimum accepté est de 12 caractères ; la longueur et l’unicité restent importantes.
 2. Lisez l’avertissement sur la perte de la phrase et la sauvegarde. Cochez votre accord, puis **Créer le coffre chiffré**. Aucun compte ni adresse électronique ne sont demandés. Le coffre est l’espace chiffré qui contient votre travail.
-3. Dans **Organisation**, documentez les informations connues. Un nom saisi ne constitue pas une identité vérifiée.
-4. Dans **Registre**, choisissez **Ajouter une activité responsable** ou **Ajouter une activité sous-traitante** selon le rôle que vous avez examiné. Le rôle est fixé à la création de la fiche.
-5. Nommez l’activité, remplissez les rubriques connues et cliquez sur **Enregistrer la fiche**. Un brouillon incomplet est autorisé. Attendez le message **Enregistré dans le coffre chiffré.**
+3. **Ma mission** vous présente le fil du travail. Commencez par **Décrire l’organisation** pour noter le périmètre et les contacts, ou par **Choisir ma première activité** si vous connaissez déjà ce cadre.
+4. Choisissez un point de départ dans **Registre** : candidatures, personnel, clients, adhésions, contact ou prestation. Lisez les questions de préparation, puis choisissez explicitement le rôle de votre organisme. Seul le titre de départ est proposé dans la fiche ; aucune réponse juridique n’est ajoutée.
+5. Parcourez les six étapes : **L’activité**, **Les objectifs**, **Les données**, **La protection**, **Les précisions**, **La relecture**. Vous pouvez changer d’étape, choisir **Voir toute la fiche** et **Enregistrer la fiche** à tout moment. Les réponses manquantes restent à examiner. Attendez le message **Enregistré dans le coffre chiffré.**
 6. Ouvrez **Actions & décisions** pour examiner les questions documentaires et organiser la suite du travail.
 7. Ouvrez **Sauvegarde**, puis **Télécharger la sauvegarde chiffrée**. Vérifiez que le fichier `.rgpdesk` se trouve réellement dans vos téléchargements et placez-en une copie dans l’emplacement choisi.
 
@@ -29,6 +31,23 @@ Vous avez terminé ce premier parcours lorsque vous pouvez verrouiller, rouvrir 
 **À chaque séance :** enregistrer les fiches modifiées, vérifier les questions nouvelles, sauvegarder la révision actuelle, puis verrouiller. Les formulaires ne sont pas enregistrés automatiquement à chaque frappe.
 
 ## 3. Comprendre et remplir une fiche
+
+### Préparer votre entretien métier
+
+[Les six trames métier du guide](/app/privacy/guide/#trames-metier) approfondissent le recrutement, les RH, la relation client, les adhésions, les demandes de contact et les prestations pour un client. Chaque question renvoie à une ressource officielle et à la partie pertinente. Les questions sont proposées par RGPDESK ; les référentiels, recommandations et textes cités gardent leur portée propre.
+
+Choisissez une personne qui connaît l’activité au quotidien. Envoyez-lui les thèmes ci-dessous, puis travaillez ensemble sur un cas fictif. Votre objectif est d’obtenir une description vérifiable, pas de faire remplir des cases à l’aveugle.
+
+| Pendant l’échange | Ce que vous cherchez à retrouver |
+| --- | --- |
+| « Racontez-moi ce qui se passe, de la première demande à la clôture. » | Les étapes et l’objectif concret de l’activité. |
+| « Quelles informations utilisez-vous, et lesquelles vous sont vraiment utiles ? » | Les catégories de personnes et de données, sans recopier de données individuelles. |
+| « Qui les consulte, dans quels outils, et à qui les transmettez-vous ? » | Les équipes, intervenants, outils et accès à documenter. |
+| « Que devient le dossier après la fin de son utilisation ? » | La règle de conservation, sa source et la manière dont elle est appliquée. |
+| « Quels documents décrivent ce fonctionnement ? » | Les notices, contrats, procédures et analyses à référencer. |
+| « Quelle réponse manque encore, et qui peut nous la fournir ? » | Une prochaine action avec un interlocuteur et, si utile, une date convenue. |
+
+À la fin, **Enregistrer la fiche**, puis **Préparer les questions de cette activité**. Dans chaque question, **Préparer l’échange** propose une formulation, des interlocuteurs possibles et les éléments à retrouver. Créez une action lorsque vous souhaitez en suivre la résolution. Le logiciel n’envoie aucun message à vos interlocuteurs.
 
 ### Décrire une activité
 
@@ -65,6 +84,8 @@ L’association fictive « Les Alizés » commence une fiche intitulée **Gestio
 
 La base légale, la conservation, les destinataires et les transferts restent à examiner tant qu’elle n’a pas établi ces informations. Cet exemple montre comment décrire une fiche ; il ne fournit aucune réponse juridique prête à reprendre. Pour manipuler des exemples, **Importer un CSV** propose aussi **Essayer le modèle fictif : association & service**.
 
+<figure class="guide-visual annotated-record"><div class="visual-kicker">Lire une fiche en un regard · exemple fictif</div><div class="annotated-grid"><div class="record-paper"><span class="paper-tab">REGISTRE DES TRAITEMENTS</span><h3>Gestion des adhésions</h3><dl><dt>01 · Pourquoi ?</dt><dd>Suivre les inscriptions et les renouvellements.</dd><dt>02 · Pour qui ?</dt><dd>Les adhérents de l’association.</dd><dt>03 · Quelles données ?</dt><dd>Coordonnées et état de l’adhésion.</dd><dt>04 · Ce qui reste à établir</dt><dd class="paper-open">Base légale, conservation, destinataires et transferts à examiner.</dd></dl></div><div class="record-reading"><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="27" y="16" width="66" height="80" rx="8" fill="#d8e0ff" transform="rotate(8 60 56)"/><rect x="19" y="9" width="66" height="80" rx="8" fill="#fff" stroke="#354fd0" stroke-width="3"/><rect x="31" y="25" width="20" height="20" rx="5" fill="#d9e6ff"/><path d="M59 29h14M59 39h10M31 58h42M31 69h31" stroke="#354fd0" stroke-width="3" stroke-linecap="round"/><circle cx="86" cy="78" r="17" fill="#c9f2df"/><path d="m78 78 6 6 10-13" fill="none" stroke="#236953" stroke-width="3" stroke-linecap="round"/></svg><h3>Une description, pas un fichier de personnes.</h3><p>Vous expliquez comment fonctionne l’activité. Vous n’ajoutez pas les noms des adhérents ni leurs dossiers.</p><p>La réponse n’est pas connue ? Gardez la question ouverte et préparez le prochain échange.</p></div></div><figcaption>Cet exemple illustre la rédaction. Il ne fournit pas de choix juridique à reprendre.</figcaption></figure>
+
 ## 4. Intervenants, systèmes et documents
 
 **Intervenants** recense les organismes ou fonctions que vous reliez aux activités. **Systèmes** décrit les moyens utilisés. Enregistrez-les, puis revenez modifier la fiche pour sélectionner ses relations. Inscrire un prestataire ne suffit pas à qualifier automatiquement son rôle ou son contrat.
@@ -72,6 +93,8 @@ La base légale, la conservation, les destinataires et les transferts restent à
 Dans **Documents**, enregistrez une référence, sa catégorie, sa version, sa portée et les activités ou intervenants concernés. La localisation interne aide à retrouver le document dans votre propre organisation. **Aucun PDF, contrat, scan ou autre pièce binaire n’est joint au coffre.** La présence d’une référence ne prouve pas que le document est signé, à jour ou adapté.
 
 Le titre interne, la localisation et les notes restent internes. Une **référence publique** distincte peut être renseignée pour un partage ultérieur. Elle ne part qu’après sélection explicite d’une référence éligible et revue du dossier. Les références liées à une activité hors de la sélection ne sont pas proposées. Aucun lien documentaire n’est consulté automatiquement.
+
+<figure class="guide-visual guide-flow"><div class="visual-kicker">Reconstituer le circuit pendant l’entretien</div><div class="visual-cards"><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><circle cx="45" cy="31" r="16" fill="#fff" stroke="#354fd0" stroke-width="3"/><path d="M13 88V74c0-24 64-24 64 0v14Z" fill="#dce4ff" stroke="#354fd0" stroke-width="3"/><circle cx="87" cy="42" r="12" fill="#c9f2df" stroke="#236953" stroke-width="3"/><path d="M85 63c23 0 23 14 23 25H89" fill="#c9f2df" stroke="#236953" stroke-width="3"/></svg><h3>Les personnes</h3><p>De qui viennent les données ? Quelles informations donnent-elles ?</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="11" y="15" width="96" height="66" rx="9" fill="#fff" stroke="#354fd0" stroke-width="3"/><path d="M11 67h96M46 94h28M60 81v13" stroke="#354fd0" stroke-width="3" stroke-linecap="round"/><rect x="25" y="28" width="22" height="25" rx="4" fill="#c9f2df"/><path d="M59 33h31M59 44h22" stroke="#354fd0" stroke-width="3" stroke-linecap="round"/></svg><h3>Votre activité</h3><p>Quels outils et quelles équipes les utilisent ?</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><path d="M17 45 60 16l43 29v44H17Z" fill="#ffe6c7" stroke="#945216" stroke-width="3"/><rect x="33" y="9" width="54" height="63" rx="5" fill="#fff" stroke="#945216" stroke-width="3"/><path d="M43 24h33M43 36h25M17 45l43 31 43-31M17 89l31-22M103 89 72 67" stroke="#945216" fill="none" stroke-width="3" stroke-linecap="round"/></svg><h3>Les destinataires</h3><p>Qui les reçoit ou y accède, et depuis où ?</p></div></div><figcaption>Suivez un cas fictif avec l’équipe. Notez les accès et échanges réels ; ce schéma ne présume pas le rôle des acteurs.</figcaption></figure>
 
 ## 5. Importer un registre CSV
 
@@ -98,7 +121,7 @@ Pour **Clôturer**, renseignez l’auteur déclaré et la justification. La clô
 
 **Documenter une décision** permet d’enregistrer la question examinée, le périmètre, l’auteur, la décision et sa motivation. Les décisions passées ne sont pas réécrites automatiquement. Un changement de révision du dossier ou de catalogue peut les signaler **À réexaminer** ; c’est une invitation à les revoir, pas une annulation juridique automatique.
 
-Le panneau **Comprendre les contrôles & leurs sources** décrit chaque contrôle et son lien CNIL. Le catalogue `fr-eu-2026-09-22.draft-1` est une proposition **sans revue juridique humaine**. Les contrôles sont des pratiques produit inspirées des textes, pas une interprétation validée couvrant tous les régimes sectoriels. En cas de doute sur une qualification, conservez la question et sollicitez l’interlocuteur compétent.
+Le panneau **Comprendre les questions et leurs sources** explique les informations recherchées et donne accès aux textes CNIL. Ces repères ne remplacent pas l’analyse de votre situation ou des règles propres à votre secteur. Si une réponse reste incertaine, conservez la question et identifiez l’interlocuteur qui pourra vous aider à la résoudre.
 
 ## 7. Préparer un dossier à partager
 
@@ -145,6 +168,8 @@ Ce lecteur accepte les ZIP de partage, pas les sauvegardes `.rgpdesk`. Pour un u
 
 ## 9. Sauvegarder et restaurer sans perdre son travail
 
+<figure class="guide-visual guide-storage"><div class="visual-kicker">Trois objets, trois usages</div><div class="visual-cards"><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="20" y="13" width="78" height="81" rx="13" fill="#fff" stroke="#354fd0" stroke-width="3"/><rect x="30" y="25" width="58" height="56" rx="7" fill="#dce4ff" stroke="#354fd0" stroke-width="2"/><circle cx="59" cy="52" r="15" fill="#fff" stroke="#354fd0" stroke-width="3"/><path d="M59 37v30M44 52h30M20 34h-6M20 73h-6" stroke="#354fd0" stroke-width="3"/><circle cx="93" cy="83" r="16" fill="#c9f2df"/><path d="m86 83 5 5 9-11" fill="none" stroke="#236953" stroke-width="3"/></svg><span class="visual-label">TRAVAILLER</span><h3>Le coffre</h3><p>Votre espace chiffré dans ce navigateur.</p><strong>Sur cet appareil</strong></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><path d="M24 10h53l18 18v64H24Z" fill="#fff" stroke="#236953" stroke-width="3"/><path d="M77 10v19h18" fill="#c9f2df" stroke="#236953" stroke-width="3"/><rect x="36" y="55" width="43" height="26" rx="6" fill="#c9f2df" stroke="#236953" stroke-width="3"/><path d="M45 55v-9a13 13 0 0 1 26 0v9M58 64v8" fill="none" stroke="#236953" stroke-width="3"/></svg><span class="visual-label">RESTAURER</span><h3>La sauvegarde</h3><p>Tout votre espace dans un fichier .rgpdesk chiffré.</p><strong>Phrase secrète nécessaire</strong></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><path d="M17 45 60 16l43 29v44H17Z" fill="#ffe6c7" stroke="#945216" stroke-width="3"/><rect x="33" y="9" width="54" height="63" rx="5" fill="#fff" stroke="#945216" stroke-width="3"/><path d="M43 24h33M43 36h25M17 45l43 31 43-31M17 89l31-22M103 89 72 67" stroke="#945216" fill="none" stroke-width="3" stroke-linecap="round"/></svg><span class="visual-label">TRANSMETTRE</span><h3>Le dossier partagé</h3><p>Les rubriques choisies dans un ZIP lisible par son destinataire.</p><strong>En clair : à relire</strong></div></div><figcaption>Un dossier partagé ne restaure pas le coffre. La sauvegarde du serveur ne contient pas votre travail local.</figcaption></figure>
+
 ### Trois objets, trois usages
 
 | Objet | Contenu | Protection | Usage |
@@ -179,7 +204,7 @@ Une sauvegarde ancienne rétablit son ancien état. Il n’existe pas de fusion 
 
 Le contenu chiffré est stocké dans IndexedDB, dans votre navigateur. Il dépend du profil et de l’origine web : protocole, domaine et port. Un coffre créé sur une adresse locale de développement n’apparaît donc pas automatiquement sur `https://rgpdesk.fr`. Utilisez une sauvegarde chiffrée pour le déplacer.
 
-Le navigateur ou son utilisateur peut effacer ce stockage. Le mode privé n’est pas un emplacement durable pour votre registre. Aucune synchronisation n’est intégrée. Le fonctionnement hors réseau est possible après chargement de la page, mais **le rechargement hors ligne n’est pas garanti**. Il ne s’agit pas d’une application installable qualifiée pour un usage entièrement hors ligne.
+Le navigateur ou son utilisateur peut effacer ce stockage. Le mode privé n’est pas un emplacement durable pour votre registre. Aucune synchronisation n’est intégrée. Le fonctionnement hors réseau est possible après chargement de la page, mais **le rechargement hors ligne n’est pas garanti**. Gardez la page ouverte pendant votre travail hors réseau.
 
 ### Quand le coffre se verrouille-t-il ?
 
@@ -191,7 +216,7 @@ Utilisez un seul onglet pour modifier un coffre. En cas de conflit entre onglets
 
 Le chiffrement est effectué avec WebCrypto, AES-GCM 256 et une dérivation PBKDF2 SHA-256 à 600 000 itérations. La phrase n’est pas envoyée au serveur. Des identifiants opaques, numéros de version et de révision et métadonnées techniques nécessaires restent visibles dans le stockage ; le nom de l’organisme et les textes métier restent chiffrés quand le coffre est fermé.
 
-Le chiffrement ne protège pas les données affichées dans une session ouverte, ni un appareil, navigateur ou extension déjà compromis. Le code chargé depuis le site fait partie de la chaîne de confiance. Les tests automatisés ne constituent pas un audit de sécurité indépendant. Pour les échanges réseau du site et ses journaux techniques, consultez [Confidentialité et limites](/app/privacy/confidentialite/).
+Le chiffrement ne protège pas les données affichées dans une session ouverte, ni un appareil, navigateur ou extension déjà compromis. Le code chargé depuis le site fait partie de la chaîne de confiance. Pour les échanges réseau du site et ses journaux techniques, consultez [Confidentialité et limites](/app/privacy/confidentialite/).
 
 ### Effacer le stockage
 
@@ -247,9 +272,9 @@ Pour une vulnérabilité, suivez la politique [SECURITY.md du dépôt](https://g
 
 ## 12. Sources, version et portée de ce guide
 
-Guide produit rédigé le **22 septembre 2026** pour la version expérimentale couvrant les lots 0 à 3. La révision réellement servie figure dans [release.json](/release.json). Le code est ouvert sous [licence AGPL-3.0-only](/LICENSE.txt), avec les [notices du socle](/NOTICE.txt) conservées.
+Guide mis à jour le **22 septembre 2026**. Vous pouvez consulter la [version du logiciel](/release.json). Le code est ouvert sous [licence AGPL-3.0-only](/LICENSE.txt), avec les [notices du socle](/NOTICE.txt) conservées.
 
-Les descriptions des écrans, formats et limites proviennent du code de RGPDESK et des parcours testés du dépôt. La version publiée de ce guide accompagne l’application ; elle ne se met pas à jour depuis une IA ou un service distant. Le fichier source du guide est [consultable dans le dépôt](https://github.com/l0gfr/RGPDESK/blob/main/docs/rgpd/GUIDE-UTILISATEUR.md).
+Ce guide accompagne la version de RGPDESK que vous utilisez. Son contenu est [consultable dans le dépôt](https://github.com/l0gfr/RGPDESK/blob/main/docs/rgpd/GUIDE-UTILISATEUR.md).
 
 Les références juridiques servent à orienter la lecture, sans remplacer l’examen de votre situation :
 
@@ -260,4 +285,4 @@ Les références juridiques servent à orienter la lecture, sans remplacer l’e
 - [RGPD, chapitre IV : obligations et registres des responsables et sous-traitants](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4).
 - [Catalogue de conception et références détaillées du dépôt](https://github.com/l0gfr/RGPDESK/blob/main/docs/rgpd/SOURCES.md).
 
-Ces sources ont été consultées pour la rédaction ; cela ne constitue pas une revue juridique humaine du catalogue. Aucun score, certification ou conclusion automatique n’est produit. Les évolutions législatives et règles sectorielles exigent leur propre vérification. La qualification Firefox/Safari et l’audit de sécurité indépendant restent à réaliser.
+Appuyez-vous sur ces sources pour examiner vos choix, en tenant compte de votre situation et des règles de votre secteur. RGPDESK vous aide à documenter ce travail ; il ne remplace pas votre analyse et ne délivre pas de certification.
