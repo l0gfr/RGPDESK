@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { VaultInventory } from "../persistence/inventory";
   import { onMount, tick } from "svelte";
   import { createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { assertLocalPassphrase } from "../../../lib/local-encryption";
@@ -22,6 +23,9 @@
   import type { StartingPoint } from "../guidance";
 
   let ready = $state(false);
+  let inventoryStatus: "loading" | "ready" | "error" = $state("loading");
+  let storageOrigin = $state("");
+  let inventory: VaultInventory | undefined;
   let stale = $state(false);
   let busy = $state(false);
   let master: Workspace | null = $state(null);
@@ -117,7 +121,7 @@
       phrase = secret;
       master = created;
       phraseInput = confirmation = organizationName = "";
-      records = await vault!.list();
+      await inventory!.refresh();
       checkSession(current);
       message = fr.saved;
       await revealWorkspace(current);
@@ -234,7 +238,7 @@
       restoreFile = null;
       if (fileInput) fileInput.value = "";
       master = restored;
-      records = await vault!.list();
+      await inventory!.refresh();
       checkSession(current);
       message = "Sauvegarde restaurée et rechiffrée dans ce profil navigateur.";
       await revealWorkspace(current);
@@ -257,20 +261,37 @@
   onMount(() => {
     let disposed = false;
     vault = new PrivacyVault();
-    void vault.initialize().then(async (value) => {
-      const items = await vault!.list();
-      if (!disposed) { epoch = value; records = items; ready = true; }
-    }).catch(() => { if (!disposed) error = fr.errors.STORAGE; });
+    storageOrigin = window.location.origin;
+    inventory = new VaultInventory(async () => {
+      if (!epoch) epoch = await vault!.initialize();
+      return vault!.listCurrent(epoch);
+    }, (state) => {
+      if (disposed) return;
+      inventoryStatus = state.status;
+      records = state.items;
+      ready = state.status === "ready";
+      if (state.epochChanged) {
+        records = [];
+        lock("Le stockage a changé dans un autre onglet. Rechargez cette page avant de continuer.");
+        stale = true;
+      }
+    });
+    void inventory.refresh();
+    const refreshLocked = () => { if (!master && !busy && !stale && document.visibilityState === "visible") void inventory?.refresh(); };
+    window.addEventListener("focus", refreshLocked);
+    window.addEventListener("pageshow", refreshLocked);
+    document.addEventListener("visibilitychange", refreshLocked);
     const unsubscribe = subscribeToSensitivePageLock(() => lock());
     const onPageHide = () => lock();
     window.addEventListener("pagehide", onPageHide);
     const channel = typeof BroadcastChannel === "undefined" ? null : new BroadcastChannel(PRIVACY_CHANNEL);
-    if (channel) channel.onmessage = () => {
-      lock("Effacement détecté dans un autre onglet. Rechargez cette page avant de continuer.");
-      records = [];
-      stale = true;
+    if (channel) channel.onmessage = (event) => {
+      if (event.data?.type === "wipe") {
+        lock("Vérification du stockage après une modification dans un autre onglet.");
+        void inventory?.refresh();
+      }
     };
-    return () => { disposed = true; lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
+    return () => { disposed = true; inventory?.dispose(); window.removeEventListener("focus", refreshLocked); window.removeEventListener("pageshow", refreshLocked); document.removeEventListener("visibilitychange", refreshLocked); lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
   });
 </script>
 
@@ -279,7 +300,7 @@
   {#if error}<p class="notice error" role="alert">{error}</p>{/if}
   {#if message}<p class="notice" role="status">{message}</p>{/if}
   {#if stale}<a class="button" href="/app/privacy/">Recharger l’application</a>{/if}
-  {#if !ready}<p role="status">Ouverture du stockage local…</p>{/if}
+  {#if inventoryStatus === "loading"}<p role="status">Lecture des coffres de ce navigateur…</p>{/if}
 
   {#if master}
     <div class="desk-layout">
@@ -349,9 +370,15 @@
         </fieldset></form>
       </section>
       <section class="panel"><p class="eyebrow">02 / Coffres de ce navigateur</p><h2>Reprendre votre travail</h2>
-        {#if records.length === 0}<p class="empty">Aucun coffre enregistré dans ce profil.</p>{/if}
-        <ul class="records">{#each records as item, index (item.id)}<li><span>Coffre {index + 1}<small>Révision {item.revision}</small></span><button class="secondary" disabled={busy || stale} onclick={() => { selectedId = item.id; phraseInput = ""; }}>Ouvrir le coffre {index + 1}</button></li>{/each}</ul>
-        {#if selectedId}<form onsubmit={(event) => { event.preventDefault(); void unlock(); }}><fieldset disabled={busy || stale}><label class="field"><span>Phrase secrète du coffre</span><input type="password" maxlength="1024" required bind:value={phraseInput} autocomplete="off" /></label><button type="submit">Déverrouiller</button></fieldset></form>{/if}
+        <p class="help">Adresse de stockage : <strong>{storageOrigin || "Vérification en cours"}</strong></p>
+        {#if inventoryStatus === "loading"}<p role="status">Recherche des coffres enregistrés…</p>
+        {:else if inventoryStatus === "error"}<p class="notice error" role="alert">La liste des coffres n’a pas pu être lue. Cela ne signifie pas qu’ils ont été effacés. Aucun coffre n’est créé ni remplacé par cette vérification.</p>
+        {:else if stale}<p class="notice" role="status">Le stockage a changé. Rechargez la page pour relire les coffres disponibles.</p>
+        {:else if records.length === 0}<p class="empty">Aucun coffre trouvé à cette adresse dans ce profil navigateur.</p>{/if}
+        <button class="secondary" disabled={busy || stale || inventoryStatus === "loading"} onclick={() => void inventory?.refresh()}>Actualiser la liste des coffres</button>
+        <details><summary>Je ne retrouve pas un coffre</summary><p>Revenez à l’adresse exacte et au profil navigateur utilisés lors de sa création. Le site rgpdesk.fr, la version locale et les différents ports locaux ont des stockages séparés. Une fenêtre privée peut aussi utiliser un espace distinct.</p><p>Ne créez pas un coffre de remplacement et n’effacez pas les données du site pour résoudre ce problème. Si vous avez une sauvegarde chiffrée, la restauration ci-dessous refuse d’écraser un coffre existant.</p></details>
+        <ul class="records">{#each records as item, index (item.id)}<li><span>Coffre {index + 1}<small>Révision {item.revision}</small></span><button class="secondary" disabled={!ready || busy || stale} onclick={() => { selectedId = item.id; phraseInput = ""; }}>Ouvrir le coffre {index + 1}</button></li>{/each}</ul>
+        {#if selectedId}<form onsubmit={(event) => { event.preventDefault(); void unlock(); }}><fieldset disabled={!ready || busy || stale}><label class="field"><span>Phrase secrète du coffre</span><input type="password" maxlength="1024" required bind:value={phraseInput} autocomplete="off" /></label><button type="submit">Déverrouiller</button></fieldset></form>{/if}
         <p class="help">Les noms et contenus restent chiffrés. Ce stockage dépend du domaine et du profil navigateur ; il peut être effacé par le navigateur ou son utilisateur.</p>
       </section>
     </div>

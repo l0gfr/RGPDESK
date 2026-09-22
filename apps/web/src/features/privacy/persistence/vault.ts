@@ -47,6 +47,13 @@ export class PrivacyVault extends Dexie {
     return (await this.records.toArray()).map(({ id, revision }) => ({ id, revision }));
   }
 
+  async listCurrent(expectedEpoch: string): Promise<VaultItem[]> {
+    return this.transaction("r", this.records, this.metadata, async () => {
+      if ((await this.metadata.get("epoch"))?.value !== expectedEpoch) throw new PrivacyError("EPOCH");
+      return this.list();
+    });
+  }
+
   async assertCurrent(id: string, revision: number, session: VaultSession): Promise<void> {
     await this.transaction("r", this.records, this.metadata, async () => {
       await this.assertEpoch(session);
