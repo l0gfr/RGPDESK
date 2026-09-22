@@ -1,4 +1,6 @@
 ---
+import Brand from "../../../../features/privacy/components/Brand.astro";
+import favicon from "../../../../features/privacy/assets/rgpdesk-symbol.svg?url";
 import { Content, getHeadings } from "../../../../../../../docs/rgpd/GUIDE-UTILISATEUR.md";
 import "../../../../features/privacy/privacy.css";
 import "../../../../features/privacy/atelier.css";
@@ -10,7 +12,7 @@ const chapters = getHeadings().filter((heading) => heading.depth === 2);
 <!doctype html>
 <html lang="fr">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><link rel="icon" type="image/svg+xml" href={favicon} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="no-referrer" />
@@ -19,7 +21,7 @@ const chapters = getHeadings().filter((heading) => heading.depth === 2);
   </head>
   <body class="rgpdesk">
     <a class="skip-link" href="#main">Aller au contenu</a>
-    <header class="site-bar"><a class="wordmark" href="/app/privacy/" aria-label="RGPDESK, accueil"><span class="brand-mark" aria-hidden="true">R</span>RGPDESK<span class="brand-suffix">GUIDE UTILISATEUR</span></a><nav class="site-nav" aria-label="Navigation"><a href="/app/privacy/">Ouvrir le registre</a><a href="/app/privacy/verify/">Vérifier un dossier</a></nav></header>
+    <header class="site-bar"><Brand caption="GUIDE DE TRAVAIL" /><nav class="site-nav" aria-label="Navigation"><a href="/app/privacy/">Ouvrir le registre</a><a href="/app/privacy/verify/">Vérifier un dossier</a></nav></header>
     <main id="main" class="guide-main">
       <header class="guide-hero intro"><p class="eyebrow"><span class="eyebrow-line"></span>Le mode d’emploi, du début à la suite</p><h1>Menez l’entretien.<br /><em>Construisez l’analyse.</em></h1><p>Préparez votre premier entretien, décrivez une activité et transformez les réponses manquantes en prochaines actions. Des exemples et des repères visuels vous accompagnent tout au long de la mission.</p><div class="guide-cover-art" aria-hidden="true"><Pictogram kind="book" /><span>LE MANUEL</span><strong>Du fait<br />au choix.</strong></div><div class="guide-meta"><span>Édition du 22 septembre 2026</span><span>Pour les DPO et référents RGPD</span><span>À consulter pendant vos entretiens</span></div></header>
       <div class="guide-layout">

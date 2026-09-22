@@ -1,10 +1,12 @@
 ---
+import Brand from "../../../../features/privacy/components/Brand.astro";
+import favicon from "../../../../features/privacy/assets/rgpdesk-symbol.svg?url";
 import "../../../../features/privacy/privacy.css";
 import "../../../../features/privacy/atelier.css";
 ---
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex, nofollow" /><meta name="referrer" content="no-referrer" /><title>RGPDESK | Confidentialité et limites</title></head>
-<body class="rgpdesk"><a class="skip-link" href="#main">Aller au contenu</a><header class="site-bar"><a class="wordmark" href="/app/privacy/"><span class="brand-mark" aria-hidden="true">R</span>RGPDESK<span class="brand-suffix">BUREAU PRIVÉ</span></a><nav class="site-nav" aria-label="Navigation"><a href="/app/privacy/guide/">Guide d’utilisation</a><a href="/app/privacy/">Ouvrir le registre</a></nav></header>
+<html lang="fr"><head><meta charset="utf-8" /><link rel="icon" type="image/svg+xml" href={favicon} /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="robots" content="noindex, nofollow" /><meta name="referrer" content="no-referrer" /><title>RGPDESK | Confidentialité et limites</title></head>
+<body class="rgpdesk"><a class="skip-link" href="#main">Aller au contenu</a><header class="site-bar"><Brand caption="LE BUREAU DU DPO" /><nav class="site-nav" aria-label="Navigation"><a href="/app/privacy/guide/">Guide d’utilisation</a><a href="/app/privacy/">Ouvrir le registre</a></nav></header>
 <main id="main"><article class="panel"><p class="eyebrow">Confidentialité et limites</p><h1>Votre registre reste dans votre navigateur.</h1>
 <p>RGPDESK est un espace de travail personnel, sans compte. Votre coffre est chiffré dans le navigateur que vous utilisez. Le mot de passe, le registre, les imports, les sauvegardes et les dossiers vérifiés ne sont pas envoyés au serveur. Aucun outil de mesure d’audience, CDN, service d’IA distante ou synchronisation n’est intégré.</p>
 <h2>Le rôle du serveur</h2><p>Le serveur fournit les fichiers statiques de l’application. Comme pour toute consultation HTTPS, il reçoit votre adresse IP et les ressources demandées. La configuration RGPDESK ne conserve pas de journal d’accès ; les journaux d’erreurs d’Apache peuvent contenir des informations de connexion. Les liens externes vers les sources et GitHub ne s’ouvrent que sur votre action, sans transmettre le contenu du coffre.</p>
