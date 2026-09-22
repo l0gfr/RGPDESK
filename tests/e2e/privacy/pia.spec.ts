@@ -31,7 +31,7 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await atelier.getByRole("button", { name: /Risques humains/ }).click();
   await atelier.getByRole("button", { name: "Décrire un scénario de risque", exact: true }).click();
   await atelier.getByLabel("Scénario 1 · Nom", { exact: true }).fill("Exclusion fictive à examiner");
-  await expect(atelier.getByLabel("R1 · Gravité initiale", { exact: true })).toHaveValue("unknown");
+  await expect(atelier.getByRole("combobox", { name: "R1 · Gravité initiale", exact: true })).toHaveValue("unknown");
   await atelier.getByLabel("R1 · Droits et libertés affectés", { exact: true }).fill(marker);
   await atelier.getByRole("button", { name: "Retirer le scénario R1", exact: true }).click();
   await atelier.getByLabel("Échelles, hypothèses et méthode d’appréciation", { exact: true }).fill("Méthode fictive modifiée après retrait");
