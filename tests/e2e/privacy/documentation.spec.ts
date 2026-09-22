@@ -37,12 +37,17 @@ test("guide is readable without JavaScript and every local link and chapter reso
     for (const chapter of await page.locator(".business-chapter").all()) {
       if (!(await chapter.locator(".business-questions").isVisible())) await chapter.locator("summary").first().click();
       await expect(chapter.locator(".question-source")).toHaveCount(6);
-      for (const href of await chapter.locator(".question-source").evaluateAll((links) => links.map((link) => (link as HTMLAnchorElement).href))) {
-        const source = new URL(href);
+      for (const link of await chapter.locator(".question-source").evaluateAll((links) => links.map((link) => ({ href: (link as HTMLAnchorElement).href, title: link.textContent!.trim() })))) {
+        const source = new URL(link.href);
         expect(source.protocol).toBe("https:");
-        expect(source.hostname).toBe("www.cnil.fr");
+        if (link.title.startsWith("RGPD ·")) {
+          expect(source.href).toBe("https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr");
+        } else {
+          expect(source.origin).toBe("https://www.cnil.fr");
+        }
       }
     }
+    await expect(page.locator('.question-source[href="https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr"]')).not.toHaveCount(0);
     const localLinks = await page.locator('a[href^="/"], a[href^="#"]').evaluateAll((elements) => elements.map((element) => (element as HTMLAnchorElement).getAttribute("href")!));
     for (const href of new Set(localLinks)) {
       if (href.startsWith("#")) {
