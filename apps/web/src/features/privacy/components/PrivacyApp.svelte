@@ -278,6 +278,7 @@
     });
     void inventory.refresh();
     const refreshLocked = () => { if (!master && !busy && !stale && document.visibilityState === "visible") void inventory?.refresh(); };
+    const inventorySubscription = vault.watchInventory(refreshLocked);
     window.addEventListener("focus", refreshLocked);
     window.addEventListener("pageshow", refreshLocked);
     document.addEventListener("visibilitychange", refreshLocked);
@@ -291,7 +292,7 @@
         void inventory?.refresh();
       }
     };
-    return () => { disposed = true; inventory?.dispose(); window.removeEventListener("focus", refreshLocked); window.removeEventListener("pageshow", refreshLocked); document.removeEventListener("visibilitychange", refreshLocked); lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
+    return () => { disposed = true; inventorySubscription.unsubscribe(); inventory?.dispose(); window.removeEventListener("focus", refreshLocked); window.removeEventListener("pageshow", refreshLocked); document.removeEventListener("visibilitychange", refreshLocked); lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
   });
 </script>
 

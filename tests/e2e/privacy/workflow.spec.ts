@@ -192,7 +192,7 @@ test("two open tabs reject stale writes and clear both views after local wipe", 
   await expect(other.getByLabel("Nom de l’activité", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Recharger l’application", exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByText("Aucun coffre enregistré dans ce profil.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Aucun coffre trouvé à cette adresse dans ce profil navigateur.", { exact: true })).toBeVisible();
 });
 
 test("manual lock during a save cannot reopen the page or commit the pending edit", async ({ page }) => {

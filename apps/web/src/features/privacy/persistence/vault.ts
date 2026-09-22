@@ -1,5 +1,5 @@
 import { verifyFiles } from "@rgpdesk/privacy-verifier";
-import Dexie, { type Table } from "dexie";
+import Dexie, { liveQuery, type Table } from "dexie";
 import { assertWorkspace, parseWorkspace, reviseWorkspace, canonicalJson, PrivacyError, type PrivacyEnvelope, type Workspace, type SharedRegister, type DeliveryRecord } from "@rgpdesk/privacy-core";
 import { decodeArchive, encodeBackup, openMaster, sealMaster, sealSnapshot, openSnapshot, type DeliverySnapshot } from "./crypto";
 
@@ -45,6 +45,13 @@ export class PrivacyVault extends Dexie {
   async list(): Promise<VaultItem[]> {
     // Only opaque identifiers and revision counters leave this boundary while locked.
     return (await this.records.toArray()).map(({ id, revision }) => ({ id, revision }));
+  }
+
+  watchInventory(onChange: () => void) {
+    return liveQuery(() => this.transaction("r", this.records, this.metadata, async () => ({
+      epoch: (await this.metadata.get("epoch"))?.value,
+      items: await this.list(),
+    }))).subscribe({ next: onChange, error: onChange });
   }
 
   async listCurrent(expectedEpoch: string): Promise<VaultItem[]> {
