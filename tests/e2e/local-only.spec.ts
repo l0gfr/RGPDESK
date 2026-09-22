@@ -72,7 +72,12 @@ test("v11 to v12 removes only access state and preserves encrypted dossier and s
   // page explicitly before replacement, without weakening any migration check.
   const page = await editorPage.context().newPage();
   await editorPage.close();
-  await page.goto("/");
+  // The public home also opens IndexedDB for its resume link. Use an inert page
+  // on the same origin to replace the synthetic schema without a competing app.
+  await page.route("**/__migration-fixture", (route) => route.fulfill({
+    contentType: "text/html", body: "<!doctype html><title>Migration fixture</title>",
+  }));
+  await page.goto("/__migration-fixture");
   const snapshotPayload = await encryptLocalPayload({ deliveryJson: "synthetic historical snapshot" }, passphrase);
   const originals = await page.evaluate(async (payload) => {
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
