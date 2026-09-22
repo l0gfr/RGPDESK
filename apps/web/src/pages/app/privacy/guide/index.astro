@@ -1,7 +1,10 @@
 ---
 import { Content, getHeadings } from "../../../../../../../docs/rgpd/GUIDE-UTILISATEUR.md";
 import "../../../../features/privacy/privacy.css";
+import "../../../../features/privacy/atelier.css";
 import InterviewLibrary from "../../../../features/privacy/components/InterviewLibrary.svelte";
+import ReviewMethods from "../../../../features/privacy/components/ReviewMethods.svelte";
+import Pictogram from "../../../../features/privacy/components/Pictogram.svelte";
 const chapters = getHeadings().filter((heading) => heading.depth === 2);
 ---
 <!doctype html>
@@ -18,10 +21,10 @@ const chapters = getHeadings().filter((heading) => heading.depth === 2);
     <a class="skip-link" href="#main">Aller au contenu</a>
     <header class="site-bar"><a class="wordmark" href="/app/privacy/" aria-label="RGPDESK, accueil"><span class="brand-mark" aria-hidden="true">R</span>RGPDESK<span class="brand-suffix">GUIDE UTILISATEUR</span></a><nav class="site-nav" aria-label="Navigation"><a href="/app/privacy/">Ouvrir le registre</a><a href="/app/privacy/verify/">Vérifier un dossier</a></nav></header>
     <main id="main" class="guide-main">
-      <header class="guide-hero intro"><p class="eyebrow"><span class="eyebrow-line"></span>Le mode d’emploi, du début à la suite</p><h1>Un registre compris.<br /><em>Un travail que l’on peut reprendre.</em></h1><p>Préparez votre premier entretien, décrivez une activité et transformez les réponses manquantes en prochaines actions. Des exemples et des repères visuels vous accompagnent tout au long de la mission.</p><div class="guide-cover-art" aria-hidden="true"><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="27" y="16" width="66" height="80" rx="8" fill="#d8e0ff" transform="rotate(8 60 56)"/><rect x="19" y="9" width="66" height="80" rx="8" fill="#fff" stroke="#354fd0" stroke-width="3"/><rect x="31" y="25" width="20" height="20" rx="5" fill="#d9e6ff"/><path d="M59 29h14M59 39h10M31 58h42M31 69h31" stroke="#354fd0" stroke-width="3" stroke-linecap="round"/><circle cx="86" cy="78" r="17" fill="#c9f2df"/><path d="m78 78 6 6 10-13" fill="none" stroke="#236953" stroke-width="3" stroke-linecap="round"/></svg><span>Observer</span><span>Documenter</span><span>Décider</span></div><div class="guide-meta"><span>Édition du 22 septembre 2026</span><span>Pour les DPO et référents RGPD</span><span>À consulter pendant vos entretiens</span></div></header>
+      <header class="guide-hero intro"><p class="eyebrow"><span class="eyebrow-line"></span>Le mode d’emploi, du début à la suite</p><h1>Menez l’entretien.<br /><em>Construisez l’analyse.</em></h1><p>Préparez votre premier entretien, décrivez une activité et transformez les réponses manquantes en prochaines actions. Des exemples et des repères visuels vous accompagnent tout au long de la mission.</p><div class="guide-cover-art" aria-hidden="true"><Pictogram kind="book" /><span>LE MANUEL</span><strong>Du fait<br />au choix.</strong></div><div class="guide-meta"><span>Édition du 22 septembre 2026</span><span>Pour les DPO et référents RGPD</span><span>À consulter pendant vos entretiens</span></div></header>
       <div class="guide-layout">
-        <aside class="guide-sidebar"><nav aria-label="Sommaire du guide"><p class="eyebrow">Dans ce guide</p><a class="guide-business-link" href="#trames-metier">Les six trames métier</a><ol>{chapters.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text.replace(/^\d+\. /, "")}</a></li>)}</ol></nav><a class="button" href="/app/privacy/">Ouvrir mon registre</a><p class="help">Enregistrez votre travail avant de consulter l’aide : le coffre se verrouille après une minute en arrière-plan.</p></aside>
-        <article class="guide-content"><InterviewLibrary /><Content /><a class="guide-top" href="#main">Revenir au début du guide ↑</a></article>
+        <aside class="guide-sidebar"><nav aria-label="Sommaire du guide"><p class="eyebrow">Dans ce guide</p><a class="guide-business-link" href="#atelier-dpo">L’atelier : analyse, contrats et flux</a><a class="guide-business-link" href="#trames-metier">Les six trames métier</a><ol>{chapters.map((heading) => <li><a href={`#${heading.slug}`}>{heading.text.replace(/^\d+\. /, "")}</a></li>)}</ol></nav><a class="button" href="/app/privacy/">Ouvrir mon registre</a><p class="help">Enregistrez votre travail avant de consulter l’aide : le coffre se verrouille après une minute en arrière-plan.</p></aside>
+        <article class="guide-content"><ReviewMethods /><InterviewLibrary /><Content /><a class="guide-top" href="#main">Revenir au début du guide ↑</a></article>
       </div>
     </main>
     <footer class="privacy-footer"><p>RGPDESK · Registre, suivi documentaire et partage examiné.</p><p><a href="/app/privacy/confidentialite/">Confidentialité et limites</a> · <a href="/release.json">Version servie</a> · <a href="/LICENSE.txt">AGPL-3.0-only</a> · Dérivé de BLACKPROOF-AGPL.</p></footer>

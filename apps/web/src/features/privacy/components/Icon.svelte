@@ -1,6 +1,8 @@
 <script lang="ts">
   let { name = "folder", size = 20 }: { name?: string; size?: number } = $props();
   const paths: Record<string, string> = {
+    flows: "M3 3h6v6H3ZM15 15h6v6h-6ZM6 9v9h9M15 3h6v6h-6ZM9 6h6M18 9v6",
+    analysis: "M4 3h11l4 4v5M4 3v18h7M8 7h3M8 11h4M8 15h2M21 16a5 5 0 1 1-10 0 5 5 0 0 1 10 0M20 20l3 3",
     overview: "M3 3h7v7H3ZM14 3h7v7h-7ZM3 14h7v7H3ZM14 14h7v7h-7Z",
     folder: "M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9H3Z",
     register: "M5 3h14v18H5ZM9 7h6M9 11h6M9 15h4M3 6h4M3 10h4M3 14h4M3 18h4",
@@ -21,6 +23,8 @@
     check: "m5 12 4 4L19 6", chevron: "m9 5 7 7-7 7", key: "M14 8a5 5 0 1 1-5-5 5 5 0 0 1 5 5Zm-1 3 8 8v2h-3v-3h-3l-3-3",
   };
   const accents: Record<string, string> = {
+    flows: "M3 3h6v6H3ZM15 15h6v6h-6ZM15 3h6v6h-6Z",
+    analysis: "M4 3h11l4 4v5M4 3v18h7M8 7h3M8 11h4M8 15h2M21 16a5 5 0 1 1-10 0 5 5 0 0 1 10 0M20 20l3 3",
     overview: "M3 3h7v7H3ZM14 14h7v7h-7Z", folder: "M3 8h18v13H3Z",
     register: "M5 3h14v18H5Z", organization: "M4 8 12 3l8 5v13H4Z",
     parties: "M13 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0M3 18c0-6 12-6 12 0v3H3Z",

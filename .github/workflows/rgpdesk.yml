@@ -34,6 +34,8 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: All source, security, build and browser regression gates
         run: pnpm verify:all
+      - name: Validate isolated activation and rollback without starting backups
+        run: pnpm test:privacy:deploy
       - name: Qualify RGPD-only distribution
         run: pnpm test:privacy:release && pnpm privacy:release
       - name: Verify extracted artifact

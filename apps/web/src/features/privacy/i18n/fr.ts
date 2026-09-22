@@ -2,11 +2,11 @@ import { PrivacyError } from "@rgpdesk/privacy-core";
 
 export const fr = {
   welcome: {
-    eyebrow: "Logiciel libre de registre RGPD",
-    title: "Votre registre RGPD.",
-    subtitle: "De l’entretien métier",
-    ending: "au dossier prêt à remettre.",
-    description: "Préparez vos échanges avec les équipes, décrivez leurs usages des données personnelles et gardez le fil des réponses à obtenir. Puis remettez un dossier relu, en gardant vos notes de travail privées.",
+    eyebrow: "Le bureau de travail du DPO",
+    title: "Voyez vos données.",
+    subtitle: "Éclairez vos choix.",
+    ending: "",
+    description: "Le bureau de travail du DPO : du premier entretien au registre, des flux déclarés aux décisions argumentées. Vos sources, vos réserves et vos prochaines actions, dans un coffre qui reste chez vous.",
     start: "Commencer mon registre",
     guide: "Lire le guide",
   },

@@ -78,16 +78,16 @@ describe("documentary history", () => {
   it("contract references cover only declared linked parties and never imply legal validation", () => {
     const m = fixture(); const pid = id(); m.parties.push({ id: pid, workspaceId: m.id, name: "Prestataire fictif", contact: unknown() }); m.activities[0]!.review.subcontractorIds.push(pid);
     expect(evaluateWorkspace(m, "2026-09-22").some((f) => f.ruleId === "R-005")).toBe(true);
-    const doc: EvidenceReference = { id: id(), workspaceId: m.id, title: "GDPR compliant", category: "contract", activityIds: [m.activities[0]!.id], purposeIds: [], partyIds: [pid], scope: "Une activité", version: "", declaredAuthor: "", internalRef: "interne", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: "2026-09-21", audience: "", channel: "", availability: unknown() };
+    const doc: EvidenceReference = { id: id(), workspaceId: m.id, title: "GDPR compliant", category: "contract", contractReview: null, activityIds: [m.activities[0]!.id], purposeIds: [], partyIds: [pid], scope: "Une activité", version: "", declaredAuthor: "", internalRef: "interne", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: "2026-09-21", audience: "", channel: "", availability: unknown() };
     m.documents.push(doc); const findings = evaluateWorkspace(m, "2026-09-22");
-    expect(findings.some((f) => f.ruleId === "R-005")).toBe(false); expect(findings.some((f) => f.ruleId === "R-008")).toBe(true);
+    expect(findings.some((f) => f.ruleId === "R-005" && f.message.includes("Clauses"))).toBe(true); expect(findings.some((f) => f.ruleId === "R-008")).toBe(true);
   });
   it("explicitly migrates v1 without modifying original IDs, revision or source", () => {
     const m = fixture(); const legacy = JSON.parse(JSON.stringify(m));
     for (const key of ["documents", "actions", "decisions", "imports", "deliveries"]) delete legacy[key];
-    legacy.format = "rgpd-master-v1"; delete legacy.organization.representatives; legacy.activities.forEach((a: Record<string, unknown>) => delete a.review);
+    legacy.format = "rgpd-master-v1"; delete legacy.organization.representatives; legacy.activities.forEach((a: Record<string, unknown>) => { delete a.review; delete a.analysis; delete a.flows; });
     const bytes = JSON.stringify(legacy); const migrated = migrateWorkspace(legacy);
-    expect(migrated.format).toBe("rgpd-master-v2"); expect(migrated.revision).toBe(m.revision); expect(migrated.activities[0]?.id).toBe(m.activities[0]?.id); expect(JSON.stringify(legacy)).toBe(bytes);
+    expect(migrated.format).toBe("rgpd-master-v3"); expect(migrated.revision).toBe(m.revision); expect(migrated.activities[0]?.id).toBe(m.activities[0]?.id); expect(JSON.stringify(legacy)).toBe(bytes);
     expect(() => migrateWorkspace({ ...legacy, unknown: true })).toThrow();
   });
 });
@@ -138,7 +138,7 @@ it("scans all decoded ZIP files for every internal field and stable identifier",
   const pid = id(); m.parties.push({ id: pid, workspaceId: m.id, name: "CANARY_OTHER_CLIENT_23", contact: knowledge("CANARY_OTHER_CONTACT_23") });
   const systemId = id(); m.systems.push({ id: systemId, workspaceId: m.id, name: "CANARY_SYSTEM_23", description: knowledge("CANARY_SYSTEM_DESCRIPTION_23") }); a.systemIds = [systemId]; a.participantIds = [pid];
   const other = createActivity(m.id, id(), "processor"); if (other.role === "processor") { other.title = "CANARY_OTHER_ACTIVITY_23"; other.controllerIds = [pid]; other.instructions = knowledge("CANARY_INSTRUCTIONS_23"); other.operations = knowledge("CANARY_OPERATIONS_23"); } m.activities.push(other);
-  const doc: EvidenceReference = { id: id(), workspaceId: m.id, title: "CANARY_TITLE_23", category: "contract", activityIds: [a.id], purposeIds: [], partyIds: [], scope: "CANARY_DOC_SCOPE_23", version: "CANARY_VERSION_23", declaredAuthor: "CANARY_AUTHOR_23", internalRef: "CANARY_PATH_23", publicReference: "CANARY_UNSELECTED_PUBLIC_REF_23", reservations: "CANARY_RESERVES_23", sensitivity: "restricted", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: "2026-10-01", audience: "CANARY_AUDIENCE_23", channel: "CANARY_CHANNEL_23", availability: knowledge("CANARY_AVAILABILITY_23") }; m.documents.push(doc);
+  const doc: EvidenceReference = { id: id(), workspaceId: m.id, title: "CANARY_TITLE_23", category: "contract", contractReview: null, activityIds: [a.id], purposeIds: [], partyIds: [], scope: "CANARY_DOC_SCOPE_23", version: "CANARY_VERSION_23", declaredAuthor: "CANARY_AUTHOR_23", internalRef: "CANARY_PATH_23", publicReference: "CANARY_UNSELECTED_PUBLIC_REF_23", reservations: "CANARY_RESERVES_23", sensitivity: "restricted", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: "2026-10-01", audience: "CANARY_AUDIENCE_23", channel: "CANARY_CHANNEL_23", availability: knowledge("CANARY_AVAILABILITY_23") }; m.documents.push(doc);
   let withHistory = addDecision(m, { id: id(), activityId: a.id, ruleId: "R-004", author: "CANARY_DECISION_AUTHOR_23", justification: "CANARY_DECISION_MOTIVE_23", conclusion: "CANARY_DECISION_23" }, now);
   const finding = evaluateWorkspace(withHistory, "2026-09-22").find((f) => f.ruleId === "R-004")!;
   withHistory = createAction(withHistory, finding, { id: id(), owner: "CANARY_ACTION_OWNER_23", due: "2026-10-01" }, now);

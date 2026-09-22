@@ -1,5 +1,5 @@
-import validate from "./generated/master-v2-validator.js";
-import type { Workspace } from "./model";
+import validate from "./generated/master-v3-validator.js";
+import { ANALYSIS_QUESTIONS, CONTRACT_QUESTIONS, type ReviewNote, type Workspace } from "./model";
 
 export const MAX_MASTER_BYTES = 2 * 1024 * 1024;
 export const MAX_BACKUP_BYTES = 12 * 1024 * 1024;
@@ -58,7 +58,13 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
   }
   const activityIds = new Set(master.activities.map((a) => a.id));
   const purposeIds = new Set(master.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : []));
+  const checkNotes = (notes: ReviewNote[], expected: readonly string[]) => {
+    const ids = new Set(notes.map((note) => note.questionId));
+    if (ids.size !== expected.length || expected.some((id) => !ids.has(id))) throw new PrivacyError("INVALID");
+  };
   for (const activity of master.activities) {
+    checkNotes(activity.analysis.notes, ANALYSIS_QUESTIONS);
+    for (const flow of activity.flows) registerId(flow.id);
     links(activity.review.subcontractorIds, partyIds);
     links(activity.systemIds, systemIds);
     links(activity.participantIds, partyIds);
@@ -71,6 +77,10 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
     if (entity.workspaceId !== master.id) throw new PrivacyError("INVALID");
   }
   for (const doc of master.documents) {
+    if (doc.contractReview) {
+      if (doc.category !== "contract") throw new PrivacyError("INVALID");
+      checkNotes(doc.contractReview.notes, CONTRACT_QUESTIONS);
+    }
     links(doc.activityIds, activityIds); links(doc.purposeIds, purposeIds); links(doc.partyIds, partyIds);
     const scopedPurposes = new Set(master.activities.filter((a) => doc.activityIds.includes(a.id)).flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : []));
     links(doc.purposeIds, scopedPurposes);
@@ -98,7 +108,8 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
       || new Set(record.mapping.map((m) => m.field)).size !== record.mapping.length) throw new PrivacyError("INVALID");
   }
   for (const record of master.deliveries) if (record.createdAt > master.updatedAt || record.revision >= master.revision) throw new PrivacyError("INVALID");
-  if (utf8Size(JSON.stringify(master)) > MAX_MASTER_BYTES) throw new PrivacyError("LIMIT");
+  // A saved document must also remain readable by the bounded parser.
+  parseBoundedJson(JSON.stringify(master));
 }
 
 export function parseWorkspace(text: string): Workspace {

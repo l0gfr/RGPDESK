@@ -29,7 +29,7 @@ test("guided interview becomes an activity-specific follow-up, without legal def
   await expect(page.locator(".step-heading h3")).toBeFocused();
   await page.getByRole("button", { name: "Ajouter une finalité", exact: true }).click();
   await page.getByLabel("Finalité 1", { exact: true }).fill("Examiner des candidatures fictives");
-  await expect(page.getByLabel("Base légale documentée 1 (complément)", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Fondement juridique documenté 1 (complément)", { exact: true })).toHaveValue("");
   await expect(page.getByLabel("Durée ou critère de conservation 1", { exact: true })).toHaveValue("");
   await page.getByRole("button", { name: "Continuer", exact: true }).click();
   await page.getByLabel("Catégories de personnes", { exact: true }).fill("Candidats fictifs");
@@ -67,7 +67,7 @@ test("processor interview keeps its role and can save an incomplete draft", asyn
   await page.getByRole("button", { name: "Continuer", exact: true }).click();
   await page.getByLabel("Catégories d’opérations", { exact: true }).fill("Assistance fictive sur instruction");
   await page.getByRole("button", { name: "Voir toute la fiche", exact: true }).click();
-  await expect(page.getByLabel(/Base légale documentée/)).toHaveCount(0);
+  await expect(page.getByLabel(/Fondement juridique documenté/)).toHaveCount(0);
   await page.getByRole("button", { name: "Enregistrer la fiche", exact: true }).click();
   await page.getByRole("button", { name: "Modifier Prestation pour un client", exact: true }).click();
   await page.getByRole("button", { name: "Continuer", exact: true }).click();
@@ -79,7 +79,7 @@ test("public pages use visitor language and illustrated guide fits narrow screen
     await page.goto(route);
     await expect(page.locator("body")).not.toContainText(/qualification|audit de sécurité indépendant|sans revue juridique humaine|Lots 0 à 3|fr-eu-2026-09-22\.draft/);
   }
-  await expect(page.locator("figure.guide-visual")).toHaveCount(4);
+  await expect(page.locator("figure.guide-visual")).toHaveCount(5);
   await page.locator("#entretien-recruitment > summary").click();
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });

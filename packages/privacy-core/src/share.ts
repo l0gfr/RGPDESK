@@ -45,7 +45,7 @@ export function projectShare(master: Workspace, options: ShareOptions, id: () =>
   dto.coverage = shareCoverage(dto);
   assertShare(dto);
   // Injected IDs must never reuse a stable internal ID.
-  const internalIds = new Set([master.id, ...master.activities.map((a) => a.id), ...master.parties.map((p) => p.id), ...master.documents.map((d) => d.id), ...master.systems.map((s) => s.id), ...master.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])]);
+  const internalIds = new Set([master.id, ...master.activities.flatMap((a) => a.flows.map((f) => f.id)), ...master.activities.map((a) => a.id), ...master.parties.map((p) => p.id), ...master.documents.map((d) => d.id), ...master.systems.map((s) => s.id), ...master.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])]);
   const publicIds = [dto.id, ...dto.activities.map((a) => a.id), ...dto.parties.map((p) => p.id), ...dto.references.map((r) => r.id), ...dto.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])];
   if (publicIds.some((pid) => internalIds.has(pid))) throw new PrivacyError("INVALID");
   return dto;

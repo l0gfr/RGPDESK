@@ -103,5 +103,34 @@ test("IndexedDB v1 upgrade preserves the old encrypted master and v1 backup migr
     const [backupEnvelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(old.id, 1, "backup"), value: payload }], phrase);
     const decoded = await api.decodeArchive(JSON.stringify({ format: "rgpd-backup-v1", workspaceId: old.id, revision: 1, envelope: backupEnvelope }), phrase);
     return { untouched, format: opened.format, oldRevision: opened.revision, same: api.canonicalJson(opened) === api.canonicalJson(decoded.master) };
-  }); expect(result).toEqual({ untouched: true, format: "rgpd-master-v2", oldRevision: 1, same: true });
+  }); expect(result).toEqual({ untouched: true, format: "rgpd-master-v3", oldRevision: 1, same: true });
+});
+
+
+test("v2 encrypted content migrates without rewriting disk and v3 analysis survives backup restoration", async ({ page }) => {
+  const result = await page.evaluate(async () => {
+    const api = window.privacyTest; const phrase = "Fictional analysis migration phrase 2026!";
+    const master = api.createWorkspace(crypto.randomUUID(), "Mission historique fictive", new Date().toISOString());
+    master.activities.push(api.createActivity(master.id, crypto.randomUUID(), "controller"));
+    const old = JSON.parse(JSON.stringify(master)); old.format = "rgpd-master-v2";
+    for (const activity of old.activities) { delete activity.analysis; delete activity.flows; }
+    const vault = new api.PrivacyVault(); let session = { epoch: await vault.initialize(), signal: new AbortController().signal };
+    const [envelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(old.id, 1, "master"), value: old }], phrase);
+    await vault.table("records").add({ id: old.id, revision: 1, format: "rgpd-envelope-v1", envelope });
+    const before = JSON.stringify(await vault.table("records").toArray());
+    const opened = await vault.unlock(old.id, phrase, session);
+    const untouched = before === JSON.stringify(await vault.table("records").toArray());
+    const activity = structuredClone(opened.activities[0]!);
+    activity.analysis.operations = api.knowledge("PRIVATE_V3_OPERATION");
+    activity.analysis.notes[0]!.evidence = api.knowledge("PRIVATE_V3_EVIDENCE");
+    activity.flows.push({ ...api.createDataFlow(crypto.randomUUID()), source: api.knowledge("PRIVATE_V3_FLOW") });
+    const next = api.putActivity(opened, activity, opened.revision, new Date().toISOString());
+    await vault.save(next, phrase, opened.revision, session);
+    const backup = await vault.backup(next, phrase, session);
+    const encrypted = JSON.stringify(await vault.table("records").toArray());
+    await vault.wipe(session.epoch); session = { epoch: await vault.initialize(), signal: new AbortController().signal };
+    const restored = await vault.restore(backup, phrase, session);
+    return { untouched, format: restored.format, revision: restored.revision, equal: api.canonicalJson(restored) === api.canonicalJson(next), leaked: (encrypted + backup).includes("PRIVATE_V3"), sourceUnchanged: old.format === "rgpd-master-v2" && !old.activities[0].analysis };
+  });
+  expect(result).toEqual({ untouched: true, format: "rgpd-master-v3", revision: 2, equal: true, leaked: false, sourceUnchanged: true });
 });

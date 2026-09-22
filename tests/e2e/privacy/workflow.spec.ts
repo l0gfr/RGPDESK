@@ -89,7 +89,7 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
   await activity(page, "responsable", "Gestion des bénévoles fictifs");
   await page.getByRole("button", { name: "Ajouter une finalité", exact: true }).click();
   await page.getByLabel("Finalité 1", { exact: true }).fill("Coordonner les activités associatives fictives");
-  await expect(page.getByLabel("Base légale documentée 1 (complément)", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Fondement juridique documenté 1 (complément)", { exact: true })).toHaveValue("");
   await expect(page.getByLabel("Durée ou critère de conservation 1", { exact: true })).toHaveValue("");
   await page.getByLabel("Outil de gestion fictif", { exact: true }).check();
   await page.getByLabel("Notes internes", { exact: true }).fill("NEVER_LEAK_INTERNAL_NOTE_7D31");
@@ -97,7 +97,7 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
   await activity(page, "sous-traitante", "Service SaaS fictif");
   await page.getByLabel("Catégories d’opérations", { exact: true }).fill("Hébergement et assistance déclarés");
   await page.getByRole("group", { name: "Clients responsables identifiés", exact: true }).getByLabel("Client SaaS fictif", { exact: true }).check();
-  await expect(page.getByLabel(/Base légale documentée/)).toHaveCount(0);
+  await expect(page.getByLabel(/Fondement juridique documenté/)).toHaveCount(0);
   await saveActivity(page, "Service SaaS fictif");
   const bytes = await backup(page);
   expect(bytes.toString()).not.toContain(organization);

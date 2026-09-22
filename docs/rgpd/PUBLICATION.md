@@ -41,3 +41,20 @@ Préconditions : DNS `rgpdesk.fr` vers le serveur visé, modules SSL/headers/rew
 Le vhost n'a ni proxy, ni endpoint d'upload, ni statistiques. Le journal d'accès est désactivé ; le journal d'erreurs Apache peut contenir des données de connexion. `connect-src 'none'`, `form-action 'none'` et l'interdiction des scripts inline non hachés restent actifs. La notice de confidentialité est disponible dans l'application.
 
 Les opérations privilégiées sont exécutées par l'opérateur. Une connexion serveur ou une archive transférée ne prouvent pas que le site est en production. Seuls les contrôles HTTPS sur les octets effectivement servis permettent d'annoncer le déploiement.
+
+
+## Mises à jour courantes et sauvegarde Zen
+
+`deploy/rgpdesk/update-release.py` remplace le couplage activation puis sauvegarde générale. Une mise à jour ne lance **ni Borg ni `zen-backup.service`** et ne modifie aucune tâche planifiée. RGPDESK conserve la politique de sauvegarde Zen existante. Les coffres des visiteurs restent dans leurs navigateurs : la sauvegarde serveur ne les contient pas.
+
+L’opérateur exécute une copie du script dont le SHA-256 est épinglé, avec quatre arguments hexadécimaux : commit nouveau, SHA-256 du ZIP CI, commit précédent et SHA-256 du vhost courant. Le ZIP est attendu dans `/home/bluetouff/rgpdesk-<commit>/rgpdesk-release.zip`. La procédure opérateur doit vérifier le script avant de l’exécuter, sans importer de module depuis ce répertoire utilisateur.
+
+Avant l’activation : vérification des répertoires privilégiés, refus des liens et fichiers ambigus, verrou de déploiement, contrôle du vhost courant, syntaxe Apache, archive CI bornée et manifeste fermé. Le script conserve la release précédente, l’ancien vhost et le ZIP dans une archive root protégée ; seuls le nouveau répertoire de release et le vhost RGPDESK sont installés. Après rechargement gracieux, le SHA est contrôlé en HTTPS local avec vérification TLS. Une erreur de syntaxe, de rechargement ou de preuve HTTPS restaure le vhost précédent. Aucun nouvel essai automatique.
+
+L’état du timer et le résultat du dernier backup sont affichés séparément, en lecture seule. **Un site activé peut coexister avec une sauvegarde en erreur.** Ce résultat ne doit pas être présenté comme une activation échouée ni comme une sauvegarde fraîche vérifiée. Une restauration locale et distante exige sa propre preuve ; un timer actif ou un code retour zéro ne la remplace pas.
+
+Le 22 septembre 2026, le lancement global demandé par l’ancienne procédure a terminé avec le statut 1 : journal Apache l0g modifié pendant l’archivage. Une archive locale était annoncée, sans preuve de passage à la copie distante pour ce lancement. Ne pas transformer tous les avertissements Borg en succès. Le diagnostic et une éventuelle correction de la politique globale des logs doivent être séparés des mises à jour RGPDESK et préserver les autres applications.
+
+### Retour arrière et formats des coffres
+
+La release précédente et son vhost permettent un retour arrière du site par l’opérateur après contrôle Apache. Cela ne restaure pas les coffres des visiteurs. Un enregistrement fait par la nouvelle application peut employer `rgpd-master-v3`, qu’une application ancienne ne sait pas lire. En cas de retour arrière du site, ne pas supprimer de coffre : conserver les sauvegardes, rétablir une version compatible v3 ou examiner une sauvegarde antérieure dans un profil distinct. Aucun script de déploiement ne modifie IndexedDB des visiteurs.

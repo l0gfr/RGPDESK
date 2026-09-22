@@ -1,5 +1,6 @@
+import validateV2 from "./generated/master-v2-validator.js";
 import validateV1 from "./generated/master-validator.js";
-import { createActivityReview, unknown, type Workspace } from "./model";
+import { createActivityReview, createActivityAnalysis, unknown, type Workspace } from "./model";
 import { assertWorkspace, PrivacyError } from "./validation";
 
 // Explicit one-way, in-memory migration. Disk is only changed by a guarded save.
@@ -10,6 +11,14 @@ export function migrateWorkspace(value: unknown): Workspace {
     value = { ...old, format: "rgpd-master-v2", organization: { ...old.organization, representatives: unknown() },
       activities: old.activities.map((activity) => ({ ...activity, review: createActivityReview() })),
       documents: [], decisions: [], actions: [], imports: [], deliveries: [] };
+  }
+  if (value && typeof value === "object" && "format" in value && value.format === "rgpd-master-v2") {
+    if (!validateV2(value)) throw new PrivacyError("INVALID");
+    const old = value as unknown as Workspace;
+    value = { ...old, format: "rgpd-master-v3",
+      activities: old.activities.map((activity) => ({ ...activity, analysis: createActivityAnalysis(), flows: [] })),
+      documents: old.documents.map((document) => ({ ...document, contractReview: null })),
+    };
   }
   assertWorkspace(value);
   return value;

@@ -27,9 +27,9 @@ test("guide is readable without JavaScript and every local link and chapter reso
   try {
     const page = await context.newPage();
     await page.goto("/app/privacy/guide/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Un registre compris.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Menez l’entretien.");
     const chapters = page.getByRole("navigation", { name: "Sommaire du guide" }).getByRole("link");
-    await expect(chapters).toHaveCount(13);
+    await expect(chapters).toHaveCount(14);
     await expect(page.locator(".business-chapter")).toHaveCount(6);
     await page.locator("#entretien-recruitment summary").first().click();
     await expect(page.locator("#entretien-recruitment .business-questions > li")).toHaveCount(6);
@@ -58,7 +58,7 @@ test("guide is readable without JavaScript and every local link and chapter reso
     }
     await expect(page.getByRole("article")).toContainText("La sauvegarde du serveur RGPDESK ne contient pas vos coffres.");
     await expect(page.getByRole("article")).toContainText("il ne remplace pas votre analyse");
-    await expect(page.locator("figure.guide-visual")).toHaveCount(4);
+    await expect(page.locator("figure.guide-visual")).toHaveCount(5);
     await expect(page.getByRole("article")).not.toContainText("qualification Firefox");
     await expect(page.locator("script, iframe, form")).toHaveCount(0);
   } finally {
@@ -69,7 +69,7 @@ test("guide is readable without JavaScript and every local link and chapter reso
 test("entry explains the product, keeps the guide separate from an open vault and fits small screens", async ({ page }) => {
   await page.goto("/app/privacy/");
   await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Votre registre RGPD.");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Voyez vos données.");
   const guide = page.getByRole("navigation", { name: "Aide" }).getByRole("link", { name: "Guide d’utilisation" });
   await expect(guide).toHaveAttribute("target", "_blank");
   await expect(guide).toHaveAttribute("rel", /noopener/);

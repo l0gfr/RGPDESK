@@ -1,9 +1,9 @@
-import { unknown, createActivityReview, type Activity, type Party, type Purpose, type System, type Workspace } from "./model";
+import { unknown, createActivityReview, createActivityAnalysis, type Activity, type Party, type Purpose, type System, type Workspace } from "./model";
 import { assertWorkspace, PrivacyError } from "./validation";
 
 export function createWorkspace(id: string, name: string, now: string): Workspace {
   const master: Workspace = {
-    format: "rgpd-master-v2", id, revision: 1, createdAt: now, updatedAt: now,
+    format: "rgpd-master-v3", id, revision: 1, createdAt: now, updatedAt: now,
     language: "fr", jurisdiction: unknown(), scope: unknown(),
     organization: { name: name.trim(), contact: unknown(), dpo: unknown(), representatives: unknown() },
     parties: [], systems: [], activities: [], documents: [], decisions: [], actions: [], imports: [], deliveries: [],
@@ -18,7 +18,7 @@ export const createPurpose = (id: string): Purpose => ({
 
 export function createActivity(workspaceId: string, id: string, role: Activity["role"]): Activity {
   const base = {
-    review: createActivityReview(),
+    review: createActivityReview(), analysis: createActivityAnalysis(), flows: [],
     id, workspaceId, title: "Nouvelle activité", status: "draft" as const,
     systemIds: [], participantIds: [], dataCategories: unknown(), dataSubjects: unknown(),
     recipients: unknown(), transfers: unknown(), securityMeasures: unknown(), internalNotes: "",

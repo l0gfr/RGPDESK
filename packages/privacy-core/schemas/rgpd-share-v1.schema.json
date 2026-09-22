@@ -40,7 +40,10 @@
       ]
     },
     "catalogVersion": {
-      "const": "fr-eu-2026-09-22.draft-1"
+      "enum": [
+        "fr-eu-2026-09-22.draft-1",
+        "fr-eu-2026-09-22.draft-2"
+      ]
     },
     "recipient": {
       "type": "string",

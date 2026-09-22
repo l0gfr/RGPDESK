@@ -24,7 +24,13 @@ export function evaluateWorkspace(master: Workspace, today: string): Finding[] {
       if (a.review.collection === "unknown" || !a.purposes.length || a.purposes.some((p) => !docs.some((d) => d.category === "notice" && d.purposeIds.includes(p.id) && d.audience && d.channel && d.version && d.availability.state === "documented"))) add("R-007", a.id, "information", "Mode de collecte ou notice par finalité à documenter : public, canal, version, disponibilité.");
     }
     const relations = [...a.review.subcontractorIds, ...(a.role === "processor" ? a.controllerIds : [])];
-    for (const partyId of new Set(relations)) if (!docs.some((d) => d.category === "contract" && d.partyIds.includes(partyId))) add("R-005", a.id, partyId, "Cadre contractuel de la relation déclarée à documenter.");
+    for (const partyId of new Set(relations)) {
+      const contracts = docs.filter((d) => d.category === "contract" && d.partyIds.includes(partyId));
+      if (!contracts.length) add("R-005", a.id, partyId, "Cadre contractuel de la relation déclarée à documenter.");
+      else if (!contracts.some((d) => d.contractReview?.notes.every((note) => note.assessment.state === "documented" && note.evidence.state === "documented"))) {
+        add("R-005", a.id, partyId, "Référence de contrat présente. Clauses, garanties et éléments de vérification à examiner.");
+      }
+    }
     if (a.review.transferStatus === "unknown" || a.transfers.state === "unknown") add("R-006", a.id, "transferts", "Transferts et accès à examiner, ou absence de transfert à motiver après examen.");
   }
   for (const d of master.documents) {

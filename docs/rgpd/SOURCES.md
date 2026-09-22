@@ -125,3 +125,17 @@ Consultées le 22 septembre 2026. Les questions de préparation sont des proposi
 | M-obligations | [RGPD · Responsable et sous-traitant](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4) | Texte du règlement, reproduit par la CNIL | Articles 28, 30 et 32 |
 
 Les référentiels ne remplacent pas l’examen des textes applicables et de leur champ. Le référentiel RH de conservation du 20 mai 2026 distingue explicitement les durées obligatoires et recommandées ; aucune valeur n’en est préremplie. Aucune revue juridique humaine n’est attribuée. Les exemples fictifs restent distingués des prescriptions.
+
+
+## Sources de l’atelier d’analyse et de la revue contractuelle
+
+Consultées le 22 septembre 2026. Les formulations dans `review-methods.ts` sont des questions rédigées pour RGPDESK, et non la transcription d’un questionnaire d’autorité ou d’une grille d’auteur. Chaque question conserve un identifiant, un repère précis et la nature de sa source ; les notes conservent la version de la méthode.
+
+| Référence | Source et version | Usage et portée |
+| --- | --- | --- |
+| A01 | [RGPD, texte officiel EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra) ; reproductions CNIL [I](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre1), [II](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre2), [IV](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4), [V](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre5) | Articles 4 §2, 5, 6, 9, 10, 24, 25, 28 à 30, 32, 35, 36, 44 à 49. Texte vérifié dans les reproductions CNIL ; l’accès automatisé EUR-Lex était bloqué. Les compléments d’analyse ne sont pas présentés comme tous exigés par l’article 30. |
+| A02 | [CEPD, lignes directrices 07/2020](https://www.edpb.europa.eu/system/files/2023-10/EDPB_guidelines_202007_controllerprocessor_final_en.pdf), version 2.1, adoptées le 7 juillet 2021, corrections mineures du 20 septembre 2022 | §95 à 99 : garanties adaptées au contexte et suivi ; §111 à 115 : contenu concret de la relation contractuelle. Interprétation d’autorité, sans évaluation automatique d’un prestataire. |
+| A03 | [EDPS, Quick Guide to Necessity and Proportionality](https://www.edps.europa.eu/sites/default/files/publication/20-01-28_edps_quickguide_en.pdf), 28 janvier 2020 | Étapes 1, 3, 4 et 5 pour cadrer objectif, efficacité et alternatives. Outil conçu pour les mesures législatives de l’UE ; contextualisé comme repère méthodologique pour les questions métier, pas comme formulaire universel d’AIPD. |
+| A04 | [Estelle De Marco, support ESIEA 2025–2026, version 2.12](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=75) | PDF de 451 pages : méthode p.74, vue d’ensemble de la grille p.75, inventaire pratique p.77, développements p.78 à 85. Lecture complémentaire, reliée au support original. Aucun tableur séparé identifié, aucune reproduction intégrale de la grille, aucun aval de son auteure attribué. |
+
+La relecture humaine reste à réaliser. L’application n’adopte pas les appréciations reçues dans un retour utilisateur comme des conclusions juridiques : notamment, elle ne prétend ni que l’expression « base légale » serait interdite, ni qu’un outil PIA existant serait juridiquement invalide. Le libellé métier « fondement juridique » conserve le champ technique `legalBasis` et ses données historiques.

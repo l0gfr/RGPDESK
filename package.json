@@ -37,7 +37,8 @@
     "test:privacy": "pnpm --filter @rgpdesk/privacy-core test && pnpm --filter @blackproof/web exec vitest run src/features/privacy",
     "test:privacy:e2e": "playwright test tests/e2e/privacy --workers=1",
     "privacy:release": "node scripts/build-privacy-release.mjs",
-    "test:privacy:release": "node --test scripts/privacy-release.test.mjs"
+    "test:privacy:release": "node --test scripts/privacy-release.test.mjs",
+    "test:privacy:deploy": "python3 scripts/rgpdesk-deploy.test.py"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

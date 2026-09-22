@@ -14,7 +14,25 @@ export interface ActivityReview {
   collection: "unknown" | "direct" | "indirect" | "both";
   subcontractorIds: string[];
 }
+export const ANALYSIS_QUESTIONS = ["objective", "lawfulness", "effectiveness", "alternatives", "minimisation", "rights", "safeguards", "conclusion"] as const;
+export const CONTRACT_QUESTIONS = ["scope", "instructions", "confidentiality", "security", "subprocessors", "rights", "assistance", "termination", "audit", "unlawful", "guarantees"] as const;
+export interface ReviewNote {
+  questionId: string;
+  facts: Knowledge; evidence: Knowledge; objections: Knowledge; assessment: Knowledge; followUp: Knowledge;
+}
+export interface ActivityAnalysis {
+  methodVersion: "necessity-2026-09-22.1";
+  operations: Knowledge; access: Knowledge; notes: ReviewNote[];
+}
+export interface DataFlow {
+  id: string;
+  source: Knowledge; destination: Knowledge; operation: Knowledge;
+  data: Knowledge; channel: Knowledge; location: Knowledge; access: Knowledge;
+}
+export interface ContractReview { methodVersion: "article28-2026-09-22.1"; notes: ReviewNote[] }
 interface ActivityBase {
+  analysis: ActivityAnalysis;
+  flows: DataFlow[];
   review: ActivityReview;
   id: string;
   workspaceId: string;
@@ -41,7 +59,7 @@ export interface ProcessorActivity extends ActivityBase {
 }
 export type Activity = ControllerActivity | ProcessorActivity;
 export interface Workspace {
-  format: "rgpd-master-v2";
+  format: "rgpd-master-v3";
   id: string;
   revision: number;
   createdAt: string;
@@ -64,6 +82,7 @@ export const knowledge = (value: string): Knowledge => value.trim() ? { state: "
 export const knowledgeText = (value: Knowledge): string => value.state === "documented" ? value.value : "";
 
 export interface EvidenceReference {
+  contractReview: ContractReview | null;
   id: string; workspaceId: string; title: string;
   category: "contract" | "notice" | "policy" | "analysis" | "other";
   activityIds: string[]; purposeIds: string[]; partyIds: string[];
@@ -99,4 +118,15 @@ export interface DeliveryRecord {
 }
 export const createActivityReview = (): ActivityReview => ({
   article9: unknown(), article10: unknown(), transferStatus: "unknown", collection: "unknown", subcontractorIds: [],
+});
+
+export const createReviewNotes = (questions: readonly string[]): ReviewNote[] => questions.map((questionId) => ({
+  questionId, facts: unknown(), evidence: unknown(), objections: unknown(), assessment: unknown(), followUp: unknown(),
+}));
+export const createActivityAnalysis = (): ActivityAnalysis => ({
+  methodVersion: "necessity-2026-09-22.1", operations: unknown(), access: unknown(), notes: createReviewNotes(ANALYSIS_QUESTIONS),
+});
+export const createContractReview = (): ContractReview => ({ methodVersion: "article28-2026-09-22.1", notes: createReviewNotes(CONTRACT_QUESTIONS) });
+export const createDataFlow = (id: string): DataFlow => ({
+  id, source: unknown(), destination: unknown(), operation: unknown(), data: unknown(), channel: unknown(), location: unknown(), access: unknown(),
 });

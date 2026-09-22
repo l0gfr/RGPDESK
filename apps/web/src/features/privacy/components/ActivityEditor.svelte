@@ -2,14 +2,18 @@
   import { tick, untrack } from "svelte";
   import { createPurpose, knowledgeText, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { fieldHints, type StartingPoint } from "../guidance";
+  import ReviewNotebook from "./ReviewNotebook.svelte";
+  import FlowEditor from "./FlowEditor.svelte";
+  import { ANALYSIS_METHOD } from "../review-methods";
   import Icon from "./Icon.svelte";
   import InterviewPlaybook from "./InterviewPlaybook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
-  let { initial, workspace, busy, example, onSave, onCancel }: {
-    initial: Activity; workspace: Workspace; busy: boolean; example?: StartingPoint;
+  let { initial, workspace, busy, example, initialSection = "record", onSave, onCancel }: {
+    initialSection?: "record" | "analysis" | "flows"; initial: Activity; workspace: Workspace; busy: boolean; example?: StartingPoint;
     onSave: (activity: Activity) => Promise<void>; onCancel: () => void;
   } = $props();
   let draft: Activity = $state(untrack(() => structuredClone(initial)));
+  let section = $state(untrack(() => initialSection));
   let step = $state(0);
   let whole = $state(false);
   let sectionTitle: HTMLHeadingElement | undefined = $state();
@@ -29,7 +33,7 @@
     sectionTitle?.focus();
   }
   async function save() {
-    if (!draft.title.trim()) { whole = false; await go(0); form?.reportValidity(); return; }
+    if (!draft.title.trim()) { section = "record"; whole = false; await go(0); form?.reportValidity(); return; }
     await onSave($state.snapshot(draft));
   }
   function toggle(field: "systemIds" | "participantIds" | "controllerIds", id: string, checked: boolean) {
@@ -42,13 +46,22 @@
 <section class="panel guided-editor" aria-labelledby="activity-editor-title">
   <div class="section-heading">
     <div><p class="eyebrow">{draft.role === "controller" ? "Registre responsable" : "Registre sous-traitant"}</p><h2 id="activity-editor-title">Fiche de traitement</h2></div>
-    <button type="button" class="secondary" disabled={busy} onclick={() => whole = !whole}>{whole ? "Revenir au parcours guidé" : "Voir toute la fiche"}</button>
+    <button type="button" class="secondary" disabled={busy} onclick={() => { section = "record"; whole = !whole; }}>{whole ? "Revenir au parcours guidé" : "Voir toute la fiche"}</button>
   </div>
   <p class="help">Vous pouvez enregistrer à tout moment. Les champs laissés vides resteront à examiner.</p>
-  {#if example}<aside class="interview-card"><strong>Votre fil conducteur</strong><p>{example.question}</p><details><summary>Retrouver les questions métier et leurs sources</summary><InterviewPlaybook {example} /></details></aside>{/if}
-  {#if !whole}<nav class="editor-steps" aria-label="Étapes de la fiche">{#each steps as label, index}<button type="button" class="secondary" disabled={busy} aria-current={step === index ? "step" : undefined} onclick={() => void go(index)}><span>{index + 1}</span>{label}</button>{/each}</nav><div class="step-heading"><p class="eyebrow">Étape {step + 1} sur {steps.length}</p><h3 bind:this={sectionTitle} tabindex="-1">{steps[step]}</h3><p>{introductions[step]}</p></div>{/if}
+  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
+  {#if example && section === "record"}<aside class="interview-card"><strong>Votre fil conducteur</strong><p>{example.question}</p><details><summary>Retrouver les questions métier et leurs sources</summary><InterviewPlaybook {example} /></details></aside>{/if}
+  {#if section === "record" && !whole}<nav class="editor-steps" aria-label="Étapes de la fiche">{#each steps as label, index}<button type="button" class="secondary" disabled={busy} aria-current={step === index ? "step" : undefined} onclick={() => void go(index)}><span>{index + 1}</span>{label}</button>{/each}</nav><div class="step-heading"><p class="eyebrow">Étape {step + 1} sur {steps.length}</p><h3 bind:this={sectionTitle} tabindex="-1">{steps[step]}</h3><p>{introductions[step]}</p></div>{/if}
   <form bind:this={form} onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <fieldset disabled={busy}>
+      {#if section === "analysis"}
+        <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Documenter la nécessité et la proportionnalité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au coffre ; leur saisie ne vaut pas validation.</p></div>
+        <KnowledgeField label="Opérations détaillées du traitement" bind:value={draft.analysis.operations} hint="Décrivez la collecte, l’enregistrement, les consultations, les calculs ou rapprochements, les transmissions, l’archivage et l’effacement, selon le fonctionnement réel." />
+        <KnowledgeField label="Personnes habilitées et droits d’accès" bind:value={draft.analysis.access} hint="Décrivez les rôles, équipes ou organismes autorisés, leurs droits de lecture, modification, extraction ou suppression et le circuit d’autorisation. Pas de liste nominative." />
+        <ReviewNotebook bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" />
+        <p class="help">Cette grille ne couvre pas à elle seule une AIPD complète. Référence : <a href="https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4" target="_blank" rel="noopener noreferrer">RGPD, article 35</a>. Après enregistrement, consignez les décisions et affectez les correctifs dans Actions & décisions.</p>
+      {:else if section === "flows"}<FlowEditor bind:flows={draft.flows} />
+      {:else}
       {#if whole || step === 0}<div class="grid-two">
         <label class="field"><span>Nom de l’activité</span><input required maxlength="160" bind:value={draft.title} /></label>
         <label class="field"><span>État de la fiche</span><select bind:value={draft.status}><option value="draft">Brouillon</option><option value="active">Active, état déclaré</option><option value="archived">Archivée, conservée dans le coffre</option></select></label>
@@ -58,12 +71,12 @@
       {#if whole || step === 1}
       {#if draft.role === "controller"}
         <h3>Finalités et conservation</h3>
-        <p class="help">Les finalités et la conservation relèvent des rubriques du registre responsable. La base légale est un complément de documentation, à examiner séparément.</p>
+        <p class="help">Les finalités et la conservation relèvent des rubriques du registre responsable. Le fondement juridique de l’article 6 est un complément de documentation, à examiner séparément.</p>
         {#each draft.purposes as purpose, index (purpose.id)}
           <div class="subpanel">
             <h4>Finalité {index + 1}</h4>
             <KnowledgeField label={`Finalité ${index + 1}`} bind:value={purpose.description} hint={fieldHints.purpose} />
-            <KnowledgeField label={`Base légale documentée ${index + 1} (complément)`} bind:value={purpose.legalBasis} hint={fieldHints.legal} />
+            <KnowledgeField label={`Fondement juridique documenté ${index + 1} (complément)`} bind:value={purpose.legalBasis} hint={fieldHints.legal} />
             <div class="grid-two">
               <KnowledgeField label={`Durée ou critère de conservation ${index + 1}`} bind:value={purpose.retention.period} hint={fieldHints.retention} />
               <KnowledgeField label={`Événement de départ ${index + 1}`} bind:value={purpose.retention.trigger} hint={fieldHints.trigger} />
@@ -92,6 +105,7 @@
         <KnowledgeField label="Catégories de données" bind:value={draft.dataCategories} hint={fieldHints.data} />
       </div>
       <KnowledgeField label="Catégories de destinataires" bind:value={draft.recipients} hint={fieldHints.recipients} />
+      <aside class="method-callout"><Icon name="flows" size={25} /><div><strong>Qui accède aux données, pour quelle opération ?</strong><p>Les catégories de destinataires figurent ici. Décrivez les habilitations dans L’analyse et les circulations concrètes dans Les flux, sans quitter cette fiche.</p><button type="button" class="text-button" onclick={() => section = "flows"}>Décrire un flux<Icon name="arrow" size={16} /></button></div></aside>
       {/if}
       {#if whole || step === 3}<h3>Transferts et mesures générales</h3>
       <KnowledgeField label="Transferts documentés" bind:value={draft.transfers} hint={fieldHints.transfers} />
@@ -114,8 +128,9 @@
       </div>
       <div class="field"><label for="privacy-notes">Notes internes</label><textarea id="privacy-notes" aria-describedby="privacy-notes-hint" rows="3" maxlength="4000" bind:value={draft.internalNotes}></textarea><small id="privacy-notes-hint">Évitez les données individuelles, secrets et pièces justificatives.</small></div>
       {/if}
-      {#if !whole && step === 5}<div class="review-summary"><h3>Votre fiche avant enregistrement</h3><dl><dt>Activité</dt><dd>{draft.title || "À nommer"}</dd><dt>Rôle choisi</dt><dd>{draft.role === "controller" ? "Responsable de traitement" : "Sous-traitant"}</dd>{#if draft.role === "controller"}{#each draft.purposes as purpose, i}<dt>Finalité {i + 1}</dt><dd>{knowledgeText(purpose.description) || "À examiner"}</dd><dt>Base légale {i + 1}</dt><dd>{knowledgeText(purpose.legalBasis) || "À examiner"}</dd><dt>Conservation {i + 1}</dt><dd>{knowledgeText(purpose.retention.period) || "À examiner"}</dd>{/each}{:else}<dt>Opérations</dt><dd>{knowledgeText(draft.operations) || "À examiner"}</dd>{/if}<dt>Personnes concernées</dt><dd>{knowledgeText(draft.dataSubjects) || "À examiner"}</dd><dt>Données utilisées</dt><dd>{knowledgeText(draft.dataCategories) || "À examiner"}</dd><dt>Destinataires</dt><dd>{knowledgeText(draft.recipients) || "À examiner"}</dd></dl><p>Après enregistrement, ouvrez Actions & décisions pour préparer vos prochaines vérifications. Une fiche peut rester en brouillon pendant cette collecte.</p></div>{/if}
+      {#if !whole && step === 5}<div class="review-summary"><h3>Votre fiche avant enregistrement</h3><dl><dt>Activité</dt><dd>{draft.title || "À nommer"}</dd><dt>Rôle choisi</dt><dd>{draft.role === "controller" ? "Responsable de traitement" : "Sous-traitant"}</dd>{#if draft.role === "controller"}{#each draft.purposes as purpose, i}<dt>Finalité {i + 1}</dt><dd>{knowledgeText(purpose.description) || "À examiner"}</dd><dt>Fondement juridique {i + 1}</dt><dd>{knowledgeText(purpose.legalBasis) || "À examiner"}</dd><dt>Conservation {i + 1}</dt><dd>{knowledgeText(purpose.retention.period) || "À examiner"}</dd>{/each}{:else}<dt>Opérations</dt><dd>{knowledgeText(draft.operations) || "À examiner"}</dd>{/if}<dt>Personnes concernées</dt><dd>{knowledgeText(draft.dataSubjects) || "À examiner"}</dd><dt>Données utilisées</dt><dd>{knowledgeText(draft.dataCategories) || "À examiner"}</dd><dt>Destinataires</dt><dd>{knowledgeText(draft.recipients) || "À examiner"}</dd></dl><p>Après enregistrement, ouvrez Actions & décisions pour préparer vos prochaines vérifications. Une fiche peut rester en brouillon pendant cette collecte.</p></div>{/if}
       {#if !whole}<div class="step-navigation">{#if step > 0}<button type="button" class="secondary" onclick={() => void go(step - 1)}>Étape précédente</button>{/if}{#if step < steps.length - 1}<button type="button" onclick={() => void go(step + 1)}>Continuer<Icon name="arrow" /></button>{/if}</div>{/if}
+      {/if}
       <div class="actions editor-save"><button type="submit">{busy ? "Chiffrement en cours…" : "Enregistrer la fiche"}</button><button type="button" class="secondary" onclick={onCancel}>Annuler l’édition</button></div>
     </fieldset>
   </form>
