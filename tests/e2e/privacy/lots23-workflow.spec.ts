@@ -87,6 +87,24 @@ test("premium interface remains usable at desktop, tablet and narrow mobile widt
     if (width === 1440 || width === 390) await page.screenshot({ path: testInfo.outputPath(`rgpdesk-accueil-${width}.png`), fullPage: true });
   }
   await create(page); await importFiction(page);
+  // Visible sections must remain inset from the folio edges, including at tablet width.
+  for (const width of [1440, 1024, 900, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    const sections = await page.locator(".desk-sidebar").evaluate((sidebar) => {
+      const outer = sidebar.getBoundingClientRect();
+      return Array.from(sidebar.querySelectorAll(".sidebar-caption, .nav-label, .tabs, .sidebar-security"))
+        .filter((element) => getComputedStyle(element).display !== "none")
+        .map((element) => {
+          const rect = element.getBoundingClientRect();
+          return { name: element.className, left: rect.left - outer.left, right: outer.right - rect.right };
+        });
+    });
+    for (const section of sections) {
+      expect(section.left, `${width}px ${section.name} left inset`).toBeGreaterThanOrEqual(12);
+      expect(section.right, `${width}px ${section.name} right inset`).toBeGreaterThanOrEqual(12);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${width}px workspace`).toBe(true);
+  }
   await page.setViewportSize({ width: 1440, height: 1000 }); await navigate(page, "Registre"); await page.screenshot({ path: testInfo.outputPath("rgpdesk-registre-1440.png"), fullPage: true }); await page.setViewportSize({ width: 320, height: 1000 });
   for (const panel of ["Registre", "Documents", "Actions & décisions", "Partager un dossier", "Sauvegarde"]) { await navigate(page, panel); expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true); }
 });
