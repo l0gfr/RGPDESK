@@ -66,7 +66,7 @@ test("Apache configuration has dedicated scope and strictly validated substituti
   const commit = "a".repeat(40);
   const csp = "default-src 'self'; connect-src 'none'; form-action 'none'";
   const result = renderApache(template, commit, csp);
-  assert.ok(result.includes(`/var/www/html/rgpdesk/releases/${commit}`));
+  assert.ok(result.includes(`/var/www/rgpdesk/releases/${commit}`));
   assert.ok(!result.includes("blackproof") && !result.includes("ProxyPass") && !result.includes("__RGPDESK_"));
   assert.throws(() => renderApache(template, "../outside", csp));
   assert.throws(() => renderApache(template, commit, csp + '\nAlias /private /etc'));

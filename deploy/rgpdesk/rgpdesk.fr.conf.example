@@ -1,7 +1,7 @@
 <VirtualHost *:80>
     ServerName rgpdesk.fr
-    DocumentRoot /var/www/html/rgpdesk-acme
-    <Directory /var/www/html/rgpdesk-acme>
+    DocumentRoot /var/www/rgpdesk-acme
+    <Directory /var/www/rgpdesk-acme>
         Options -Indexes -ExecCGI -Includes -MultiViews -FollowSymLinks
         AllowOverride None
         Require all granted
@@ -15,13 +15,13 @@
 
 <VirtualHost *:443>
     ServerName rgpdesk.fr
-    DocumentRoot /var/www/html/rgpdesk/releases/__RGPDESK_COMMIT__
+    DocumentRoot /var/www/rgpdesk/releases/__RGPDESK_COMMIT__
     DirectoryIndex index.html
     SSLEngine on
     SSLProtocol -all +TLSv1.2 +TLSv1.3
     SSLCertificateFile /etc/letsencrypt/live/rgpdesk.fr/fullchain.pem
     SSLCertificateKeyFile /etc/letsencrypt/live/rgpdesk.fr/privkey.pem
-    <Directory /var/www/html/rgpdesk/releases/__RGPDESK_COMMIT__>
+    <Directory /var/www/rgpdesk/releases/__RGPDESK_COMMIT__>
         Options -Indexes -ExecCGI -Includes -MultiViews -FollowSymLinks
         AllowOverride None
         Require all granted
