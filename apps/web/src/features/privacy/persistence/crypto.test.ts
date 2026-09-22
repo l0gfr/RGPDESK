@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createWorkspace, MAX_BACKUP_BYTES } from "@rgpdesk/privacy-core";
+import { createWorkspace, createActivity, createImpactAssessment, createPiaRisk, knowledge, recordPiaReview, putImpactAssessment, MAX_BACKUP_BYTES } from "@rgpdesk/privacy-core";
 import { encryptLocalPayloadBatch } from "../../../lib/local-encryption";
 import { contextFor, decodeBackup, encodeBackup, openMaster, sealMaster } from "./crypto";
 
@@ -69,5 +69,25 @@ describe("privacy adapter with real WebCrypto", () => {
     for (const patch of [{ format: "proofpack-v3" }, { extra: "ignored?" }, { envelope: { ...backup.envelope, iterations: 310_000 } }, { envelope: { ...backup.envelope, iterations: 10_000_000 } }]) {
       await expect(decodeBackup(JSON.stringify({ ...backup, ...patch }), phrase)).rejects.toThrow("INVALID");
     }
+  });
+});
+
+describe("AIPD schema evolution with real WebCrypto", () => {
+  it("opens the exact historical v3 envelope then backs up and restores v4 with frozen reviews", async () => {
+    const original = fixture(); original.activities.push(createActivity(original.id, other, "controller"));
+    original.activities[0]!.analysis.notes[0]!.facts = knowledge("PRIVATE_EXISTING_V3_NOTE");
+    const legacy = JSON.parse(JSON.stringify(original)); legacy.format = "rgpd-master-v3"; delete legacy.impactAssessments;
+    const legacyBytes = JSON.stringify(legacy);
+    const [envelope] = await encryptLocalPayloadBatch([{ aad: contextFor(id, 1, "master"), value: legacy }], phrase);
+    let next = await openMaster(envelope, phrase, id, 1);
+    expect(next.format).toBe("rgpd-master-v4"); expect(next.activities).toEqual(original.activities);
+    const pia = createImpactAssessment(id, next.activities[0]!, "00000000-0000-4000-8000-000000000003");
+    const risk = createPiaRisk("00000000-0000-4000-8000-000000000004"); risk.rights = knowledge("PRIVATE_PIA_RIGHTS"); pia.content.risks.push(risk);
+    next = putImpactAssessment(next, pia, next.revision, next.updatedAt);
+    next = recordPiaReview(next, pia.id, { id: "00000000-0000-4000-8000-000000000005", author: "Fictif", reason: "Réexamen fictif", outcome: "rework" }, next.revision, next.updatedAt);
+    const backup = await encodeBackup(next, phrase); expect(backup).not.toContain("PRIVATE_");
+    expect(await decodeBackup(backup, phrase)).toEqual(next);
+    expect(JSON.stringify(legacy)).toBe(legacyBytes);
+    expect(await openMaster(envelope, phrase, id, 1)).toEqual(original);
   });
 });

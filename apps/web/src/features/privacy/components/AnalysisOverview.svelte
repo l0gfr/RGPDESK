@@ -3,7 +3,7 @@
   import { hasNotes } from "../review-methods";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, mode, busy, onEdit, onRegister }: { workspace: Workspace; mode: "analysis" | "flows"; busy: boolean; onEdit: (activity: Activity, section: "analysis" | "flows") => void; onRegister: () => void } = $props();
+  let { workspace, mode, busy, onEdit, onRegister, onPia }: { workspace: Workspace; mode: "analysis" | "flows"; busy: boolean; onEdit: (activity: Activity, section: "analysis" | "flows") => void; onRegister: () => void; onPia: () => void } = $props();
   let selected = $state("");
   let activity = $derived(workspace.activities.find((item) => item.id === selected) ?? workspace.activities[0]);
 </script>
@@ -17,7 +17,7 @@
       {#if activity.flows.length}<FlowMap flows={activity.flows} />{:else}<div class="flow-empty"><Icon name="flows" size={54} /><h3>Les flux de cette activité restent à décrire.</h3><p>Le lien avec un prestataire ou un logiciel ne renseigne pas, à lui seul, la circulation des données.</p></div>{/if}
     {:else}
       <dl class="analysis-summary"><div><dt>Opérations détaillées</dt><dd>{knowledgeText(activity.analysis.operations) || "À documenter"}</dd></div><div><dt>Accès et habilitations</dt><dd>{knowledgeText(activity.analysis.access) || "À documenter"}</dd></div></dl>
-      <aside class="method-boundary"><strong>Cette grille contribue à l’analyse. Elle ne constitue pas, seule, une AIPD.</strong><p>Une AIPD comprend aussi l’évaluation des risques, les mesures pour y faire face et les autres éléments exigés par l’article 35. L’appréciation reste humaine, sans note ni conclusion automatique.</p><a href="https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4" target="_blank" rel="noopener noreferrer">RGPD, article 35</a></aside>
+      <aside class="method-boundary"><strong>Cette grille contribue à l’analyse. Elle ne constitue pas, seule, une AIPD.</strong><p>Une AIPD comprend aussi l’évaluation des risques, les mesures pour y faire face et les autres éléments exigés par l’article 35. L’appréciation reste humaine, sans note ni conclusion automatique.</p><a href="https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4" target="_blank" rel="noopener noreferrer">RGPD, article 35</a><p><button class="secondary" disabled={busy} onclick={onPia}>Poursuivre dans l’atelier AIPD<Icon name="arrow" /></button></p></aside>
     {/if}
   {:else}<div class="flow-empty"><Icon name={mode} size={54} /><h3>Choisissez d’abord une activité.</h3><p>L’analyse et les flux seront conservés dans sa fiche, avec le reste de votre travail.</p><button disabled={busy} onclick={onRegister}>Ouvrir le registre<Icon name="arrow" /></button></div>{/if}
 </section>

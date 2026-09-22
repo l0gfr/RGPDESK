@@ -1,3 +1,4 @@
+import validateV3 from "./generated/master-v3-validator.js";
 import validateV2 from "./generated/master-v2-validator.js";
 import validateV1 from "./generated/master-validator.js";
 import { createActivityReview, createActivityAnalysis, unknown, type Workspace } from "./model";
@@ -19,6 +20,10 @@ export function migrateWorkspace(value: unknown): Workspace {
       activities: old.activities.map((activity) => ({ ...activity, analysis: createActivityAnalysis(), flows: [] })),
       documents: old.documents.map((document) => ({ ...document, contractReview: null })),
     };
+  }
+  if (value && typeof value === "object" && "format" in value && value.format === "rgpd-master-v3") {
+    if (!validateV3(value)) throw new PrivacyError("INVALID");
+    value = { ...value, format: "rgpd-master-v4", impactAssessments: [] };
   }
   assertWorkspace(value);
   return value;

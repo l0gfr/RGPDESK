@@ -13,7 +13,7 @@ function fixture() {
 describe("internal analysis and explicitly declared flows", () => {
   it("starts with unknown facts, no flow or legal decision, and validates the current version", () => {
     const { master, activity } = fixture(); assertWorkspace(master);
-    expect(master.format).toBe("rgpd-master-v3"); expect(activity.flows).toEqual([]);
+    expect(master.format).toBe("rgpd-master-v4"); expect(activity.flows).toEqual([]);
     expect(activity.purposes[0]!.legalBasis).toEqual(unknown());
     expect(activity.analysis.notes).toHaveLength(8);
     for (const note of activity.analysis.notes) for (const field of ["facts", "evidence", "objections", "assessment", "followUp"] as const) expect(note[field]).toEqual(unknown());
@@ -21,7 +21,7 @@ describe("internal analysis and explicitly declared flows", () => {
   });
   it("migrates v2 in memory preserving existing content, IDs, revision and historical deliveries", () => {
     const { master, activity } = fixture(); activity.recipients = knowledge("Destinataires historiques fictifs");
-    const previous = JSON.parse(JSON.stringify(master)); previous.format = "rgpd-master-v2";
+    const previous = JSON.parse(JSON.stringify(master)); previous.format = "rgpd-master-v2"; delete previous.impactAssessments;
     for (const row of previous.activities) { delete row.analysis; delete row.flows; }
     const bytes = JSON.stringify(previous); const upgraded = migrateWorkspace(previous);
     expect(JSON.stringify(previous)).toBe(bytes); expect(upgraded.revision).toBe(master.revision);

@@ -1,3 +1,4 @@
+import type { ImpactAssessment } from "./pia-model";
 export type Knowledge = { state: "unknown" } | { state: "documented"; value: string };
 export interface Entity { id: string; workspaceId: string; name: string }
 export interface Party extends Entity { contact: Knowledge }
@@ -59,7 +60,8 @@ export interface ProcessorActivity extends ActivityBase {
 }
 export type Activity = ControllerActivity | ProcessorActivity;
 export interface Workspace {
-  format: "rgpd-master-v3";
+  format: "rgpd-master-v4";
+  impactAssessments: ImpactAssessment[];
   id: string;
   revision: number;
   createdAt: string;

@@ -9,6 +9,7 @@
   import { zipFiles } from "@rgpdesk/privacy-verifier";
   import Icon from "./Icon.svelte";
   import ProcessingAtlas from "./ProcessingAtlas.svelte";
+  import PiaPanel from "./PiaPanel.svelte";
   import AnalysisOverview from "./AnalysisOverview.svelte";
   import Pictogram from "./Pictogram.svelte";
   import ImportPanel from "./ImportPanel.svelte";
@@ -43,7 +44,8 @@
   let fileInput: HTMLInputElement | undefined = $state();
   let wipeConfirmation = $state("");
   let showWipe = $state(false);
-  let panel: "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
+  let panel: "pia" | "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
+  let piaEditing = $state(false);
   let missingOnly = $state(false);
   let registerRole = $state("");
   let findings = $derived(master ? evaluateWorkspace(master, new Date().toISOString().slice(0, 10)) : []);
@@ -70,6 +72,7 @@
     organizationName = "";
     master = null;
     editor = null;
+    piaEditing = false;
     editorSection = "record";
     missingOnly = false;
     registerRole = "";
@@ -307,20 +310,22 @@
     <div class="desk-layout">
     <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>VOTRE ESPACE</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
-      {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
-        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
-      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key} /><span>{label}</span></button>{/each}</nav>
+      {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
+        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" ? "analysis" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
+      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" ? "analysis" : key} /><span>{label}</span></button>{/each}</nav>
       <div class="sidebar-security"><Icon name="shield" size={25} /><strong>Votre appareil. Votre coffre.</strong><p>Les informations restent ici. Pensez à votre sauvegarde chiffrée.</p></div>
     </aside><div class="desk-workspace">
-    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => lock()}><Icon name="lock" />Verrouiller le coffre</button></header>
+    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => lock()}><Icon name="lock" />Verrouiller le coffre</button></header>
     <p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>
     {#if editor}
       <p class="help">Enregistrez avant de quitter cette fiche. Le verrouillage abandonne les modifications non enregistrées.</p>
       {#key editor.id}<ActivityEditor initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if panel === "overview"}
       <MissionOverview workspace={master} {busy} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />
+    {:else if panel === "pia"}
+      <PiaPanel workspace={master} {busy} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
     {:else if panel === "analysis" || panel === "flows"}
-      {#key panel}<AnalysisOverview workspace={master} mode={panel} {busy} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
+      {#key panel}<AnalysisOverview workspace={master} mode={panel} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
       {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button></div></aside>{/if}
       {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}

@@ -8,9 +8,9 @@ Il s’adresse à la personne qui tient ce registre pour une association, une en
 
 La CNIL présente le registre comme un outil de recensement et d’analyse des traitements. Les rubriques diffèrent selon que l’organisme agit comme responsable ou comme sous-traitant. RGPDESK distingue ces deux registres. [Présentation du registre par la CNIL](https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement).
 
-**Disponible aujourd’hui :** coffre local, fiches de traitement, cartographie des flux déclarés, notes de nécessité et proportionnalité, revue des contrats article 28, intervenants, systèmes, références documentaires, import CSV, questions à examiner, actions, décisions, exports examinés, vérification technique et sauvegarde chiffrée.
+**Disponible aujourd’hui :** coffre local, fiches de traitement, cartographie des flux déclarés, notes de nécessité et proportionnalité, atelier AIPD avec risques, mesures et historique des revues, revue des contrats article 28, intervenants, systèmes, références documentaires, import CSV, questions à examiner, actions, décisions, exports examinés, vérification technique et sauvegarde chiffrée.
 
-**Pas encore disponible :** gestion des demandes d’exercice de droits, registre des violations, calcul de leurs délais, AIPD guidée. Le logiciel ne scanne pas vos systèmes, ne supprime pas des données dans vos outils et n’envoie rien à une autorité. Il ne choisit aucun fondement juridique, durée de conservation ou conclusion juridique.
+**Pas encore disponible :** gestion des demandes d’exercice de droits, registre des violations, calcul de leurs délais, export de l’AIPD vers un tiers et échange de fichiers avec le logiciel PIA de la CNIL. Le logiciel ne scanne pas vos systèmes, ne supprime pas des données dans vos outils et n’envoie rien à une autorité. Il ne choisit aucun fondement juridique, durée de conservation ou conclusion juridique.
 
 <figure class="guide-visual guide-route"><div class="visual-kicker">Le résultat de votre travail</div><div class="visual-cards"><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><circle cx="45" cy="31" r="16" fill="#fff" stroke="#313d58" stroke-width="3"/><path d="M13 88V74c0-24 64-24 64 0v14Z" fill="#ccd7ef" stroke="#313d58" stroke-width="3"/><circle cx="87" cy="42" r="12" fill="#9db6f0" stroke="#303d5d" stroke-width="3"/><path d="M85 63c23 0 23 14 23 25H89" fill="#9db6f0" stroke="#303d5d" stroke-width="3"/></svg><h3>Un entretien préparé</h3><p>Les bonnes questions, avec le bon interlocuteur.</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="27" y="16" width="66" height="80" rx="8" fill="#bbc9ea" transform="rotate(8 60 56)"/><rect x="19" y="9" width="66" height="80" rx="8" fill="#fff" stroke="#313d58" stroke-width="3"/><rect x="31" y="25" width="20" height="20" rx="5" fill="#cdd8f1"/><path d="M59 29h14M59 39h10M31 58h42M31 69h31" stroke="#313d58" stroke-width="3" stroke-linecap="round"/><circle cx="86" cy="78" r="17" fill="#9db6f0"/><path d="m78 78 6 6 10-13" fill="none" stroke="#303d5d" stroke-width="3" stroke-linecap="round"/></svg><h3>Une fiche exploitable</h3><p>Les faits connus et les réponses encore à obtenir.</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><path d="M17 45 60 16l43 29v44H17Z" fill="#d6e3ff" stroke="#3157d5" stroke-width="3"/><rect x="33" y="9" width="54" height="63" rx="5" fill="#fff" stroke="#3157d5" stroke-width="3"/><path d="M43 24h33M43 36h25M17 45l43 31 43-31M17 89l31-22M103 89 72 67" stroke="#3157d5" fill="none" stroke-width="3" stroke-linecap="round"/></svg><h3>Un dossier à remettre</h3><p>Une sélection relue pour votre destinataire.</p></div></div><figcaption>RGPDESK relie ces étapes dans un même espace de travail.</figcaption></figure>
 
@@ -108,6 +108,60 @@ L’onglet **L’analyse** propose huit questions sourcées : objectif, fondemen
 Le badge **Notes de travail saisies** indique uniquement la présence d’un texte. Il n’évalue ni sa qualité ni la licéité du traitement. Enregistrez vos notes avec **Enregistrer la fiche** ; utilisez **Actions & décisions** pour consigner une décision datée, son auteur déclaré et les travaux à réaliser.
 
 L’[atelier du DPO](#atelier-dpo) explique les questions et leur portée. Cette analyse ne suffit pas, à elle seule, à réaliser une AIPD : les risques, mesures et autres exigences applicables restent à examiner. [RGPD, articles 35 et 36](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4).
+
+## Construire une AIPD, de la question à la décision
+
+Dans le coffre ouvert, choisissez **AIPD / PIA**, sélectionnez un traitement du registre, puis **Ouvrir une étude d’impact**. L’atelier vous accompagne jusqu’à une revue motivée. Ouvrir une étude ne décide pas qu’elle est obligatoire.
+
+**Le fil conducteur : une décision explicable.** Le contexte vient du registre ; vous confrontez les moyens aux finalités, comparez les alternatives, décrivez les conséquences pour les personnes et vérifiez les garanties. La revue conserve l’étude et le contexte à sa date. Si le registre ou l’étude évolue ensuite, le dossier signale le changement.
+
+Le parcours reprend les quatre temps de la [méthode CNIL de février 2018](https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-1-fr-methode.pdf) : contexte, principes, risques, validation. Les étapes de déclenchement, les avis et le réexamen s’appuient aussi sur les [articles 35 et 36 du RGPD](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4). Les questions et l’organisation des écrans sont propres à RGPDESK.
+
+### 1 · Déterminer ce qu’il faut instruire
+
+Documentez le champ applicable, les cas légaux et les listes de l’autorité compétente. Examinez les neuf critères du [G29, WP248 rév.01, partie III.B](https://www.cnil.fr/sites/default/files/atoms/files/wp248_rev.01_fr.pdf) et motivez vos réponses. Il n’y a pas de compteur qui tranche : un critère peut suffire à révéler un risque élevé, et le contexte reste déterminant. Choisissez vous-même la position sur la réalisation de l’AIPD et ses raisons.
+
+### 2 · Situer les opérations et les droits
+
+Relisez le contexte repris du registre et les flux déclarés. Les carnets couvrent le périmètre, la gouvernance, la licéité, l’information, les droits, les prestataires, les transferts, l’exactitude et la conservation. Renseignez des références précises, des faits et des objections. Si le registre est incomplet, enregistrez et fermez l’étude, complétez la fiche puis revenez dans l’atelier.
+
+### 3 · Mettre la nécessité à l’épreuve
+
+Les notes de nécessité déjà présentes dans la fiche sont **copiées une fois à l’ouverture**. Elles deviennent les notes de cette étude : modifier la fiche ne les remplace pas. Examinez les opérations et les accès, puis les huit questions argumentées.
+
+**Comparer une alternative** ouvre une fiche par option : finalité visée, moyen envisagé, efficacité attendue, effets sur les droits, preuves et choix motivé. Comparez une option sans données personnelles lorsqu’elle est envisageable. Distinguez résultat démontré, hypothèse, contrainte et préférence.
+
+Le [cours d’Estelle De Marco, ESIEA 2025–2026, version 2.12, p.74–90](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=74) apporte un éclairage sur ce raisonnement. RGPDESK propose ses propres questions ; il ne reproduit pas intégralement sa grille et ne revendique pas son approbation.
+
+### 4 · Décrire ce qui peut arriver aux personnes
+
+Commencez par définir vos échelles et vos hypothèses. **Décrire un scénario de risque** vous fait distinguer l’événement, les personnes exposées, les droits affectés, les conséquences, les sources de risque, les supports et les mesures existantes. Examinez aussi les effets possibles d’un fonctionnement prévu, par exemple une exclusion ou une surveillance, en plus des atteintes à la confidentialité, à l’intégrité et à la disponibilité. Voir [G29, WP248 rév.01, notion de droits et libertés](https://www.cnil.fr/sites/default/files/atoms/files/wp248_rev.01_fr.pdf#page=7) et [CNIL, modèles, partie 3](https://www.cnil.fr/sites/default/files/atoms/files/cnil-pia-2-fr-modeles.pdf#page=20).
+
+Vous placez vous-même chaque scénario dans les matrices initiale et résiduelle. Un niveau inconnu reste hors de la matrice. Aucun produit « gravité × vraisemblance », seuil d’acceptabilité ou jugement juridique n’est calculé. L’appréciation d’un risque résiduel élevé est une question distincte, à motiver.
+
+### 5 · Relier les garanties aux risques
+
+**Organiser une mesure** permet de la relier aux scénarios concernés, de nommer son responsable, de fixer une échéance et de consigner sa preuve, son efficacité et les conséquences d’une défaillance. Distinguez **Prévue**, **Mise en œuvre déclarée** et **Vérification déclarée**. La vérification est celle que vous documentez, pas un contrôle effectué par le logiciel.
+
+Une baisse de niveau saisie sans mesure liée, déclarée vérifiée et étayée reste un point à instruire dans l’interface. Ce contrôle de saisie est une précaution de travail RGPDESK ; il ne prouve pas l’efficacité de la garantie.
+
+### 6 · Conserver les avis et une position motivée
+
+Dans **Avis & décision**, consignez l’avis du DPO, l’examen de la consultation des personnes, celui de la consultation préalable de l’autorité, le suivi des changements et une date de réexamen choisie. Motivez les démarches non réalisées ; RGPDESK ne contacte personne.
+
+Enregistrez d’abord l’étude. Relisez-la dans **Dossier & historique**, puis revenez consigner l’auteur déclaré, la position et ses raisons. La revue est ajoutée après votre confirmation de lecture. Les noms saisis ne sont pas des signatures ni des identités vérifiées.
+
+Vous pouvez conserver une demande de réexamen, un renoncement ou une préparation de consultation avec des points ouverts. Par précaution, l’interface ne permet pas de consigner une poursuite avec des éléments attendus non renseignés ou un risque résiduel élevé ou inconnu. Un sous-traitant prépare une contribution ; il ne consigne pas ici une décision de poursuite au nom du responsable. Ces garde-fous ne déterminent pas à eux seuls ce que le droit autorise.
+
+### 7 · Retrouver ce qui a fondé la décision
+
+Dans **Dossier & historique**, sélectionnez l’étude en cours ou une revue conservée. L’historique restitue le contexte, les flux, les références et les appréciations enregistrés à cette date. Une modification ultérieure ne réécrit pas une revue. Le signalement d’un changement vous invite à en examiner les conséquences ; l’absence de signalement n’est pas une certification d’actualité.
+
+**Enregistrer l’étude** conserve vos saisies chiffrées. **Sauvegarde** emporte ensuite l’ensemble du coffre, études et revues comprises. Les exports de registre actuels excluent les notes AIPD. La lecture du dossier reste interne ; aucun export AIPD ni échange automatique avec le logiciel CNIL n’est proposé dans cette version.
+
+Vous pouvez retirer une option, un scénario ou une mesure de l’étude en cours puis **Annuler le dernier retrait** avant enregistrement. Retirez d’abord les liens d’une mesure vers un scénario pour pouvoir retirer ce scénario. Les revues déjà conservées restent inchangées.
+
+Pour garder un coffre maniable, chaque étude peut contenir 20 alternatives, 30 scénarios, 50 mesures et 8 revues conservées ; le coffre accepte 40 études, une par activité. La limite globale de taille peut être atteinte avant ces plafonds. Un dépassement refuse l’enregistrement et conserve les saisies à l’écran : raccourcissez les descriptions et référencez les pièces dans votre organisation. Sauvegardez régulièrement le coffre.
 
 ## 4. Intervenants, systèmes et documents
 

@@ -139,3 +139,20 @@ Consultées le 22 septembre 2026. Les formulations dans `review-methods.ts` sont
 | A04 | [Estelle De Marco, support ESIEA 2025–2026, version 2.12](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=75) | PDF de 451 pages : méthode p.74, vue d’ensemble de la grille p.75, inventaire pratique p.77, développements p.78 à 85. Lecture complémentaire, reliée au support original. Aucun tableur séparé identifié, aucune reproduction intégrale de la grille, aucun aval de son auteure attribué. |
 
 La relecture humaine reste à réaliser. L’application n’adopte pas les appréciations reçues dans un retour utilisateur comme des conclusions juridiques : notamment, elle ne prétend ni que l’expression « base légale » serait interdite, ni qu’un outil PIA existant serait juridiquement invalide. Le libellé métier « fondement juridique » conserve le champ technique `legalBasis` et ses données historiques.
+
+## Sources du parcours AIPD
+
+Revue documentaire : 22 septembre 2026. Version de la trame : `aipd-2026-09-22.1`. Questions originales et références embarquées dans `pia-method.ts` ; aucune récupération distante lors de l’usage du coffre.
+
+| Source | Nature, version, portée | Usage dans RGPDESK |
+| --- | --- | --- |
+| [RGPD, chapitre IV](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4) | Texte applicable, articles 28, 35, 36, 38, 39 ; reproduction par la CNIL | Description, nécessité, risques, mesures, avis, consultation et réexamen ; responsabilité distincte du sous-traitant |
+| [G29, WP248 rév.01](https://www.cnil.fr/sites/default/files/atoms/files/wp248_rev.01_fr.pdf) | Lignes directrices, révision du 4 octobre 2017 ; interprétation d’autorité | Partie III.B : neuf critères sans décision automatique ; droits et libertés au-delà de la seule sécurité des données ; annexe 2 : critères d’une analyse |
+| [CNIL, PIA méthode](https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-1-fr-methode.pdf) | Guide méthodologique, février 2018 | Quatre phases et itérations ; articulation principes et risques ; annexe de correspondance avec WP248 |
+| [CNIL, PIA modèles](https://www.cnil.fr/sites/default/files/atoms/files/cnil-pia-2-fr-modeles.pdf) | Modèles, février 2018 | Contexte, garanties, scénarios, gravité et vraisemblance, plan d’action, avis et validation ; pas de compatibilité de fichiers revendiquée |
+| [CNIL, ce qu’il faut savoir sur l’AIPD](https://www.cnil.fr/fr/ce-quil-faut-savoir-sur-lanalyse-dimpact-relative-la-protection-des-donnees-aipd) | Explications et accès aux listes ; page consultée le 22 septembre 2026 | Point d’accès explicite pour l’examen du champ applicable, aucune liste importée automatiquement |
+| [Estelle De Marco, support ESIEA 2025–2026, v2.12](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf) | Support pédagogique d’auteur, 451 pages ; éclairage méthodologique | Raisonnement p.74–90 ; risques et garanties p.171–208 ; gouvernance p.211–213. Questions rédigées pour le produit, sans reproduction intégrale ni aval attribué |
+
+Le [projet de modèle AIPD du CEPD publié pour consultation en 2026](https://www.edpb.europa.eu/our-work-tools/documents/public-consultations/2026/edpb-dpia-template_en) reste une référence de veille : la clôture de la consultation ne suffit pas à établir son adoption finale. Il n’est pas activé comme une obligation ou une méthode définitive.
+
+Les contrôles de complétude, plafonds et règles de conservation des revues sont des choix produit documentés dans `AIPD.md`, non des prescriptions attribuées aux sources.
