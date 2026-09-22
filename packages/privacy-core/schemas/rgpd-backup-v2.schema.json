@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rgpdesk:rgpd-backup-v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "workspaceId",
+    "revision",
+    "envelope"
+  ],
+  "properties": {
+    "format": {
+      "const": "rgpd-backup-v2"
+    },
+    "workspaceId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740990
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "algorithm",
+        "keyDerivation",
+        "iterations",
+        "salt",
+        "iv",
+        "aad",
+        "ciphertext"
+      ],
+      "properties": {
+        "version": {
+          "const": 2
+        },
+        "algorithm": {
+          "const": "AES-GCM"
+        },
+        "keyDerivation": {
+          "const": "PBKDF2-SHA-256"
+        },
+        "iterations": {
+          "type": "integer",
+          "minimum": 600000,
+          "maximum": 1000000
+        },
+        "salt": {
+          "type": "string",
+          "minLength": 24,
+          "maxLength": 24,
+          "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+        },
+        "iv": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 16,
+          "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+        },
+        "aad": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "ciphertext": {
+          "type": "string",
+          "minLength": 24,
+          "maxLength": 12582912,
+          "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+        }
+      }
+    }
+  }
+}

@@ -61,6 +61,12 @@ importers:
       '@blackproof/verifier':
         specifier: workspace:*
         version: link:../../packages/verifier
+      '@rgpdesk/privacy-core':
+        specifier: workspace:*
+        version: link:../../packages/privacy-core
+      '@rgpdesk/privacy-verifier':
+        specifier: workspace:*
+        version: link:../../packages/privacy-verifier
       astro:
         specifier: 7.2.8
         version: 7.2.8(@emnapi/core@2.0.0-alpha.3)(@emnapi/runtime@2.0.0-alpha.3)(@types/node@22.20.2)(yaml@2.9.0)
@@ -120,6 +126,14 @@ importers:
       '@modelcontextprotocol/client':
         specifier: 2.0.0
         version: 2.0.0
+
+  packages/privacy-core: {}
+
+  packages/privacy-verifier:
+    dependencies:
+      jszip:
+        specifier: 3.10.1
+        version: 3.10.1
 
   packages/verifier:
     dependencies:

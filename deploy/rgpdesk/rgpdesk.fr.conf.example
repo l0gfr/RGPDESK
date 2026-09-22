@@ -1,0 +1,52 @@
+<VirtualHost *:80>
+    ServerName rgpdesk.fr
+    DocumentRoot /var/www/html/rgpdesk-acme
+    <Directory /var/www/html/rgpdesk-acme>
+        Options -Indexes -ExecCGI -Includes -MultiViews -FollowSymLinks
+        AllowOverride None
+        Require all granted
+    </Directory>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[A-Za-z0-9_-]+$
+    RewriteRule ^ https://rgpdesk.fr%{REQUEST_URI} [R=308,END,NE]
+    ErrorLog ${APACHE_LOG_DIR}/rgpdesk-error.log
+    CustomLog /dev/null combined
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName rgpdesk.fr
+    DocumentRoot /var/www/html/rgpdesk/releases/__RGPDESK_COMMIT__
+    DirectoryIndex index.html
+    SSLEngine on
+    SSLProtocol -all +TLSv1.2 +TLSv1.3
+    SSLCertificateFile /etc/letsencrypt/live/rgpdesk.fr/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/rgpdesk.fr/privkey.pem
+    <Directory /var/www/html/rgpdesk/releases/__RGPDESK_COMMIT__>
+        Options -Indexes -ExecCGI -Includes -MultiViews -FollowSymLinks
+        AllowOverride None
+        Require all granted
+        SetHandler none
+    </Directory>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} !^(GET|HEAD)$
+    RewriteRule ^ - [R=405,END]
+    RewriteCond %{REQUEST_URI} (^|/)\.
+    RewriteRule ^ - [R=404,END]
+    # Exact public routes; unknown paths never fall back to application HTML.
+    RewriteCond %{REQUEST_URI} !^/(?:$|index\.html$|app/privacy/(?:index\.html|verify/(?:index\.html)?|confidentialite/(?:index\.html)?)?$|_astro/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|svg|png|webp)$|(?:LICENSE|NOTICE|THIRD_PARTY_NOTICES|TRADEMARKS)\.txt$|robots\.txt$|release\.json$)
+    RewriteRule ^ - [R=404,END]
+    Header always set Content-Security-Policy "__RGPDESK_CSP__"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "no-referrer"
+    Header always set X-Frame-Options "DENY"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), clipboard-read=(), clipboard-write=()"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+    Header always set Strict-Transport-Security "max-age=31536000"
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive"
+    Header always set X-RGPDESK-Commit "__RGPDESK_COMMIT__"
+    Header always set Cache-Control "no-store"
+    # No access statistics. Apache error logs may still contain connection data.
+    ErrorLog ${APACHE_LOG_DIR}/rgpdesk-error.log
+    CustomLog /dev/null combined
+</VirtualHost>

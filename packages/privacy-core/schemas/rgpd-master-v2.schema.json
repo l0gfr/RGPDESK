@@ -1,0 +1,1118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rgpdesk:rgpd-master-v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "id",
+    "revision",
+    "createdAt",
+    "updatedAt",
+    "language",
+    "jurisdiction",
+    "scope",
+    "organization",
+    "parties",
+    "systems",
+    "activities",
+    "documents",
+    "decisions",
+    "actions",
+    "imports",
+    "deliveries"
+  ],
+  "properties": {
+    "format": {
+      "const": "rgpd-master-v2"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740990
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "language": {
+      "const": "fr"
+    },
+    "jurisdiction": {
+      "$ref": "#/$defs/knowledge"
+    },
+    "scope": {
+      "$ref": "#/$defs/knowledge"
+    },
+    "organization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "contact",
+        "dpo",
+        "representatives"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 160,
+          "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+          "minLength": 1
+        },
+        "contact": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "dpo": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "representatives": {
+          "$ref": "#/$defs/knowledge"
+        }
+      }
+    },
+    "parties": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "name",
+          "contact"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "contact": {
+            "$ref": "#/$defs/knowledge"
+          }
+        }
+      }
+    },
+    "systems": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "description": {
+            "$ref": "#/$defs/knowledge"
+          }
+        }
+      }
+    },
+    "activities": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "workspaceId",
+              "title",
+              "status",
+              "systemIds",
+              "participantIds",
+              "dataCategories",
+              "dataSubjects",
+              "recipients",
+              "transfers",
+              "securityMeasures",
+              "internalNotes",
+              "role",
+              "purposes",
+              "review"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "workspaceId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "draft",
+                  "active",
+                  "archived"
+                ]
+              },
+              "systemIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "participantIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "dataCategories": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "dataSubjects": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "recipients": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "transfers": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "securityMeasures": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "internalNotes": {
+                "type": "string",
+                "maxLength": 4000,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+              },
+              "role": {
+                "const": "controller"
+              },
+              "purposes": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/$defs/purpose"
+                }
+              },
+              "review": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "article9",
+                  "article10",
+                  "transferStatus",
+                  "collection",
+                  "subcontractorIds"
+                ],
+                "properties": {
+                  "article9": {
+                    "$ref": "#/$defs/knowledge"
+                  },
+                  "article10": {
+                    "$ref": "#/$defs/knowledge"
+                  },
+                  "transferStatus": {
+                    "enum": [
+                      "unknown",
+                      "none-reviewed",
+                      "identified"
+                    ]
+                  },
+                  "collection": {
+                    "enum": [
+                      "unknown",
+                      "direct",
+                      "indirect",
+                      "both"
+                    ]
+                  },
+                  "subcontractorIds": {
+                    "type": "array",
+                    "maxItems": 200,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                    },
+                    "uniqueItems": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "workspaceId",
+              "title",
+              "status",
+              "systemIds",
+              "participantIds",
+              "dataCategories",
+              "dataSubjects",
+              "recipients",
+              "transfers",
+              "securityMeasures",
+              "internalNotes",
+              "role",
+              "controllerIds",
+              "operations",
+              "instructions",
+              "review"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "workspaceId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "draft",
+                  "active",
+                  "archived"
+                ]
+              },
+              "systemIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "participantIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "dataCategories": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "dataSubjects": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "recipients": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "transfers": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "securityMeasures": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "internalNotes": {
+                "type": "string",
+                "maxLength": 4000,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+              },
+              "role": {
+                "const": "processor"
+              },
+              "controllerIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "operations": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "instructions": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "review": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "article9",
+                  "article10",
+                  "transferStatus",
+                  "collection",
+                  "subcontractorIds"
+                ],
+                "properties": {
+                  "article9": {
+                    "$ref": "#/$defs/knowledge"
+                  },
+                  "article10": {
+                    "$ref": "#/$defs/knowledge"
+                  },
+                  "transferStatus": {
+                    "enum": [
+                      "unknown",
+                      "none-reviewed",
+                      "identified"
+                    ]
+                  },
+                  "collection": {
+                    "enum": [
+                      "unknown",
+                      "direct",
+                      "indirect",
+                      "both"
+                    ]
+                  },
+                  "subcontractorIds": {
+                    "type": "array",
+                    "maxItems": 200,
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                    },
+                    "uniqueItems": true
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "documents": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "title",
+          "category",
+          "activityIds",
+          "purposeIds",
+          "partyIds",
+          "scope",
+          "version",
+          "declaredAuthor",
+          "internalRef",
+          "publicReference",
+          "reservations",
+          "sensitivity",
+          "status",
+          "reviewedRevision",
+          "reviewedAt",
+          "reviewDue",
+          "audience",
+          "channel",
+          "availability"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "category": {
+            "enum": [
+              "contract",
+              "notice",
+              "policy",
+              "analysis",
+              "other"
+            ]
+          },
+          "activityIds": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+            },
+            "uniqueItems": true
+          },
+          "purposeIds": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+            },
+            "uniqueItems": true
+          },
+          "partyIds": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+            },
+            "uniqueItems": true
+          },
+          "scope": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "declaredAuthor": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "internalRef": {
+            "type": "string",
+            "maxLength": 4000,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "publicReference": {
+            "type": "string",
+            "maxLength": 4000,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "reservations": {
+            "type": "string",
+            "maxLength": 4000,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "sensitivity": {
+            "enum": [
+              "internal",
+              "restricted"
+            ]
+          },
+          "status": {
+            "enum": [
+              "declared",
+              "reviewed"
+            ]
+          },
+          "reviewedRevision": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740990
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewDue": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audience": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "channel": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "availability": {
+            "$ref": "#/$defs/knowledge"
+          }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "ruleId",
+          "activityId",
+          "author",
+          "justification",
+          "conclusion",
+          "createdAt",
+          "revision",
+          "catalogVersion"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "ruleId": {
+            "type": "string",
+            "pattern": "^R-00[1-9]$"
+          },
+          "activityId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "author": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "justification": {
+            "type": "string",
+            "maxLength": 4000,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "conclusion": {
+            "type": "string",
+            "maxLength": 4000,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          },
+          "catalogVersion": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "findingKey",
+          "ruleId",
+          "activityId",
+          "scope",
+          "owner",
+          "due",
+          "createdAt",
+          "catalogVersion",
+          "reviewedRevision",
+          "closure"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "findingKey": {
+            "type": "string",
+            "maxLength": 200,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "ruleId": {
+            "type": "string",
+            "pattern": "^R-00[1-9]$"
+          },
+          "activityId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "owner": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "due": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "catalogVersion": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "reviewedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          },
+          "closure": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "at",
+                  "author",
+                  "justification"
+                ],
+                "properties": {
+                  "at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+                  },
+                  "author": {
+                    "type": "string",
+                    "maxLength": 160,
+                    "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                    "minLength": 1
+                  },
+                  "justification": {
+                    "type": "string",
+                    "maxLength": 4000,
+                    "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                    "minLength": 1
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "imports": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "at",
+          "revision",
+          "encoding",
+          "delimiter",
+          "mapping",
+          "acceptedRows",
+          "rejectedRows",
+          "ignoredColumns",
+          "activityIds",
+          "ignoredCells"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          },
+          "encoding": {
+            "enum": [
+              "utf-8",
+              "windows-1252"
+            ]
+          },
+          "delimiter": {
+            "enum": [
+              ",",
+              ";",
+              "\t"
+            ]
+          },
+          "mapping": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "column",
+                "field"
+              ],
+              "properties": {
+                "column": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 49
+                },
+                "field": {
+                  "type": "string",
+                  "maxLength": 80,
+                  "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "acceptedRows": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 201
+            }
+          },
+          "rejectedRows": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "row",
+                "reason"
+              ],
+              "properties": {
+                "row": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 201
+                },
+                "reason": {
+                  "enum": [
+                    "columns",
+                    "role",
+                    "title",
+                    "invalid"
+                  ]
+                }
+              }
+            }
+          },
+          "ignoredColumns": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 49
+            }
+          },
+          "activityIds": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+            },
+            "uniqueItems": true
+          },
+          "ignoredCells": {
+            "type": "array",
+            "maxItems": 2400,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "row",
+                "column",
+                "reason"
+              ],
+              "properties": {
+                "row": {
+                  "type": "integer",
+                  "minimum": 2,
+                  "maximum": 201
+                },
+                "column": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 49
+                },
+                "reason": {
+                  "const": "role-incompatible"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "deliveries": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "revision",
+          "createdAt",
+          "profile",
+          "recipient",
+          "catalogVersion",
+          "manifestHash"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+          },
+          "profile": {
+            "enum": [
+              "article30-controller",
+              "article30-processor",
+              "internal-review",
+              "client-excerpt"
+            ]
+          },
+          "recipient": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "catalogVersion": {
+            "type": "string",
+            "maxLength": 80,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "manifestHash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "knowledge": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "const": "unknown"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value"
+          ],
+          "properties": {
+            "state": {
+              "const": "documented"
+            },
+            "value": {
+              "type": "string",
+              "maxLength": 4000,
+              "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "legalBasis",
+        "retention"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+        },
+        "description": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "legalBasis": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "retention": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "period",
+            "trigger"
+          ],
+          "properties": {
+            "period": {
+              "$ref": "#/$defs/knowledge"
+            },
+            "trigger": {
+              "$ref": "#/$defs/knowledge"
+            }
+          }
+        }
+      }
+    }
+  }
+}

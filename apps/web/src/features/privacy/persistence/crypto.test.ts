@@ -1,0 +1,73 @@
+import { describe, expect, it } from "vitest";
+import { createWorkspace, MAX_BACKUP_BYTES } from "@rgpdesk/privacy-core";
+import { encryptLocalPayloadBatch } from "../../../lib/local-encryption";
+import { contextFor, decodeBackup, encodeBackup, openMaster, sealMaster } from "./crypto";
+
+const phrase = "Fictional vault phrase 2026 correct";
+const id = "00000000-0000-4000-8000-000000000001";
+const other = "00000000-0000-4000-8000-000000000002";
+const fixture = () => createWorkspace(id, "NEVER_LEAK_ORGANIZATION_FICTIONAL_7D31", "2026-09-22T10:00:00.000Z");
+
+describe("privacy adapter with real WebCrypto", () => {
+  it("round trips with upstream PBKDF2 cost, random salt and IV, and no plaintext metadata", async () => {
+    const first = await sealMaster(fixture(), phrase);
+    const second = await sealMaster(fixture(), phrase);
+    expect(first.iterations).toBe(600_000);
+    expect(first.salt).not.toBe(second.salt);
+    expect(first.iv).not.toBe(second.iv);
+    expect(JSON.stringify(first)).not.toContain("NEVER_LEAK");
+    expect(await openMaster(first, phrase, id, 1)).toEqual(fixture());
+  });
+
+  it("rejects wrong phrase and altered ciphertext", async () => {
+    const envelope = await sealMaster(fixture(), phrase);
+    await expect(openMaster(envelope, "Wrong fictional phrase 2026", id, 1)).rejects.toThrow("CRYPTO");
+    const bytes = Uint8Array.from(atob(envelope.ciphertext), (c) => c.charCodeAt(0));
+    bytes[0]! ^= 1;
+    await expect(openMaster({ ...envelope, ciphertext: btoa(String.fromCharCode(...bytes)) }, phrase, id, 1)).rejects.toThrow("CRYPTO");
+  });
+
+  it("rejects an authentic envelope substituted across workspace, revision or entry kind", async () => {
+    const envelope = await sealMaster(fixture(), phrase);
+    await expect(openMaster(envelope, phrase, other, 1)).rejects.toThrow("CRYPTO");
+    await expect(openMaster(envelope, phrase, id, 2)).rejects.toThrow("CRYPTO");
+    const backup = JSON.parse(await encodeBackup(fixture(), phrase));
+    await expect(openMaster(backup.envelope, phrase, id, 1)).rejects.toThrow("CRYPTO");
+  });
+
+  it("rejects forged clear AAD even when changed to match the destination", async () => {
+    const envelope = await sealMaster(fixture(), phrase);
+    await expect(openMaster({ ...envelope, aad: contextFor(other, 1, "master") }, phrase, other, 1)).rejects.toThrow("CRYPTO");
+  });
+
+  it("validates authenticated plaintext instead of trusting a generic type", async () => {
+    for (const value of [{ ...fixture(), score: 100 }, { ...fixture(), id: other }, { ...fixture(), revision: 2 }]) {
+      const [envelope] = await encryptLocalPayloadBatch([{ aad: contextFor(id, 1, "master"), value }], phrase);
+      await expect(openMaster(envelope, phrase, id, 1)).rejects.toThrow();
+    }
+  });
+
+  it("round trips a full backup with encrypted inventory", async () => {
+    const encoded = await encodeBackup(fixture(), phrase);
+    expect(encoded).not.toContain("inventory");
+    expect(encoded).not.toContain("NEVER_LEAK");
+    expect(await decodeBackup(encoded, phrase)).toEqual(fixture());
+  });
+
+  it("rejects incomplete, extra or inconsistent authenticated inventories", async () => {
+    for (const inventory of [[], [{ kind: "master", id: other, revision: 1 }], [{ kind: "master", id, revision: 1, extra: true }]]) {
+      const [envelope] = await encryptLocalPayloadBatch([{ aad: contextFor(id, 1, "backup"), value: { format: "rgpd-backup-payload-v1", inventory, master: fixture() } }], phrase);
+      await expect(decodeBackup(JSON.stringify({ format: "rgpd-backup-v1", workspaceId: id, revision: 1, envelope }), phrase)).rejects.toThrow("INVALID");
+    }
+  });
+
+  it("rejects truncated, oversized, unknown and weakened formats before decryption", async () => {
+    const encoded = await encodeBackup(fixture(), phrase);
+    await expect(decodeBackup(encoded.slice(0, -1), phrase)).rejects.toThrow("INVALID");
+    await expect(decodeBackup(" ".repeat(MAX_BACKUP_BYTES + 1), phrase)).rejects.toThrow("LIMIT");
+    const backup = JSON.parse(encoded);
+    for (const patch of [{ format: "proofpack-v3" }, { extra: "ignored?" }, { envelope: { ...backup.envelope, iterations: 310_000 } }, { envelope: { ...backup.envelope, iterations: 10_000_000 } }]) {
+      await expect(decodeBackup(JSON.stringify({ ...backup, ...patch }), phrase)).rejects.toThrow("INVALID");
+    }
+  });
+});

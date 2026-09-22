@@ -1,0 +1,21 @@
+---
+import PrivacyApp from "../../../features/privacy/components/PrivacyApp.svelte";
+import "../../../features/privacy/privacy.css";
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="description" content="RGPDESK, prototype de registre RGPD local et coffre chiffré. Aucun compte, aucun envoi de données métier." />
+    <title>RGPDESK | Coffre et registre local</title>
+  </head>
+  <body class="rgpdesk">
+    <a class="skip-link" href="#main">Aller au contenu</a>
+    <header class="site-bar"><a class="wordmark" href="/app/privacy/" aria-label="RGPDESK, accueil"><span class="brand-mark" aria-hidden="true">R</span>RGPDESK<span class="brand-suffix">BUREAU PRIVÉ</span></a><span class="site-caption">Votre organisation, en toute discrétion</span></header>
+    <main id="main"><PrivacyApp client:load /><noscript>JavaScript est nécessaire pour le chiffrement et le stockage local. Aucune donnée ne sera envoyée à un serveur.</noscript></main>
+    <footer class="privacy-footer"><p>RGPDESK · Version de développement 0.3 · Lots 0 à 3</p><p>Dérivé de BLACKPROOF-AGPL. <a href="/LICENSE.txt">Licence AGPL-3.0-only</a> · <a href="/app/privacy/confidentialite/">Confidentialité et limites</a> · <a href="https://github.com/l0gfr/RGPDESK" rel="noreferrer noopener" target="_blank">Dépôt RGPDESK</a> · <a href="https://github.com/l0gfr/BLACKPROOF-AGPL" rel="noreferrer noopener" target="_blank">Source du socle</a></p><p>Version expérimentale. Code source ouvert. Catalogue documentaire fr-eu-2026-09-22.draft-1, sans revue juridique humaine.</p></footer>
+  </body>
+</html>

@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rgpdesk:rgpd-share-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "id",
+    "createdAt",
+    "profile",
+    "catalogVersion",
+    "recipient",
+    "scope",
+    "reservations",
+    "coverage",
+    "organization",
+    "parties",
+    "activities",
+    "references"
+  ],
+  "properties": {
+    "format": {
+      "const": "rgpd-share-v1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "profile": {
+      "enum": [
+        "article30-controller",
+        "article30-processor",
+        "internal-review",
+        "client-excerpt"
+      ]
+    },
+    "catalogVersion": {
+      "const": "fr-eu-2026-09-22.draft-1"
+    },
+    "recipient": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000,
+      "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+    },
+    "reservations": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 0,
+        "maxLength": 4000,
+        "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+      }
+    },
+    "coverage": {
+      "enum": [
+        "excerpt",
+        "incomplete",
+        "documented-profile"
+      ]
+    },
+    "organization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "contact",
+        "dpo",
+        "representatives"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 160,
+          "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+          "minLength": 1
+        },
+        "contact": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "dpo": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "representatives": {
+          "$ref": "#/$defs/knowledge"
+        }
+      }
+    },
+    "parties": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "contact"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          },
+          "contact": {
+            "$ref": "#/$defs/knowledge"
+          }
+        }
+      }
+    },
+    "activities": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title",
+              "dataCategories",
+              "dataSubjects",
+              "recipients",
+              "transfers",
+              "securityMeasures",
+              "role",
+              "purposes"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                "minLength": 1
+              },
+              "dataCategories": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "dataSubjects": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "recipients": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "transfers": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "securityMeasures": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "role": {
+                "const": "controller"
+              },
+              "purposes": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/$defs/purpose"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "title",
+              "dataCategories",
+              "dataSubjects",
+              "recipients",
+              "transfers",
+              "securityMeasures",
+              "role",
+              "controllerIds",
+              "operations"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                "minLength": 1
+              },
+              "dataCategories": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "dataSubjects": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "recipients": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "transfers": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "securityMeasures": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "role": {
+                "const": "processor"
+              },
+              "controllerIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "operations": {
+                "$ref": "#/$defs/knowledge"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "references": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "activityIds",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "activityIds": {
+            "type": "array",
+            "maxItems": 200,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+            }
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000,
+            "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "knowledge": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "const": "unknown"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value"
+          ],
+          "properties": {
+            "state": {
+              "const": "documented"
+            },
+            "value": {
+              "type": "string",
+              "maxLength": 4000,
+              "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "legalBasis",
+        "retention"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+        },
+        "description": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "legalBasis": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "retention": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "period",
+            "trigger"
+          ],
+          "properties": {
+            "period": {
+              "$ref": "#/$defs/knowledge"
+            },
+            "trigger": {
+              "$ref": "#/$defs/knowledge"
+            }
+          }
+        }
+      }
+    }
+  }
+}

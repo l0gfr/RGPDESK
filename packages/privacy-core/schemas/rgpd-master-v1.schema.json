@@ -1,0 +1,417 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rgpdesk:rgpd-master-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "id",
+    "revision",
+    "createdAt",
+    "updatedAt",
+    "language",
+    "jurisdiction",
+    "scope",
+    "organization",
+    "parties",
+    "systems",
+    "activities"
+  ],
+  "properties": {
+    "format": {
+      "const": "rgpd-master-v1"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9007199254740990
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"
+    },
+    "language": {
+      "const": "fr"
+    },
+    "jurisdiction": {
+      "$ref": "#/$defs/knowledge"
+    },
+    "scope": {
+      "$ref": "#/$defs/knowledge"
+    },
+    "organization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "contact",
+        "dpo"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 160,
+          "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+          "minLength": 1
+        },
+        "contact": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "dpo": {
+          "$ref": "#/$defs/knowledge"
+        }
+      }
+    },
+    "parties": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "name",
+          "contact"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "contact": {
+            "$ref": "#/$defs/knowledge"
+          }
+        }
+      }
+    },
+    "systems": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "workspaceId",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "workspaceId": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+            "minLength": 1
+          },
+          "description": {
+            "$ref": "#/$defs/knowledge"
+          }
+        }
+      }
+    },
+    "activities": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "workspaceId",
+              "title",
+              "status",
+              "systemIds",
+              "participantIds",
+              "dataCategories",
+              "dataSubjects",
+              "recipients",
+              "transfers",
+              "securityMeasures",
+              "internalNotes",
+              "role",
+              "purposes"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "workspaceId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "draft",
+                  "active",
+                  "archived"
+                ]
+              },
+              "systemIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "participantIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "dataCategories": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "dataSubjects": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "recipients": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "transfers": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "securityMeasures": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "internalNotes": {
+                "type": "string",
+                "maxLength": 4000,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+              },
+              "role": {
+                "const": "controller"
+              },
+              "purposes": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "$ref": "#/$defs/purpose"
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "workspaceId",
+              "title",
+              "status",
+              "systemIds",
+              "participantIds",
+              "dataCategories",
+              "dataSubjects",
+              "recipients",
+              "transfers",
+              "securityMeasures",
+              "internalNotes",
+              "role",
+              "controllerIds",
+              "operations",
+              "instructions"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "workspaceId": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 160,
+                "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+                "minLength": 1
+              },
+              "status": {
+                "enum": [
+                  "draft",
+                  "active",
+                  "archived"
+                ]
+              },
+              "systemIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "participantIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "dataCategories": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "dataSubjects": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "recipients": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "transfers": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "securityMeasures": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "internalNotes": {
+                "type": "string",
+                "maxLength": 4000,
+                "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"
+              },
+              "role": {
+                "const": "processor"
+              },
+              "controllerIds": {
+                "type": "array",
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+                },
+                "uniqueItems": true
+              },
+              "operations": {
+                "$ref": "#/$defs/knowledge"
+              },
+              "instructions": {
+                "$ref": "#/$defs/knowledge"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "knowledge": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state"
+          ],
+          "properties": {
+            "state": {
+              "const": "unknown"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "value"
+          ],
+          "properties": {
+            "state": {
+              "const": "documented"
+            },
+            "value": {
+              "type": "string",
+              "maxLength": 4000,
+              "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "description",
+        "legalBasis",
+        "retention"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+        },
+        "description": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "legalBasis": {
+          "$ref": "#/$defs/knowledge"
+        },
+        "retention": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "period",
+            "trigger"
+          ],
+          "properties": {
+            "period": {
+              "$ref": "#/$defs/knowledge"
+            },
+            "trigger": {
+              "$ref": "#/$defs/knowledge"
+            }
+          }
+        }
+      }
+    }
+  }
+}

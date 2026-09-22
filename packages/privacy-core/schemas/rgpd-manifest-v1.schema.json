@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:rgpdesk:rgpd-manifest-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "canonicalization",
+    "deliveryId",
+    "files",
+    "sha256"
+  ],
+  "properties": {
+    "format": {
+      "const": "rgpd-manifest-v1"
+    },
+    "canonicalization": {
+      "const": "rgpdesk-sorted-json-v1"
+    },
+    "deliveryId": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "files": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "name": {
+            "enum": [
+              "register.json",
+              "register.csv",
+              "report.html",
+              "README.txt"
+            ]
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 524288
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  }
+}

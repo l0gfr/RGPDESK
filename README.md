@@ -1,3 +1,14 @@
+# RGPDESK
+
+Prototype local RGPD, lots 0 à 3, dérivé de BLACKPROOF-AGPL sous AGPL-3.0-only.
+Entrée : `/app/privacy/`. Distribution RGPDESK isolée : `pnpm build && pnpm privacy:release`.
+Coffre et sauvegarde chiffrés, registres responsable/sous-traitant, import CSV examiné, références documentaires, décisions et actions. Livraisons JSON/CSV/HTML par liste blanche, instantanés chiffrés et vérification locale navigateur/CLI. Identité RGPDESK distincte, sans ressource graphique distante. Aucun avis juridique automatique.
+Voir [la baseline](docs/rgpd/BASELINE.md) et les recettes [lot 1](docs/rgpd/LOT-1.md) et [lots 2 et 3](docs/rgpd/LOTS-2-3.md).
+Vérificateur : `/app/privacy/verify/` ou `node packages/privacy-verifier/bin/rgpdesk-verify.mjs dossier.zip`. Aucun fichier n’est transmis.
+Les routes cyber restent conservées pour les régressions ; le build mixte ne doit pas être publié tel quel. Seul `artifacts/rgpdesk/site` est destiné à RGPDESK.fr. Voir [la procédure de publication](docs/rgpd/PUBLICATION.md).
+
+## Documentation du socle conservée
+
 # BLACKPROOF
 
 BLACKPROOF is a free, open-source, local-first cyber evidence app under AGPL-3.0-only.

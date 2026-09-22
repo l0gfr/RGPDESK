@@ -29,11 +29,15 @@
     "editorial:e2e": "playwright test tests/e2e/editorial-generic.spec.ts --project=chromium --workers=1",
     "contract:smoke": "node scripts/check-public-proofpack-contract.mjs",
     "notices:generate": "node scripts/generate-third-party-notices.mjs",
-    "schema:generate": "node scripts/generate-proofpack-validator.mjs",
-    "schema:check": "node scripts/generate-proofpack-validator.mjs --check",
+    "schema:generate": "node scripts/generate-proofpack-validator.mjs && node scripts/generate-privacy-validator.mjs",
+    "schema:check": "node scripts/generate-proofpack-validator.mjs --check && node scripts/generate-privacy-validator.mjs --check",
     "vectors:generate": "node scripts/generate-canonicalization-vectors.mjs",
     "vectors:check": "node scripts/generate-canonicalization-vectors.mjs --check",
-    "open-source:check": "node scripts/check-open-source-build.mjs"
+    "open-source:check": "node scripts/check-open-source-build.mjs",
+    "test:privacy": "pnpm --filter @rgpdesk/privacy-core test && pnpm --filter @blackproof/web exec vitest run src/features/privacy",
+    "test:privacy:e2e": "playwright test tests/e2e/privacy --workers=1",
+    "privacy:release": "node scripts/build-privacy-release.mjs",
+    "test:privacy:release": "node --test scripts/privacy-release.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

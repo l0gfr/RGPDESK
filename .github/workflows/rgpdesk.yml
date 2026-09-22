@@ -1,0 +1,61 @@
+name: RGPDESK checks and isolated artifact
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rgpdesk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+        with:
+          version: 10.34.5
+          run_install: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: All source, security, build and browser regression gates
+        run: pnpm verify:all
+      - name: Qualify RGPD-only distribution
+        run: pnpm test:privacy:release && pnpm privacy:release
+      - name: Verify extracted artifact
+        run: python3 artifacts/rgpdesk/verify-release.py artifacts/rgpdesk "$GITHUB_SHA"
+      - name: Exercise the exact isolated artifact in Chromium
+        env:
+          PLAYWRIGHT_SKIP_WEBSERVER: "1"
+        run: |
+          python3 -m http.server 4321 --bind 127.0.0.1 --directory artifacts/rgpdesk/site > /tmp/rgpdesk-preview.log 2>&1 &
+          preview_pid=$!
+          trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4321/release.json >/dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4321/release.json >/dev/null
+          pnpm test:privacy:e2e
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: rgpdesk-${{ github.sha }}
+          path: |
+            artifacts/rgpdesk-release.zip
+            artifacts/rgpdesk-release.zip.sha256
+          if-no-files-found: error
+          retention-days: 14
