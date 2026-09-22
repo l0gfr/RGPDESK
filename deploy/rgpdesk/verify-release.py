@@ -36,7 +36,7 @@ def verify(root, commit):
     manifest = json.loads(actual["manifest.json"])
     if manifest["format"] != "rgpdesk-static-release-v1" or manifest["commit"] != commit or manifest["dirtyWorktree"] is not False:
         raise ValueError("Unexpected or uncommitted release")
-    allowed = re.compile(r"(?:site/(?:index\.html|app/privacy/(?:index\.html|verify/index\.html|confidentialite/index\.html)|_astro/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|svg|png|webp)|(?:LICENSE|NOTICE|THIRD_PARTY_NOTICES|TRADEMARKS)\.txt|robots\.txt|release\.json)|apache/(?:rgpdesk\.fr\.conf|rgpdesk-bootstrap\.conf)|verify-release\.py)")
+    allowed = re.compile(r"(?:site/(?:index\.html|app/privacy/(?:index\.html|verify/index\.html|confidentialite/index\.html|guide/index\.html)|_astro/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|svg|png|webp)|(?:LICENSE|NOTICE|THIRD_PARTY_NOTICES|TRADEMARKS)\.txt|robots\.txt|release\.json)|apache/(?:rgpdesk\.fr\.conf|rgpdesk-bootstrap\.conf)|verify-release\.py)")
     expected = set()
     for item in manifest["files"]:
         name = item["path"]
@@ -48,7 +48,7 @@ def verify(root, commit):
             raise ValueError("Release integrity mismatch")
     if set(actual) != expected | {"manifest.json", "SHA256SUMS"}:
         raise ValueError("Incomplete or extra release files")
-    required = {"site/index.html", "site/app/privacy/index.html", "site/app/privacy/verify/index.html", "site/app/privacy/confidentialite/index.html", "site/LICENSE.txt", "site/NOTICE.txt", "site/THIRD_PARTY_NOTICES.txt", "site/TRADEMARKS.txt", "site/robots.txt", "site/release.json", "apache/rgpdesk.fr.conf", "apache/rgpdesk-bootstrap.conf", "verify-release.py"}
+    required = {"site/index.html", "site/app/privacy/index.html", "site/app/privacy/verify/index.html", "site/app/privacy/confidentialite/index.html", "site/app/privacy/guide/index.html", "site/LICENSE.txt", "site/NOTICE.txt", "site/THIRD_PARTY_NOTICES.txt", "site/TRADEMARKS.txt", "site/robots.txt", "site/release.json", "apache/rgpdesk.fr.conf", "apache/rgpdesk-bootstrap.conf", "verify-release.py"}
     if not required <= expected:
         raise ValueError("Missing required release files")
     sums = {}

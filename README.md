@@ -1,6 +1,10 @@
 # RGPDESK
 
-Prototype local RGPD, lots 0 à 3, dérivé de BLACKPROOF-AGPL sous AGPL-3.0-only.
+RGPDESK aide à décrire les traitements de données personnelles d’une organisation, tenir son registre RGPD, suivre les questions documentaires et préparer un dossier à partager après relecture.
+
+**Pour commencer : [guide utilisateur complet](docs/rgpd/GUIDE-UTILISATEUR.md)**, également accessible dans l’application à `/app/privacy/guide/`.
+
+Version expérimentale locale, lots 0 à 3, dérivée de BLACKPROOF-AGPL sous AGPL-3.0-only.
 Entrée : `/app/privacy/`. Distribution RGPDESK isolée : `pnpm build && pnpm privacy:release`.
 Coffre et sauvegarde chiffrés, registres responsable/sous-traitant, import CSV examiné, références documentaires, décisions et actions. Livraisons JSON/CSV/HTML par liste blanche, instantanés chiffrés et vérification locale navigateur/CLI. Identité RGPDESK distincte, sans ressource graphique distante. Aucun avis juridique automatique.
 Voir [la baseline](docs/rgpd/BASELINE.md) et les recettes [lot 1](docs/rgpd/LOT-1.md) et [lots 2 et 3](docs/rgpd/LOTS-2-3.md).

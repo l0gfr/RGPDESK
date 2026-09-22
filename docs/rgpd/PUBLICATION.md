@@ -18,13 +18,13 @@ python3 artifacts/rgpdesk/verify-release.py artifacts/rgpdesk "$(git rev-parse H
 
 `--candidate` autorise uniquement les essais locaux avec des fichiers non commités. Un tel artefact indique `dirtyWorktree: true` et le vérificateur de publication le refuse.
 
-Le générateur copie les trois pages RGPD, duplique l'entrée sur `/`, suit leurs dépendances compilées avec esbuild et conserve leurs octets. Il refuse les liens symboliques, chemins sortants, imports réseau et imports dynamiques non littéraux. Aucun remplacement de noms ou de formats cyber n'est effectué. Les quatre fichiers de licence et notices sont copiés sans modification. Les fichiers `robots.txt` et `release.json` complètent le site.
+Le générateur copie les quatre pages RGPD (application, guide utilisateur, confidentialité et vérificateur), duplique l'entrée sur `/`, suit leurs dépendances compilées avec esbuild et conserve leurs octets. Il refuse les liens symboliques, chemins sortants, imports réseau et imports dynamiques non littéraux. Aucun remplacement de noms ou de formats cyber n'est effectué. Les quatre fichiers de licence et notices sont copiés sans modification. Les fichiers `robots.txt` et `release.json` complètent le site.
 
 Le ZIP `artifacts/rgpdesk-release.zip` contient `site/`, les deux configurations Apache, un manifeste fermé, les SHA-256 et un vérificateur Python autonome. Les fichiers d'exploitation sont hors du document root. La configuration TLS contient la CSP extraite des pages exactes et le commit Git. L'artefact doit être construit après la dernière modification du code, puis qualifié sans reconstruire entre les tests et le transfert.
 
 ## CI et provenance
 
-`.github/workflows/rgpdesk.yml` tourne sur `main` et les PR. Il impose la suite complète de régression, les audits disponibles, les tests du générateur, le vérificateur Python et les 28 E2E RGPD sur la distribution isolée. L'artefact téléchargeable est lié au SHA du workflow. Les trois tests cyber conditionnels ignorés par la suite générale ne sont pas présentés comme réussis.
+`.github/workflows/rgpdesk.yml` tourne sur `main` et les PR. Il impose la suite complète de régression, les audits disponibles, les tests du générateur, le vérificateur Python et les E2E RGPD, y compris la documentation sans JavaScript, les liens et le rendu mobile, sur la distribution isolée. L'artefact téléchargeable est lié au SHA du workflow. Les trois tests cyber conditionnels ignorés par la suite générale ne sont pas présentés comme réussis.
 
 Un checksum identifie les octets ; il ne constitue pas une signature d'auteur. Vérifier le SHA de la source, le succès du workflow et le digest transmis par l'opérateur. Ne jamais exécuter ni activer une archive dont cette chaîne n'est pas établie.
 

@@ -1,6 +1,15 @@
 import { PrivacyError } from "@rgpdesk/privacy-core";
 
 export const fr = {
+  welcome: {
+    eyebrow: "Logiciel libre de registre RGPD",
+    title: "Votre registre RGPD.",
+    subtitle: "Du premier traitement",
+    ending: "au dossier partagé.",
+    description: "Décrivez comment votre organisation utilise les données personnelles : adhésions, personnel, relation client… Tenez vos fiches de traitement, suivez les points à examiner et préparez un registre à transmettre après relecture.",
+    start: "Commencer mon registre",
+    guide: "Lire le guide",
+  },
   unknown: "Inconnu / à examiner",
   saved: "Enregistré dans le coffre chiffré.",
   locked: "Coffre verrouillé. Les modifications non enregistrées ont été abandonnées.",

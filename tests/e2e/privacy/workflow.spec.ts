@@ -100,7 +100,7 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
   expect(bytes.toString()).not.toContain(organization);
   expect(bytes.toString()).not.toContain("NEVER_LEAK_INTERNAL_NOTE_7D31");
   expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
-  expect(await page.title()).toBe("RGPDESK | Coffre et registre local");
+  expect(await page.title()).toBe("RGPDESK | Votre registre RGPD, de la fiche au dossier partagé");
   expect(attempts).toEqual([]);
   expect(await page.evaluate(() => (window as unknown as { privacyNetworkCalls: string[] }).privacyNetworkCalls)).toEqual([]);
   expect(logs.join("\n")).not.toContain("NEVER_LEAK");
