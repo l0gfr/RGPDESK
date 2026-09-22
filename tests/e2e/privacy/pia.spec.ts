@@ -41,7 +41,8 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await atelier.getByRole("button", { name: "Enregistrer l’étude", exact: true }).click();
   await expect(atelier.getByText("Étude enregistrée dans le coffre", { exact: true })).toBeVisible();
   await atelier.getByRole("button", { name: /Avis & décision/ }).click();
-  await expect(atelier.getByLabel("Position à consigner").locator('option[value="proceed"]')).toBeDisabled();
+  // Native option.disabled is the guard; the generic enabled matcher follows the select.
+  await expect(atelier.getByRole("combobox", { name: "Position à consigner", exact: true }).locator('option[value="proceed"]')).toHaveJSProperty("disabled", true);
   await atelier.getByLabel("Auteur déclaré de la décision", { exact: true }).fill("Relecteur fictif");
   await atelier.getByLabel("Motifs et réserves de la décision", { exact: true }).fill("Vérifier les effets du projet avant toute décision.");
   await atelier.getByLabel("J’ai relu le dossier et je consigne une décision humaine, avec ses réserves.").check();
