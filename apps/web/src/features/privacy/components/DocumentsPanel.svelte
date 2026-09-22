@@ -20,7 +20,7 @@
 </script>
 <section class="panel">
   <div class="section-heading"><div><p class="eyebrow">Bibliothèque de références</p><h2>Les documents, à leur place.</h2></div><button disabled={busy} onclick={create}><Icon name="plus" />Ajouter une référence</button></div>
-  <p class="help">Rattachez un contrat, une notice ou une analyse. Le coffre conserve sa référence, jamais le fichier. Une référence disponible ne valide ni les clauses ni les faits déclarés.</p>
+  <p class="help">Rattachez un contrat, une notice ou une analyse. Le dossier conserve sa référence, jamais le fichier. Une référence disponible ne valide ni les clauses ni les faits déclarés.</p>
   {#if !workspace.documents.length && !draft}<div class="empty"><span class="icon-tile"><Icon name="documents" size={30} /></span><h3>Un dossier qui garde ses sources.</h3><p>Pour votre première activité, recherchez la notice remise aux personnes, le contrat du prestataire ou la procédure utilisée. Ajoutez leur titre, leur emplacement et le périmètre qu’ils couvrent.</p></div>{/if}
   <ul class="records">{#each workspace.documents as doc}<li><span class="record-icon"><Icon name="documents" /></span><div class="grow"><strong>{doc.title}</strong><p>{categories[doc.category]} · {doc.scope} · {doc.status === "reviewed" && doc.reviewedRevision === workspace.revision && (!doc.reviewDue || doc.reviewDue > new Date().toISOString().slice(0, 10)) ? "Revue déclarée" : "À réexaminer / déclaré"}</p></div><button class="secondary" disabled={busy} onclick={() => edit(doc)}>Examiner {doc.title}</button></li>{/each}</ul>
   {#if draft}<form class="subpanel" onsubmit={(e) => { e.preventDefault(); void save(); }}><fieldset disabled={busy}>

@@ -16,6 +16,20 @@ La CNIL présente le registre comme un outil de recensement et d’analyse des t
 
 ## 2. Votre premier registre, pas à pas
 
+### Essayer avant de créer un coffre
+
+Depuis l’accueil, **Explorer la démo** ouvre le dossier de **Maison Sillage**, un organisme entièrement fictif. Aucune phrase secrète ni inscription n’est nécessaire. Huit étapes vous conduisent du registre à la sauvegarde ; les rubriques latérales restent accessibles pour une visite libre.
+
+Le dossier comprend quatre activités, sept flux, quatre intervenants, quatre systèmes, quatre références documentaires, trois actions et une AIPD à approfondir. Vous pouvez modifier les exemples, importer un CSV fictif, examiner le contrat du prestataire de badges et consulter la revue conservée de l’AIPD. Les fondements juridiques, durées et conclusions manquants restent à examiner. Ces textes illustrent une démarche ; ils ne constituent ni un modèle de conformité, ni des pièces justificatives réelles.
+
+Dans **Partager un dossier**, utilisez **Charger la sélection d’exemple**, puis prévisualisez et relisez le contenu. Après votre confirmation, le ZIP contient le véritable rendu HTML, les tableaux CSV et les données JSON. Ouvrez `report.html` pour lire le dossier. Les notes internes et l’AIPD sont exclues de cet export, comme dans un coffre personnel.
+
+**La démo reste uniquement dans la mémoire de cet onglet.** Les essais et l’historique des partages disparaissent quand vous quittez la démo, rechargez la page ou atteignez le délai de verrouillage. Aucun coffre personnel n’est créé, modifié ou effacé. Les fichiers que vous avez téléchargés restent sur votre disque.
+
+Pour conserver une copie de l’exercice, **Sauvegarde** permet de choisir une phrase et de télécharger un fichier chiffré. Si vous décidez de le restaurer depuis l’accueil, un coffre fictif distinct sera créé explicitement ; aucun coffre existant ne sera remplacé. Pour votre travail réel, quittez la démo et créez votre propre registre vide.
+
+### Commencer votre propre registre
+
 Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emplacement pour vos sauvegardes. Pour commencer, utilisez Chrome ou Edge à jour sur ordinateur. Choisissez une première activité simple à décrire et rassemblez vos informations avant de saisir des données.
 
 1. Ouvrez [le registre](/app/privacy/). Dans **Créer le registre de mon organisation**, renseignez le nom de l’organisme et deux fois votre phrase secrète. Le minimum accepté est de 12 caractères ; la longueur et l’unicité restent importantes.

@@ -3,9 +3,9 @@
   import { hasNotes } from "../review-methods";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, mode, busy, onEdit, onRegister, onPia }: { workspace: Workspace; mode: "analysis" | "flows"; busy: boolean; onEdit: (activity: Activity, section: "analysis" | "flows") => void; onRegister: () => void; onPia: () => void } = $props();
+  let { workspace, mode, busy, initialActivityId, onEdit, onRegister, onPia }: { workspace: Workspace; mode: "analysis" | "flows"; busy: boolean; initialActivityId?: string; onEdit: (activity: Activity, section: "analysis" | "flows") => void; onRegister: () => void; onPia: () => void } = $props();
   let selected = $state("");
-  let activity = $derived(workspace.activities.find((item) => item.id === selected) ?? workspace.activities[0]);
+  let activity = $derived(workspace.activities.find((item) => item.id === selected) ?? workspace.activities.find((item) => item.id === initialActivityId) ?? workspace.activities[0]);
 </script>
 <section class="panel analysis-overview">
   <div class="section-heading"><div><p class="eyebrow">{mode === "flows" ? "Voir les usages réels" : "Argumenter vos choix"}</p><h2>{mode === "flows" ? "Les données ont un parcours." : "Une appréciation se construit."}</h2></div><span class="icon-tile"><Icon name={mode} size={34} /></span></div>

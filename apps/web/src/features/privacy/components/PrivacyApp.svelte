@@ -21,8 +21,16 @@
   import RelationsEditor from "./RelationsEditor.svelte";
   import MissionOverview from "./MissionOverview.svelte";
   import ActivityStarter from "./ActivityStarter.svelte";
+  import { DemoSession } from "../demo-session";
+  import DemoOverview from "./DemoOverview.svelte";
+  import DemoGuide from "./DemoGuide.svelte";
   import type { StartingPoint } from "../guidance";
 
+  let demo = $state(false);
+  let hydrated = $state(false);
+  let demoSession: DemoSession | undefined;
+  let demoPhrase = $state("");
+  let demoConfirmation = $state("");
   let ready = $state(false);
   let inventoryStatus: "loading" | "ready" | "error" = $state("loading");
   let storageOrigin = $state("");
@@ -66,6 +74,12 @@
   function lock(text: string = fr.locked) {
     controller.abort();
     controller = new AbortController();
+    demoSession?.clear();
+    demoSession = undefined;
+    demo = false;
+    demoPhrase = demoConfirmation = "";
+    showWipe = false;
+    wipeConfirmation = "";
     phrase = "";
     phraseInput = "";
     confirmation = "";
@@ -92,7 +106,7 @@
   }
 
   async function run(action: (current: VaultSession) => Promise<void>) {
-    if (!ready || busy || stale) return;
+    if ((!ready && !demo) || busy || stale) return;
     const current = session();
     busy = true;
     message = "";
@@ -110,6 +124,25 @@
     checkSession(current);
     workspaceHeading?.focus({ preventScroll: true });
     workspaceHeading?.scrollIntoView({ block: "start" });
+  }
+
+  async function exploreDemo() {
+    if (!hydrated || master || busy || stale) return;
+    lock("");
+    demo = true;
+    await run(async (current) => {
+      const created = new DemoSession(() => crypto.randomUUID(), now());
+      checkSession(current);
+      demoSession = created;
+      master = created.read();
+      await revealWorkspace(current);
+    });
+    if (!master) demo = false;
+  }
+  function leaveDemo() {
+    lock("Démo terminée. Vos coffres personnels n’ont pas été modifiés.");
+    void inventory?.refresh();
+    void tick().then(() => document.getElementById("explorer-demo")?.focus());
   }
 
   async function create() {
@@ -146,11 +179,12 @@
 
   async function persist(next: Workspace, current: VaultSession) {
     if (!master) throw new PrivacyError("LOCKED");
-    await vault!.save(next, phrase, master.revision, current);
+    if (demoSession) next = demoSession.save(next);
+    else await vault!.save(next, phrase, master.revision, current);
     checkSession(current);
     master = next;
     editor = null;
-    message = fr.saved;
+    message = demo ? "Modifications conservées pour cette visite uniquement." : fr.saved;
   }
 
   function startActivity(role: Activity["role"], example?: StartingPoint) {
@@ -186,6 +220,13 @@
       if (!master || prepared.workspaceId !== master.id || prepared.revision !== master.revision) throw new PrivacyError("CONFLICT");
       const bytes = await zipFiles(prepared.files);
       checkSession(current);
+      if (demoSession) {
+        const next = await demoSession.deliver(master.id, prepared.revision, prepared.register, prepared.files);
+        checkSession(current); master = next;
+        download(bytes, "rgpdesk-demonstration-dossier.zip");
+        message = "Dossier fictif préparé. Son historique reste dans cette visite uniquement.";
+        return;
+      }
       const next = await vault!.deliver($state.snapshot(master), prepared.register, prepared.files, prepared.revision, phrase, current);
       checkSession(current); master = next;
       await vault!.assertCurrent(next.id, next.revision, current);
@@ -197,10 +238,11 @@
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
       const frozen = $state.snapshot(master);
-      const files = await vault!.deliveryFiles(frozen, id, phrase, current);
+      const practice = demoSession;
+      const files = practice ? practice.files(id) : await vault!.deliveryFiles(frozen, id, phrase, current);
       const bytes = await zipFiles(files);
-      await vault!.assertCurrent(frozen.id, frozen.revision, current);
-      checkSession(current); download(bytes, "rgpdesk-dossier.zip");
+      if (!practice) await vault!.assertCurrent(frozen.id, frozen.revision, current);
+      checkSession(current); download(bytes, practice ? "rgpdesk-demonstration-dossier.zip" : "rgpdesk-dossier.zip");
       message = "Instantané historique préparé, sans recalcul avec les données actuelles.";
     });
   }
@@ -209,18 +251,24 @@
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
       const snapshot = $state.snapshot(master);
-      const text = await vault!.backup(snapshot, phrase, current);
+      const practice = demoSession;
+      if (practice) {
+        if (demoPhrase !== demoConfirmation) throw new PrivacyError("INVALID");
+        assertLocalPassphrase(demoPhrase);
+      }
+      const text = practice ? await practice.backup(demoPhrase) : await vault!.backup(snapshot, phrase, current);
       // Final guard immediately before the synchronous download gesture.
-      await vault!.assertCurrent(snapshot.id, snapshot.revision, current);
+      if (!practice) await vault!.assertCurrent(snapshot.id, snapshot.revision, current);
       checkSession(current);
       const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
       const anchor = document.createElement("a");
       try {
         anchor.href = url;
-        anchor.download = "rgpdesk-sauvegarde.rgpdesk";
+        anchor.download = practice ? "rgpdesk-demonstration.rgpdesk" : "rgpdesk-sauvegarde.rgpdesk";
         document.body.append(anchor);
         anchor.click();
       } finally { anchor.remove(); URL.revokeObjectURL(url); }
+      demoPhrase = demoConfirmation = "";
       backupRevision = snapshot.revision;
       message = "Sauvegarde chiffrée préparée. Vérifiez le fichier téléchargé et conservez-le séparément de cet appareil.";
     });
@@ -249,7 +297,7 @@
   }
 
   async function wipe() {
-    if (wipeConfirmation !== "EFFACER" || busy || stale) return;
+    if (demo || wipeConfirmation !== "EFFACER" || busy || stale) return;
     lock();
     busy = true;
     try {
@@ -262,6 +310,7 @@
   }
 
   onMount(() => {
+    hydrated = true;
     let disposed = false;
     vault = new PrivacyVault();
     storageOrigin = window.location.origin;
@@ -300,7 +349,8 @@
 </script>
 
 <div data-rgpdesk-ready={ready ? "true" : "false"} class="privacy-app">
-  <div class="notice-strip"><span class="status-dot" aria-hidden="true"></span> Espace local & confidentiel <span><Icon name="lock" size={14} /> Chiffrement sur cet appareil</span></div>
+  <div class="notice-strip"><span class="status-dot" aria-hidden="true"></span> {demo ? "Démonstration interactive" : "Espace local & confidentiel"} <span><Icon name={demo ? "eye" : "lock"} size={14} /> {demo ? "Exercice fictif en mémoire uniquement" : "Chiffrement sur cet appareil"}</span></div>
+  {#if demo}<aside class="demo-mode" aria-label="Mode démonstration"><span class="demo-mode-tag">DÉMO</span><p><strong>Essayez avec des données fictives.</strong> Cette visite disparaît à la fermeture ou au rechargement. Aucun coffre personnel n’est modifié.</p><button class="text-button" onclick={leaveDemo}>Quitter la démo <Icon name="arrow" size={16} /></button></aside>{/if}
   {#if error}<p class="notice error" role="alert">{error}</p>{/if}
   {#if message}<p class="notice" role="status">{message}</p>{/if}
   {#if stale}<a class="button" href="/app/privacy/">Recharger l’application</a>{/if}
@@ -308,24 +358,25 @@
 
   {#if master}
     <div class="desk-layout">
-    <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>VOTRE ESPACE</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
+    <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>{demo ? "DOSSIER FICTIF" : "VOTRE ESPACE"}</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
       {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
         <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" ? "analysis" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
       {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" ? "analysis" : key} /><span>{label}</span></button>{/each}</nav>
-      <div class="sidebar-security"><Icon name="shield" size={25} /><strong>Votre appareil. Votre coffre.</strong><p>Les informations restent ici. Pensez à votre sauvegarde chiffrée.</p></div>
+      <div class="sidebar-security"><Icon name="shield" size={25} /><strong>{demo ? "Un espace pour essayer." : "Votre appareil. Votre coffre."}</strong><p>{demo ? "L’exercice reste en mémoire dans cet onglet. Aucun enregistrement automatique." : "Les informations restent ici. Pensez à votre sauvegarde chiffrée."}</p></div>
     </aside><div class="desk-workspace">
-    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => lock()}><Icon name="lock" />Verrouiller le coffre</button></header>
-    <p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>
+    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
+    {#if !demo}<p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>{/if}
+    {#if demo && !editor}<DemoGuide {panel} busy={busy || piaEditing} onNavigate={(next) => panel = next} />{/if}
     {#if editor}
       <p class="help">Enregistrez avant de quitter cette fiche. Le verrouillage abandonne les modifications non enregistrées.</p>
       {#key editor.id}<ActivityEditor initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if panel === "overview"}
-      <MissionOverview workspace={master} {busy} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />
+      {#if demo}<DemoOverview {busy} onNavigate={(next) => panel = next} />{:else}<MissionOverview workspace={master} {busy} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
     {:else if panel === "pia"}
       <PiaPanel workspace={master} {busy} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
     {:else if panel === "analysis" || panel === "flows"}
-      {#key panel}<AnalysisOverview workspace={master} mode={panel} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
+      {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo && panel === "analysis" ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
       {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button></div></aside>{/if}
       {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}
@@ -350,13 +401,15 @@
     {:else if panel === "actions"}
       {#key master.revision}<ActionsPanel workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} />{/key}
     {:else if panel === "delivery"}
-      {#key master.revision}<DeliveryPanel workspace={$state.snapshot(master)} {busy} onDeliver={deliver} onDownload={downloadDelivery} />{/key}
+      {#key master.revision}<DeliveryPanel workspace={$state.snapshot(master)} {busy} {demo} onDeliver={deliver} onDownload={downloadDelivery} />{/key}
     {:else}
-      <section class="panel"><h2>Sauvegarde chiffrée</h2><p>Elle contient tout cet espace, y compris les notes internes. Elle sert à la restauration et n’est pas un dossier à partager avec un client.</p><p>La même phrase secrète sera nécessaire. Aucun service ne peut la récupérer pour vous.</p><button disabled={busy} onclick={downloadBackup}>Télécharger la sauvegarde chiffrée</button><p class="help">Pour tester la restauration, ouvrez RGPDESK sur un autre profil navigateur. Toute collision avec un espace existant est refusée.</p></section>
+      {#if demo}<section class="panel demo-backup"><div class="section-heading"><div><p class="eyebrow">L’exercice vous appartient aussi</p><h2>Essayez une vraie sauvegarde chiffrée.</h2></div><span class="icon-tile"><Icon name="backup" size={30} /></span></div><p>Choisissez une phrase propre à cette copie fictive. Le fichier contient tout le dossier de démonstration et les versions partagées pendant la visite. Aucun coffre n’est créé sur cet appareil.</p><form onsubmit={(e) => { e.preventDefault(); void downloadBackup(); }}><fieldset disabled={busy}><div class="grid-two"><label class="field">Phrase pour la sauvegarde de démonstration<input type="password" required minlength="12" maxlength="1024" autocomplete="new-password" bind:value={demoPhrase} /></label><label class="field">Confirmer la phrase de démonstration<input type="password" required maxlength="1024" autocomplete="new-password" bind:value={demoConfirmation} /></label></div><p class="help">Préférez une phrase longue et unique. Elle sera nécessaire pour restaurer le fichier ; elle ne peut pas être récupérée.</p><button disabled={!demoPhrase || demoPhrase !== demoConfirmation} type="submit">Chiffrer et télécharger l’exercice</button></fieldset></form><p class="help">Pour essayer la restauration, quittez la démo puis utilisez « Restaurer une sauvegarde chiffrée ». Ce geste créera un coffre fictif distinct ; aucun coffre existant ne sera écrasé.</p></section>{:else}
+      <section class="panel"><h2>Sauvegarde chiffrée</h2><p>Elle contient tout cet espace, y compris les notes internes. Elle sert à la restauration et n’est pas un dossier à partager avec un client.</p><p>La même phrase secrète sera nécessaire. Aucun service ne peut la récupérer pour vous.</p><button disabled={busy} onclick={downloadBackup}>Télécharger la sauvegarde chiffrée</button><p class="help">Pour tester la restauration, ouvrez RGPDESK sur un autre profil navigateur. Toute collision avec un espace existant est refusée.</p></section>{/if}
     {/if}
     <p class="catalog-caption">Un doute pendant votre travail ? <a href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">Retrouver une explication dans le guide</a>.</p></div></div>
   {:else}
-    <div class="welcome-hero"><header class="intro"><p class="eyebrow"><span class="eyebrow-line"></span>{fr.welcome.eyebrow}</p><h1>{fr.welcome.title}<br /><em>{fr.welcome.subtitle}</em></h1><p>{fr.welcome.description}</p><div class="actions hero-actions"><a class="button" href="#creer-registre">{fr.welcome.start} <Icon name="arrow" size={17} /></a><a class="button secondary" href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">{fr.welcome.guide}</a></div><div class="trust-row"><span><Icon name="lock" size={17} />Coffre chiffré</span><span><Icon name="shield" size={17} />Sans compte</span><span><Icon name="documents" size={17} />Partage choisi</span></div></header><ProcessingAtlas /></div>
+    <div class="welcome-hero"><header class="intro"><p class="eyebrow"><span class="eyebrow-line"></span>{fr.welcome.eyebrow}</p><h1>{fr.welcome.title}<br /><em>{fr.welcome.subtitle}</em></h1><p>{fr.welcome.description}</p><div class="actions hero-actions"><button id="explorer-demo" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Explorer la démo <Icon name="arrow" size={17} /></button><a class="button secondary" href="#creer-registre">{fr.welcome.start}</a></div><p class="hero-demo-caption">Un dossier déjà rempli. Sans compte, sans phrase secrète à créer.</p><div class="trust-row"><span><Icon name="lock" size={17} />Coffre chiffré</span><span><Icon name="shield" size={17} />Sans compte</span><span><Icon name="documents" size={17} />Partage choisi</span></div></header><ProcessingAtlas /></div>
+    <section class="demo-invitation"><span class="demo-invitation-mark" aria-hidden="true">S.</span><div><p class="eyebrow">Entrez dans un dossier, pas devant une page vide</p><h2>Rencontrez Maison Sillage.</h2><p>4 activités, 7 flux, une AIPD et un dossier à partager. Un cas fictif pour essayer les gestes de votre prochaine mission.</p></div><button class="secondary" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Ouvrir le dossier fictif <Icon name="arrow" /></button></section>
     <p class="business-entry"><Icon name="book" size={20} /><a href="/app/privacy/guide/#trames-metier" target="_blank" rel="noopener noreferrer">Préparer un entretien : 6 trames métier sourcées</a><span>Recrutement · RH · Clients · Associations · Contact · Prestations</span></p>
     <section class="use-cases" aria-label="Ce que vous pouvez faire avec RGPDESK">
       <article><Pictogram kind="register" /><p class="eyebrow">01 / Décrire</p><h2>Un registre structuré.</h2><p>Une fiche par activité : pourquoi ces données, pour quelles personnes, avec quels intervenants et quelles mesures.</p></article>
@@ -398,6 +451,6 @@
   {/if}
 
   <aside class="limits"><span class="icon-tile"><Icon name="shield" size={24} /></span><div><h2>Vous documentez. Vous gardez les décisions.</h2><p>Ni score de conformité, ni choix juridique automatique. Aucun upload, compte ou synchronisation. N’insérez pas de listes de personnes, mots de passe ou pièces d’identité.</p><p>Verrouillage après 15 minutes d’inactivité ou 1 minute en arrière-plan. Le chiffrement ne protège pas une session ouverte sur un poste ou navigateur compromis. Les modifications non enregistrées sont abandonnées au verrouillage.</p><p>Le travail peut continuer sans réseau après chargement de la page. Le rechargement hors ligne n’est pas garanti.</p></div></aside>
-  <button class="text-button danger" disabled={!ready || busy || stale} onclick={() => showWipe = !showWipe}>Effacer les coffres RGPDESK de ce profil</button>
-  {#if showWipe}<section class="panel danger-panel"><h2>Effacement local</h2><p>Tous les espaces RGPDESK de cette origine et de ce profil seront effacés. Les fichiers téléchargés, sauvegardes externes, captures et copies système ne seront pas effacés. Sauvegardez avant de poursuivre.</p><label class="field"><span>Saisissez EFFACER</span><input autocomplete="off" bind:value={wipeConfirmation} /></label><button disabled={wipeConfirmation !== "EFFACER" || busy || stale} onclick={wipe}>Confirmer l’effacement local</button></section>{/if}
+  {#if !demo}<button class="text-button danger" disabled={!ready || busy || stale} onclick={() => showWipe = !showWipe}>Effacer les coffres RGPDESK de ce profil</button>
+  {#if showWipe}<section class="panel danger-panel"><h2>Effacement local</h2><p>Tous les espaces RGPDESK de cette origine et de ce profil seront effacés. Les fichiers téléchargés, sauvegardes externes, captures et copies système ne seront pas effacés. Sauvegardez avant de poursuivre.</p><label class="field"><span>Saisissez EFFACER</span><input autocomplete="off" bind:value={wipeConfirmation} /></label><button disabled={wipeConfirmation !== "EFFACER" || busy || stale} onclick={wipe}>Confirmer l’effacement local</button></section>{/if}{/if}
 </div>

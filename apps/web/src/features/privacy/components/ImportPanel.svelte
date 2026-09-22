@@ -25,7 +25,7 @@
   async function save() {
     if (!table || !accepted) return;
     try { await onSave(commitCsv(workspace, table, mapping, encoding, delimiter, () => crypto.randomUUID(), new Date().toISOString())); }
-    catch { error = "Import non enregistré. Vérifiez le mapping, les limites et la révision du coffre."; }
+    catch { error = "Import non enregistré. Vérifiez le mapping, les limites et la révision du dossier."; }
   }
   onDestroy(() => { generation++; });
 </script>
@@ -50,5 +50,5 @@
       <button disabled={busy || !accepted || !preview.activities.length} onclick={save}>Importer les fiches examinées</button>
     {/if}<button class="secondary" disabled={busy} onclick={reset}>Annuler l’import</button>
   {/if}
-  {#if workspace.imports.length}<details class="subpanel"><summary>Provenances conservées dans le coffre ({workspace.imports.length})</summary>{#each workspace.imports as batch}<p>{batch.at} · {batch.acceptedRows.length} ajout(s) · {batch.rejectedRows.length} rejet(s) · {batch.ignoredColumns.length} colonne(s) ignorée(s). Mapping et numéros de ligne conservés ; aucun contenu brut.</p>{/each}</details>{/if}
+  {#if workspace.imports.length}<details class="subpanel"><summary>Provenances du dossier ({workspace.imports.length})</summary>{#each workspace.imports as batch}<p>{batch.at} · {batch.acceptedRows.length} ajout(s) · {batch.rejectedRows.length} rejet(s) · {batch.ignoredColumns.length} colonne(s) ignorée(s). Mapping et numéros de ligne conservés ; aucun contenu brut.</p>{/each}</details>{/if}
 </section>

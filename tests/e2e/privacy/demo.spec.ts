@@ -1,0 +1,113 @@
+import { test, expect, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import JSZip from "jszip";
+
+const phrase = "Fictional practice backup phrase 2026!";
+async function ready(page: Page) { await page.goto("/app/privacy/"); await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible(); }
+async function demo(page: Page) {
+  await page.getByRole("button", { name: "Explorer la démo", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Prenez la place du DPO.", exact: true })).toBeVisible();
+}
+async function nav(page: Page, name: string) { await page.getByRole("button", { name, exact: true }).click(); }
+async function stored(page: Page) {
+  return page.evaluate(async () => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => { const r = indexedDB.open("rgpdesk-vault-v1"); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error); });
+    try {
+      const stores = Array.from(db.objectStoreNames);
+      const tx = db.transaction(stores, "readonly");
+      return await Promise.all(stores.map((name) => new Promise((resolve, reject) => { const r = tx.objectStore(name).getAll(); r.onsuccess = () => resolve([name, r.result]); r.onerror = () => reject(r.error); })));
+    } finally { db.close(); }
+  });
+}
+test("practice does not write browser storage or change an existing encrypted vault", async ({ page, context }) => {
+  await ready(page);
+  await page.getByLabel("Nom de l’organisme", { exact: true }).fill("Existing fictitious organization");
+  await page.getByLabel("Nouvelle phrase secrète", { exact: true }).fill(phrase);
+  await page.getByLabel("Confirmer la phrase secrète", { exact: true }).fill(phrase);
+  await page.getByLabel("Je comprends qu’une phrase perdue").check(); await nav(page, "Créer le coffre chiffré");
+  await nav(page, "Verrouiller le coffre");
+  const before = await stored(page);
+  const browserStorage = await page.evaluate(() => ({ local: { ...localStorage }, session: { ...sessionStorage } }));
+  const calls: string[] = []; page.on("request", (request) => calls.push(request.method()));
+  await context.setOffline(true); await demo(page); await nav(page, "Registre");
+  await nav(page, "Modifier Recrutement · exemple fictif");
+  await page.getByLabel("Nom de l’activité", { exact: true }).fill("Fictional edited demonstration");
+  await nav(page, "Enregistrer la fiche");
+  await expect(page.getByRole("status")).toHaveText("Modifications conservées pour cette visite uniquement.");
+  await nav(page, "Quitter la démo");
+  await expect(page.getByRole("button", { name: "Ouvrir le coffre 1", exact: true })).toBeVisible();
+  expect(await stored(page)).toEqual(before);
+  expect(await page.evaluate(() => ({ local: { ...localStorage }, session: { ...sessionStorage } }))).toEqual(browserStorage);
+  expect(calls).toEqual([]);
+  await nav(page, "Ouvrir le coffre 1"); await page.getByLabel("Phrase secrète du coffre", { exact: true }).fill(phrase); await nav(page, "Déverrouiller");
+  await expect(page.getByRole("heading", { name: "Existing fictitious organization", exact: true })).toBeVisible();
+  await nav(page, "Registre"); await expect(page.locator(".activity-records li")).toHaveCount(0);
+});
+
+test("guided practice exposes populated register, flows, PIA history and every panel without overflow", async ({ page }, testInfo) => {
+  await ready(page); await demo(page);
+  for (const width of [1440, 1024, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `overview ${width}`).toBe(true);
+    if (width === 1440 || width === 390) await page.screenshot({ path: testInfo.outputPath(`demo-overview-${width}.png`), fullPage: true });
+  }
+  await nav(page, "Commencer par le registre"); await expect(page.locator(".activity-records li")).toHaveCount(4);
+  await page.getByRole("complementary", { name: "Repère de démonstration", exact: true }).getByRole("button", { name: "Étape suivante", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Votre carte des flux.", exact: true })).toBeVisible();
+  await nav(page, "AIPD / PIA"); await nav(page, "Lire le dossier");
+  await page.getByLabel("Version du dossier", { exact: true }).selectOption("0");
+  await expect(page.getByRole("region", { name: "Atelier AIPD", exact: true })).toContainText("Réexaminer le projet");
+  await expect(page.getByRole("region", { name: "Atelier AIPD", exact: true })).toContainText("Aucune mise en œuvre autorisée");
+  await nav(page, "Fermer l’étude");
+  for (const name of ["Registre", "Cartographie", "Analyse", "Organisation", "Intervenants", "Systèmes", "Documents", "Actions & décisions", "Importer un CSV", "Partager un dossier", "Sauvegarde"]) {
+    await nav(page, name);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), name).toBe(true);
+    await expect(page.getByRole("complementary", { name: "Mode démonstration", exact: true })).toBeVisible();
+  }
+  await expect(page.getByRole("button", { name: "Effacer les coffres RGPDESK de ce profil", exact: true })).toHaveCount(0);
+  await page.reload(); await expect(page.getByRole("button", { name: "Explorer la démo", exact: true })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /^Ouvrir le coffre/ })).toHaveCount(0);
+});
+
+test("practice delivers a verified fictional ZIP then a real encrypted restorable backup, without storing a vault", async ({ page }) => {
+  test.setTimeout(90_000);
+  await ready(page); const before = await stored(page); await demo(page); await nav(page, "Partager un dossier");
+  await nav(page, "Charger la sélection d’exemple"); await nav(page, "Prévisualiser le dossier");
+  await expect(page.getByRole("table")).toContainText("DÉMONSTRATION FICTIVE");
+  await expect(page.getByRole("table")).not.toContainText("NOTE INTERNE");
+  await expect(page.getByRole("button", { name: "Confirmer et télécharger le dossier", exact: true })).toBeDisabled();
+  await page.getByLabel("J’ai relu ce contenu en clair").check();
+  const zipDownload = page.waitForEvent("download"); await nav(page, "Confirmer et télécharger le dossier");
+  const downloaded = await zipDownload; expect(downloaded.suggestedFilename()).toBe("rgpdesk-demonstration-dossier.zip");
+  const bytes = await readFile((await downloaded.path())!); const zip = await JSZip.loadAsync(bytes);
+  expect(Object.keys(zip.files).sort()).toEqual(["README.txt", "manifest.json", "register.csv", "register.json", "report.html"]);
+  for (const entry of Object.values(zip.files)) expect(await entry.async("string")).not.toContain("NOTE INTERNE");
+  await nav(page, "Sauvegarde");
+  await page.getByLabel("Phrase pour la sauvegarde de démonstration", { exact: true }).fill(phrase);
+  await page.getByLabel("Confirmer la phrase de démonstration", { exact: true }).fill(phrase);
+  const backupDownload = page.waitForEvent("download"); await nav(page, "Chiffrer et télécharger l’exercice");
+  const backup = await backupDownload; const backupBytes = await readFile((await backup.path())!);
+  expect(backupBytes.toString()).not.toContain("Sillage");
+  expect(JSON.parse(backupBytes.toString()).envelope.iterations).toBe(600_000);
+  expect(await stored(page)).toEqual(before);
+  await nav(page, "Quitter la démo");
+  await page.getByText("Restaurer une sauvegarde chiffrée", { exact: true }).click();
+  await page.getByLabel("Fichier de sauvegarde RGPDESK", { exact: true }).setInputFiles({ name: "demo.rgpdesk", mimeType: "application/json", buffer: backupBytes });
+  await page.getByLabel("Phrase secrète de la sauvegarde", { exact: true }).fill(phrase);
+  await page.getByLabel("Je souhaite réintroduire les données").check(); await nav(page, "Restaurer dans ce navigateur");
+  await expect(page.getByRole("button", { name: "Verrouiller le coffre", exact: true })).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Mode démonstration", exact: true })).toHaveCount(0);
+  await nav(page, "Partager un dossier");
+  const originalDownload = page.waitForEvent("download"); await nav(page, "Télécharger l’instantané");
+  expect(await readFile((await (await originalDownload).path())!)).toEqual(bytes);
+});
+
+test("the volatile demonstration remains usable when IndexedDB is unavailable", async ({ page }) => {
+  await page.addInitScript(() => { IDBFactory.prototype.open = () => { throw new DOMException("Unavailable", "SecurityError"); }; });
+  await page.goto("/app/privacy/");
+  await expect(page.getByText("La liste des coffres n’a pas pu être lue.", { exact: false })).toBeVisible();
+  await demo(page); await nav(page, "Registre");
+  await expect(page.locator(".activity-records li")).toHaveCount(4);
+  await nav(page, "Quitter la démo");
+  await expect(page.getByRole("button", { name: "Créer le coffre chiffré", exact: true })).toBeDisabled();
+});

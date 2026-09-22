@@ -55,7 +55,7 @@
   <form bind:this={form} onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <fieldset disabled={busy}>
       {#if section === "analysis"}
-        <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Documenter la nécessité et la proportionnalité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au coffre ; leur saisie ne vaut pas validation.</p></div>
+        <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Documenter la nécessité et la proportionnalité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au dossier ; leur saisie ne vaut pas validation.</p></div>
         <KnowledgeField label="Opérations détaillées du traitement" bind:value={draft.analysis.operations} hint="Décrivez la collecte, l’enregistrement, les consultations, les calculs ou rapprochements, les transmissions, l’archivage et l’effacement, selon le fonctionnement réel." />
         <KnowledgeField label="Personnes habilitées et droits d’accès" bind:value={draft.analysis.access} hint="Décrivez les rôles, équipes ou organismes autorisés, leurs droits de lecture, modification, extraction ou suppression et le circuit d’autorisation. Pas de liste nominative." />
         <ReviewNotebook bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" />
@@ -64,7 +64,7 @@
       {:else}
       {#if whole || step === 0}<div class="grid-two">
         <label class="field"><span>Nom de l’activité</span><input required maxlength="160" bind:value={draft.title} /></label>
-        <label class="field"><span>État de la fiche</span><select bind:value={draft.status}><option value="draft">Brouillon</option><option value="active">Active, état déclaré</option><option value="archived">Archivée, conservée dans le coffre</option></select></label>
+        <label class="field"><span>État de la fiche</span><select bind:value={draft.status}><option value="draft">Brouillon</option><option value="active">Active, état déclaré</option><option value="archived">Archivée, conservée dans le dossier</option></select></label>
       </div>
       <p class="help">Le rôle est fixé à la création de cette fiche. Un organisme peut avoir des activités dans les deux registres.</p>
       {/if}
