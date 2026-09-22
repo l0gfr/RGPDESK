@@ -46,3 +46,5 @@ La lecture du dossier est interne. Export AIPD par liste blanche avec revue, int
 ## Recette
 
 Tests métier : migrations sans mutation, inconnus, bornes/relations, historique conservé, modification de contexte, poursuite sous-traitante refusée, réduction non étayée, conflits, canaris de fuite dans le partage. Adaptateur : WebCrypto réel, ouverture d’une enveloppe v3 intacte, sauvegarde/restauration v4 et revue exacte. Navigateur : saisie hors réseau, sauvegarde, décision, ancien contexte après modification, réouverture, texte hostile échappé, aucun contenu métier dans les requêtes ou logs. Les résultats d’exécution sont consignés dans le compte rendu de livraison ; l’existence des tests n’atteste pas leur réussite.
+
+La grille affichée dans l’AIPD est distincte de celle de l’analyse RGPD ordinaire. Ses identifiants et les notes historiques sont conservés ; les reformulations de l’analyse courante ne remplacent pas les questions utilisées pour lire les revues AIPD. Les notes de la fiche sont reprises une fois à la création de l’étude et doivent être réexaminées dans le contexte de l’AIPD.

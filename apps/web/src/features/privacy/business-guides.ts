@@ -13,8 +13,8 @@ export const businessSources = {
   subcontracting: { title: "CNIL · Sécurité de la sous-traitance", url: "https://www.cnil.fr/fr/securite-gerer-la-sous-traitance", nature: "Guide de sécurité CNIL", edition: "14 mars 2024" },
   access: { title: "CNIL · Gérer les habilitations", url: "https://www.cnil.fr/fr/securite-gerer-les-habilitations", nature: "Guide de sécurité CNIL", edition: "Page consultée le 22 septembre 2026" },
   retention: { title: "CNIL · Cycle de vie et conservation", url: "https://www.cnil.fr/fr/passer-laction/les-durees-de-conservation-des-donnees", nature: "Explications de la CNIL", edition: "2 avril 2026" },
-  principles: { title: "RGPD · Principes et licéité", url: "https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre2", nature: "Texte du règlement, reproduit par la CNIL", edition: "Articles 5, 6, 9 et 10" },
-  obligations: { title: "RGPD · Responsable et sous-traitant", url: "https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4", nature: "Texte du règlement, reproduit par la CNIL", edition: "Articles 28, 30 et 32" },
+  principles: { title: "RGPD · Principes et licéité", url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr", nature: "Texte applicable, Journal officiel de l’Union européenne", edition: "Articles 5, 6, 9 et 10" },
+  obligations: { title: "RGPD · Responsable et sous-traitant", url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr", nature: "Texte applicable, Journal officiel de l’Union européenne", edition: "Articles 28, 30 et 32" },
 } as const;
 export type BusinessSourceId = keyof typeof businessSources;
 export interface InterviewQuestion {

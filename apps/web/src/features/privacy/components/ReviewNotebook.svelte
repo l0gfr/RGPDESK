@@ -4,7 +4,8 @@
   import { hasNotes, REVIEW_EDITION } from "../review-methods";
   import KnowledgeField from "./KnowledgeField.svelte";
   import Icon from "./Icon.svelte";
-  let { notes = $bindable(), questions, prefix }: { notes: ReviewNote[]; questions: readonly ReviewQuestion[]; prefix: string } = $props();
+  import LegitimateInterestGuide from "./LegitimateInterestGuide.svelte";
+  let { notes = $bindable(), questions, prefix, legitimateInterest = false }: { notes: ReviewNote[]; questions: readonly ReviewQuestion[]; prefix: string; legitimateInterest?: boolean } = $props();
 </script>
 <div class="review-notebook">
   <p class="method-caption">{REVIEW_EDITION}. Vos appréciations restent à motiver, même lorsqu’un justificatif est référencé.</p>
@@ -16,6 +17,7 @@
         <p class="method-question">{question.question}</p>
         <p class="method-evidence"><Icon name="documents" size={17} /><span><strong>Sur quoi vous appuyer</strong>{question.evidence}</span></p>
         <a class="method-source" href={question.source} target="_blank" rel="noopener noreferrer">{question.reference}<span>{question.nature} · source consultée le 22 septembre 2026</span></a>
+        {#if legitimateInterest && note.questionId === "lawfulness"}<LegitimateInterestGuide />{/if}
         <KnowledgeField label={`${prefix} ${index + 1} · Faits recueillis`} bind:value={note.facts} hint="Décrivez ce qui a été observé ou déclaré, avec son périmètre. Une affirmation à vérifier reste une affirmation." />
         <KnowledgeField label={`${prefix} ${index + 1} · Éléments de preuve et références`} bind:value={note.evidence} hint="Référence précise, version, date, clause ou passage utile. Conservez les fichiers dans votre organisation." />
         <KnowledgeField label={`${prefix} ${index + 1} · Objections et incertitudes`} bind:value={note.objections} hint="Consignez aussi ce qui contredit l’hypothèse et les réponses que vous n’avez pas encore." />

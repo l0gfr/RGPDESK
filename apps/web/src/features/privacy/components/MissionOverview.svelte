@@ -10,7 +10,7 @@
     { panel: "organization", icon: "organization", title: "Cadrer votre mission", text: "Précisez l’organisme, les contacts et le périmètre que vous accompagnez.", action: "Décrire l’organisation" },
     { panel: "register", icon: "register", title: "Rencontrer les métiers", text: "Choisissez une activité, préparez l’entretien et consignez ce que vous apprenez.", action: "Ouvrir le registre" },
     { panel: "flows", icon: "flows", title: "Suivre les données", text: "Décrivez les opérations, les origines, les destinations et les accès connus.", action: "Voir la cartographie" },
-    { panel: "analysis", icon: "analysis", title: "Construire votre analyse", text: "Confrontez les faits et les arguments pour motiver la nécessité et la proportionnalité.", action: "Ouvrir la grille" },
+    { panel: "analysis", icon: "analysis", title: "Construire votre analyse", text: "Examinez les finalités, les fondements, les droits et la sécurité du traitement.", action: "Ouvrir la grille" },
     { panel: "documents", icon: "documents", title: "Rassembler les références", text: "Retrouvez les notices, contrats et procédures qui éclairent chaque traitement.", action: "Relier les documents" },
     { panel: "actions", icon: "actions", title: "Organiser les suites", text: "Transformez une question ouverte en action, avec un responsable et une échéance.", action: "Examiner les questions" },
     { panel: "delivery", icon: "delivery", title: "Préparer votre restitution", text: "Sélectionnez les fiches utiles au destinataire et relisez le dossier avant de le transmettre.", action: "Préparer un partage" },

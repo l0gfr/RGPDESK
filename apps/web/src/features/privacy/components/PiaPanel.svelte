@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaOpenPoints, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
-  import { ANALYSIS_METHOD } from "../review-methods";
+  import { PIA_NECESSITY_METHOD } from "../review-methods";
   import { PIA_STEPS, PIA_SOURCES, PIA_PRINCIPLE_QUESTIONS, SCREENING_LABELS, PIA_LEVELS, PIA_OUTCOMES, PIA_RISK_FIELDS, PIA_ALTERNATIVE_FIELDS, PIA_MEASURE_FIELDS } from "../pia-method";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
@@ -99,8 +99,9 @@
       <ReviewNotebook bind:notes={draft.content.principles} questions={PIA_PRINCIPLE_QUESTIONS} prefix="AIPD principes" />
     {:else if step === 2}
       <p>Raisonnez par finalité et par opération. Examinez aussi les conséquences de ne pas traiter, la solidité des résultats attendus, les objections et les effets sur l’exercice des libertés.</p>
+      <p class="help">Les notes reprises de la fiche sont un point de départ. Réexaminez-les dans le périmètre de cette AIPD ; elles ne remplacent pas l’évaluation de nécessité et de proportionnalité.</p>
       <KnowledgeField label="Opérations examinées dans l’AIPD" bind:value={draft.content.necessity.operations} /><KnowledgeField label="Accès examinés dans l’AIPD" bind:value={draft.content.necessity.access} />
-      <ReviewNotebook bind:notes={draft.content.necessity.notes} questions={ANALYSIS_METHOD} prefix="AIPD nécessité" />
+      <ReviewNotebook bind:notes={draft.content.necessity.notes} questions={PIA_NECESSITY_METHOD} prefix="AIPD nécessité" />
       <div class="pia-alternatives"><p class="eyebrow">L’épreuve des alternatives</p><h4>La même finalité, un autre moyen.</h4><p>Comparez notamment une option sans traitement de données, si elle est envisageable. Une contrainte ou une efficacité supposée doit rester identifiable comme telle.</p>
       {#each draft.content.alternatives as alternative, index}<details class="subpanel" open><summary>Option {index + 1}</summary>{#each Object.entries(PIA_ALTERNATIVE_FIELDS) as [key, label]}<KnowledgeField label={`Option ${index + 1} · ${label}`} bind:value={alternative[key as keyof typeof PIA_ALTERNATIVE_FIELDS]} />{/each}<button class="secondary" onclick={() => removeDraftItem("alternatives", alternative.id)}>Retirer l’option {index + 1}</button></details>{/each}
       <button class="secondary" disabled={draft.content.alternatives.length >= 20} onclick={() => draft!.content.alternatives.push(createPiaAlternative(crypto.randomUUID()))}>Comparer une alternative</button></div>

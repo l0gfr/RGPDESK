@@ -1,17 +1,23 @@
 <script lang="ts">
-  import { createDataFlow, type DataFlow } from "@rgpdesk/privacy-core";
+  import { createDataFlow, knowledgeText, type DataFlow } from "@rgpdesk/privacy-core";
   import KnowledgeField from "./KnowledgeField.svelte";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { flows = $bindable() }: { flows: DataFlow[] } = $props();
+  let { flows = $bindable(), compact = false }: { flows: DataFlow[]; compact?: boolean } = $props();
+  let added = $state("");
+  function addFlow() {
+    if (flows.length >= 20) return;
+    added = crypto.randomUUID();
+    flows = [...flows, createDataFlow(added)];
+  }
   let removal = $state("");
 </script>
 <div class="flow-editor">
-  <div class="section-heading"><div><p class="eyebrow">Origine · opération · destination</p><h3>Suivez le parcours des données.</h3></div><button type="button" disabled={flows.length >= 20} onclick={() => flows = [...flows, createDataFlow(crypto.randomUUID())]}><Icon name="plus" />Ajouter un flux</button></div>
+  <div class="section-heading"><div><p class="eyebrow">Origine · opération · destination</p><h3>Suivez le parcours des données.</h3></div><button type="button" disabled={flows.length >= 20} onclick={addFlow}><Icon name="plus" />Ajouter un flux</button></div>
   <p>Un flux décrit une collecte, un accès, une transmission ou une autre opération. Ajoutez uniquement les relations que vous avez identifiées. Un outil relié à une fiche ne crée aucun flux automatiquement.</p>
   {#if !flows.length}<div class="flow-empty"><Icon name="flows" size={48} /><h3>Commencez par un mouvement concret.</h3><p>Dans un exemple fictif : un candidat transmet son CV à l’équipe de recrutement par un formulaire. Documentez ensuite les accès à ce CV et les transmissions, s’ils existent dans votre organisation.</p></div>{/if}
   {#each flows as flow, index (flow.id)}
-    <details class="analysis-question" open><summary><span class="question-index">{String(index + 1).padStart(2, "0")}</span><span>Décrire le flux {index + 1}</span><Icon name="plus" size={18} /></summary><div class="analysis-question-body">
+    <details class="analysis-question" open={!compact || added === flow.id}><summary><span class="question-index">{String(index + 1).padStart(2, "0")}</span><span>Décrire le flux {index + 1}{#if compact}<small>{knowledgeText(flow.source).slice(0, 65) || "Origine à préciser"} → {knowledgeText(flow.destination).slice(0, 65) || "Destination à préciser"}</small>{/if}</span><Icon name="plus" size={18} /></summary><div class="analysis-question-body">
       <div class="grid-two"><KnowledgeField label={`Flux ${index + 1} · Origine`} bind:value={flow.source} hint="Catégorie de personnes, équipe, outil ou organisme à l’origine. Aucun nom de personne nécessaire." /><KnowledgeField label={`Flux ${index + 1} · Destination`} bind:value={flow.destination} hint="Outil, équipe ou organisme destinataire de cette opération." /></div>
       <KnowledgeField label={`Flux ${index + 1} · Opération`} bind:value={flow.operation} hint="Décrivez ce qui se passe : collecte, consultation, rapprochement, transmission, archivage, effacement…" />
       <div class="grid-two"><KnowledgeField label={`Flux ${index + 1} · Données concernées`} bind:value={flow.data} hint="Catégories utiles à cette opération, sans liste de personnes ni données individuelles." /><KnowledgeField label={`Flux ${index + 1} · Canal ou support`} bind:value={flow.channel} hint="Formulaire, interface entre outils, accès direct, fichier, support papier…" /></div>
@@ -21,5 +27,5 @@
     </div></details>
   {/each}
   {#if flows.length}<h3>Votre carte, d’après ces déclarations</h3><FlowMap {flows} />{/if}
-  <p class="help">20 flux maximum par activité. La carte et les notes d’analyse restent dans le coffre et sa sauvegarde chiffrée. Elles ne sont pas incluses dans les dossiers partageables actuels.</p>
+  <p class="help">20 flux maximum par activité. La carte et les notes d’analyse restent dans le dossier de travail et sa sauvegarde chiffrée. Elles ne sont pas incluses dans les dossiers partageables actuels.</p>
 </div>

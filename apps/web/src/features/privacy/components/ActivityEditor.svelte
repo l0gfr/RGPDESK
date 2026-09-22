@@ -55,11 +55,11 @@
   <form bind:this={form} onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <fieldset disabled={busy}>
       {#if section === "analysis"}
-        <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Documenter la nécessité et la proportionnalité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au dossier ; leur saisie ne vaut pas validation.</p></div>
+        <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Examiner les exigences RGPD de cette activité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au dossier ; leur saisie ne vaut pas validation.</p></div>
         <KnowledgeField label="Opérations détaillées du traitement" bind:value={draft.analysis.operations} hint="Décrivez la collecte, l’enregistrement, les consultations, les calculs ou rapprochements, les transmissions, l’archivage et l’effacement, selon le fonctionnement réel." />
         <KnowledgeField label="Personnes habilitées et droits d’accès" bind:value={draft.analysis.access} hint="Décrivez les rôles, équipes ou organismes autorisés, leurs droits de lecture, modification, extraction ou suppression et le circuit d’autorisation. Pas de liste nominative." />
-        <ReviewNotebook bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" />
-        <p class="help">Cette grille ne couvre pas à elle seule une AIPD complète. Référence : <a href="https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4" target="_blank" rel="noopener noreferrer">RGPD, article 35</a>. Après enregistrement, consignez les décisions et affectez les correctifs dans Actions & décisions.</p>
+        <ReviewNotebook bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" legitimateInterest={draft.role === "controller"} />
+        <p class="help">Cette analyse accompagne le registre. La nécessité et la proportionnalité de l’AIPD se travaillent dans son atelier distinct. Référence : <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr" target="_blank" rel="noopener noreferrer">RGPD, articles 5, 6, 24, 25 et 32</a>. Après enregistrement, consignez les décisions et affectez les correctifs dans Actions & décisions.</p>
       {:else if section === "flows"}<FlowEditor bind:flows={draft.flows} />
       {:else}
       {#if whole || step === 0}<div class="grid-two">
@@ -98,14 +98,17 @@
         <p class="help">Cette fiche ne vous demande pas de choisir une base légale pour une opération réalisée sur instruction. Vos propres finalités relèvent d’une fiche responsable distincte.</p>
       {/if}
       {/if}
-      {#if whole || step === 2}<h3>Personnes, données et destinataires</h3>
+      {#if whole || step === 2}
+      <div class="method-intro"><p class="eyebrow">Une seule saisie, deux vues</p><h3>Décrire les données et leurs flux.</h3><p>Renseignez les circulations pendant votre entretien. La cartographie affiche ces mêmes flux : vous n’aurez pas à les ressaisir. Les rubriques de synthèse du registre se complètent ci-dessous.</p></div>
+      <FlowEditor bind:flows={draft.flows} compact />
+      <h3>Personnes, données et destinataires</h3>
       <p class="help">Rubriques article 30 pour le responsable ; compléments de documentation pour le sous-traitant.</p>
       <div class="grid-two">
         <KnowledgeField label="Catégories de personnes" bind:value={draft.dataSubjects} hint={fieldHints.subjects} />
         <KnowledgeField label="Catégories de données" bind:value={draft.dataCategories} hint={fieldHints.data} />
       </div>
       <KnowledgeField label="Catégories de destinataires" bind:value={draft.recipients} hint={fieldHints.recipients} />
-      <aside class="method-callout"><Icon name="flows" size={25} /><div><strong>Qui accède aux données, pour quelle opération ?</strong><p>Les catégories de destinataires figurent ici. Décrivez les habilitations dans L’analyse et les circulations concrètes dans Les flux, sans quitter cette fiche.</p><button type="button" class="text-button" onclick={() => section = "flows"}>Décrire un flux<Icon name="arrow" size={16} /></button></div></aside>
+      <aside class="method-callout"><Icon name="flows" size={25} /><div><strong>Les flux et le registre décrivent la même activité.</strong><p>La carte utilise les flux ci-dessus. Les catégories de personnes, données et destinataires restent votre synthèse de l’activité ; aucun rôle ni transfert n’est déduit automatiquement d’un flux.</p></div></aside>
       {/if}
       {#if whole || step === 3}<h3>Transferts et mesures générales</h3>
       <KnowledgeField label="Transferts documentés" bind:value={draft.transfers} hint={fieldHints.transfers} />

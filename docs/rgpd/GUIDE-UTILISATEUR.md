@@ -8,7 +8,7 @@ Il s’adresse à la personne qui tient ce registre pour une association, une en
 
 La CNIL présente le registre comme un outil de recensement et d’analyse des traitements. Les rubriques diffèrent selon que l’organisme agit comme responsable ou comme sous-traitant. RGPDESK distingue ces deux registres. [Présentation du registre par la CNIL](https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement).
 
-**Disponible aujourd’hui :** coffre local, fiches de traitement, cartographie des flux déclarés, notes de nécessité et proportionnalité, atelier AIPD avec risques, mesures et historique des revues, revue des contrats article 28, intervenants, systèmes, références documentaires, import CSV, questions à examiner, actions, décisions, exports examinés, vérification technique et sauvegarde chiffrée.
+**Disponible aujourd’hui :** coffre local, fiches de traitement, cartographie des flux déclarés, analyse des exigences RGPD, atelier AIPD avec risques, mesures et historique des revues, revue des contrats article 28, intervenants, systèmes, références documentaires, import CSV, questions à examiner, actions, décisions, exports examinés, vérification technique et sauvegarde chiffrée.
 
 **Pas encore disponible :** gestion des demandes d’exercice de droits, registre des violations, calcul de leurs délais, export de l’AIPD vers un tiers et échange de fichiers avec le logiciel PIA de la CNIL. Le logiciel ne scanne pas vos systèmes, ne supprime pas des données dans vos outils et n’envoie rien à une autorité. Il ne choisit aucun fondement juridique, durée de conservation ou conclusion juridique.
 
@@ -69,13 +69,13 @@ Une activité répond à un usage concret : « Gérer les adhésions », plutôt
 
 Les boutons **Ajouter une activité responsable** et **Ajouter une activité sous-traitante** ouvrent des rubriques différentes. Un même organisme peut avoir des fiches dans les deux registres. Si vous vous êtes trompé de rôle, créez une fiche du bon type après examen ; l’interface ne convertit pas la fiche existante.
 
-Le RGPD distingue celui qui détermine les finalités et les moyens du traitement de celui qui traite pour son compte. L’article 30 distingue leurs rubriques de registre. Les champs supplémentaires de RGPDESK sont indiqués comme compléments de documentation ; ils ne sont pas tous des rubriques expressément énumérées par cet article. [Définitions, article 4](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre1) · [Registres, article 30](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4).
+Le RGPD distingue celui qui détermine les finalités et les moyens du traitement de celui qui traite pour son compte. L’article 30 distingue leurs rubriques de registre. Les champs supplémentaires de RGPDESK sont indiqués comme compléments de documentation ; ils ne sont pas tous des rubriques expressément énumérées par cet article. [Définitions, article 4](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr) · [Registres, article 30](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
 ### Fiche responsable
 
 Dans **Finalités et conservation**, ajoutez une finalité et décrivez son objectif. La base légale documentée, la durée ou le critère et l’événement de départ restent vos déclarations. Aucun modèle ne les choisit pour vous. Plusieurs finalités peuvent être ajoutées.
 
-Renseignez ensuite les catégories de personnes, de données et de destinataires, les transferts et les mesures techniques et organisationnelles. Décrivez les mesures réellement examinées ; distinguez ce qui existe de ce qui est prévu. Les examens des articles 9 et 10 restent distincts de la base de l’article 6. [Principes et licéité, articles 5, 6, 9 et 10](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre2).
+Renseignez ensuite les catégories de personnes, de données et de destinataires, les transferts et les mesures techniques et organisationnelles. Décrivez les mesures réellement examinées ; distinguez ce qui existe de ce qui est prévu. Les examens des articles 9 et 10 restent distincts de la base de l’article 6. [Principes et licéité, articles 5, 6, 9 et 10](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
 ### Fiche sous-traitante
 
@@ -102,26 +102,32 @@ La base légale, la conservation, les destinataires et les transferts restent à
 
 ### Détailler les opérations et les accès
 
-Dans **Analyse**, sélectionnez l’activité, puis **Travailler l’analyse**. Décrivez les opérations réelles : collecte, consultation, transformation, communication, archivage ou effacement, selon votre situation. Précisez les fonctions autorisées à consulter ou modifier les données, les restrictions et le mode d’attribution des accès. N’ajoutez pas une liste nominative de salariés quand une description des fonctions suffit à votre analyse. [RGPD, article 4 §2](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre1), [articles 5 §1 c)](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre2), [25 §2, 29 et 32](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4).
+Dans **Analyse**, sélectionnez l’activité, puis **Travailler l’analyse**. Décrivez les opérations réelles : collecte, consultation, transformation, communication, archivage ou effacement, selon votre situation. Précisez les fonctions autorisées à consulter ou modifier les données, les restrictions et le mode d’attribution des accès. N’ajoutez pas une liste nominative de salariés quand une description des fonctions suffit à votre analyse. [RGPD, article 4 §2](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), [articles 5 §1 c)](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), [25 §2, 29 et 32](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
 Les **destinataires** de la fiche et les **habilitations** de l’analyse répondent à des questions différentes : à qui les données sont-elles communiquées, et qui peut faire quoi dans les outils ? Un destinataire renseigné ne décrit pas à lui seul les droits d’accès. Les champs d’analyse complètent le registre ; toutes ces précisions ne sont pas des rubriques expressément imposées par l’article 30.
 
 ### Construire la carte des flux
 
-1. Ouvrez **Cartographie**, choisissez l’activité puis **Compléter la cartographie**.
+1. Dans la fiche du registre, ouvrez l’étape **Les données**. Les flux et la carte se renseignent directement pendant la saisie. Vous pouvez aussi les retrouver dans **Cartographie**, puis **Compléter la cartographie** : il s’agit des mêmes flux, sans copie ni nouvelle saisie.
 2. Cliquez sur **Ajouter un flux**. Décrivez l’origine, la destination et l’opération, puis les données, le canal, les lieux et les habilitations connus.
-3. Examinez la carte sous les champs. Les rubriques inconnues restent **À examiner**. Décrivez les accès distants pertinents : le nom d’un pays ou d’un outil ne suffit pas à établir le régime d’un transfert. [RGPD, chapitre V](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre5).
+3. Examinez la carte sous les champs. Les rubriques inconnues restent **À examiner**. Décrivez les accès distants pertinents : le nom d’un pays ou d’un outil ne suffit pas à établir le régime d’un transfert. [RGPD, chapitre V](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 4. Enregistrez la fiche. Vous pouvez ajouter jusqu’à 20 flux par activité, les modifier et supprimer un flux après confirmation.
 
 La carte représente uniquement vos déclarations, activité par activité. Elle ne découvre pas le réseau, n’infère aucun lien entre systèmes et ne garantit pas l’exhaustivité des échanges. Elle reste privée dans le coffre et dans la sauvegarde chiffrée.
 
-### Travailler la nécessité et la proportionnalité
+### Examiner les exigences RGPD de l’activité
 
-L’onglet **L’analyse** propose huit questions sourcées : objectif, fondement juridique, utilité réelle, autres moyens, étendue, effets sur les personnes, garanties et position motivée. Pour chaque question, distinguez **faits recueillis**, **éléments de preuve**, **objections**, **appréciation motivée** et **suites à donner**. Une réponse inconnue peut rester vide.
+L’onglet **L’analyse** propose huit questions sourcées : finalités, fondement juridique, opérations utiles, réduction des données et accès, étendue et conservation, risques et sécurité du traitement, mesures et droits, écarts et suites. Le point 06 examine la sécurité au titre de l’article 32, sans supposer qu’une AIPD a été ouverte. Pour chaque question, distinguez **faits recueillis**, **éléments de preuve**, **objections**, **appréciation motivée** et **suites à donner**. Une réponse inconnue peut rester vide.
 
 Le badge **Notes de travail saisies** indique uniquement la présence d’un texte. Il n’évalue ni sa qualité ni la licéité du traitement. Enregistrez vos notes avec **Enregistrer la fiche** ; utilisez **Actions & décisions** pour consigner une décision datée, son auteur déclaré et les travaux à réaliser.
 
-L’[atelier du DPO](#atelier-dpo) explique les questions et leur portée. Cette analyse ne suffit pas, à elle seule, à réaliser une AIPD : les risques, mesures et autres exigences applicables restent à examiner. [RGPD, articles 35 et 36](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4).
+L’[atelier du DPO](#atelier-dpo) explique les questions et leur portée. Cette analyse accompagne le registre, même sans AIPD. L’atelier **AIPD / PIA** porte séparément l’évaluation prévue par l’article 35, avec sa propre grille de nécessité et proportionnalité. La nécessité reste aussi à examiner au titre de la minimisation et de certains fondements juridiques. [RGPD, articles 5, 6, 32, 35 et 36](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+### Examiner l’intérêt légitime au point 02
+
+Dans une fiche responsable, ouvrez **L’analyse**, puis **02 · Motiver le fondement juridique** et la trame **Examiner l’intérêt légitime, si vous envisagez ce fondement**. Elle organise l’examen de l’intérêt poursuivi, de la nécessité du traitement et de la mise en balance avec les droits et intérêts des personnes. Précisez la finalité et le responsable dans les faits ; consignez les références, objections, appréciations et suites dans les cinq rubriques existantes. Pour plusieurs finalités, distinguez explicitement vos examens dans ces rubriques.
+
+Les examens de plusieurs finalités sont consignés dans ce même carnet : identifiez chaque finalité clairement dans vos réponses. La trame n’attribue aucun fondement, ne calcule aucun résultat et ne remplit pas le champ partageable du registre. Les notes restent internes et chiffrées dans le coffre. Pour une fiche sous-traitante, le choix du fondement appartient au responsable : soumettez-lui les questions relatives à son traitement. [RGPD, article 6 §1 f), considérant 47, articles 13, 14 et 21](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), [repères CNIL](https://www.cnil.fr/fr/les-bases-legales/interet-legitime).
 
 ## Construire une AIPD, de la question à la décision
 
@@ -129,7 +135,7 @@ Dans le coffre ouvert, choisissez **AIPD / PIA**, sélectionnez un traitement du
 
 **Le fil conducteur : une décision explicable.** Le contexte vient du registre ; vous confrontez les moyens aux finalités, comparez les alternatives, décrivez les conséquences pour les personnes et vérifiez les garanties. La revue conserve l’étude et le contexte à sa date. Si le registre ou l’étude évolue ensuite, le dossier signale le changement.
 
-Le parcours reprend les quatre temps de la [méthode CNIL de février 2018](https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-1-fr-methode.pdf) : contexte, principes, risques, validation. Les étapes de déclenchement, les avis et le réexamen s’appuient aussi sur les [articles 35 et 36 du RGPD](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4). Les questions et l’organisation des écrans sont propres à RGPDESK.
+Le parcours reprend les quatre temps de la [méthode CNIL de février 2018](https://www.cnil.fr/sites/cnil/files/atoms/files/cnil-pia-1-fr-methode.pdf) : contexte, principes, risques, validation. Les étapes de déclenchement, les avis et le réexamen s’appuient aussi sur les [articles 35 et 36 du RGPD](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr). Les questions et l’organisation des écrans sont propres à RGPDESK.
 
 ### 1 · Déterminer ce qu’il faut instruire
 
@@ -141,7 +147,7 @@ Relisez le contexte repris du registre et les flux déclarés. Les carnets couvr
 
 ### 3 · Mettre la nécessité à l’épreuve
 
-Les notes de nécessité déjà présentes dans la fiche sont **copiées une fois à l’ouverture**. Elles deviennent les notes de cette étude : modifier la fiche ne les remplace pas. Examinez les opérations et les accès, puis les huit questions argumentées.
+Les notes d’analyse RGPD déjà présentes dans la fiche sont **copiées une fois à l’ouverture**. Réexaminez-les selon les questions propres à l’AIPD : cette reprise ne vaut pas évaluation de nécessité et proportionnalité. Elles deviennent les notes de cette étude : modifier la fiche ne les remplace pas. Examinez les opérations et les accès, puis les huit questions argumentées.
 
 **Comparer une alternative** ouvre une fiche par option : finalité visée, moyen envisagé, efficacité attendue, effets sur les droits, preuves et choix motivé. Comparez une option sans données personnelles lorsqu’elle est envisageable. Distinguez résultat démontré, hypothèse, contrainte et préférence.
 
@@ -189,7 +195,7 @@ Le titre interne, la localisation et les notes restent internes. Une **référen
 
 ### Examiner un contrat de sous-traitance
 
-Dans **Documents**, créez ou ouvrez une référence de catégorie **Contrat**. Reliez les activités et les intervenants concernés, puis cliquez sur **Commencer la revue article 28**. Onze points couvrent le périmètre contractuel, les instructions, la confidentialité, la sécurité, les sous-traitants ultérieurs, les droits, l’assistance, la fin de prestation, les audits, l’alerte sur une instruction illicite et les garanties du prestataire. [RGPD, article 28](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4) ; [CEPD, lignes directrices 07/2020, §95 à 99 et 111 à 115](https://www.edpb.europa.eu/system/files/2023-10/EDPB_guidelines_202007_controllerprocessor_final_en.pdf).
+Dans **Documents**, créez ou ouvrez une référence de catégorie **Contrat**. Reliez les activités et les intervenants concernés, puis cliquez sur **Commencer la revue article 28**. Onze points couvrent le périmètre contractuel, les instructions, la confidentialité, la sécurité, les sous-traitants ultérieurs, les droits, l’assistance, la fin de prestation, les audits, l’alerte sur une instruction illicite et les garanties du prestataire. [RGPD, article 28](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr) ; [CEPD, lignes directrices 07/2020, §95 à 99 et 111 à 115](https://www.edpb.europa.eu/system/files/2023-10/EDPB_guidelines_202007_controllerprocessor_final_en.pdf).
 
 Pour chaque point, notez la clause ou annexe examinée, sa version, les éléments disponibles, vos réserves et votre appréciation. **Enregistrer la référence** conserve cette revue dans le coffre. Aucun fichier de contrat n’est importé. Une revue commencée reste rattachée à la catégorie Contrat afin de ne pas perdre les notes par un changement de catégorie.
 
@@ -244,7 +250,7 @@ Renseignez le **Destinataire déclaré** et le **Périmètre public de cette liv
 3. Cochez la confirmation de relecture, puis **Confirmer et télécharger le dossier**. Si le dossier de travail a changé entre-temps, recommencez la préparation sur sa nouvelle révision.
 4. Vérifiez la présence du ZIP sur votre disque, puis son intégrité. Le téléchargement ne prouve ni l’envoi ni la réception par le destinataire.
 
-Les notes internes, analyses de nécessité et proportionnalité, cartes des flux, revues contractuelles, localisations internes des documents, provenances d’import, actions, décisions, systèmes et identifiants du coffre sont exclus, y compris du profil Revue documentaire. Le dossier utilise ses propres identifiants. Relisez néanmoins chaque texte partageable : « en clair » signifie lisible par toute personne disposant du fichier.
+Les notes internes, analyses RGPD et notes de l’AIPD, cartes des flux, revues contractuelles, localisations internes des documents, provenances d’import, actions, décisions, systèmes et identifiants du coffre sont exclus, y compris du profil Revue documentaire. Le dossier utilise ses propres identifiants. Relisez néanmoins chaque texte partageable : « en clair » signifie lisible par toute personne disposant du fichier.
 
 Le ZIP contient exactement `README.txt`, `manifest.json`, `register.csv`, `register.json` et `report.html`. Le rapport HTML sert à la lecture ; le CSV à la consultation tabulaire, sans être le format d’une restauration complète. Les protections de formules à l’export ne justifient pas d’activer du contenu dangereux dans un tableur.
 
@@ -382,10 +388,10 @@ Ce guide accompagne la version de RGPDESK que vous utilisez. Son contenu est [co
 Les références juridiques servent à orienter la lecture, sans remplacer l’examen de votre situation :
 
 - [CNIL : registre des activités de traitement](https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement).
-- [RGPD, chapitre I : définitions](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre1).
-- [RGPD, chapitre II : principes et licéité](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre2).
-- [RGPD, chapitre III : droits des personnes](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre3).
-- [RGPD, chapitre IV : obligations et registres des responsables et sous-traitants](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4).
+- [RGPD, chapitre I : définitions](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+- [RGPD, chapitre II : principes et licéité](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+- [RGPD, chapitre III : droits des personnes](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+- [RGPD, chapitre IV : obligations et registres des responsables et sous-traitants](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 - [CEPD : rôles de responsable et sous-traitant, lignes directrices 07/2020](https://www.edpb.europa.eu/system/files/2023-10/EDPB_guidelines_202007_controllerprocessor_final_en.pdf).
 - [Contrôleur européen : guide nécessité et proportionnalité](https://www.edps.europa.eu/sites/default/files/publication/20-01-28_edps_quickguide_en.pdf), conçu pour l’examen de mesures législatives européennes.
 - [Estelle De Marco : support ESIEA 2025–2026, grille et cas pratique](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=75), lecture complémentaire.

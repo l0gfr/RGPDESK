@@ -1,6 +1,6 @@
 <script lang="ts">
   import { knowledgeText, piaOpenPoints, type PiaContent, type PiaContext, type ReviewNote } from "@rgpdesk/privacy-core";
-  import { ANALYSIS_METHOD } from "../review-methods";
+  import { PIA_NECESSITY_METHOD } from "../review-methods";
   import { PIA_PRINCIPLE_QUESTIONS, PIA_RISK_FIELDS, PIA_ALTERNATIVE_FIELDS, PIA_MEASURE_FIELDS, SCREENING_LABELS, PIA_SOURCES } from "../pia-method";
   import FlowMap from "./FlowMap.svelte";
   import PiaRiskMap from "./PiaRiskMap.svelte";
@@ -22,7 +22,7 @@
     {#if context.activity.flows.length}<FlowMap flows={context.activity.flows} />{:else}<p>Aucun flux décrit.</p>{/if}
     {@render notes(content.principles, PIA_PRINCIPLE_QUESTIONS)}
   </section>
-  <section><h4>2. Nécessité et proportionnalité</h4><dl><dt>Opérations examinées</dt><dd>{knowledgeText(content.necessity.operations) || "À documenter"}</dd><dt>Accès examinés</dt><dd>{knowledgeText(content.necessity.access) || "À documenter"}</dd></dl>{@render notes(content.necessity.notes, ANALYSIS_METHOD)}
+  <section><h4>2. Nécessité et proportionnalité</h4><dl><dt>Opérations examinées</dt><dd>{knowledgeText(content.necessity.operations) || "À documenter"}</dd><dt>Accès examinés</dt><dd>{knowledgeText(content.necessity.access) || "À documenter"}</dd></dl>{@render notes(content.necessity.notes, PIA_NECESSITY_METHOD)}
     <h5>Alternatives</h5>{#each content.alternatives as alternative, index}<h5>Option {index + 1}</h5><dl>{#each Object.entries(PIA_ALTERNATIVE_FIELDS) as [key, label]}<dt>{label}</dt><dd>{knowledgeText(alternative[key as keyof typeof PIA_ALTERNATIVE_FIELDS]) || "À documenter"}</dd>{/each}</dl>{:else}<p>Aucune alternative décrite.</p>{/each}
   </section>
   <section><h4>3. Risques pour les personnes</h4><p>{knowledgeText(content.evaluationMethod) || "Méthode d’appréciation à documenter"}</p><div class="grid-two"><PiaRiskMap risks={content.risks} /><PiaRiskMap risks={content.risks} residual /></div>
