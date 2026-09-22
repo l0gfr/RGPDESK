@@ -31,7 +31,7 @@ function watchCalls() {
 test("offline lot 2 to lot 3: CSV, contract reference, action closure, reviewed delivery and local verification", async ({ page, context }) => {
   test.setTimeout(90_000);
   await page.addInitScript(watchCalls); await ready(page);
-  const verifier = await context.newPage(); await verifier.goto("/app/privacy/verify/"); await expect(verifier.getByLabel("Dossier ZIP à vérifier")).toBeVisible();
+  const verifier = await context.newPage(); await verifier.goto("/app/privacy/verify/"); await expect(verifier.locator("astro-island[ssr]")).toHaveCount(0); await expect(verifier.getByLabel("Dossier ZIP à vérifier")).toBeEnabled();
   await page.bringToFront(); await context.setOffline(true); await create(page); await importFiction(page);
   await navigate(page, "Documents"); await page.getByRole("button", { name: "Ajouter une référence", exact: true }).click();
   await page.getByLabel("Titre interne", { exact: true }).fill("CANARY_DOC_TITLE_23"); await page.getByLabel("Périmètre de la référence", { exact: true }).fill("CANARY_DOC_SCOPE_23");

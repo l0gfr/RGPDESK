@@ -1,5 +1,27 @@
 import { expect, test } from "@playwright/test";
 
+test("verifier refuses premature file selection while its component is loading", async ({ page }) => {
+  let resume: () => void = () => {};
+  const gate = new Promise<void>((resolve) => { resume = resolve; });
+  await page.route("**/_astro/VerifyPanel.*.js", async (route) => {
+    await gate;
+    await route.continue();
+  });
+  try {
+    await page.goto("/app/privacy/verify/", { waitUntil: "domcontentloaded" });
+    await expect(page.getByLabel("Dossier ZIP à vérifier")).toBeDisabled();
+    await expect(page.getByRole("status")).toHaveText("Chargement du vérificateur local…");
+  } finally {
+    resume();
+  }
+  await expect(page.getByLabel("Dossier ZIP à vérifier")).toBeEnabled();
+  await expect(page.getByRole("status")).toHaveCount(0);
+  await page.getByLabel("Dossier ZIP à vérifier").setInputFiles({
+    name: "invalid.zip", mimeType: "application/zip", buffer: Buffer.from("synthetic invalid ZIP"),
+  });
+  await expect(page.getByRole("status")).toContainText("Dossier refusé");
+});
+
 test("guide is readable without JavaScript and every local link and chapter resolves", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
   try {
