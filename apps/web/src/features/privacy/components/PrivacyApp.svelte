@@ -374,7 +374,7 @@
     {:else if panel === "overview"}
       {#if demo}<DemoOverview {busy} onNavigate={(next) => panel = next} />{:else}<MissionOverview workspace={master} {busy} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
     {:else if panel === "pia"}
-      <PiaPanel workspace={master} {busy} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
+      <PiaPanel workspace={master} {busy} {demo} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
     {:else if panel === "analysis" || panel === "flows"}
       {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo && panel === "analysis" ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
