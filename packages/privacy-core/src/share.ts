@@ -1,3 +1,5 @@
+import { documentaryActionLabel } from "./workbench";
+import { resolveFlow } from "./linked-facts";
 import { CATALOG_VERSION } from "./catalog";
 import { unknown, type Knowledge, type ShareProfile, type Workspace, type Purpose } from "./model";
 import { assertWorkspace, PrivacyError } from "./validation";
@@ -6,12 +8,16 @@ export * from "./share-format.js";
 interface SharedBase { id: string; title: string; dataCategories: Knowledge; dataSubjects: Knowledge; recipients: Knowledge; transfers: Knowledge; securityMeasures: Knowledge }
 export type SharedActivity = SharedBase & ({ role: "controller"; purposes: Purpose[] } | { role: "processor"; controllerIds: string[]; operations: Knowledge });
 export interface SharedRegister {
-  format: "rgpd-share-v1"; id: string; createdAt: string; profile: ShareProfile; catalogVersion: string;
+  executive?: {changes:string;arbitrations:string};
+  format: "rgpd-share-v1" | "rgpd-share-v2";
+  flows?: (Pick<import("./model").DataFlow, "id" | "source" | "destination" | "operation" | "data" | "channel" | "location" | "access"> & {activityId: string})[];
+  positions?: {id: string; activityId: string | null; position: string; reason: string}[];
+  nextSteps?: {id: string; activityId: string | null; task: string; owner: string; due: string | null}[]; id: string; createdAt: string; profile: ShareProfile; catalogVersion: string;
   recipient: string; scope: string; reservations: string[]; coverage: "excerpt" | "incomplete" | "documented-profile";
   organization: Workspace["organization"]; parties: { id: string; name: string; contact: Knowledge }[];
   activities: SharedActivity[]; references: { id: string; activityIds: string[]; text: string }[];
 }
-export interface ShareOptions { profile: ShareProfile; recipient: string; scope: string; reservations: string[]; activityIds: string[]; documentIds: string[]; clientId: string | null }
+export interface ShareOptions { executive?: {changes:string;arbitrations:string}; presentation?: boolean; flowIds?: string[]; decisionIds?: string[]; actionIds?: string[]; profile: ShareProfile; recipient: string; scope: string; reservations: string[]; activityIds: string[]; documentIds: string[]; clientId: string | null }
 const k = (value: Knowledge): Knowledge => value.state === "documented" ? { state: "documented", value: value.value } : unknown();
 export function projectShare(master: Workspace, options: ShareOptions, id: () => string, now: string): SharedRegister {
   assertWorkspace(master);
@@ -42,11 +48,35 @@ export function projectShare(master: Workspace, options: ShareOptions, id: () =>
       return { id: id(), activityIds: doc.activityIds.map((aid) => activityMap.get(aid)!), text: doc.publicReference };
     }),
   };
+  const flowIds = options.flowIds ?? [], decisionIds = options.decisionIds ?? [], actionIds = options.actionIds ?? [];
+  if ([flowIds, decisionIds, actionIds].some((ids) => new Set(ids).size !== ids.length)) throw new PrivacyError("INVALID");
+  if (options.executive || options.presentation || flowIds.length || decisionIds.length || actionIds.length) {
+    if (options.profile === "client-excerpt") throw new PrivacyError("INVALID");
+    dto.format = "rgpd-share-v2";
+    if(options.executive)dto.executive={changes:options.executive.changes.trim(),arbitrations:options.executive.arbitrations.trim()};
+    dto.flows = flowIds.map((fid) => {
+      const activity = activities.find((a) => a.flows.some((f) => f.id === fid));
+      const flow = activity?.flows.find((f) => f.id === fid);
+      if (!activity || !flow) throw new PrivacyError("INVALID");
+      const f = resolveFlow(flow, activity, master);
+      // Explicit projection: references, annotations and stable IDs never cross this boundary.
+      return {id:id(), activityId:activityMap.get(activity.id)!, source:k(f.source), destination:k(f.destination), operation:k(f.operation), data:k(f.data), channel:k(f.channel), location:k(f.location), access:k(f.access)};
+    });
+    const publicActivity = (aid: string | null) => { if (aid && !activityMap.has(aid)) throw new PrivacyError("INVALID"); return aid ? activityMap.get(aid)! : null; };
+    dto.positions = decisionIds.map((did) => {
+      const d = master.decisions.find((d) => d.id === did); if (!d) throw new PrivacyError("INVALID");
+      return {id:id(), activityId:publicActivity(d.activityId), position:d.conclusion, reason:d.justification};
+    });
+    dto.nextSteps = actionIds.map((aid) => {
+      const a = master.actions.find((a) => a.id === aid); if (!a || a.closure) throw new PrivacyError("INVALID");
+      return {id:id(), activityId:publicActivity(a.activityId), task:documentaryActionLabel(a), owner:a.owner, due:a.due};
+    });
+  }
   dto.coverage = shareCoverage(dto);
   assertShare(dto);
   // Injected IDs must never reuse a stable internal ID.
-  const internalIds = new Set([master.id, ...master.dpoCases.flatMap((c) => [c.id, ...c.events.map((e) => e.id), ...c.reviews.map((r) => r.id)]), ...master.piaPublications.map((p) => p.id), ...master.impactAssessments.flatMap((p) => [p.id, ...p.reviews.flatMap((r) => [r.id, r.context.activity.id, ...r.context.activity.flows.map((f) => f.id), ...(r.context.activity.role === "controller" ? r.context.activity.purposes.map((purpose) => purpose.id) : []), ...r.context.parties.map((item) => item.id), ...r.context.systems.map((item) => item.id), ...r.context.documents.map((item) => item.id), ...r.content.risks.map((item) => item.id), ...r.content.measures.map((item) => item.id), ...r.content.alternatives.map((item) => item.id)]), ...p.content.risks.map((r) => r.id), ...p.content.measures.map((m) => m.id), ...p.content.alternatives.map((a) => a.id)]), ...master.activities.flatMap((a) => a.flows.map((f) => f.id)), ...master.activities.map((a) => a.id), ...master.parties.map((p) => p.id), ...master.documents.map((d) => d.id), ...master.systems.map((s) => s.id), ...master.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])]);
-  const publicIds = [dto.id, ...dto.activities.map((a) => a.id), ...dto.parties.map((p) => p.id), ...dto.references.map((r) => r.id), ...dto.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])];
+  const internalIds = new Set([master.id, ...master.decisions.map((d) => d.id), ...master.actions.map((a) => a.id), ...master.dpoCases.flatMap((c) => [c.id, ...c.events.map((e) => e.id), ...c.reviews.map((r) => r.id)]), ...master.piaPublications.map((p) => p.id), ...master.impactAssessments.flatMap((p) => [p.id, ...p.reviews.flatMap((r) => [r.id, r.context.activity.id, ...r.context.activity.flows.map((f) => f.id), ...(r.context.activity.role === "controller" ? r.context.activity.purposes.map((purpose) => purpose.id) : []), ...r.context.parties.map((item) => item.id), ...r.context.systems.map((item) => item.id), ...r.context.documents.map((item) => item.id), ...r.content.risks.map((item) => item.id), ...r.content.measures.map((item) => item.id), ...r.content.alternatives.map((item) => item.id)]), ...p.content.risks.map((r) => r.id), ...p.content.measures.map((m) => m.id), ...p.content.alternatives.map((a) => a.id)]), ...master.activities.flatMap((a) => a.flows.map((f) => f.id)), ...master.activities.map((a) => a.id), ...master.parties.map((p) => p.id), ...master.documents.map((d) => d.id), ...master.systems.map((s) => s.id), ...master.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])]);
+  const publicIds = [dto.id, ...(dto.flows ?? []).map((f) => f.id), ...(dto.positions ?? []).map((d) => d.id), ...(dto.nextSteps ?? []).map((a) => a.id), ...dto.activities.map((a) => a.id), ...dto.parties.map((p) => p.id), ...dto.references.map((r) => r.id), ...dto.activities.flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])];
   if (publicIds.some((pid) => internalIds.has(pid))) throw new PrivacyError("INVALID");
   return dto;
 }

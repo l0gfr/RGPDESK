@@ -1,4 +1,6 @@
 import { visualRegisterReport } from "./share-report.js";
+import { executivePage, presentationSections } from "./share-presentation.js";
+import validateV2 from "./generated/share-v2-validator.js";
 import validate from "./generated/share-validator.js";
 export const SHARE_LIMITATION = "Vérification technique locale : structure, liens, inventaire et empreintes. Elle ne prouve ni la vérité des déclarations, ni leur auteur, ni la conformité juridique, ni un horodatage de confiance. Un tiers peut modifier les fichiers et recalculer toutes les empreintes.";
 export const SHARE_FILES = ["README.txt", "manifest.json", "register.csv", "register.json", "report.html"];
@@ -15,7 +17,7 @@ export function shareCoverage(register) {
   return "documented-profile";
 }
 export function assertShare(value) {
-  if (!validate(value)) throw new Error("INVALID_SHARE");
+  if (!(value?.format === "rgpd-share-v2" ? validateV2(value) : validate(value))) throw new Error("INVALID_SHARE");
   const ids = new Set([value.id]);
   const add = (id) => { if (ids.has(id)) throw new Error("INVALID_LINK"); ids.add(id); };
   const parties = new Set(value.parties.map((p) => p.id));
@@ -30,6 +32,12 @@ export function assertShare(value) {
   }
   if (value.parties.some((p) => !linkedParties.has(p.id)) || (value.profile === "client-excerpt" && value.parties.length !== 1)) throw new Error("INVALID_PROFILE");
   for (const ref of value.references) if (!ref.activityIds.length || ref.activityIds.some((id) => !activities.has(id))) throw new Error("INVALID_LINK");
+  if (value.format === "rgpd-share-v2") {
+    if (value.profile === "client-excerpt") throw new Error("INVALID_PROFILE");
+    for (const item of [...value.flows, ...value.positions, ...value.nextSteps]) {
+      add(item.id); if (item.activityId !== null && !activities.has(item.activityId)) throw new Error("INVALID_LINK");
+    }
+  }
   if (value.coverage !== shareCoverage(value)) throw new Error("INVALID_COVERAGE");
 }
 export function csvCell(input) {
@@ -40,7 +48,7 @@ export function csvCell(input) {
 const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 export const PROFILE_LABELS = { "article30-controller": "Article 30 · Responsable", "article30-processor": "Article 30 · Sous-traitant", "internal-review": "Revue documentaire", "client-excerpt": "Extrait client" };
 export const COVERAGE_LABELS = { excerpt: "Extrait limité au périmètre choisi", incomplete: "Dossier documentaire incomplet", "documented-profile": "Rubriques du profil renseignées, déclarations non validées" };
-const labels = { name: "Nom", contact: "Coordonnées", dpo: "DPO / situation déclarée", representatives: "Représentant / responsables conjoints", title: "Activité", role: "Rôle", dataCategories: "Catégories de données", dataSubjects: "Catégories de personnes", recipients: "Destinataires", transfers: "Transferts et garanties déclarés", securityMeasures: "Mesures de sécurité déclarées", purposes: "Finalités", description: "Description", legalBasis: "Base légale (complément)", retention: "Conservation", period: "Durée ou critère", trigger: "Événement de départ", controllerIds: "Références clients", operations: "Catégories d’opérations", id: "Référence de livraison", activityIds: "Activités liées", text: "Référence publique déclarée" };
+const labels = { changes:"Ce qui change", arbitrations:"Arbitrages demandés", source: "Origine", destination: "Destination", operation: "Opération", data: "Données", channel: "Canal", location: "Pays et accès distants", access: "Habilitations", activityId: "Activité liée", position: "Position déclarée", reason: "Motifs", task: "Suite", owner: "Responsable déclaré", due: "Échéance déclarée", name: "Nom", contact: "Coordonnées", dpo: "DPO / situation déclarée", representatives: "Représentant / responsables conjoints", title: "Activité", role: "Rôle", dataCategories: "Catégories de données", dataSubjects: "Catégories de personnes", recipients: "Destinataires", transfers: "Transferts et garanties déclarés", securityMeasures: "Mesures de sécurité déclarées", purposes: "Finalités", description: "Description", legalBasis: "Base légale (complément)", retention: "Conservation", period: "Durée ou critère", trigger: "Événement de départ", controllerIds: "Références clients", operations: "Catégories d’opérations", id: "Référence de livraison", activityIds: "Activités liées", text: "Référence publique déclarée" };
 export function shareRows(register) {
   const rows = [];
   const walk = (value, path) => {
@@ -52,6 +60,10 @@ export function shareRows(register) {
   rows.push(["Profil", PROFILE_LABELS[register.profile]], ["État documentaire", COVERAGE_LABELS[register.coverage]], ["Destinataire déclaré", register.recipient], ["Périmètre public", register.scope], ["Date déclarée", register.createdAt], ["Catalogue", register.catalogVersion]);
   register.reservations.forEach((r) => rows.push(["Réserve", r]));
   walk(register.organization, "Organisation"); walk(register.parties, "Clients responsables"); walk(register.activities, "Registre"); walk(register.references, "Références publiques");
+  if (register.format === "rgpd-share-v2") {
+    if(register.executive)walk(register.executive,"Synthèse direction");
+    walk(register.flows, "Flux sélectionnés"); walk(register.positions, "Positions communiquées"); walk(register.nextSteps, "Suites communiquées");
+  }
   return rows;
 }
 const REPORT_STYLE = "body{margin:0;background:#f6f6ef;color:#142f3c;font:14px/1.7 system-ui,sans-serif}header,main,footer{max-width:1100px;margin:auto;padding:36px}header{border-bottom:1px solid #dce2d3}header>p:first-child{letter-spacing:.16em;font-size:10px;color:#8a713f}h1{font:40px/1.15 Georgia,serif;letter-spacing:-.03em}table{border-collapse:collapse;width:100%;background:#fffefa}caption{font-size:18px;text-align:left;padding:20px 0}th,td{border-bottom:1px solid #e3e5dc;text-align:left;vertical-align:top;padding:12px 16px}th{font-size:11px;font-weight:500;width:36%;background:#f0f3e8}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}footer{font-size:11px;color:#64716f}thead{display:table-header-group}@media(max-width:600px){header,main,footer{padding:20px}th,td{padding:8px}h1{font-size:30px}}@media print{body{background:white;font-size:10pt}header,main,footer{padding:12px}tr{break-inside:avoid}thead{display:table-header-group}footer{font-size:8pt}}";
@@ -68,5 +80,12 @@ export function renderLegacyShareFiles(register) {
 export function renderShareFiles(register) {
   const files = renderLegacyShareFiles(register);
   files["report.html"] = visualRegisterReport(register, shareRows(register), PROFILE_LABELS, COVERAGE_LABELS, SHARE_LIMITATION);
+  if (register.format === "rgpd-share-v2") {
+    if(register.executive)files["report.html"]=files["report.html"].replace("<main>","<main>"+executivePage(register));
+    const marker = '<article class="activity"';
+    // Fixed marker and escaped text only; the original stylesheet/CSP remain exact.
+    files["report.html"] = files["report.html"].replace(marker, presentationSections(register) + marker);
+    files["README.txt"] = files["README.txt"].replace("rgpd-share-v1", "rgpd-share-v2") + "Les flux, positions et suites présents ont été sélectionnés par le rédacteur. Aucune exhaustivité ni validation juridique n’est déduite. Les autres analyses restent dans le coffre.\n";
+  }
   return files;
 }

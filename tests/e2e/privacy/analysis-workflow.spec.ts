@@ -31,6 +31,7 @@ test("declared flows, analysis and clause notes stay private, encrypted and usab
   await page.getByLabel("Flux 1 · Origine", { exact: true }).fill('PRIVATE_FLOW_<img src=x onerror="alert(1)">');
   await page.getByLabel("Flux 1 · Destination", { exact: true }).fill("Outil fictif de recrutement");
   await page.getByLabel("Flux 1 · Opération", { exact: true }).fill("Collecte du CV fictif");
+  await page.getByText("Préciser le canal, les pays et les habilitations", { exact: true }).click();
   await page.getByLabel("Flux 1 · Accès et habilitations", { exact: true }).fill("PRIVATE_ACCESS_DPO");
   await expect(page.locator(".flow-map img")).toHaveCount(0);
   await expect(page.getByLabel("Flux 1 · Lieux et accès à distance", { exact: true })).toHaveValue("");

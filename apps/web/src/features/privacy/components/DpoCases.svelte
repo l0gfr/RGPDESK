@@ -1,25 +1,28 @@
 <script lang="ts">
-  import { onDestroy, tick } from "svelte";
+  import { onDestroy, tick, untrack } from "svelte";
   import { appendDpoEvent, canonicalJson, createDpoCase, dpoChanges, dpoChangeDetails, knowledge, knowledgeText, putDpoCase, recordDpoReview, rightsDeadline, breachDeadline, type DpoCase, type DpoKind, type DpoReview, type Workspace } from "@rgpdesk/privacy-core";
   import { DPO_TITLES, DPO_INTRO, DPO_METHODS } from "../dpo-methods";
   import { RGPD_OFFICIAL } from "../review-methods";
   import ReviewChanges from "./ReviewChanges.svelte";
   import ReviewEvidence from "./ReviewEvidence.svelte";
+  import InventoryContext from "./InventoryContext.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
+  import EvidenceCitations from "./EvidenceCitations.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, onSave, onEditing, onLeave, onRegister, onActions, onDocument, initialCaseId = "" }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onActions: (activityId: string) => void; onDocument: (id: string) => void; initialCaseId?: string } = $props();
-  let kind = $state<DpoKind>("interest"), draft = $state<DpoCase | null>(null), step = $state("scope"), error = $state("");
+  let { workspace, busy, onSave, onEditing, onLeave, onRegister, onActions, onDocument, initialKind = "interest", initialActivityId = "", initialCaseId = "", initialSection = "scope" }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onActions: (activityId: string) => void; onDocument: (id: string) => void; initialKind?: DpoKind; initialActivityId?: string; initialCaseId?: string; initialSection?: "scope"|"analysis"|"events"|"review" } = $props();
+  let kind = $state<DpoKind>(untrack(() => initialKind)), draft = $state<DpoCase | null>(null), step = $state<"scope"|"analysis"|"events"|"review">("scope"), error = $state("");
   let draftHeading: HTMLHeadingElement | undefined = $state();
   let filter = $state("all"), ownerFilter = $state("");
   let reviewAuthor = $state(""), reviewReason = $state(""), outcome = $state<DpoReview["outcome"]>("rework");
   let eventAt = $state(""), eventAuthor = $state(""), eventText = $state(""), eventEvidence = $state("");
   let historical = $state(""), consumed = $state("");
-  $effect(() => { if (initialCaseId && consumed !== initialCaseId) { consumed = initialCaseId; const item = workspace.dpoCases.find((c) => c.id === initialCaseId); if (item) { kind = item.kind; open(item); } } });
+  $effect(() => { if (initialCaseId && consumed !== initialCaseId) { consumed = initialCaseId; const item = workspace.dpoCases.find((c) => c.id === initialCaseId); if (item) { kind = item.kind; open(item); step=initialSection; } } });
   const today = () => new Date().toISOString().slice(0, 10);
   const now = () => new Date().toISOString();
   const exists = () => !!draft && workspace.dpoCases.some((c) => c.id === draft!.id);
   const changed = () => !draft || canonicalJson(workspace.dpoCases.find((c) => c.id === draft!.id)) !== canonicalJson($state.snapshot(draft));
+  export function getCheckpoint(){return draft?{kind:"dpo" as const,id:draft.id,section:step}:undefined;}
   export function hasUnsavedChanges() {
     return !!draft && (changed() || !!(reviewAuthor || reviewReason || eventAt || eventAuthor || eventText || eventEvidence) || outcome !== "rework");
   }
@@ -28,10 +31,10 @@
     try { return item.kind === "rights" ? rightsDeadline(item.content.rights).due : item.kind === "breach" ? breachDeadline(item.content.breach.awarenessAt, item.content.breach.role) : item.content.reviewDue; }
     catch { return null; }
   }
-  let visible = $derived(workspace.dpoCases.filter((c) => c.kind === kind && (!ownerFilter || c.owner.toLocaleLowerCase().includes(ownerFilter.toLocaleLowerCase())) && (filter === "all" || (filter === "review" ? dpoChanges(workspace, c).length > 0 : !!deadline(c) && deadline(c)!.slice(0, 10) <= today()))));
+  let visible = $derived(workspace.dpoCases.filter((c) => c.kind === kind && (!initialActivityId || c.activityIds.includes(initialActivityId)) && (!ownerFilter || c.owner.toLocaleLowerCase().includes(ownerFilter.toLocaleLowerCase())) && (filter === "all" || (filter === "review" ? dpoChanges(workspace, c).length > 0 : !!deadline(c) && deadline(c)!.slice(0, 10) <= today()))));
   function open(item?: DpoCase) {
     draft = item ? structuredClone($state.snapshot(item)) : createDpoCase(workspace.id, crypto.randomUUID(), kind);
-    if (!item) draft.title = "";
+    if (!item) { draft.title = ""; if (initialActivityId && workspace.activities.some((a) => a.id === initialActivityId)) draft.activityIds = [initialActivityId]; }
     clearPendingReview(); step = "scope"; historical = ""; error = ""; onEditing(true);
     const id = draft.id;
     void tick().then(() => { if (draft?.id === id && draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } });
@@ -60,7 +63,7 @@
   {#if error}<p class="notice error" role="alert">{error}</p>{/if}
   {#if !draft}
     <nav class="dpo-kind-nav" aria-label="Types de dossiers">{#each Object.entries(DPO_TITLES) as [key, title]}<button class="secondary" class:active={kind === key} aria-pressed={kind === key} disabled={busy} onclick={() => kind = key as DpoKind}><Icon name={key === "transfer" ? "flows" : key === "breach" ? "shield" : key === "rights" ? "parties" : "analysis"} /><span>{title}</span></button>{/each}</nav>
-    <header class="dpo-case-cover"><div><p class="eyebrow">Atelier / {DPO_TITLES[kind]}</p><h2>{DPO_TITLES[kind]}</h2><p>{DPO_INTRO[kind]}</p><button disabled={busy || workspace.dpoCases.length >= 200} onclick={() => open()}>Ouvrir un dossier <Icon name="plus" /></button></div><div class="dpo-cover-index" aria-hidden="true">{({interest:"IL",transfer:"TF",rights:"DR",breach:"VI"})[kind]}<span>Faits / preuves / décisions</span></div></header>
+    <header class="dpo-case-cover"><div><p class="eyebrow">Atelier / {DPO_TITLES[kind]}</p><h2>{DPO_TITLES[kind]}</h2><p>{DPO_INTRO[kind]}</p><button disabled={busy || workspace.dpoCases.length >= 200} onclick={() => open()}>Ouvrir un dossier <Icon name="plus" /></button></div><div class="dpo-cover-index" aria-hidden="true">{({interest:"IL",transfer:"TF",rights:"DR",breach:"VI",security:"SI"})[kind]}<span>Faits / preuves / décisions</span></div></header>
     <div class="filters"><label class="field">Afficher<select bind:value={filter}><option value="all">Tous les dossiers</option><option value="review">À examiner ou réexaminer</option><option value="due">Échéance atteinte</option></select></label><label class="field">Responsable du suivi<input bind:value={ownerFilter} maxlength="160" placeholder="Filtrer par responsable" /></label></div>
     <ul class="records">{#each visible as item}<li><span class="record-icon"><Icon name="folder" /></span><div class="grow"><strong>{item.title}</strong><p>{item.owner || "Suivi à affecter"} · {item.reviews.length} revue(s) conservée(s) · {item.reviews.at(-1)?.outcome === "closed" ? "Clôture déclarée" : "Dossier en suivi"}</p><p>{dpoChanges(workspace, item).join(" · ") || "Pas de changement détecté depuis la revue"}</p>{#if deadline(item)}<p>Échéance / repère : {deadline(item)}</p>{/if}</div><button class="secondary" disabled={busy} onclick={() => open(item)}>Ouvrir {item.title}</button></li>{/each}</ul>
     {#if !visible.length}<p class="empty">Aucun dossier pour cette sélection. Commencez par un cas concret, même si certaines réponses manquent.</p>{/if}
@@ -69,7 +72,7 @@
     <header class="section-heading"><div><p class="eyebrow">{DPO_TITLES[draft.kind]} / dossier de travail</p><h2 bind:this={draftHeading} data-draft-heading tabindex="-1">{draft.title || "Nouveau dossier"}</h2></div></header>
     <div class="draft-toolbar"><span>{changed() ? "Dossier à enregistrer" : "Dossier enregistré"}{#if !changed() && hasUnsavedChanges()} · Événement ou revue à consigner{/if}</span><div class="actions"><button disabled={busy} onclick={save}>Enregistrer le dossier</button><button class="secondary" disabled={busy} onclick={() => onLeave(close)}>Fermer le dossier</button></div></div>
     <p class="help">Enregistrez vos modifications ici. Les événements et les revues se consignent dans leurs étapes dédiées. Une revue conserve l’analyse et le contexte du registre à sa date.</p>
-    <nav class="dpo-step-nav" aria-label="Parcours du dossier">{#each [["scope","01 Cadrage"],["analysis","02 Analyse"],["events","03 Chronologie"],["review","04 Revue & historique"]] as [key,label]}<button class="secondary" class:active={step === key} disabled={busy} onclick={() => step = key}>{label}</button>{/each}</nav>
+    <nav class="dpo-step-nav" aria-label="Parcours du dossier">{#each [["scope","01 Cadrage"],["analysis","02 Analyse"],["events","03 Chronologie"],["review","04 Revue & historique"]] as [key,label]}<button class="secondary" class:active={step === key} disabled={busy} onclick={() => step = key as typeof step}>{label}</button>{/each}</nav>
     <ReviewChanges changes={dpoChangeDetails(workspace, draft)} review={draft.reviews.at(-1)} dirty={changed()} />
     <ReviewEvidence documents={workspace.documents.filter((d) => d.activityIds.some((id) => draft!.activityIds.includes(id)))} disabled={busy || changed()} onOpen={(id) => onLeave(() => { close(); onDocument(id); })} />
     <fieldset disabled={busy}>
@@ -103,7 +106,8 @@
       {/if}
       <div class="actions"><button onclick={() => step = "analysis"}>Poursuivre l’analyse <Icon name="arrow" /></button></div>
     {:else if step === "analysis"}
-      <ReviewNotebook bind:notes={draft.content.notes} questions={DPO_METHODS[draft.kind]} prefix={DPO_TITLES[draft.kind]} edition="Questions RGPDESK · 23 septembre 2026" />
+      <InventoryContext activities={workspace.activities.filter((a) => draft!.activityIds.includes(a.id))} />
+      <ReviewNotebook documents={workspace.documents.filter((d) => d.activityIds.some((id) => draft!.activityIds.includes(id)))} bind:notes={draft.content.notes} questions={DPO_METHODS[draft.kind]} prefix={DPO_TITLES[draft.kind]} edition="Questions RGPDESK · 23 septembre 2026" />
       <div class="actions"><button class="secondary" onclick={() => step = "review"}>Préparer la revue</button></div>
     {:else if step === "events"}
       <h3>Une chronologie conservée</h3><p>Déclarez les faits, décisions opérationnelles, envois initiaux et compléments. Une erreur se corrige par un nouvel événement explicatif ; les événements enregistrés restent intacts.</p>
@@ -116,7 +120,7 @@
       <label class="field">Auteur déclaré de la revue<input bind:value={reviewAuthor} maxlength="160" /></label><label class="field">Position<select bind:value={outcome}><option value="rework">Travail à approfondir</option><option value="reviewed">Revue effectuée, position motivée ci-dessous</option><option value="closed">Clôture déclarée du dossier</option></select></label><label class="field">Motivation et suites<textarea bind:value={reviewReason} maxlength="4000"></textarea></label><button disabled={!exists() || draft.reviews.length >= 8} onclick={() => record("review")}>Conserver cette revue</button>
       <h3>Relire une revue conservée</h3><label class="field">Revue historique<select bind:value={historical}><option value="">Choisir une revue</option>{#each draft.reviews as r,index}<option value={r.id}>Revue {index + 1} · {r.at} · {r.author}</option>{/each}</select></label>
       {@const review = draft.reviews.find((r) => r.id === historical)}
-      {#if review}<article class="panel" aria-label="Revue historique"><h4>{review.at} · {review.author}</h4><p>{review.reason}</p><p>Contexte conservé : {review.context.organization.name} · {review.context.activities.map((c) => c.activity.title).join(" · ")}</p><ReviewEvidence documents={review.context.activities.flatMap((c) => c.documents)} historical />{#each review.content.notes as note}<details><summary>{DPO_METHODS[draft.kind].find((q) => q.id === note.questionId)?.title}</summary><dl>{#each [["Faits",note.facts],["Preuves",note.evidence],["Objections",note.objections],["Appréciation",note.assessment],["Suites",note.followUp]] as pair}<dt>{pair[0]}</dt><dd>{knowledgeText(pair[1] as import("@rgpdesk/privacy-core").Knowledge) || "À documenter"}</dd>{/each}</dl></details>{/each}</article>{/if}
+      {#if review}<article class="panel" aria-label="Revue historique"><h4>{review.at} · {review.author}</h4><p>{review.reason}</p><p>Contexte conservé : {review.context.organization.name} · {review.context.activities.map((c) => c.activity.title).join(" · ")}</p><ReviewEvidence documents={review.context.activities.flatMap((c) => c.documents)} historical />{#each review.content.notes as note}<details><summary>{DPO_METHODS[draft.kind].find((q) => q.id === note.questionId)?.title}</summary><dl>{#each [["Faits",note.facts],["Preuves",note.evidence],["Objections",note.objections],["Appréciation",note.assessment],["Suites",note.followUp]] as pair}<dt>{pair[0]}</dt><dd>{knowledgeText(pair[1] as import("@rgpdesk/privacy-core").Knowledge) || "À documenter"}</dd>{/each}</dl><EvidenceCitations citations={note.citations} documents={review.context.activities.flatMap((c) => c.documents)} prefix="Référence historique" readonly /></details>{/each}</article>{/if}
     {/if}
     </fieldset>
   {/if}

@@ -5,7 +5,7 @@ import { assertWorkspace, PrivacyError } from "./validation";
 
 export function createWorkspace(id: string, name: string, now: string): Workspace {
   const master: Workspace = {
-    format: "rgpd-master-v5", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
+    format: "rgpd-master-v6", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
     language: "fr", jurisdiction: unknown(), scope: unknown(),
     organization: { name: name.trim(), contact: unknown(), dpo: unknown(), representatives: unknown() },
     parties: [], systems: [], activities: [], documents: [], decisions: [], actions: [], imports: [], deliveries: [],
@@ -29,9 +29,9 @@ export function createActivity(workspaceId: string, id: string, role: Activity["
     : { ...base, role, controllerIds: [], operations: unknown(), instructions: unknown() };
 }
 
-export function reviseWorkspace(master: Workspace, expectedRevision: number, now: string, changes: Partial<Pick<Workspace, "dpoCases" | "piaPublications" | "impactAssessments" | "organization" | "scope" | "jurisdiction" | "parties" | "systems" | "activities" | "documents" | "decisions" | "actions" | "imports" | "deliveries">>): Workspace {
+export function reviseWorkspace(master: Workspace, expectedRevision: number, now: string, changes: Partial<Pick<Workspace, "workCheckpoint" | "citationReviews" | "dpoCases" | "piaPublications" | "impactAssessments" | "organization" | "scope" | "jurisdiction" | "parties" | "systems" | "activities" | "documents" | "decisions" | "actions" | "imports" | "deliveries">>): Workspace {
   assertWorkspace(master);
-  const allowed = new Set(["dpoCases", "piaPublications", "impactAssessments", "organization", "scope", "jurisdiction", "parties", "systems", "activities", "documents", "decisions", "actions", "imports", "deliveries"]);
+  const allowed = new Set(["workCheckpoint", "citationReviews", "dpoCases", "piaPublications", "impactAssessments", "organization", "scope", "jurisdiction", "parties", "systems", "activities", "documents", "decisions", "actions", "imports", "deliveries"]);
   if (Object.keys(changes).some((key) => !allowed.has(key))) throw new PrivacyError("INVALID");
   if (master.revision !== expectedRevision) throw new PrivacyError("CONFLICT");
   if (now < master.updatedAt) throw new PrivacyError("INVALID");
@@ -40,6 +40,7 @@ export function reviseWorkspace(master: Workspace, expectedRevision: number, now
     const incoming = changes[field];
     if (incoming && master[field].some((item, index) => JSON.stringify(item) !== JSON.stringify(incoming[index]))) throw new PrivacyError("INVALID");
   }
+  if ("citationReviews" in changes && (!Array.isArray(changes.citationReviews) || (master.citationReviews ?? []).some((r,i)=>JSON.stringify(r)!==JSON.stringify(changes.citationReviews![i])))) throw new PrivacyError("INVALID");
   if (changes.actions && master.actions.some((item) => {
     const next = changes.actions!.find((a) => a.id === item.id);
     return !next || (item.closure !== null && JSON.stringify(item) !== JSON.stringify(next))

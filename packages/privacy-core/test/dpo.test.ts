@@ -18,11 +18,11 @@ describe("DPO dossier integrity", () => {
     const { master } = fixture(); const legacy = JSON.parse(JSON.stringify(master));
     legacy.format = "rgpd-master-v4"; delete legacy.dpoCases; delete legacy.piaPublications;
     const original = JSON.stringify(legacy); const next = migrateWorkspace(legacy);
-    expect(next).toEqual({ ...legacy, format: "rgpd-master-v5", dpoCases: [], piaPublications: [] });
+    expect(next).toEqual({ ...legacy, format: "rgpd-master-v6", dpoCases: [], piaPublications: [] });
     expect(JSON.stringify(legacy)).toBe(original);
     expect(() => migrateWorkspace({ ...legacy, dpoCases: [] })).toThrow("INVALID");
   });
-  it.each(["interest", "transfer", "rights", "breach"] as const)("starts %s without legal outcomes or hidden timing assumptions", (kind) => {
+  it.each(["interest", "transfer", "rights", "breach", "security"] as const)("starts %s without legal outcomes or hidden timing assumptions", (kind) => {
     const { master, item } = fixture(kind); assertWorkspace(master);
     expect(item.reviews).toEqual([]); expect(item.content.rights.regime).toBe("unknown");
     expect(item.content.breach.role).toBe("unknown");

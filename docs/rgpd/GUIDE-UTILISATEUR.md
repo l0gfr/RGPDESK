@@ -483,4 +483,60 @@ Dans la démonstration, « Ouvrir la fiche d’exemple » donne accès au projet
 
 « Lire l’AIPD d’exemple » ouvre directement le dossier rempli. La lecture s’organise en cinq chapitres : contexte, choix, risques, mesures et avis. Le menu « Version du dossier » permet de lire le contexte conservé d’une revue. Les points à instruire restent accessibles dans un encart dédié. Fermer l’étude permet de reprendre la visite.
 
-Le fichier `report.html` du partage propose une vue d’ensemble, un index des activités et une fiche visuelle par activité. Les repères personnes/données/destinataires reprennent uniquement la projection autorisée ; ils ne représentent pas les flux opérationnels, qui ne font pas partie du format partagé v1. Aucune saisie supplémentaire n’est demandée pour cette mise en forme. L’annexe conserve toutes les déclarations sélectionnées. La version JSON et le CSV sont inchangés ; les anciens rapports HTML restent vérifiables selon leur rendu d’origine.
+Le fichier `report.html` propose une vue d’ensemble, un index et une fiche visuelle par activité. Dans « Partager un dossier », ouvrez « Ajouter une synthèse direction et des flux choisis ». Sélectionnez les flux à présenter, les positions avec leurs motifs et les suites avec responsable et échéance. Aucun élément n’est coché par défaut. La relecture montre chaque champ communiqué avant téléchargement. Les schémas de flux ne représentent que les mouvements sélectionnés ; les repères personnes/données/destinataires restent une synthèse distincte. L’annexe, le JSON et le CSV contiennent les mêmes déclarations examinées. Les anciens dossiers restent vérifiables. Le profil extrait client exclut ces compléments.
+
+
+## 18. Un inventaire, quatre lectures
+
+Choisissez une activité dans **Analyse** ou **Cartographie**, puis l’une des quatre lectures. Le dossier s’ouvre sur cette activité : vous ne reconstituez pas son contexte.
+
+| Lecture | Question de travail | Où poursuivre |
+| --- | --- | --- |
+| Exigences RGPD | Quels faits, exigences et choix faut-il documenter pour ce traitement ? | Carnet RGPD de la fiche |
+| Nécessité et proportionnalité | Quels moyens atteignent l’objectif, avec quels effets et quelles alternatives ? | Étape Nécessité de l’atelier AIPD |
+| Risques SI | Quel événement perturberait la confidentialité, l’intégrité ou la disponibilité, et l’activité ? | Un dossier Risques SI par scénario |
+| Droits et libertés | Que pourrait-il arriver aux personnes, même si les outils fonctionnent comme prévu ? | Étape Risques humains de l’atelier AIPD |
+
+Les faits communs viennent du registre. Les appréciations demeurent distinctes : une analyse SI ne répond pas, à elle seule, à la question des effets sur les personnes. Une nouvelle étude ne reprend pas automatiquement les conclusions du carnet RGPD. Ouvrir l’atelier ne signifie pas qu’une AIPD est obligatoire ni que le traitement est autorisé.
+
+**Repères :** [RGPD, articles 5, 24, 25, 32 et 35 §7](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr). La trame SI de RGPDESK organise un examen qualitatif léger ; elle n’est pas une mise en œuvre complète ou labellisée de la [méthode EBIOS Risk Manager de l’ANSSI](https://cyber.gouv.fr/securisation/analyse-des-risques/methode-ebios-rm/). Les questions sont celles de RGPDESK, à adapter à la mission.
+
+### Décrire un flux sans recopier l’inventaire
+
+Dans la fiche, choisissez une origine et une destination parmi les personnes concernées, intervenants et systèmes déjà décrits. Une description libre reste possible. Cochez la reprise des catégories de données uniquement si toutes circulent dans ce flux ; sinon, décrivez le sous-ensemble utile. Renseignez l’opération, puis ouvrez les précisions de canal, pays et habilitations lorsque vous les connaissez. Aucun rôle, transfert ou flux n’est déduit automatiquement.
+
+Le bouton **Modifier le flux** sur la carte rouvre sa saisie. Un changement de nom d’un outil lié apparaît dans les flux actuels. Les revues déjà consignées gardent leur ancien contexte.
+
+### Citer un passage utile à une position
+
+Référencez le document une seule fois dans **Documents**, puis reliez-le aux activités concernées. Dans une question d’analyse, choisissez ce justificatif, cliquez sur **Citer un passage**, et indiquez la page ou la clause ainsi que ce qu’elle établit et ses limites. Vous pouvez citer plusieurs passages ; la référence et son emplacement restent communs. Les originaux demeurent dans votre organisation.
+
+Si la version de la référence change, **Ma mission** présente les passages cités à réexaminer. Ouvrez **Réexaminer ce passage**, retrouvez le document dans votre organisation, puis choisissez de maintenir ou réviser votre appréciation. Consignez votre nom et votre motif. Une appréciation non documentée doit être renseignée avant cette relecture. L’ancienne appréciation, la nouvelle, les versions, le passage cité et le motif sont conservés dans l’historique. Aucun changement de version ne décide des conséquences juridiques.
+
+Cette relecture n’atteste pas l’authenticité du document. La file suit les changements du champ **Version déclarée**, uniquement pour les citations explicites des questions actuelles. Une modification du fichier original sans modification de sa référence ne peut pas être détectée. Les anciennes revues conservent leurs références. Les citations et cet historique restent exclus du partage du registre et de la restitution AIPD.
+
+### Éprouver la méthode sur dix cas fictifs
+
+Dans la démo, ouvrez **Dix situations métier à explorer** : recrutement, prospection, paie, support distant, badges, adhésions, dons, bénévoles, accompagnement et activités de mineurs. Chaque cas apporte des faits fictifs, des références inventées et une question à examiner. Il remplace uniquement la visite en mémoire, jamais un coffre personnel. Les choix juridiques restent à instruire. Ces exercices ne constituent pas des modèles validés à recopier.
+
+### Conduire un entretien court
+
+Ouvrez une fiche du registre, puis **Mener l’entretien**. Six étapes vous guident : usage, personnes et données, outils et acteurs, trajet, justificatifs et réponses attendues. Chaque réponse remplit la fiche existante ; la vue complète reste accessible. Les fondements, durées et rôles juridiques ne sont pas déduits de l’entretien.
+
+À la dernière étape, **Ajouter une question à poser** conserve une question sans réponse, jusqu’à douze par activité. Retrouvez-les dans **Ma mission**. Lorsque le métier répond, complétez le champ concerné et retirez la question. Cette liste ne crée pas automatiquement une action ou une échéance.
+
+### Retrouver un prestataire ou un outil dans tout le dossier
+
+Dans **Intervenants** ou **Systèmes**, cliquez sur **Voir la fiche**. Vous retrouvez les activités et flux qui y sont explicitement liés, les références, les questions qui citent ces références et les actions ouvertes des activités liées. La mention « Référence d’une activité liée » ne signifie pas que le document est un contrat de cet outil ou intervenant. Les informations sont relues depuis l’inventaire, sans seconde saisie.
+
+### Reprendre une séance et vérifier sa copie
+
+Un enregistrement de fiche, de dossier DPO, d’AIPD, de référence ou d’intervenant conserve un repère dans le coffre chiffré. **Reprendre là où j’ai enregistré**, dans **Ma mission**, retrouve ce dossier ; pour une fiche, un dossier DPO ou une AIPD, il retrouve aussi la dernière étape enregistrée. Naviguer sans enregistrer ne déplace pas ce repère. Il n’y a pas de sauvegarde automatique des saisies abandonnées. Dans la démo, ce repère disparaît avec la visite.
+
+Dans **Sauvegarde**, **Vérifier sans restaurer** relit le fichier choisi avec sa phrase secrète. Le résultat indique l’organisme, la révision, la date et le nombre d’activités, dossiers et restitutions. Aucun coffre n’est créé ou écrasé. Une vérification réussie porte sur la lisibilité et la structure de cette copie à cet instant, pas sur sa conservation future ni sur l’exactitude de ses déclarations. Le verrouillage efface le résultat de l’écran et annule une vérification encore en cours.
+
+### Donner une première lecture à la direction
+
+Dans **Partager un dossier**, choisissez d’abord le périmètre et le destinataire. Ouvrez les options de synthèse, puis cochez **Ouvrir le rapport par une lecture pour la direction**. Rédigez deux messages courts : **Ce qui change** et **Arbitrages demandés**. Sélectionnez les actions déjà consignées à communiquer : leurs responsables et échéances sont repris sans ressaisie.
+
+Le rapport commence par cette synthèse. Les trois premières actions sélectionnées y figurent ; les autres restent dans les suites détaillées. Les flux choisis et fiches suivent. Relisez tous les textes avant confirmation : le partage est en clair. La longueur imprimée dépend du contenu et des réglages d’impression. Ce résumé ne constitue ni un score ni une validation juridique. Le profil **Extrait client** exclut cette extension.

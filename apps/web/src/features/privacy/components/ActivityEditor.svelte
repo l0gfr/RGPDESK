@@ -2,25 +2,28 @@
   import { onMount, tick, untrack } from "svelte";
   import { canonicalJson, createPurpose, knowledgeText, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { fieldHints, type StartingPoint } from "../guidance";
+  import InterviewSteps from "./InterviewSteps.svelte";
+  import InventoryContext from "./InventoryContext.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import FlowEditor from "./FlowEditor.svelte";
   import { ANALYSIS_METHOD } from "../review-methods";
   import Icon from "./Icon.svelte";
   import InterviewPlaybook from "./InterviewPlaybook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
-  let { initial, workspace, busy, example, initialSection = "record", onSave, onCancel }: {
-    initialSection?: "record" | "analysis" | "flows"; initial: Activity; workspace: Workspace; busy: boolean; example?: StartingPoint;
+  let { initial, workspace, busy, example, initialSection = "record", initialStep = 0, onSave, onCancel }: {
+    initialStep?: number; initialSection?: "record" | "analysis" | "flows" | "evidence" | "interview"; initial: Activity; workspace: Workspace; busy: boolean; example?: StartingPoint;
     onSave: (activity: Activity, documentIds: string[]) => Promise<void>; onCancel: () => void;
   } = $props();
   let draft: Activity = $state(untrack(() => structuredClone(initial)));
-  let section = $state<"record" | "analysis" | "flows" | "evidence">(untrack(() => initialSection));
+  let section = $state<"record" | "analysis" | "flows" | "evidence" | "interview">(untrack(() => initialSection));
   let documentIds = $state(untrack(() => workspace.documents.filter((doc) => doc.activityIds.includes(initial.id)).map((doc) => doc.id)));
   const initialDraft = untrack(() => canonicalJson(initial));
   const initialDocuments = untrack(() => canonicalJson([...documentIds].sort()));
   export function hasUnsavedChanges() {
     return !workspace.activities.some((a) => a.id === draft.id) || canonicalJson(draft) !== initialDraft || canonicalJson([...documentIds].sort()) !== initialDocuments;
   }
-  let step = $state(0);
+  let step = $state(untrack(()=>Math.min(5,Math.max(0,initialStep))));
+  export function getCheckpoint() { return {kind:"activity" as const,id:draft.id,section,step}; }
   let whole = $state(false);
   let draftHeading: HTMLHeadingElement | undefined = $state();
   onMount(() => { void tick().then(() => { if (draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } }); });
@@ -59,12 +62,14 @@
   </div>
   <div class="draft-toolbar"><span>{hasUnsavedChanges() ? "Saisie à enregistrer" : "Fiche enregistrée"}</span><div class="actions"><button type="button" disabled={busy} onclick={() => void save()}>{busy ? "Chiffrement en cours…" : "Enregistrer la fiche"}</button><button type="button" class="secondary" disabled={busy} onclick={onCancel}>Annuler l’édition</button></div></div>
   <p class="help">Vous pouvez enregistrer à tout moment. Les champs laissés vides resteront à examiner.</p>
-  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"], ["evidence", "Les justificatifs", "documents"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
+  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["interview", "Mener l’entretien", "help"], ["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"], ["evidence", "Les justificatifs", "documents"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
   {#if example && section === "record"}<aside class="interview-card"><strong>Votre fil conducteur</strong><p>{example.question}</p><details><summary>Retrouver les questions métier et leurs sources</summary><InterviewPlaybook {example} /></details></aside>{/if}
   {#if section === "record" && !whole}<nav class="editor-steps" aria-label="Étapes de la fiche">{#each steps as label, index}<button type="button" class="secondary" disabled={busy} aria-current={step === index ? "step" : undefined} onclick={() => void go(index)}><span>{index + 1}</span>{label}</button>{/each}</nav><div class="step-heading"><p class="eyebrow">Étape {step + 1} sur {steps.length}</p><h3 bind:this={sectionTitle} tabindex="-1">{steps[step]}</h3><p>{introductions[step]}</p></div>{/if}
+  {#if section !== "interview" && draft.interviewQuestions?.length}<aside class="notice"><strong>À demander au métier</strong><ul>{#each draft.interviewQuestions as q}<li>{q}</li>{/each}</ul><button type="button" class="secondary" onclick={()=>{section="interview";step=5;}}>Reprendre les questions de l’entretien</button></aside>{/if}
   <form bind:this={form} onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <fieldset disabled={busy}>
-      {#if section === "evidence"}
+      {#if section === "interview"}<InterviewSteps bind:draft bind:documentIds bind:step {workspace} />
+      {:else if section === "evidence"}
         <div class="method-intro"><p class="eyebrow">Une référence, plusieurs activités</p><h3>Relier les justificatifs déjà recensés.</h3><p>Sélectionnez les documents qui concernent cette activité. Leur titre, leur version et leur emplacement restent dans la bibliothèque commune de ce coffre ; vous ne les ressaisissez pas.</p></div>
         <fieldset class="choices evidence-picker"><legend>Références de ce coffre</legend>
           {#each workspace.documents as doc (doc.id)}<label><input type="checkbox" checked={documentIds.includes(doc.id)} onchange={(e) => documentIds = e.currentTarget.checked ? [...documentIds, doc.id] : documentIds.filter((id) => id !== doc.id)} /><span><strong>{doc.title}</strong><small>{doc.version ? `Version ${doc.version}` : "Version à préciser"} · {doc.scope}</small><small>{doc.internalRef || "Emplacement à renseigner"}</small></span></label>{/each}
@@ -75,9 +80,10 @@
         <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Examiner les exigences RGPD de cette activité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au dossier ; leur saisie ne vaut pas validation.</p></div>
         <KnowledgeField label="Opérations détaillées du traitement" bind:value={draft.analysis.operations} hint="Décrivez la collecte, l’enregistrement, les consultations, les calculs ou rapprochements, les transmissions, l’archivage et l’effacement, selon le fonctionnement réel." />
         <KnowledgeField label="Personnes habilitées et droits d’accès" bind:value={draft.analysis.access} hint="Décrivez les rôles, équipes ou organismes autorisés, leurs droits de lecture, modification, extraction ou suppression et le circuit d’autorisation. Pas de liste nominative." />
-        <ReviewNotebook bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" legitimateInterest={draft.role === "controller"} />
+        <InventoryContext activities={[draft]} />
+        <ReviewNotebook documents={workspace.documents.filter((d) => documentIds.includes(d.id))} bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" legitimateInterest={draft.role === "controller"} />
         <p class="help">Cette analyse accompagne le registre. La nécessité et la proportionnalité de l’AIPD se travaillent dans son atelier distinct. Référence : <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr" target="_blank" rel="noopener noreferrer">RGPD, articles 5, 6, 24, 25 et 32</a>. Après enregistrement, consignez les décisions et affectez les correctifs dans Actions & décisions.</p>
-      {:else if section === "flows"}<FlowEditor bind:flows={draft.flows} />
+      {:else if section === "flows"}<FlowEditor activity={draft} {workspace} bind:flows={draft.flows} />
       {:else}
       {#if whole || step === 0}<div class="grid-two">
         <label class="field"><span>Nom de l’activité</span><input required maxlength="160" bind:value={draft.title} /></label>
@@ -117,7 +123,7 @@
       {/if}
       {#if whole || step === 2}
       <div class="method-intro"><p class="eyebrow">Une seule saisie, deux vues</p><h3>Décrire les données et leurs flux.</h3><p>Renseignez les circulations pendant votre entretien. La cartographie affiche ces mêmes flux : vous n’aurez pas à les ressaisir. Les rubriques de synthèse du registre se complètent ci-dessous.</p></div>
-      <FlowEditor bind:flows={draft.flows} compact />
+      <FlowEditor activity={draft} {workspace} bind:flows={draft.flows} compact />
       <h3>Personnes, données et destinataires</h3>
       <p class="help">Rubriques article 30 pour le responsable ; compléments de documentation pour le sous-traitant.</p>
       <div class="grid-two">

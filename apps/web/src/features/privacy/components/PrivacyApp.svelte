@@ -1,7 +1,7 @@
 <script lang="ts">
   import { VaultInventory } from "../persistence/inventory";
   import { onMount, tick } from "svelte";
-  import { recordPiaPublication, renderPiaPublication, type PiaPublication, createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
+  import { checkpointExists, type WorkCheckpoint, recordPiaPublication, renderPiaPublication, type PiaPublication, createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { assertLocalPassphrase } from "../../../lib/local-encryption";
   import { subscribeToSensitivePageLock } from "../../../lib/sensitive-page-lock";
   import { checkSession, PrivacyVault, PRIVACY_CHANNEL, type VaultItem, type VaultSession } from "../persistence/vault";
@@ -21,9 +21,12 @@
   import ActivityEditor from "./ActivityEditor.svelte";
   import OrganizationEditor from "./OrganizationEditor.svelte";
   import RelationsEditor from "./RelationsEditor.svelte";
+  import BackupCheck from "./BackupCheck.svelte";
+  import ReexaminationQueue from "./ReexaminationQueue.svelte";
   import MissionOverview from "./MissionOverview.svelte";
   import ActivityStarter from "./ActivityStarter.svelte";
   import { DemoSession } from "../demo-session";
+  import ReferenceCases from "./ReferenceCases.svelte";
   import DemoOverview from "./DemoOverview.svelte";
   import DemoGuide from "./DemoGuide.svelte";
   import type { DemoPanel } from "../demo-journey";
@@ -33,6 +36,7 @@
   import type { SearchResult } from "../search";
 
   let demo = $state(false);
+  let referenceCase = $state("");
   let hydrated = $state(false);
   let demoSession: DemoSession | undefined;
   let demoPhrase = $state("");
@@ -62,17 +66,25 @@
   let documentId = $state("");
   let documentActivityId = $state("");
   let piaActivityId = $state("");
+  let piaStep = $state(0);
+  let lensPia = $state(false);
+  let securityActivityId = $state("");
   let searchOpen = $state(false);
   let searchNavigation = $state(0);
   let searchButton: HTMLButtonElement | undefined = $state();
   let panel: "dpo" | "pia-sharing" | "pia" | "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
   let piaEditing = $state(false);
-  type DraftGuard = { hasUnsavedChanges: () => boolean };
+  type DraftGuard = { hasUnsavedChanges: () => boolean; getCheckpoint?:()=>WorkCheckpoint|undefined };
   let activityGuard: DraftGuard | undefined = $state();
   let dpoGuard: DraftGuard | undefined = $state();
   let piaGuard: DraftGuard | undefined = $state();
+  let documentGuard: DraftGuard | undefined = $state();
+  let relationGuard: DraftGuard | undefined = $state();
+  let reexaminationGuard: DraftGuard | undefined = $state();
+  let editorStep=$state(0), entityId=$state("");
+  let dpoSection=$state<"scope"|"analysis"|"events"|"review">("scope");
   let pendingNavigation: (() => void) | null = $state(null);
-  const hasUnsavedChanges = () => !!(activityGuard?.hasUnsavedChanges() || dpoGuard?.hasUnsavedChanges() || piaGuard?.hasUnsavedChanges());
+  const hasUnsavedChanges = () => !!(activityGuard?.hasUnsavedChanges() || dpoGuard?.hasUnsavedChanges() || piaGuard?.hasUnsavedChanges() || documentGuard?.hasUnsavedChanges() || relationGuard?.hasUnsavedChanges() || reexaminationGuard?.hasUnsavedChanges());
 
   async function resumeDraft() {
     pendingNavigation = null;
@@ -102,7 +114,8 @@
     else proceed();
   }
   function resetEditor() {
-    editor = null; piaEditing = false;
+    editorStep=0; dpoSection="scope"; entityId="";
+    editor = null; piaEditing = false; piaStep = 0; lensPia = false; securityActivityId = "";
     actionActivityId = dpoCaseId = documentId = documentActivityId = piaActivityId = "";
     searchNavigation += 1;
   }
@@ -114,7 +127,7 @@
   let findings = $derived(master ? evaluateWorkspace(master, new Date().toISOString().slice(0, 10)) : []);
   let editor: Activity | null = $state(null);
   let searchCanNavigate = $derived(!busy && ["overview", "register", "analysis", "flows", "pia", "dpo"].includes(panel));
-  let editorSection: "record" | "analysis" | "flows" = $state("record");
+  let editorSection: "record" | "analysis" | "flows" | "evidence" | "interview" = $state("record");
   let editorExample: StartingPoint | undefined = $state();
   let showStarters = $state(false);
   let lastActivityId = $state("");
@@ -132,7 +145,7 @@
     controller = new AbortController();
     demoSession?.clear();
     demoSession = undefined;
-    demo = false;
+    demo = false; referenceCase = "";
     demoPhrase = demoConfirmation = "";
     showWipe = false;
     wipeConfirmation = "";
@@ -146,6 +159,7 @@
     dpoCaseId = documentId = documentActivityId = piaActivityId = "";
     editor = null;
     piaEditing = false;
+    editorStep=0; dpoSection="scope"; entityId="";
     editorSection = "record";
     missingOnly = false;
     registerRole = "";
@@ -198,6 +212,14 @@
     });
     if (!master) demo = false;
   }
+  function openReferenceCase(id: string) {
+    if (!demo || busy) return;
+    requestNavigation(() => {
+      const next = new DemoSession(() => crypto.randomUUID(), now(), id);
+      demoSession?.clear(); demoSession = next; master = next.read();
+      resetEditor(); referenceCase = id; panel = "register"; message = "Cas fictif ouvert. Les questions et choix juridiques restent à examiner.";
+    });
+  }
   function leaveDemo() {
     lock("Démo terminée. Vos coffres personnels n’ont pas été modifiés.");
     void inventory?.refresh();
@@ -238,6 +260,9 @@
 
   async function persist(next: Workspace, current: VaultSession) {
     if (!master) throw new PrivacyError("LOCKED");
+    const guard=editor?activityGuard:panel==="pia"?piaGuard:panel==="dpo"?dpoGuard:panel==="documents"?documentGuard:(panel==="parties"||panel==="systems")?relationGuard:undefined;
+    const checkpoint=guard?.getCheckpoint?.();
+    if(checkpoint&&checkpointExists(next,checkpoint))next={...next,workCheckpoint:checkpoint};
     if (demoSession) next = demoSession.save(next);
     else await vault!.save(next, phrase, master.revision, current);
     checkSession(current);
@@ -246,8 +271,19 @@
     message = demo ? "Modifications conservées pour cette visite uniquement." : fr.saved;
   }
 
+  function resumeCheckpoint(){
+    const c=master?.workCheckpoint;if(!master||!c)return;
+    requestNavigation(()=>{if(!master)return;resetEditor();searchNavigation++;
+      if(c.kind==="activity"){const a=master.activities.find(a=>a.id===c.id);if(a){editor=structuredClone($state.snapshot(a));editorSection=c.section;editorStep=c.step;panel="register";}}
+      else if(c.kind==="pia"){piaActivityId=master.impactAssessments.find(p=>p.id===c.id)?.activityId??"";piaStep=c.step;lensPia=true;panel="pia";}
+      else if(c.kind==="dpo"){dpoCaseId=c.id;dpoSection=c.section;panel="dpo";}
+      else if(c.kind==="document"){documentId=c.id;panel="documents";}
+      else{entityId=c.id;panel=c.kind==="party"?"parties":"systems";}
+    });
+  }
   function startActivity(role: Activity["role"], example?: StartingPoint) {
     if (!master || busy || master.activities.length >= 200) return;
+    editorStep=0; dpoSection="scope"; entityId="";
     editorSection = "record";
     editor = createActivity(master.id, crypto.randomUUID(), role);
     editor.title = example?.title ?? "";
@@ -281,7 +317,8 @@
     if (result.kind === "activity") {
       const activity = master.activities.find((item) => item.id === result.id);
       if (!activity) return;
-      editorSection = "record"; editorExample = undefined;
+      editorStep=0; dpoSection="scope"; entityId="";
+    editorSection = "record"; editorExample = undefined;
       editor = structuredClone($state.snapshot(activity)); panel = "register";
     } else if (result.kind === "dpo") {
       if (!master.dpoCases.some((item) => item.id === result.id)) return;
@@ -389,7 +426,8 @@
     const activity = master.activities.find((a) => a.id === master!.impactAssessments[0]?.activityId) ?? master.activities[0];
     if (!activity) return;
     if (panel === "register") {
-      editorSection = "record"; editorExample = undefined;
+      editorStep=0; dpoSection="scope"; entityId="";
+    editorSection = "record"; editorExample = undefined;
       editor = structuredClone($state.snapshot(activity));
     } else if (panel === "pia" && master.impactAssessments.some((p) => p.activityId === activity.id)) {
       piaActivityId = activity.id;
@@ -526,21 +564,23 @@
     {#if !demo}<div class="client-switcher"><span>Registre de <strong>{master.organization.name}</strong><small>Repère du coffre : {master.id}</small></span><div><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Verrouiller ce registre et revenir aux coffres" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient()}>Changer de registre</button><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Créer un coffre distinct" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient(true)}>Ajouter un client</button></div></div>{/if}
     <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "dpo" ? "Les dossiers de votre mission." : panel === "pia-sharing" ? "Restituer votre analyse d’impact." : panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
     {#if !demo}<p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>{/if}
-    {#if demo}<DemoGuide {panel} {busy} editing={editor !== null || piaEditing}
+    {#if demo && !referenceCase}<DemoGuide {panel} {busy} editing={editor !== null || piaEditing}
       actionLabel={panel === "register" && master.activities.length ? "Ouvrir la fiche d’exemple" : panel === "pia" && master.impactAssessments.length ? "Lire l’AIPD d’exemple" : undefined}
       onAction={() => void openDemoExample()} onNavigate={(next) => void navigateDemo(next)} />{/if}
     {#if editor}
-      {#key `${editor.id}:${searchNavigation}`}<ActivityEditor bind:this={activityGuard} initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
+      {#key `${editor.id}:${searchNavigation}`}<ActivityEditor bind:this={activityGuard} initialStep={editorStep} initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if panel === "overview"}
-      {#if demo}<DemoOverview {busy} onNavigate={(next) => void navigateDemo(next)} />{:else}<MissionOverview workspace={master} {busy} onPia={(id) => { piaActivityId = id; searchNavigation++; panel = "pia"; }} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
+      {#if demo && referenceCase}<section class="panel"><p class="eyebrow">Exercice fictif</p><h2>{master.organization.name}</h2><p>Le registre est le point de départ. Retrouvez les quatre lectures dans Analyse ou Cartographie.</p><button class="secondary" onclick={() => panel = "analysis"}>Explorer les quatre lectures</button><ReferenceCases onChoose={openReferenceCase} {busy} /></section>{:else if demo}<DemoOverview onCase={openReferenceCase} {busy} onNavigate={(next) => void navigateDemo(next)} />{:else}<MissionOverview onResume={resumeCheckpoint} workspace={master} {busy} onPia={(id) => { piaActivityId = id; searchNavigation++; panel = "pia"; }} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
+      {#if demo && master.workCheckpoint}<section class="panel resume-checkpoint"><p class="eyebrow">Votre dernière étape enregistrée pour cette visite</p><button disabled={busy} onclick={resumeCheckpoint}>Reprendre là où j’ai enregistré<Icon name="arrow" /></button></section>{/if}
+      <ReexaminationQueue bind:this={reexaminationGuard} workspace={master} {busy} onSave={async next=>{await saveNext(next);return master?.revision===next.revision;}} />
     {:else if panel === "dpo"}
-      {#key searchNavigation}<DpoCases bind:this={dpoGuard} onLeave={requestNavigation} workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
+      {#key searchNavigation}<DpoCases bind:this={dpoGuard} onLeave={requestNavigation} workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} initialCaseId={dpoCaseId} initialSection={dpoSection} initialKind={securityActivityId ? "security" : "interest"} initialActivityId={securityActivityId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "pia-sharing"}
       {#key master.revision}<PiaSharing workspace={$state.snapshot(master)} {busy} onDeliver={deliverPia} onDownload={downloadPia} />{/key}
     {:else if panel === "pia"}
-      {#key searchNavigation}<PiaPanel bind:this={piaGuard} onLeave={requestNavigation} workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} {demo} initialActivityId={piaActivityId} initialView={demo ? "read" : "edit"} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
+      {#key searchNavigation}<PiaPanel bind:this={piaGuard} onLeave={requestNavigation} workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} {demo} initialActivityId={piaActivityId} initialStep={piaStep} initialView={demo && !lensPia ? "read" : "edit"} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "analysis" || panel === "flows"}
-      {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
+      {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={(id, step = 0) => { resetEditor(); piaActivityId = id; piaStep = step; lensPia = true; panel = "pia"; }} onSecurity={(id) => { resetEditor(); securityActivityId = id; panel = "dpo"; }} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
       {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><div class="actions"><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button><button class="secondary" disabled={busy} onclick={() => { documentId = ""; documentActivityId = lastActivityId; panel = "documents"; }}>Référencer un document pour cette activité<Icon name="documents" /></button></div></div></aside>{/if}
       {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}
@@ -555,20 +595,24 @@
     {:else if panel === "organization"}
       {#key master.revision}<OrganizationEditor workspace={$state.snapshot(master)} {busy} onSave={(changes) => run(async (current) => { if (master) await persist(reviseWorkspace($state.snapshot(master), master.revision, now(), changes), current); })} />{/key}
     {:else if panel === "parties" || panel === "systems"}
-      {#key `${panel}:${master.revision}`}<RelationsEditor workspace={$state.snapshot(master)} {busy} kind={panel}
+      {#key `${panel}:${master.revision}`}<RelationsEditor bind:this={relationGuard} initialId={entityId} onLeave={requestNavigation}
+        onActivity={id=>requestNavigation(()=>{const a=master?.activities.find(a=>a.id===id);if(a){resetEditor();editor=structuredClone($state.snapshot(a));panel="register";}})}
+        onDocument={id=>requestNavigation(()=>{resetEditor();documentId=id;panel="documents";})}
+        onActions={id=>requestNavigation(()=>{resetEditor();actionActivityId=id;panel="actions";})} workspace={$state.snapshot(master)} {busy} kind={panel}
         onSaveParty={(party) => run(async (current) => { if (master) await persist(putParty($state.snapshot(master), party, master.revision, now()), current); })}
         onSaveSystem={(system) => run(async (current) => { if (master) await persist(putSystem($state.snapshot(master), system, master.revision, now()), current); })} />{/key}
     {:else if panel === "import"}
       {#key master.revision}<ImportPanel workspace={$state.snapshot(master)} {busy} onSave={saveNext} />{/key}
     {:else if panel === "documents"}
-      <DocumentsPanel workspace={$state.snapshot(master)} {busy} initialDocumentId={documentId} initialActivityId={documentActivityId} onSave={async (next) => { await saveNext(next); const saved = master?.revision === next.revision; if (saved) documentId = documentActivityId = ""; return saved; }} />
+      <DocumentsPanel bind:this={documentGuard} onLeave={requestNavigation} workspace={$state.snapshot(master)} {busy} initialDocumentId={documentId} initialActivityId={documentActivityId} onSave={async (next) => { await saveNext(next); const saved = master?.revision === next.revision; if (saved) documentId = documentActivityId = ""; return saved; }} />
     {:else if panel === "actions"}
       {#key master.revision}<ActionsPanel workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} />{/key}
     {:else if panel === "delivery"}
       {#key master.revision}<DeliveryPanel workspace={$state.snapshot(master)} {busy} {demo} onDeliver={deliver} onDownload={downloadDelivery} />{/key}
     {:else}
       {#if demo}<section class="panel demo-backup"><div class="section-heading"><div><p class="eyebrow">L’exercice vous appartient aussi</p><h2>Essayez une vraie sauvegarde chiffrée.</h2></div><span class="icon-tile"><Icon name="backup" size={30} /></span></div><p>Choisissez une phrase propre à cette copie fictive. Le fichier contient tout le dossier de démonstration et les versions partagées pendant la visite. Aucun coffre n’est créé sur cet appareil.</p><form onsubmit={(e) => { e.preventDefault(); void downloadBackup(); }}><fieldset disabled={busy}><div class="grid-two"><label class="field">Phrase pour la sauvegarde de démonstration<input type="password" required minlength="12" maxlength="1024" autocomplete="new-password" bind:value={demoPhrase} /></label><label class="field">Confirmer la phrase de démonstration<input type="password" required maxlength="1024" autocomplete="new-password" bind:value={demoConfirmation} /></label></div><p class="help">Préférez une phrase longue et unique. Elle sera nécessaire pour restaurer le fichier ; elle ne peut pas être récupérée.</p><button disabled={!demoPhrase || demoPhrase !== demoConfirmation} type="submit">Chiffrer et télécharger l’exercice</button></fieldset></form><p class="help">Pour essayer la restauration, quittez la démo puis utilisez « Restaurer une sauvegarde chiffrée ». Ce geste créera un coffre fictif distinct ; aucun coffre existant ne sera écrasé.</p></section>{:else}
-      <section class="panel"><h2>Sauvegarde chiffrée</h2><p>Elle contient tout cet espace, y compris les notes internes. Elle sert à la restauration et n’est pas un dossier à partager avec un client.</p><p>La même phrase secrète sera nécessaire. Aucun service ne peut la récupérer pour vous.</p><button disabled={busy} onclick={downloadBackup}>Télécharger la sauvegarde chiffrée</button><p class="help">Pour tester la restauration, ouvrez RGPDESK sur un autre profil navigateur. Toute collision avec un espace existant est refusée.</p></section>{/if}
+      <section class="panel"><h2>Sauvegarde chiffrée</h2><p>Elle contient tout cet espace, y compris les notes internes. Elle sert à la restauration et n’est pas un dossier à partager avec un client.</p><p>La même phrase secrète sera nécessaire. Aucun service ne peut la récupérer pour vous.</p><button disabled={busy} onclick={downloadBackup}>Télécharger la sauvegarde chiffrée</button><p class="help">Vérifiez la lisibilité du fichier ci-dessous, sans créer de coffre. La restauration reste une opération distincte et refuse tout écrasement.</p></section>{/if}
+      <BackupCheck workspaceId={master.id} revision={master.revision} />
     {/if}
     <p class="catalog-caption">Un doute pendant votre travail ? <a href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">Retrouver une explication dans le guide</a>.</p></div></div>
   {:else}
@@ -583,7 +627,7 @@
     <div class="onboarding-note"><div><h2>Votre travail reste sur votre appareil.</h2><p>Le coffre protège votre registre dans ce navigateur. Sans compte ni synchronisation, vous gardez la main sur vos sauvegardes chiffrées et vos partages.</p></div><a href="/app/privacy/guide/#2-votre-premier-registre-pas-à-pas" target="_blank" rel="noopener noreferrer">Me guider pour commencer <Icon name="arrow" size={17} /></a></div>
     <aside class="cabinet-intro"><span class="cabinet-monogram" aria-hidden="true"><Icon name="organization" size={34} /></span><div><p class="eyebrow">Un organisme, un espace dédié</p><h2>Plusieurs clients. Des registres séparés.</h2><p>DPO externe : créez un coffre par client. Chaque organisation garde ses activités, ses analyses et sa sauvegarde. Ouvrez le coffre du client concerné pour reprendre sa mission.</p><p class="help">Les noms restent chiffrés jusqu’à l’ouverture. Notez le repère de chaque coffre avec sa phrase dans votre gestionnaire de mots de passe. La recherche porte uniquement sur le client ouvert.</p></div></aside>
     <div class="grid-two vault-panels">
-      <section class="panel" id="creer-registre"><p class="eyebrow">Nouvel organisme ou nouveau client</p><h2>Créer le registre de mon organisation</h2><p class="help">Choisissez la phrase qui chiffre votre espace de travail. Conservez-la : elle sera nécessaire pour rouvrir le coffre et restaurer une sauvegarde.</p>
+      <section class="panel vault-card vault-card-create" id="creer-registre"><header class="vault-card-heading"><span class="vault-card-icon"><Icon name="register" size={34} /></span><div><p class="eyebrow">01 / Ouvrir un espace</p><h2>Créer le registre de mon organisation</h2></div><span class="vault-card-stamp" aria-hidden="true">R.</span></header><p class="help">Choisissez la phrase qui chiffre votre espace de travail. Conservez-la : elle sera nécessaire pour rouvrir le coffre et restaurer une sauvegarde.</p>
         <form onsubmit={(event) => { event.preventDefault(); void create(); }}><fieldset disabled={!ready || busy || stale}>
           <label class="field"><span>Nom de l’organisme</span><input id="create-client-name" maxlength="160" required bind:value={organizationName} autocomplete="off" placeholder="Association fictive Les Alizés" /></label>
           <label class="field"><span>Nouvelle phrase secrète</span><input type="password" required minlength="12" maxlength="1024" bind:value={phraseInput} autocomplete="new-password" /></label>
@@ -593,20 +637,20 @@
           <button type="submit">{busy ? "Opération en cours…" : "Créer le coffre chiffré"}</button>
         </fieldset></form>
       </section>
-      <section class="panel" id="client-vaults"><p class="eyebrow">Vos clients et organisations</p><h2 id="client-vaults-title" tabindex="-1">Reprendre votre travail</h2>
+      <section class="panel vault-card vault-card-resume" id="client-vaults"><header class="vault-card-heading"><span class="vault-card-icon"><Icon name="key" size={34} /></span><div><p class="eyebrow">02 / Vos clients et organisations</p><h2 id="client-vaults-title" tabindex="-1">Reprendre votre travail</h2></div><span class="vault-card-stamp" aria-hidden="true">R.</span></header>
         <p class="help">Vos coffres sont enregistrés sur cet appareil, dans ce navigateur. Leur contenu n’est pas envoyé au serveur RGPDESK.</p>
         {#if inventoryStatus === "loading"}<p role="status">Recherche des coffres enregistrés…</p>
         {:else if inventoryStatus === "error"}<p class="notice error" role="alert">La liste des coffres n’a pas pu être lue. Cela ne signifie pas qu’ils ont été effacés. Aucun coffre n’est créé ni remplacé par cette vérification.</p>
         {:else if stale}<p class="notice" role="status">Le stockage a changé. Rechargez la page pour relire les coffres disponibles.</p>
-        {:else if records.length === 0}<p class="empty">Aucun coffre trouvé à cette adresse dans ce profil navigateur.</p>{/if}
+        {:else if records.length === 0}<div class="vault-empty"><span class="vault-empty-icon"><Icon name="lock" size={32} /></span><strong>Votre prochain dossier commence ici.</strong><p>Aucun coffre trouvé à cette adresse dans ce profil navigateur.</p><a href="#creer-registre">Créer mon premier coffre<Icon name="arrow" size={16} /></a></div>{/if}
         <button class="secondary" disabled={busy || stale || inventoryStatus === "loading"} onclick={() => void inventory?.refresh()}>Actualiser la liste des coffres</button>
         <details><summary>Je ne retrouve pas un coffre</summary><p>Site associé à ce stockage local : <strong>{storageOrigin || "Vérification en cours"}</strong>. Cette adresse permet au navigateur de retrouver les coffres ; elle ne désigne pas un stockage sur le serveur.</p><p>Revenez à l’adresse exacte et au profil navigateur utilisés lors de sa création. Le site rgpdesk.fr, la version locale et les différents ports locaux ont des stockages séparés. Une fenêtre privée peut aussi utiliser un espace distinct.</p><p>Ne créez pas un coffre de remplacement et n’effacez pas les données du site pour résoudre ce problème. Si vous avez une sauvegarde chiffrée, la restauration ci-dessous refuse d’écraser un coffre existant.</p></details>
-        <ul class="records">{#each records as item, index (item.id)}<li><span>Coffre {index + 1}<small>Révision {item.revision}</small><small class="vault-reference">Repère : {item.id}</small></span><button class="secondary" disabled={!ready || busy || stale} onclick={() => { selectedId = item.id; phraseInput = ""; }}>Ouvrir le coffre {index + 1}</button></li>{/each}</ul>
+        <ul class="records vault-records">{#each records as item, index (item.id)}<li><span class="vault-record-icon"><Icon name="folder" size={26} /></span><span>Coffre {index + 1}<small>Révision {item.revision}</small><small class="vault-reference">Repère : {item.id}</small></span><button class="secondary" disabled={!ready || busy || stale} onclick={() => { selectedId = item.id; phraseInput = ""; }}>Ouvrir le coffre {index + 1}</button></li>{/each}</ul>
         {#if selectedId}<form onsubmit={(event) => { event.preventDefault(); void unlock(); }}><fieldset disabled={!ready || busy || stale}><label class="field"><span>Phrase secrète du coffre</span><input type="password" maxlength="1024" required bind:value={phraseInput} autocomplete="off" /></label><button type="submit">Déverrouiller</button></fieldset></form>{/if}
         <p class="help">Les noms et contenus restent chiffrés. Ce stockage dépend du domaine et du profil navigateur ; il peut être effacé par le navigateur ou son utilisateur.</p>
       </section>
     </div>
-    <details class="panel restore"><summary>Restaurer une sauvegarde chiffrée</summary><p>Lecture locale uniquement. Une ancienne sauvegarde peut réintroduire des informations anciennes. Aucun espace existant n’est remplacé.</p>
+    <details class="panel restore vault-restore"><summary aria-label="Restaurer une sauvegarde chiffrée"><span class="vault-restore-icon"><Icon name="backup" size={26} /></span><span><strong>Restaurer une sauvegarde chiffrée</strong><small>Retrouver un dossier à partir de votre copie.</small></span><Icon name="plus" size={20} /></summary><p>Lecture locale uniquement. Une ancienne sauvegarde peut réintroduire des informations anciennes. Aucun espace existant n’est remplacé.</p>
       <form onsubmit={(event) => { event.preventDefault(); void restore(); }}><fieldset disabled={!ready || busy || stale}>
         <div class="field"><label for="privacy-backup-file">Fichier de sauvegarde RGPDESK</label><input id="privacy-backup-file" aria-describedby="privacy-backup-hint" type="file" accept=".rgpdesk" bind:this={fileInput} onchange={(event) => { restoreFile = event.currentTarget.files?.[0] ?? null; }} /><small id="privacy-backup-hint">12 Mio maximum ; aucun fichier justificatif.</small></div>
         <label class="field"><span>Phrase secrète de la sauvegarde</span><input type="password" required maxlength="1024" bind:value={phraseInput} autocomplete="off" /></label>

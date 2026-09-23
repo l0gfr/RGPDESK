@@ -1,0 +1,14 @@
+<script lang="ts">
+  import {onDestroy} from "svelte";
+  import {inspectBackup} from "../persistence/backup-check";
+  import Icon from "./Icon.svelte";
+  let {workspaceId,revision}:{workspaceId:string;revision:number}=$props();
+  let file:File|null=$state(null), phrase=$state(""), checking=$state(false), error=$state(""), result:Awaited<ReturnType<typeof inspectBackup>>|null=$state(null);
+  let controller=new AbortController();
+  function reset(){controller.abort();controller=new AbortController();phrase="";result=null;error="";checking=false;}
+  onDestroy(()=>{controller.abort();phrase="";result=null;file=null;});
+  async function check(){if(!file||checking)return;const signal=controller.signal;error="";result=null;checking=true;try{const summary=await inspectBackup(file,phrase,signal);if(!signal.aborted)result=summary;}catch{if(!signal.aborted)error="Sauvegarde non vérifiée. Vérifiez le fichier et sa phrase secrète. Aucun coffre n’a été modifié.";}finally{if(!signal.aborted){phrase="";checking=false;}}}
+</script>
+<section class="panel backup-check"><div class="section-heading"><div><p class="eyebrow">Un fichier que vous pouvez relire</p><h2>Vérifier une sauvegarde.</h2></div><span class="icon-tile"><Icon name="shield" size={28} /></span></div><p>Choisissez votre fichier chiffré et sa phrase. La vérification reste sur cet appareil et ne restaure ni ne remplace aucun coffre.</p>
+<form onsubmit={e=>{e.preventDefault();void check();}}><fieldset disabled={checking}><label class="field">Sauvegarde à vérifier<input type="file" accept=".rgpdesk,.json,application/json" onchange={e=>{reset();file=e.currentTarget.files?.[0]??null;}} /></label><label class="field">Phrase de cette sauvegarde<input type="password" required maxlength="1024" autocomplete="off" bind:value={phrase} /></label><button type="submit" disabled={!file||!phrase}>Vérifier sans restaurer</button></fieldset></form>{#if checking}<p role="status">Déchiffrement et vérification du contenu…</p>{/if}{#if error}<p role="alert">{error}</p>{/if}
+{#if result}<div class="notice" role="status"><strong>Sauvegarde lisible et structure vérifiée.</strong><dl><dt>Organisme</dt><dd>{result.name}</dd><dt>Révision sauvegardée</dt><dd>{result.revision} · {result.updatedAt}</dd><dt>Contenu</dt><dd>{result.activities} activité(s), {result.dossiers} dossier(s) DPO, {result.studies} AIPD, {result.deliveries} restitution(s).</dd></dl><p>{result.workspaceId===workspaceId?(result.revision===revision?'Même coffre et même numéro de révision que le coffre ouvert.':'Cette copie concerne le coffre ouvert, avec un numéro de révision différent.'):'Cette sauvegarde appartient à un autre coffre.'}</p><p class="help">Cette vérification porte sur ce fichier à cet instant. Conservez-le sur un support distinct ; elle ne garantit pas sa conservation future.</p></div>{/if}</section>

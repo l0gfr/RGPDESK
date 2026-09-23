@@ -1,7 +1,8 @@
 import type { DpoKind } from "@rgpdesk/privacy-core";
 import { RGPD_OFFICIAL, type ReviewQuestion } from "./review-methods";
-export const DPO_TITLES: Record<DpoKind, string> = { interest: "Intérêt légitime", transfer: "Transferts", rights: "Demandes de droits", breach: "Violations" };
+export const DPO_TITLES: Record<DpoKind, string> = { security: "Risques SI", interest: "Intérêt légitime", transfer: "Transferts", rights: "Demandes de droits", breach: "Violations" };
 export const DPO_INTRO: Record<DpoKind, string> = {
+  security: "Un dossier par scénario : interruption, altération ou accès indu. Reliez les activités concernées, décrivez les conséquences opérationnelles et argumentez les mesures. Les risques pour les personnes se travaillent séparément dans l’AIPD. Cette trame RGPDESK ne constitue pas une étude EBIOS RM complète.",
   interest: "Une finalité, un examen distinct. Comparez les moyens, examinez les effets sur les personnes et conservez une position argumentée.",
   transfer: "Suivez les entités, les accès et les transferts ultérieurs. Examinez le mécanisme invoqué, son efficacité dans le contexte réel et les mesures supplémentaires.",
   rights: "De la réception à la réponse : délimitez la demande, affectez le travail, préparez une réponse et consignez les éléments d’envoi.",
@@ -9,6 +10,16 @@ export const DPO_INTRO: Record<DpoKind, string> = {
 };
 const q = (id: string, title: string, question: string, evidence: string, reference: string, source = RGPD_OFFICIAL): ReviewQuestion => ({ id, title, question, evidence, source, reference, nature: source === RGPD_OFFICIAL ? "Texte applicable · RGPD" : "Repère méthodologique d’autorité" });
 export const DPO_METHODS: Record<DpoKind, readonly ReviewQuestion[]> = {
+  security: [
+    q("scope", "Délimiter le scénario", "Quelle activité, quels outils et quels acteurs sont concernés ? Appuyez-vous sur les faits du registre liés à ce dossier. Précisez seulement les limites particulières à ce scénario.", "Inventaire lié, dépendances et périmètre retenu.", "RGPD, art. 32 §1 et §2"),
+    q("event", "Décrire l’événement redouté", "Que pourrait-il arriver à la disponibilité, à l’intégrité ou à la confidentialité ? Décrivez un événement concret, son déroulement et les limites de vos informations.", "Retour d’expérience, architecture et observations documentées.", "RGPD, art. 32 §1 b), c) et §2"),
+    q("threats", "Identifier les causes et les dépendances", "Quelles défaillances, erreurs ou actions malveillantes pourraient produire cet événement ? Quels prestataires et systèmes en propageraient les effets ?", "Flux déclarés, entretiens techniques et contrôles.", "ANSSI, démarche d’analyse des risques", "https://cyber.gouv.fr/securisation/analyse-des-risques/methode-ebios-rm/"),
+    q("impact", "Argumenter les conséquences sur l’activité", "Quelles missions seraient perturbées, pendant combien de temps et avec quelles conséquences ? Définissez votre échelle si vous en utilisez une. Identifiez séparément les effets sur les personnes à examiner dans l’AIPD.", "Besoins métiers, engagements, dépendances et hypothèses.", "ANSSI, événements redoutés et gravité", "https://cyber.gouv.fr/securisation/analyse-des-risques/methode-ebios-rm/"),
+    q("likelihood", "Motiver la vraisemblance", "Sur quels faits repose votre appréciation de la possibilité de ce scénario ? Indiquez la période et les incertitudes. Aucun chiffre ou niveau n’est déduit automatiquement.", "Exposition, incidents connus, contrôles et limites des essais.", "ANSSI, appréciation des risques", "https://cyber.gouv.fr/securisation/analyse-des-risques/methode-ebios-rm/"),
+    q("measures", "Vérifier les mesures", "Quelles mesures préviennent, détectent ou limitent cet événement ? Distinguez ce qui est prévu, déployé et testé, notamment la restauration et le rétablissement.", "Références de procédures, résultats de tests et responsables.", "RGPD, art. 32 §1 c) et d)"),
+    q("residual", "Réexaminer le scénario après mesures", "Que reste-t-il possible, avec quelles conséquences ? Expliquez l’effet réel des garanties, leur dépendance et leur éventuelle défaillance.", "Résultats observés, réserves et argument de réduction du risque.", "RGPD, art. 32 §1 et §2"),
+    q("decision", "Faire décider et organiser le suivi", "Qui retient quelle position, pour quel périmètre et avec quelles réserves ? Qui vérifie les correctifs et quels changements imposeraient un réexamen ?", "Position motivée, responsable, échéance et actions reliées.", "RGPD, art. 24 et 32"),
+  ],
   interest: [
     q("interest", "Identifier l’intérêt poursuivi", "Qui poursuit quel intérêt ? Est-il licite, précis, réel et actuel ? Examinez le contexte et la situation de l’organisme, notamment les missions d’une autorité publique.", "Bénéficiaires, finalité, contexte, textes et éléments factuels.", "RGPD, art. 6 §1 f) et considérant 47"),
     q("necessity", "Mettre les moyens en concurrence", "Ces opérations sont-elles nécessaires à cet intérêt ? Comparez une absence de traitement et des moyens aussi efficaces portant moins atteinte aux personnes. Motivez les options écartées.", "Opérations et flux du registre, options, essais, efficacité et incertitudes.", "RGPD, art. 6 §1 f)"),

@@ -1,4 +1,4 @@
-import { knowledgeText, type Knowledge, type ReviewNote, type Workspace } from "@rgpdesk/privacy-core";
+import { resolvedFlows, knowledgeText, type Knowledge, type ReviewNote, type Workspace } from "@rgpdesk/privacy-core";
 import { DPO_TITLES } from "./dpo-methods";
 
 export type SearchKind = "activity" | "document" | "dpo" | "pia";
@@ -6,7 +6,7 @@ export const SEARCH_LABELS = { activity: "Registre & flux", document: "Documents
 export interface SearchResult { kind: SearchKind; id: string; title: string; detail: string; excerpt: string }
 export const SEARCH_LIMIT = 20;
 export const normalizeSearch = (text: string): string => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr").replace(/œ/g, "oe").trim();
-const notes = (items: ReviewNote[]): string[] => items.flatMap((n) => [n.facts, n.evidence, n.objections, n.assessment, n.followUp].map(knowledgeText));
+const notes = (items: ReviewNote[]): string[] => items.flatMap((n) => [n.facts, n.evidence, n.objections, n.assessment, n.followUp].map(knowledgeText).concat((n.citations ?? []).flatMap((c) => [c.version, c.locator, c.meaning])));
 const text = (...items: Knowledge[]): string[] => items.map(knowledgeText);
 
 /** Reads a validated, unlocked master. No cache, persistent index, history or I/O.
@@ -35,7 +35,7 @@ export function searchWorkspace(workspace: Workspace | null, query: string, kind
     add("activity", a.id, a.title, a.role === "controller" ? "Activité responsable" : "Activité sous-traitante", [
       ...text(a.dataCategories, a.dataSubjects, a.recipients, a.transfers, a.securityMeasures, a.analysis.operations, a.analysis.access),
       a.internalNotes, ...parties, ...systems, ...notes(a.analysis.notes),
-      ...a.flows.flatMap((f) => text(f.source, f.destination, f.operation, f.data, f.channel, f.location, f.access)),
+      ...resolvedFlows(a, workspace).flatMap((f) => text(f.source, f.destination, f.operation, f.data, f.channel, f.location, f.access)),
       ...(a.role === "controller" ? a.purposes.flatMap((p) => text(p.description, p.legalBasis, p.retention.period, p.retention.trigger)) : text(a.operations, a.instructions)),
     ]);
   }

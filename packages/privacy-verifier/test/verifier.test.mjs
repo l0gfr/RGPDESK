@@ -151,3 +151,15 @@ test("visual report handles empty selections and processor links without inventi
   assert.ok(!html.includes("Pourquoi ces données ?</h3><section class=\"purpose\""));
   assert.ok(!html.includes("undefined"));
 });
+
+test("v2 presentation is canonical, passive, bounded and cannot use the legacy renderer as a bypass", async () => {
+ const dto={...fixture(),format:"rgpd-share-v2",flows:[{id:uid(4),activityId:uid(2),source:{state:"documented",value:"<img src=x onerror=probe>"},destination:u(),operation:u(),data:u(),channel:u(),location:u(),access:u()}],positions:[],nextSteps:[]};
+ const {files}=await packageFiles(dto); assert.equal((await verifyPackage(await zipFiles(files))).valid,true);
+ assert.ok(files["report.html"].includes("&lt;img")); assert.ok(!files["report.html"].includes("<img src=x"));
+ const style=files["report.html"].match(/<style>([^]*?)<\/style>/)[1];
+ const expected=Buffer.from(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(style))).toString("base64"); assert.ok(files["report.html"].includes("sha256-"+expected));
+ assert.ok(Buffer.byteLength(files["report.html"])<30000);
+ const changed={...files,"report.html":renderLegacyShareFiles(dto)["report.html"]};
+ const body=JSON.parse(changed["manifest.json"]); for(const entry of body.files){entry.bytes=Buffer.byteLength(changed[entry.name]);entry.sha256=await sha256(new TextEncoder().encode(changed[entry.name]));} delete body.sha256; changed["manifest.json"]=canonicalJson({...body,sha256:await sha256(new TextEncoder().encode(canonicalJson(body)))})+"\n";
+ assert.equal((await verifyPackage(await zipFiles(changed))).valid,false);
+});

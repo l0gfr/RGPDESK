@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { knowledgeText, piaOpenPoints, type PiaContent, type PiaContext, type ReviewNote } from "@rgpdesk/privacy-core";
+  import { resolvedFlows, knowledgeText, piaOpenPoints, type PiaContent, type PiaContext, type ReviewNote } from "@rgpdesk/privacy-core";
   import { PIA_NECESSITY_METHOD } from "../review-methods";
   import { PIA_PRINCIPLE_QUESTIONS, PIA_RISK_FIELDS, PIA_ALTERNATIVE_FIELDS, PIA_MEASURE_FIELDS, SCREENING_LABELS, PIA_SOURCES } from "../pia-method";
   import { tick } from "svelte";
+  import EvidenceCitations from "./EvidenceCitations.svelte";
   import Icon from "./Icon.svelte";
   import FlowMap from "./FlowMap.svelte";
   import PiaRiskMap from "./PiaRiskMap.svelte";
@@ -17,7 +18,7 @@
   let chapter = $state(0);
   let chapterHeading: HTMLHeadingElement | undefined = $state();
   let chapterIndex: HTMLElement | undefined = $state();
-  let points = $derived(piaOpenPoints(content));
+  let points = $derived(piaOpenPoints(content, context.documents));
   async function readChapter(index: number) {
     if (index < 0 || index >= chapters.length) return;
     chapter = index;
@@ -28,7 +29,7 @@
   const noteFields = { facts: "Faits", evidence: "Références", objections: "Objections", assessment: "Appréciation", followUp: "Suites" } as const;
 </script>
 {#snippet notes(values: ReviewNote[], titles: readonly { id: string; title: string }[])}
-  {#each values as note}<details><summary>{titles.find((q) => q.id === note.questionId)?.title ?? note.questionId}</summary><dl>{#each Object.entries(noteFields) as [key, label]}<div><dt>{label}</dt><dd>{knowledgeText(note[key as keyof typeof noteFields]) || "À documenter"}</dd></div>{/each}</dl></details>{/each}
+  {#each values as note}<details><summary>{titles.find((q) => q.id === note.questionId)?.title ?? note.questionId}</summary><dl>{#each Object.entries(noteFields) as [key, label]}<div><dt>{label}</dt><dd>{knowledgeText(note[key as keyof typeof noteFields]) || "À documenter"}</dd></div>{/each}</dl><EvidenceCitations citations={note.citations} documents={context.documents} prefix="Référence" readonly /></details>{/each}
 {/snippet}
 <article class="pia-dossier" aria-label="Dossier AIPD en lecture">
   <header class="pia-reader-cover">
@@ -48,7 +49,7 @@
     {#if context.activity.role === "controller"}{#each context.activity.purposes as purpose, index}<h5>Finalité {index + 1}</h5><dl><div><dt>Objectif</dt><dd>{knowledgeText(purpose.description) || "À documenter"}</dd></div><div><dt>Fondement juridique</dt><dd>{knowledgeText(purpose.legalBasis) || "À documenter"}</dd></div><div><dt>Conservation / déclencheur</dt><dd>{knowledgeText(purpose.retention.period) || "À documenter"} / {knowledgeText(purpose.retention.trigger) || "À documenter"}</dd></div></dl>{/each}{:else}<dl><div><dt>Opérations confiées</dt><dd>{knowledgeText(context.activity.operations) || "À documenter"}</dd></div><div><dt>Instructions</dt><dd>{knowledgeText(context.activity.instructions) || "À documenter"}</dd></div></dl>{/if}
     <h5>Acteurs et supports liés</h5><ul>{#each context.parties as party}<li>{party.name} · {knowledgeText(party.contact) || "Contact à documenter"}</li>{/each}{#each context.systems as system}<li>{system.name} · {knowledgeText(system.description) || "Description à documenter"}</li>{/each}</ul>
     <h5>Références documentaires liées</h5><ul>{#each context.documents as doc}<li>{doc.title} · version {doc.version || "non renseignée"} · {doc.internalRef || "référence à documenter"} · {doc.reservations || "Aucune réserve saisie"}</li>{/each}</ul>
-    {#if context.activity.flows.length}<FlowMap flows={context.activity.flows} />{:else}<p>Aucun flux décrit.</p>{/if}
+    {#if context.activity.flows.length}<FlowMap flows={resolvedFlows(context.activity, context)} />{:else}<p>Aucun flux décrit.</p>{/if}
     {@render notes(content.principles, PIA_PRINCIPLE_QUESTIONS)}
   </section>
   <section class="pia-reader-section" hidden={chapter !== 1} aria-label={chapters[1].title}><dl><div><dt>Opérations examinées</dt><dd>{knowledgeText(content.necessity.operations) || "À documenter"}</dd></div><div><dt>Accès examinés</dt><dd>{knowledgeText(content.necessity.access) || "À documenter"}</dd></div></dl>{@render notes(content.necessity.notes, PIA_NECESSITY_METHOD)}

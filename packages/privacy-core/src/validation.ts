@@ -1,6 +1,8 @@
+import { assertWorkbench } from "./workbench";
+import { assertLinkedFacts } from "./linked-facts";
 import { assertDpoWorkspace } from "./dpo";
 import { assertPiaWorkspace } from "./pia";
-import validate from "./generated/master-v5-validator.js";
+import validate from "./generated/master-v6-validator.js";
 import { ANALYSIS_QUESTIONS, CONTRACT_QUESTIONS, type ReviewNote, type Workspace } from "./model";
 
 export const MAX_MASTER_BYTES = 2 * 1024 * 1024;
@@ -110,6 +112,8 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
       || new Set(record.mapping.map((m) => m.field)).size !== record.mapping.length) throw new PrivacyError("INVALID");
   }
   for (const record of master.deliveries) if (record.createdAt > master.updatedAt || record.revision >= master.revision) throw new PrivacyError("INVALID");
+  assertLinkedFacts(master);
+  assertWorkbench(master);
   assertPiaWorkspace(master, registerId);
   assertDpoWorkspace(master, registerId);
   // A saved document must also remain readable by the bounded parser.

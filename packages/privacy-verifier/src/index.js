@@ -188,7 +188,7 @@ export async function verifyFiles(files) {
   const canonical = renderShareFiles(register);
   // Recomputed hashes cannot bless active HTML or divergent CSV/JSON sidecars.
   const sameFile = (name, content) => content === files[name]
-    || name === "report.html" && renderLegacyShareFiles(register)[name] === files[name];
+    || register.format === "rgpd-share-v1" && name === "report.html" && renderLegacyShareFiles(register)[name] === files[name];
   // Exactly two controlled HTML renderings are supported. Neither accepts supplied markup.
   if (Object.entries(canonical).some(([name, content]) => !sameFile(name, content)) || files["manifest.json"] !== canonicalJson(manifest) + "\n") throw new Error("INVALID_CANONICAL");
   return { register, manifestHash: expected };

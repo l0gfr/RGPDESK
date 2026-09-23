@@ -203,3 +203,9 @@ Portée : réponses d’orientation pour les DPO de PME et d’associations, san
 | [CNIL, intérêt légitime](https://www.cnil.fr/fr/les-bases-legales/interet-legitime), 29 novembre 2019 | Intérêt poursuivi, nécessité, mise en balance et attentes raisonnables ; aucun fondement par défaut. |
 | [CNIL, durées de conservation](https://www.cnil.fr/fr/passer-laction/les-durees-de-conservation-des-donnees), 2 avril 2026 | Finalité, textes applicables, distinction usage courant / archivage et texte obligatoire / recommandation. Aucune durée sectorielle ajoutée à la FAQ. |
 | [CNIL, AIPD](https://www.cnil.fr/fr/RGPD-analyse-impact-protection-des-donnees-aipd), page d’orientation consultée le 23 septembre 2026 | Risque élevé et renvoi aux listes ; distinction registre et AIPD, sans décompte automatique de critères. |
+
+## Quatre lectures de l’inventaire (consultation du 23 septembre 2026)
+
+- [RGPD, texte officiel EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr) : articles 5, 24, 25, 28, 32 et 35 §7. Texte applicable ; ne détermine pas automatiquement la qualification d’un cas.
+- [ANSSI, méthode EBIOS Risk Manager](https://cyber.gouv.fr/securisation/analyse-des-risques/methode-ebios-rm/) : repère méthodologique pour le périmètre, les événements redoutés, les impacts et les mesures. RGPDESK ne reproduit ni ne revendique la méthode complète ou son label.
+- Les faits et références des dix cas de démonstration sont inventés et explicitement identifiés comme tels. Les sources normatives sont des repères à examiner, pas des réponses aux cas.

@@ -3,6 +3,7 @@ import type { PiaContext } from "./pia-model";
 
 export const DPO_METHOD = "dpo-2026-09-23.1" as const;
 export const DPO_QUESTIONS = {
+  security: ["scope", "event", "threats", "impact", "likelihood", "measures", "residual", "decision"],
   interest: ["interest", "necessity", "balance", "safeguards", "decision"],
   transfer: ["scope", "actors", "instrument", "country", "measures", "implementation", "decision"],
   rights: ["request", "identity", "scope", "search", "exceptions", "response", "dispatch"],

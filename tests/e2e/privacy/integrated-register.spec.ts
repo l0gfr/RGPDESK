@@ -7,7 +7,7 @@ test("register and map share one draft, cancel discards it, and a processor is n
   await page.getByRole("button", { name: "Modifier Recrutement · exemple fictif", exact: true }).click();
   await page.getByRole("navigation", { name: "Étapes de la fiche", exact: true }).getByRole("button").nth(2).click();
   const initialCount = await page.locator(".flow-editor .analysis-question").count();
-  await expect(page.locator(".flow-editor details[open]")).toHaveCount(0);
+  await expect(page.locator(".flow-editor > details.analysis-question[open]")).toHaveCount(0);
   await page.getByRole("button", { name: "Ajouter un flux", exact: true }).click();
   const number = initialCount + 1;
   await page.getByLabel(`Flux ${number} · Origine`, { exact: true }).fill("Origine temporaire fictive");

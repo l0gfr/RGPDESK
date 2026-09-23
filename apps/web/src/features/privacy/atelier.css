@@ -1153,3 +1153,61 @@
 @media (max-width:1100px) { .rgpdesk .demo-guide { grid-template-columns:minmax(0,1fr); }.rgpdesk .demo-guide-navigation { justify-content:flex-start; } }
 @media (max-width:600px) { .rgpdesk .demo-guide { padding:16px; }.rgpdesk .draft-toolbar { top:4px; padding:10px; }.rgpdesk .draft-toolbar .actions { flex:1 1 100%; }.rgpdesk .draft-toolbar button { flex:1 1 120px; white-space:normal; }.rgpdesk .leave-draft-dialog button { width:100%; white-space:normal; } }
 @media print { .rgpdesk .draft-toolbar,.rgpdesk dialog { display:none; } }
+
+/* Linked inventory workbench: restrained surfaces, short paths, no graph runtime. */
+.privacy-app .analysis-lenses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin:1.5rem 0}
+.privacy-app .analysis-lenses button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:.5rem;padding:1.25rem;min-width:0;background:linear-gradient(125deg,#e2eaf0,#f3f5f7);border:1px solid #aebfcc;border-radius:3px 20px 3px 3px;color:#243e52}
+.privacy-app .analysis-lenses button:hover{background:linear-gradient(125deg,#d3e0e9,#e8eef2);color:#193447;border-color:#718d9f}
+.privacy-app .analysis-lenses span{font:11px/1.5 ui-monospace,monospace;letter-spacing:.04em}.privacy-app .analysis-lenses strong{font-size:1.05rem}.privacy-app .analysis-lenses small{font-weight:400;line-height:1.5}
+.privacy-app .inventory-context,.privacy-app .mission-directory,.privacy-app .presentation-options{padding:1.1rem 1.4rem;margin:1.25rem 0;border:1px solid #b6c7d3;background:linear-gradient(110deg,#e2ebf1,#f0f3f5);border-radius:3px 18px 3px 3px}
+.privacy-app .inventory-context summary,.privacy-app .mission-directory>summary,.privacy-app .presentation-options>summary,.privacy-app .flow-detail>summary{cursor:pointer;font-weight:600;color:#2d475b;padding:.4rem 0}
+.privacy-app .citation-card{margin:1rem 0;padding:1.2rem;border:1px solid #b6c8d5;border-left:3px solid #597c95;background:#eaf0f4;border-radius:3px 15px 3px 3px}.privacy-app .citation-card header{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;justify-content:space-between}.privacy-app .citation-card header span{font-size:.8rem;color:#455f73}
+.privacy-app .citation-add{display:flex;flex-wrap:wrap;align-items:end;gap:.75rem}.privacy-app .citation-add .field{flex:1;min-width:min(100%,250px);margin-bottom:0}.privacy-app .citation-add button{margin-bottom:.2rem}.privacy-app .linked-fact{padding:.75rem 1rem;border-left:2px solid #748fa3;background:#e7edf2;display:flex;gap:.6rem;overflow-wrap:anywhere}.privacy-app .flow-detail{padding:.75rem 0;border-top:1px solid #bacbd6;margin:1rem 0}
+@media(max-width:650px){.privacy-app .analysis-lenses{grid-template-columns:1fr}.privacy-app .inventory-context,.privacy-app .mission-directory,.privacy-app .presentation-options{padding:1rem}.privacy-app .citation-add button{width:100%}}
+
+/* Coffres : trois gestes distincts, surfaces locales et pictogrammes intégrés. */
+.rgpdesk .vault-panels { align-items:start; gap:28px; }
+.rgpdesk .vault-panels > .vault-card { padding:30px; border:1px solid #b9c8d2; border-top:0; border-radius:20px; overflow:hidden; box-shadow:0 14px 38px #213b4c0c,0 1px 3px #213b4c10; background:linear-gradient(145deg,#edf3f5,#f8fafb 58%,#e0e9ef); }
+.rgpdesk .vault-panels > .vault-card-resume { background:linear-gradient(150deg,#dce7ee,#edf2f7 62%,#e0e6f1); }
+.rgpdesk .vault-panels > .vault-card::after { display:none; }
+.rgpdesk .vault-card-heading { display:flex; align-items:center; gap:18px; position:relative; isolation:isolate; margin:-30px -30px 26px; padding:30px; min-height:155px; background:radial-gradient(ellipse at 90% 0,#66869b55,transparent 65%),repeating-linear-gradient(135deg,#ffffff00 0 25px,#ffffff07 25px 26px),linear-gradient(125deg,#223b4a,#3a5369); color:#f4f8fb; }
+.rgpdesk .vault-card-resume .vault-card-heading { background:radial-gradient(ellipse at 100% 10%,#7f94b263,transparent 65%),repeating-linear-gradient(135deg,#ffffff00 0 25px,#ffffff07 25px 26px),linear-gradient(125deg,#253344,#46576f); }
+.rgpdesk .vault-card-heading > div { position:relative; z-index:1; }
+.rgpdesk .vault-panels .vault-card-heading h2 { color:#f4f8fb; font-size:clamp(22px,2.1vw,29px); line-height:1.2; margin:9px 0 0; max-width:24ch; }
+.rgpdesk .vault-panels .vault-card-heading .eyebrow { color:#c8d8e4; margin:0; font-size:9px; letter-spacing:.13em; }
+.rgpdesk .vault-card-heading .eyebrow::after { display:none; }
+.rgpdesk .vault-card-icon { display:grid; place-items:center; flex:0 0 62px; height:68px; border:1px solid #bed0df5c; background:linear-gradient(140deg,#f3f8ff20,#f3f8ff05); border-radius:15px 15px 4px 15px; color:#e0ecf5; box-shadow:inset 0 1px #ffffff20; }
+.rgpdesk .vault-card-stamp { position:absolute; z-index:0; right:16px; bottom:-20px; font:italic 150px/1 Georgia,serif; color:#ecf5ff09; pointer-events:none; }
+.rgpdesk .vault-card > .help { color:#4b6174; margin:0 0 24px; }
+.rgpdesk .vault-card .field input { border:1px solid #afbfcc; border-radius:7px; background:#fcfdfe; box-shadow:0 2px 5px #24435705; min-height:48px; }
+.rgpdesk .vault-card .field { margin-bottom:20px; }
+.rgpdesk .vault-card .check { font-size:12px; padding:14px; background:#e5ecf2; border-radius:8px; align-items:flex-start; }
+.rgpdesk .vault-card .check input { flex:0 0 auto; }
+.rgpdesk .vault-card button:not(.text-button) { border-radius:7px; }
+.rgpdesk .vault-empty { padding:26px 22px; text-align:center; border:1px dashed #a6b8c9; border-radius:12px; margin:24px 0; background:radial-gradient(ellipse at top,#f9fcffbf,#dae5ef80); }
+.rgpdesk .vault-empty-icon { display:grid; place-items:center; width:64px; height:64px; margin:0 auto 16px; background:linear-gradient(135deg,#cbdce8,#e9f0f6); border:1px solid #adc3d3; border-radius:50%; color:#3d596e; }
+.rgpdesk .vault-empty strong { display:block; color:#273d50; font-size:17px; }
+.rgpdesk .vault-empty p { margin:10px 0 18px; font-size:13px; color:#4a6074; }
+.rgpdesk .vault-empty a { display:inline-flex; align-items:center; gap:12px; color:#304f67; font-weight:600; text-underline-offset:5px; }
+.rgpdesk .vault-card details { margin:20px 0; padding:15px 0; border-block:1px solid #afbfce88; }
+.rgpdesk .vault-records { margin-block:20px; }
+.rgpdesk .vault-records > li { padding:18px; margin-bottom:10px; gap:14px; background:#f6f9fc; border:1px solid #b8c7d4; border-radius:10px; }
+.rgpdesk .vault-record-icon { display:grid; place-items:center; flex:0 0 42px; height:48px; background:#dee8f0; color:#38566c; border-radius:8px; }
+.rgpdesk .vault-records .vault-reference { max-width:28ch; }
+.rgpdesk .vault-restore { border:1px solid #b6c6d2; border-radius:14px; background:linear-gradient(110deg,#dee8ee,#f3f6fa 70%); padding:24px 30px; }
+.rgpdesk .vault-restore > summary { display:flex; align-items:center; gap:18px; list-style:none; }
+.rgpdesk .vault-restore > summary::-webkit-details-marker { display:none; }
+.rgpdesk .vault-restore > summary > .desk-icon { margin-left:auto; flex-shrink:0; }
+.rgpdesk .vault-restore[open] > summary { margin-bottom:24px; }
+.rgpdesk .vault-restore[open] > summary > .desk-icon { transform:rotate(45deg); }
+.rgpdesk .vault-restore-icon { display:grid; place-items:center; width:52px; height:52px; flex-shrink:0; background:#ccdce7; color:#38556b; border:1px solid #aec1d0; border-radius:10px; }
+.rgpdesk .vault-restore small { display:block; font-size:12px; font-weight:400; color:#4b6176; margin-top:5px; }
+.rgpdesk .entity-flow { margin:16px 0; border:1px solid #bcccd9; background:linear-gradient(120deg,#edf3f7,#dde7f1); padding:20px; border-radius:12px; }
+.rgpdesk .entity-flow > div { display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-top:12px; font-weight:600; }
+.rgpdesk .resume-checkpoint { background:linear-gradient(125deg,#dae6ed,#eef1f8); border-left:4px solid #496779; }
+.rgpdesk .interview-question { display:flex; align-items:center; gap:16px; }
+.rgpdesk .interview-question .field { flex:1; }
+.rgpdesk .reexamination-queue { background:linear-gradient(120deg,#e5ecf3,#f4f6fb); }
+.rgpdesk .backup-check { background:linear-gradient(125deg,#e3edf1,#f1f4fa); }
+@media(max-width:800px) { .rgpdesk .vault-panels > .vault-card { padding:24px; } .rgpdesk .vault-card-heading { margin:-24px -24px 24px; padding:24px; } }
+@media(max-width:480px) { .rgpdesk .vault-panels > .vault-card { padding:20px; border-radius:14px; } .rgpdesk .vault-card-heading { margin:-20px -20px 22px; padding:24px 20px; gap:12px; min-height:142px; } .rgpdesk .vault-card-icon { flex-basis:48px; height:56px; } .rgpdesk .vault-card-icon svg { width:27px; height:27px; } .rgpdesk .vault-panels .vault-card-heading h2 { font-size:23px; } .rgpdesk .vault-card .check { padding:12px; } .rgpdesk .vault-records > li { padding:14px; } .rgpdesk .vault-restore { padding:20px; } .rgpdesk .interview-question { display:block; margin-bottom:24px; } }

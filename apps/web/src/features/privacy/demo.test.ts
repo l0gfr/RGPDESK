@@ -96,3 +96,9 @@ describe("isolated fictional practice workspace", () => {
     await expect(pending).rejects.toThrow("LOCKED");
   });
 });
+
+it("retains encrypted-style work checkpoints and append-only reexaminations in the volatile demo",()=>{
+ const session=new DemoSession(()=>crypto.randomUUID(),"2026-09-23T12:00:00.000Z");const w=session.read();
+ const next=reviseWorkspace(w,w.revision,w.updatedAt,{workCheckpoint:{kind:"activity",id:w.activities[0]!.id,section:"interview",step:5},citationReviews:[]});
+ expect(session.save(next)).toEqual(next);expect(session.read().workCheckpoint).toEqual(next.workCheckpoint);
+});

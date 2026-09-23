@@ -1,4 +1,6 @@
 export * from "./model";
+export * from "./linked-facts";
+export * from "./workbench";
 export * from "./commands";
 export * from "./validation";
 export * from "./backup";

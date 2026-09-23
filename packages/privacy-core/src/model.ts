@@ -18,7 +18,9 @@ export interface ActivityReview {
 }
 export const ANALYSIS_QUESTIONS = ["objective", "lawfulness", "effectiveness", "alternatives", "minimisation", "rights", "safeguards", "conclusion"] as const;
 export const CONTRACT_QUESTIONS = ["scope", "instructions", "confidentiality", "security", "subprocessors", "rights", "assistance", "termination", "audit", "unlawful", "guarantees"] as const;
+export interface EvidenceCitation { documentId: string; version: string; locator: string; meaning: string }
 export interface ReviewNote {
+  citations?: EvidenceCitation[];
   questionId: string;
   facts: Knowledge; evidence: Knowledge; objections: Knowledge; assessment: Knowledge; followUp: Knowledge;
 }
@@ -26,13 +28,16 @@ export interface ActivityAnalysis {
   methodVersion: "necessity-2026-09-22.1";
   operations: Knowledge; access: Knowledge; notes: ReviewNote[];
 }
+export type FlowReference = `party:${string}` | `system:${string}` | "subjects";
 export interface DataFlow {
+  sourceRef?: FlowReference; destinationRef?: FlowReference; dataFromActivity?: boolean;
   id: string;
   source: Knowledge; destination: Knowledge; operation: Knowledge;
   data: Knowledge; channel: Knowledge; location: Knowledge; access: Knowledge;
 }
 export interface ContractReview { methodVersion: "article28-2026-09-22.1"; notes: ReviewNote[] }
 interface ActivityBase {
+  interviewQuestions?: string[];
   analysis: ActivityAnalysis;
   flows: DataFlow[];
   review: ActivityReview;
@@ -60,8 +65,19 @@ export interface ProcessorActivity extends ActivityBase {
   instructions: Knowledge;
 }
 export type Activity = ControllerActivity | ProcessorActivity;
+export type WorkCheckpoint = {kind: "activity"; id: string; section: "record" | "analysis" | "flows" | "evidence" | "interview"; step: number}
+  | {kind: "pia"; id: string; step: number}
+  | {kind: "dpo"; id: string; section: "scope" | "analysis" | "events" | "review"}
+  | {kind: "document" | "party" | "system"; id: string};
+export interface CitationReview {
+  target: string; documentId: string; locator: string; meaning: string;
+  fromVersion: string; toVersion: string; before: Knowledge; after: Knowledge;
+  outcome: "maintained" | "revised"; author: string; reason: string; at: string; revision: number;
+}
 export interface Workspace {
-  format: "rgpd-master-v5";
+  workCheckpoint?: WorkCheckpoint;
+  citationReviews?: CitationReview[];
+  format: "rgpd-master-v6";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];

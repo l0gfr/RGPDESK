@@ -1,23 +1,24 @@
 <script lang="ts">
-  import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
+  import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, resolvedFlows, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
   import { PIA_NECESSITY_METHOD } from "../review-methods";
   import { PIA_STEPS, PIA_SOURCES, PIA_PRINCIPLE_QUESTIONS, SCREENING_LABELS, PIA_LEVELS, PIA_OUTCOMES, PIA_RISK_FIELDS, PIA_ALTERNATIVE_FIELDS, PIA_MEASURE_FIELDS } from "../pia-method";
   import ReviewChanges from "./ReviewChanges.svelte";
   import ReviewEvidence from "./ReviewEvidence.svelte";
+  import InventoryContext from "./InventoryContext.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
   import PiaRiskMap from "./PiaRiskMap.svelte";
   import PiaDossier from "./PiaDossier.svelte";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, demo = false, onSave, onEditing, onLeave, onRegister, onDocument, initialActivityId = "", initialView = "edit" }: { initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
+  let { workspace, busy, demo = false, onSave, onEditing, onLeave, onRegister, onDocument, initialActivityId = "", initialStep = 0, initialView = "edit" }: { initialStep?: number; initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
   let draft: ImpactAssessment | null = $state(null);
   let consumedSearch = $state("");
   $effect(() => {
     if (initialActivityId && consumedSearch !== initialActivityId && !draft) {
       consumedSearch = initialActivityId;
-      if (workspace.impactAssessments.some((p) => p.activityId === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); if (initialView === "read") step = 6; }
+      if (workspace.activities.some((a) => a.id === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); step = initialView === "read" ? 6 : Math.max(0, Math.min(6, initialStep)); }
     }
   });
   let activityId = $state("");
@@ -34,8 +35,9 @@
   let selected = $derived(workspace.activities.find((a) => a.id === activityId) ?? workspace.activities[0]);
   let saved = $derived.by(() => draft ? workspace.impactAssessments.find((p) => p.id === draft!.id) : undefined);
   let dirty = $derived.by(() => draft ? !saved || canonicalJson(draft.content) !== canonicalJson(saved.content) : false);
+  export function getCheckpoint(){return draft?{kind:"pia" as const,id:draft.id,step}:undefined;}
   export function hasUnsavedChanges() { return !!draft && (dirty || !!author || !!reason || acknowledged || outcome !== "rework"); }
-  let points = $derived.by(() => draft ? piaOpenPoints(draft.content) : []);
+  let points = $derived.by(() => draft ? piaOpenPoints(draft.content, workspace.documents.filter((d) => d.activityIds.includes(draft!.activityId))) : []);
   let context = $derived.by(() => draft ? piaContext(workspace, draft.activityId) : null);
   async function go(index: number) { step = index; await tick(); stepHeading?.focus(); }
   function open(requestedId?: string) {
@@ -111,13 +113,14 @@
     {:else if step === 1}
       <p>Le registre et les flux ci-dessous forment le contexte actuel. Lors d’une revue, une copie de ce contexte est conservée avec la décision.</p>
       <dl class="analysis-summary"><div><dt>Personnes</dt><dd>{knowledgeText(context.activity.dataSubjects) || "À documenter dans le registre"}</dd></div><div><dt>Données</dt><dd>{knowledgeText(context.activity.dataCategories) || "À documenter dans le registre"}</dd></div></dl>
-      {#if context.activity.flows.length}<FlowMap flows={context.activity.flows} />{:else}<p class="help">Aucun flux décrit. Retrouvez la cartographie dans la fiche de traitement.</p>{/if}
-      <ReviewNotebook bind:notes={draft.content.principles} questions={PIA_PRINCIPLE_QUESTIONS} prefix="AIPD principes" />
+      {#if context.activity.flows.length}<FlowMap flows={resolvedFlows(context.activity, context)} />{:else}<p class="help">Aucun flux décrit. Retrouvez la cartographie dans la fiche de traitement.</p>{/if}
+      <ReviewNotebook documents={context.documents} bind:notes={draft.content.principles} questions={PIA_PRINCIPLE_QUESTIONS} prefix="AIPD principes" />
     {:else if step === 2}
       <p>Raisonnez par finalité et par opération. Examinez aussi les conséquences de ne pas traiter, la solidité des résultats attendus, les objections et les effets sur l’exercice des libertés.</p>
-      <p class="help">Les notes reprises de la fiche sont un point de départ. Réexaminez-les dans le périmètre de cette AIPD ; elles ne remplacent pas l’évaluation de nécessité et de proportionnalité.</p>
-      <KnowledgeField label="Opérations examinées dans l’AIPD" bind:value={draft.content.necessity.operations} /><KnowledgeField label="Accès examinés dans l’AIPD" bind:value={draft.content.necessity.access} />
-      <ReviewNotebook bind:notes={draft.content.necessity.notes} questions={PIA_NECESSITY_METHOD} prefix="AIPD nécessité" />
+      <p class="help">Les faits restent liés au registre. Les appréciations de nécessité et de proportionnalité sont propres à cette étude ; elles ne sont pas déduites de l’analyse RGPD.</p>
+      <InventoryContext activities={[context.activity]} />
+      {#if draft.content.necessity.operations.state === "documented" || draft.content.necessity.access.state === "documented"}<details><summary>Notes de périmètre conservées de cette étude</summary><p class="help">Ces notes appartiennent à l’étude. Les faits actuels sont ceux de l’inventaire ci-dessus.</p><KnowledgeField label="Opérations examinées dans l’AIPD" bind:value={draft.content.necessity.operations} /><KnowledgeField label="Accès examinés dans l’AIPD" bind:value={draft.content.necessity.access} /></details>{/if}
+      <ReviewNotebook documents={context.documents} bind:notes={draft.content.necessity.notes} questions={PIA_NECESSITY_METHOD} prefix="AIPD nécessité" />
       <div class="pia-alternatives"><p class="eyebrow">L’épreuve des alternatives</p><h4>La même finalité, un autre moyen.</h4><p>Comparez notamment une option sans traitement de données, si elle est envisageable. Une contrainte ou une efficacité supposée doit rester identifiable comme telle.</p>
       {#each draft.content.alternatives as alternative, index}<details class="subpanel" open><summary>Option {index + 1}</summary>{#each Object.entries(PIA_ALTERNATIVE_FIELDS) as [key, label]}<KnowledgeField label={`Option ${index + 1} · ${label}`} bind:value={alternative[key as keyof typeof PIA_ALTERNATIVE_FIELDS]} />{/each}<button class="secondary" onclick={() => removeDraftItem("alternatives", alternative.id)}>Retirer l’option {index + 1}</button></details>{/each}
       <button class="secondary" disabled={draft.content.alternatives.length >= 20} onclick={() => draft!.content.alternatives.push(createPiaAlternative(crypto.randomUUID()))}>Comparer une alternative</button></div>

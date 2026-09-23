@@ -1,3 +1,4 @@
+import { citationChanges } from "./linked-facts";
 import { ANALYSIS_QUESTIONS, type Knowledge, type ReviewNote, type Workspace } from "./model";
 import { PIA_CRITERIA, PIA_PRINCIPLES, type ImpactAssessment, type PiaContent, type PiaContext, type PiaReview } from "./pia-model";
 import { compareReviewContexts, compareReviewContent, type ReviewChange } from "./review-diff";
@@ -11,8 +12,13 @@ export function piaContext(master: Workspace, activityId: string): PiaContext {
   const parties = new Set([...activity.participantIds, ...activity.review.subcontractorIds, ...(activity.role === "processor" ? activity.controllerIds : [])]);
   const documents = master.documents.filter((d) => d.activityIds.includes(activityId));
   for (const d of documents) for (const id of d.partyIds) parties.add(id);
+  const systems = new Set(activity.systemIds);
+  for (const flow of activity.flows) for (const ref of [flow.sourceRef, flow.destinationRef]) {
+    if (ref?.startsWith("party:")) parties.add(ref.slice(6));
+    if (ref?.startsWith("system:")) systems.add(ref.slice(7));
+  }
   return { activity, organization: master.organization, scope: master.scope, jurisdiction: master.jurisdiction,
-    parties: master.parties.filter((p) => parties.has(p.id)), systems: master.systems.filter((s) => activity.systemIds.includes(s.id)), documents };
+    parties: master.parties.filter((p) => parties.has(p.id)), systems: master.systems.filter((s) => systems.has(s.id)), documents };
 }
 export function piaReviewState(master: Workspace, pia: ImpactAssessment): "unreviewed" | "unchanged" | "changed" {
   const last = pia.reviews.at(-1);
@@ -27,12 +33,13 @@ export function piaChanges(master: Workspace, pia: ImpactAssessment): ReviewChan
 }
 const documented = (k: Knowledge) => k.state === "documented";
 // Editorial checks only: never a score, legal opinion or automatic authorization.
-export function piaOpenPoints(content: PiaContent): string[] {
+export function piaOpenPoints(content: PiaContent, documents?: Workspace["documents"]): string[] {
   const points: string[] = [];
+  if (documents && citationChanges([...content.principles, ...content.necessity.notes], documents).length) points.push("Réexaminer les citations dont la version a changé.");
   if (content.screeningDecision === "unknown" || !documented(content.applicability) || !documented(content.screeningReason)
     || content.screening.some((c) => c.answer === "unknown" || !documented(c.reason))) points.push("Motiver le déclenchement et les critères de l’AIPD.");
-  if (content.principles.some((n) => !documented(n.assessment) || !documented(n.evidence))) points.push("Documenter les principes, les droits et leurs références.");
-  if (content.necessity.notes.some((n) => !documented(n.assessment) || !documented(n.evidence))) points.push("Argumenter la nécessité et la proportionnalité.");
+  if (content.principles.some((n) => !documented(n.assessment) || (!documented(n.evidence) && !n.citations?.length))) points.push("Documenter les principes, les droits et leurs références.");
+  if (content.necessity.notes.some((n) => !documented(n.assessment) || (!documented(n.evidence) && !n.citations?.length))) points.push("Argumenter la nécessité et la proportionnalité.");
   if (!content.alternatives.length || content.alternatives.some((a) => [a.description, a.purpose, a.effectiveness, a.impacts, a.evidence, a.choice].some((k) => !documented(k)))) points.push("Comparer les alternatives et justifier le choix.");
   if (!documented(content.evaluationMethod)) points.push("Définir les échelles et la méthode d’appréciation des risques.");
   if (!content.risks.length || content.risks.some((r) => [r.event, r.people, r.rights, r.impacts, r.threats, r.supports, r.existingMeasures, r.initialReason, r.residualReason].some((k) => !documented(k))
@@ -54,7 +61,7 @@ export function recordPiaReview(master: Workspace, piaId: string, decision: Pick
   assertWorkspace(master);
   const pia = master.impactAssessments.find((p) => p.id === piaId);
   if (!pia || !decision.author.trim() || !decision.reason.trim()) throw new PrivacyError("INVALID");
-  if (decision.outcome === "proceed" && (piaOpenPoints(pia.content).length || master.activities.find((a) => a.id === pia.activityId)?.role !== "controller")) throw new PrivacyError("INVALID");
+  if (decision.outcome === "proceed" && (piaOpenPoints(pia.content, piaContext(master, pia.activityId).documents).length || master.activities.find((a) => a.id === pia.activityId)?.role !== "controller")) throw new PrivacyError("INVALID");
   const review: PiaReview = { ...decision, author: decision.author.trim(), reason: decision.reason.trim(), at: now, revision: master.revision + 1, context: structuredClone(piaContext(master, pia.activityId)), content: structuredClone(pia.content) };
   return reviseWorkspace(master, expectedRevision, now, { impactAssessments: master.impactAssessments.map((p) => p.id === piaId ? { ...p, reviews: [...p.reviews, review] } : p) });
 }
@@ -86,7 +93,7 @@ export function assertPiaWorkspace(master: Workspace, registerId: (id: string) =
       notes(review.context.activity.analysis.notes, ANALYSIS_QUESTIONS);
       for (const doc of review.context.documents) if (doc.workspaceId !== master.id) throw new PrivacyError("INVALID");
       for (const entity of [...review.context.parties, ...review.context.systems]) if (entity.workspaceId !== master.id) throw new PrivacyError("INVALID");
-      if (review.outcome === "proceed" && (piaOpenPoints(review.content).length || review.context.activity.role !== "controller")) throw new PrivacyError("INVALID");
+      if (review.outcome === "proceed" && (piaOpenPoints(review.content, review.context.documents).length || review.context.activity.role !== "controller")) throw new PrivacyError("INVALID");
     }
   }
 }

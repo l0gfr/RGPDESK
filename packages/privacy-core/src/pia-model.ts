@@ -49,7 +49,7 @@ export function createImpactAssessment(workspaceId: string, activity: Activity, 
   return { id, workspaceId, activityId: activity.id, methodVersion: PIA_METHOD, reviews: [], content: {
     screening: PIA_CRITERIA.map((criterionId) => ({ criterionId, answer: "unknown", reason: unknown() })),
     applicability: unknown(), screeningDecision: "unknown", screeningReason: unknown(),
-    principles: createReviewNotes(PIA_PRINCIPLES), necessity: structuredClone(activity.analysis ?? createActivityAnalysis()), alternatives: [],
+    principles: createReviewNotes(PIA_PRINCIPLES), necessity: createActivityAnalysis(), alternatives: [],
     evaluationMethod: unknown(), risks: [], measures: [], dpoAdvice: unknown(), peopleConsultation: unknown(),
     authorityConsultation: unknown(), monitoring: unknown(), reviewDue: null,
   } };

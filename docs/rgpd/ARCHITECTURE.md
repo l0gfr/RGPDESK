@@ -261,3 +261,18 @@ Chaque analyse garde sa méthode, son périmètre, ses hypothèses, ses argument
 ### État de l’implémentation
 
 L’analyse RGPD et l’AIPD disposent déjà de leurs parcours. L’AIPD rassemble actuellement nécessité/proportionnalité et risques pour les personnes. L’analyse de risque SI autonome et la navigation unifiée entre quatre analyses restent à concevoir et à qualifier. Aucun import de domaine cyber ni changement du format de coffre n’est introduit par la refonte de lecture du 23 septembre.
+
+## Inventaire lié (23 septembre 2026)
+
+Le maître courant est v6 et les partages graphiques facultatifs v2. Voir [INVENTAIRE-LIE.md](INVENTAIRE-LIE.md) pour la migration, les références, les invariants et la compatibilité. Les descriptions de lots précédents restent des états historiques.
+
+### Parcours de travail et reprise locale (23 septembre 2026)
+
+- `Activity.interviewQuestions` facultatif, 12 questions de 500 caractères maximum. L’entretien écrit directement dans les mêmes rubriques, flux et liens documentaires que la fiche.
+- `Workspace.workCheckpoint` facultatif, discriminant et identifiant existant validés. Le repère est inclus dans l’écriture chiffrée explicitement demandée, sans révision ni stockage supplémentaires à chaque clic. Aucun état de dossier dans les URL, localStorage ou sessionStorage.
+- `Workspace.citationReviews` facultatif, au plus 300 traces, ajout seul via les commandes. Le réexamen capture version précédente et actuelle, passage, argument, appréciations avant/après, auteur, motif et révision. Seules les citations actuelles dont la version déclarée diffère sont proposées. Les contextes historiques ne sont jamais modifiés.
+- Les vues transversales sont des projections de liens explicites. Un document d’une activité liée est étiqueté comme tel, sans prétendre à une relation contractuelle directe avec un système.
+- `inspectBackup` réutilise `decodeArchive`, sans accès à PrivacyVault ou IndexedDB, contrôle la taille avant lecture et le signal d’annulation avant/après les opérations asynchrones. Il ne renvoie qu’un résumé. Le composant efface phrase et résultat à la fermeture.
+- `rgpd-share-v2.executive` facultatif, deux textes explicites limités à 800 caractères. Projection par liste blanche, rendu passif échappé, CSV neutralisé, relecture obligatoire. Sans cette option, les octets canoniques des anciens rapports v1 et v2 restent inchangés.
+
+Ces propriétés complètent le format v6 local déjà en développement. Aucun format historique 1 à 5 ni aucune primitive cryptographique ne change. La lecture d’un ancien coffre ne déclenche toujours aucune migration écrite automatique.

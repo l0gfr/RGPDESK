@@ -1,3 +1,4 @@
+import { resolvedFlows } from "./linked-facts";
 import type { Knowledge, ReviewNote } from "./model";
 import type { PiaContent, PiaContext } from "./pia-model";
 import type { DpoContent } from "./dpo-model";
@@ -36,8 +37,11 @@ function facts() {
   const choice = (key: string, subject: string, label: string, area: ChangeArea, value: string) => add(key, subject, label, area, value, statusLabels[value] ?? value);
   const links = (key: string, subject: string, label: string, area: ChangeArea, ids: string[], names: Map<string, string>) => add(key, subject, label, area, [...ids].sort(), ids.map((id) => names.get(id) ?? "Lien hors de cette fiche").sort().join(" · ") || "Aucun lien");
   const notes = (key: string, subject: string, list: ReviewNote[], area: ChangeArea = "analysis") => {
-    for (const [index, note] of list.entries()) for (const [field, label] of Object.entries({ facts: "Faits", evidence: "Éléments de preuve", objections: "Objections", assessment: "Appréciation", followUp: "Suites" }) as [keyof Omit<ReviewNote, "questionId">, string][]) {
+    for (const [index, note] of list.entries()) for (const [field, label] of Object.entries({ facts: "Faits", evidence: "Éléments de preuve", objections: "Objections", assessment: "Appréciation", followUp: "Suites" }) as ["facts" | "evidence" | "objections" | "assessment" | "followUp", string][]) {
       add(`${key}/${note.questionId}/${field}`, subject, `Question ${index + 1} · ${label}`, field === "evidence" ? "evidence" : area, note[field]);
+    }
+    for (const note of list) for (const citation of note.citations ?? []) {
+      add(`${key}/${note.questionId}/citation/${JSON.stringify([citation.documentId, citation.locator])}`, subject, "Passage cité", "evidence", JSON.stringify(citation), `${citation.version || "Version non précisée"} · ${citation.locator} · ${citation.meaning}`);
     }
   };
   return { rows, add, choice, links, notes };
@@ -81,7 +85,7 @@ function contextFacts(contexts: PiaContext[], organization: PiaContext["organiza
       f.add(`${base}/processorOperations`, subject, "Catégories d’opérations", "flow", a.operations);
       f.add(`${base}/instructions`, subject, "Instructions", "context", a.instructions);
     }
-    for (const [i, flow] of a.flows.entries()) for (const [field, label] of Object.entries({ source: "Origine", destination: "Destination", operation: "Opération", data: "Données", channel: "Canal", location: "Lieu", access: "Accès" }) as [keyof Omit<typeof flow, "id">, string][]) f.add(`${base}/flow/${flow.id}/${field}`, `${subject} · Flux ${i + 1}`, label, "flow", flow[field]);
+    for (const [i, flow] of resolvedFlows(a, c).entries()) for (const [field, label] of Object.entries({ source: "Origine", destination: "Destination", operation: "Opération", data: "Données", channel: "Canal", location: "Lieu", access: "Accès" }) as ["source" | "destination" | "operation" | "data" | "channel" | "location" | "access", string][]) f.add(`${base}/flow/${flow.id}/${field}`, `${subject} · Flux ${i + 1}`, label, "flow", flow[field]);
     for (const p of c.parties) { f.add(`${base}/party/${p.id}`, p.name, "Intervenant", "flow", p.name); f.add(`${base}/party/${p.id}/contact`, p.name, "Contact de l’intervenant", "flow", p.contact); }
     for (const s of c.systems) { f.add(`${base}/system/${s.id}`, s.name, "Système", "flow", s.name); f.add(`${base}/system/${s.id}/description`, s.name, "Description du système", "flow", s.description); }
     for (const d of c.documents) {
@@ -145,7 +149,7 @@ export function compareReviewContent(before: PiaContent | DpoContent, after: Pia
           return;
         }
         for (const [i, item] of value.entries()) {
-          const identity = item.id ?? item.questionId ?? item.criterionId;
+          const identity = item.id ?? item.questionId ?? item.criterionId ?? JSON.stringify([item.documentId, item.locator]);
           walk(item, `${key}/${identity}`, `${subject} · ${label} ${i + 1}`, label);
         }
         return;
@@ -161,6 +165,7 @@ export function compareReviewContent(before: PiaContent | DpoContent, after: Pia
   return compare(rows(before), rows(after));
 }
 const CONTENT_LABELS: Readonly<Record<string, string>> = {
+  citations: "Passage cité", version: "Version citée", locator: "Passage", meaning: "Ce que le passage établit et ses limites", documentId: "Référence documentaire",
   necessity: "Nécessité et proportionnalité", breach: "Incident", facts: "Faits", evidence: "Éléments de preuve", objections: "Objections", assessment: "Appréciation", followUp: "Suites", notes: "Question", reviewDue: "Prochain réexamen",
   receivedOn: "Réception de la demande", regime: "Régime du délai", calendarConfirmed: "Calendrier confirmé", holidays: "Jours exclus", extensionMonths: "Mois de prolongation", extensionReason: "Motif de prolongation", extensionNotifiedOn: "Information sur la prolongation", manualDue: "Échéance choisie", manualReason: "Motif du délai choisi",
   detectedAt: "Détection", awarenessAt: "Prise de connaissance", role: "Rôle", screening: "Critère", answer: "Appréciation du critère", reason: "Motivation", applicability: "Champ applicable", screeningDecision: "Réalisation de l’AIPD", screeningReason: "Motif de réalisation", principles: "Principe", operations: "Opérations examinées", access: "Accès examinés", methodVersion: "Version de la trame",
