@@ -73,6 +73,20 @@ test("Apache configuration has dedicated scope and strictly validated substituti
   assert.throws(() => renderApache(template, commit, csp + "; script-src 'unsafe-inline'"));
 });
 
+test("Apache serves every packaged public page and rejects unlisted routes", () => {
+  const template = readFileSync("deploy/rgpdesk/rgpdesk.fr.conf.example", "utf8");
+  const line = template.split("\n").find((value) => value.includes("RewriteCond %{REQUEST_URI} !^/(?:"));
+  assert.ok(line, "Missing exact public route allowlist");
+  const allowed = new RegExp(line.trim().split(" ")[2].slice(1));
+  for (const page of ["index.html", ...privacyPages]) {
+    assert.ok(allowed.test("/" + page), `Packaged page blocked: ${page}`);
+    assert.ok(allowed.test("/" + page.slice(0, -"index.html".length)), `Directory route blocked: ${page}`);
+  }
+  for (const path of ["/app/privacy/soutenir/", "/app/privacy/soutenir/index.html", "/app/privacy/faq/private.html", "/app/privacy/faq/more/", "/app/cases/", "/deploy/", "/private.html", "/manifest.json"]) {
+    assert.equal(allowed.test(path), false, `Unlisted route allowed: ${path}`);
+  }
+});
+
 function verifierFixture(t) {
   const root = realpathSync(mkdtempSync(join(tmpdir(), "rgpdesk-verifier-test-")));
   t.after(() => rmSync(root, { recursive: true, force: true }));
