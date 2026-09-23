@@ -550,7 +550,9 @@
       if (disposed) return;
       inventoryStatus = state.status;
       records = state.items;
-      ready = state.status === "ready";
+      // A background reread must not disable a focused input between focus and typing.
+      // Initial reads and failures stay blocked; vault writes still check epoch/revision.
+      if (state.status !== "loading") ready = state.status === "ready";
       if (state.epochChanged) {
         records = [];
         lock("Le stockage a changé dans un autre onglet. Rechargez cette page avant de continuer.");

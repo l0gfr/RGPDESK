@@ -42,3 +42,37 @@ test("unavailable IndexedDB is a read error, not an empty list", async ({ page }
   await expect(page.getByRole("button", { name: "Créer le coffre chiffré", exact: true })).toBeDisabled();
   await expect(page.getByRole("button", { name: "Actualiser la liste des coffres", exact: true })).toBeEnabled();
 });
+
+test("refreshing the known inventory does not interrupt typing and a read failure still blocks writes", async ({ page }) => {
+  await page.goto("/app/privacy/#registre");
+  await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
+  const name = page.getByLabel("Nom de l’organisme", { exact: true });
+  await name.fill("Fictional uninterrupted input");
+  const interrupted = await page.evaluate(async () => {
+    const fieldset = document.querySelector<HTMLFieldSetElement>("#creer-registre fieldset")!;
+    let disabled = false;
+    const observer = new MutationObserver(records => {
+      disabled ||= fieldset.disabled || records.some(record => record.oldValue !== null);
+    });
+    observer.observe(fieldset, { attributes: true, attributeFilter: ["disabled"], attributeOldValue: true });
+    window.dispatchEvent(new Event("focus"));
+    // Let the real IndexedDB read and DOM updates run; no crypto or storage replacement.
+    await new Promise(resolve => setTimeout(resolve, 100));
+    observer.disconnect();
+    return disabled;
+  });
+  expect(interrupted).toBe(false);
+  await expect(name).toHaveValue("Fictional uninterrupted input");
+  await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
+  await page.evaluate(() => {
+    const original = IDBObjectStore.prototype.get;
+    IDBObjectStore.prototype.get = function (...args) {
+      if (this.name === "metadata") throw new DOMException("Fictional read failure", "SecurityError");
+      return original.apply(this, args);
+    };
+    window.dispatchEvent(new Event("focus"));
+  });
+  await expect(page.getByText("La liste des coffres n’a pas pu être lue.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Créer le coffre chiffré", exact: true })).toBeDisabled();
+  await expect(page.getByText(/Aucun coffre (enregistré|trouvé)/)).toHaveCount(0);
+});
