@@ -2,7 +2,7 @@
 import Brand from "./Brand.astro";
 import Icon from "./Icon.svelte";
 import "../public.css";
-interface Props { current: "workspace" | "guide" | "faq" | "verify" | "support" | "privacy" }
+interface Props { current: "workspace" | "guide" | "faq" | "verify" | "privacy" }
 const { current } = Astro.props;
 const inWorkspace = current === "workspace";
 const items = [
@@ -10,7 +10,6 @@ const items = [
   { key: "guide", href: "/app/privacy/guide/", label: "Guide", detail: "Avancer pas à pas", icon: "book" },
   { key: "faq", href: "/app/privacy/faq/", label: "FAQ", detail: "Les réponses utiles", icon: "help" },
   { key: "verify", href: "/app/privacy/verify/", label: "Vérifier", detail: "Examiner un dossier reçu", icon: "shield" },
-  { key: "support", href: "/app/privacy/soutenir/", label: "Nous soutenir", detail: "Faire vivre le projet", icon: "support" },
 ];
 ---
 <header class="site-bar desk-header">

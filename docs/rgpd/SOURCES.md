@@ -190,3 +190,16 @@ Questions originales RGPDESK, sans reprise de durée ni de fondement par défaut
 | [RGPD, source officielle EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), articles 5, 6, 28 et 30 ; ressource CNIL « Informer les personnes » déjà référencée | Questions sur les données des contacts fournisseurs, les finalités, le périmètre, les destinataires et l’archivage. Le texte intégral EUR-Lex a de nouveau répondu par une protection JavaScript lors de cette consultation ; les références déjà documentées du dépôt ont été conservées et les extraits institutionnels indexés des articles 5 et 6 recoupés. |
 
 Le choix « un coffre par client » et la recherche limitée au coffre ouvert sont des choix de cloisonnement du produit, pas des prescriptions attribuées au règlement. La recherche ne constitue ni un diagnostic de conformité ni une recherche dans les justificatifs originaux.
+
+
+## FAQ métier (23 septembre 2026)
+
+Portée : réponses d’orientation pour les DPO de PME et d’associations, sans qualification individuelle ni validation humaine présumée. Liens affichés dans chaque réponse ; les parcours produit sont vérifiés dans le guide utilisateur et les composants correspondants.
+
+| Source consultée | Portée dans la FAQ |
+| --- | --- |
+| [RGPD, EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), articles 5 §1 e), 6 §1 f), 28, 30 §5, 32 et 35, considérant 47 | Texte applicable cité. EUR-Lex a renvoyé une protection JavaScript ; les articles 28, 30, 32 et 35 ont été recoupés avec leur [reproduction par la CNIL](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4). Aucun contournement de la protection. |
+| [CNIL, registre](https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement), 13 avril 2018 | Construction du registre par activité et finalité ; portée de la dérogation pour les petites structures. |
+| [CNIL, intérêt légitime](https://www.cnil.fr/fr/les-bases-legales/interet-legitime), 29 novembre 2019 | Intérêt poursuivi, nécessité, mise en balance et attentes raisonnables ; aucun fondement par défaut. |
+| [CNIL, durées de conservation](https://www.cnil.fr/fr/passer-laction/les-durees-de-conservation-des-donnees), 2 avril 2026 | Finalité, textes applicables, distinction usage courant / archivage et texte obligatoire / recommandation. Aucune durée sectorielle ajoutée à la FAQ. |
+| [CNIL, AIPD](https://www.cnil.fr/fr/RGPD-analyse-impact-protection-des-donnees-aipd), page d’orientation consultée le 23 septembre 2026 | Risque élevé et renvoi aux listes ; distinction registre et AIPD, sans décompte automatique de critères. |

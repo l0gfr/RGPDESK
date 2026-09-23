@@ -45,7 +45,7 @@
 
 <section class="panel guided-editor" aria-labelledby="activity-editor-title">
   <div class="section-heading">
-    <div><p class="eyebrow">{draft.role === "controller" ? "Registre responsable" : "Registre sous-traitant"}</p><h2 id="activity-editor-title">Fiche de traitement</h2></div>
+    <div><p class="eyebrow">{draft.role === "controller" ? "Registre responsable" : "Registre sous-traitant"}</p><h2 id="activity-editor-title" tabindex="-1">Fiche de traitement</h2></div>
     <button type="button" class="secondary" disabled={busy} onclick={() => { section = "record"; whole = !whole; }}>{whole ? "Revenir au parcours guidé" : "Voir toute la fiche"}</button>
   </div>
   <p class="help">Vous pouvez enregistrer à tout moment. Les champs laissés vides resteront à examiner.</p>

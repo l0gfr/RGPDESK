@@ -52,9 +52,21 @@ test("guided practice exposes populated register, flows, PIA history and every p
     if (width === 1440 || width === 390) await page.screenshot({ path: testInfo.outputPath(`demo-overview-${width}.png`), fullPage: true });
   }
   await nav(page, "Commencer par le registre"); await expect(page.locator(".activity-records li")).toHaveCount(4);
-  await page.getByRole("complementary", { name: "Repère de démonstration", exact: true }).getByRole("button", { name: "Étape suivante", exact: true }).click();
+  await page.getByRole("complementary", { name: "Repère de démonstration", exact: true }).getByRole("button", { name: "Continuer : Suivre les données", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Votre carte des flux.", exact: true })).toBeVisible();
-  await nav(page, "AIPD / PIA"); await nav(page, "Lire le dossier");
+  await nav(page, "AIPD / PIA"); await nav(page, "Lire l’AIPD d’exemple");
+  const reader = page.getByRole("article", { name: "Dossier AIPD en lecture" });
+  await expect(reader).toBeVisible();
+  await expect(reader.getByRole("heading", { name: "Contexte et déclenchement", exact: true })).toBeVisible();
+  await reader.getByRole("button", { name: "02 Les choix", exact: true }).click();
+  await expect(reader.getByRole("heading", { name: "Nécessité et proportionnalité", exact: true })).toBeFocused();
+  await expect(reader.getByRole("region", { name: "Contexte et déclenchement" })).toBeHidden();
+  await expect(reader.locator(".pia-reader-option")).toHaveCount(2);
+  await expect(page.getByRole("complementary", { name: "Repère de démonstration" }).getByRole("button", { name: /^Continuer :/ })).toBeDisabled();
+  for (const width of [1440, 768, 390, 320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `AIPD ${width}`).toBe(true);
+  }
   await page.getByLabel("Version du dossier", { exact: true }).selectOption("0");
   await expect(page.getByRole("region", { name: "Atelier AIPD", exact: true })).toContainText("Réexaminer le projet");
   await expect(page.getByRole("region", { name: "Atelier AIPD", exact: true })).toContainText("Aucune mise en œuvre autorisée");
@@ -82,6 +94,22 @@ test("practice delivers a verified fictional ZIP then a real encrypted restorabl
   const bytes = await readFile((await downloaded.path())!); const zip = await JSZip.loadAsync(bytes);
   expect(Object.keys(zip.files).sort()).toEqual(["README.txt", "manifest.json", "register.csv", "register.json", "report.html"]);
   for (const entry of Object.values(zip.files)) expect(await entry.async("string")).not.toContain("NOTE INTERNE");
+  const report = await page.context().newPage();
+  const reportRequests: string[] = [];
+  report.on("request", (request) => reportRequests.push(request.url()));
+  try {
+    await report.setContent(await zip.file("report.html")!.async("string"));
+    await expect(report.getByRole("heading", { level: 1 })).toContainText("Maison Sillage");
+    await expect(report.locator(".activity")).toHaveCount(3);
+    await expect(report.locator("script, iframe, img, link")).toHaveCount(0);
+    expect(await report.locator("body").evaluate((body) => getComputedStyle(body).backgroundColor)).toBe("rgb(232, 238, 242)");
+    for (const width of [1440, 768, 390, 320]) {
+      await report.setViewportSize({ width, height: 900 });
+      expect(await report.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `report ${width}`).toBe(true);
+    }
+    expect(reportRequests).toEqual([]);
+  } finally { await report.close(); }
+
   await nav(page, "Sauvegarde");
   await page.getByLabel("Phrase pour la sauvegarde de démonstration", { exact: true }).fill(phrase);
   await page.getByLabel("Confirmer la phrase de démonstration", { exact: true }).fill(phrase);
@@ -110,4 +138,19 @@ test("the volatile demonstration remains usable when IndexedDB is unavailable", 
   await expect(page.locator(".activity-records li")).toHaveCount(4);
   await nav(page, "Quitter la démo");
   await expect(page.getByRole("button", { name: "Créer le coffre chiffré", exact: true })).toBeDisabled();
+});
+
+
+test("demo opens the filled example and keeps guidance without losing an unfinished edit", async ({ page }) => {
+  await ready(page); await demo(page); await nav(page, "Commencer par le registre");
+  await nav(page, "Ouvrir la fiche d’exemple");
+  const guide = page.getByRole("complementary", { name: "Repère de démonstration" });
+  await expect(guide).toBeVisible();
+  await expect(page.getByLabel("Nom de l’activité", { exact: true })).toHaveValue(/badge/i);
+  await page.getByLabel("Nom de l’activité", { exact: true }).fill("Fictional unsaved badge project");
+  await expect(guide.getByRole("button", { name: "Continuer : Suivre les données" })).toBeDisabled();
+  await nav(page, "Annuler l’édition");
+  await expect(page.getByRole("button", { name: "Modifier Fictional unsaved badge project" })).toHaveCount(0);
+  await guide.getByRole("button", { name: "Continuer : Suivre les données" }).click();
+  await expect(page.getByRole("heading", { name: "Votre carte des flux." })).toBeFocused();
 });

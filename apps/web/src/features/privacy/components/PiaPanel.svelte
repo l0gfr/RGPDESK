@@ -9,13 +9,13 @@
   import PiaDossier from "./PiaDossier.svelte";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, demo = false, onSave, onEditing, onRegister, initialActivityId = "" }: { initialActivityId?: string; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void } = $props();
+  let { workspace, busy, demo = false, onSave, onEditing, onRegister, initialActivityId = "", initialView = "edit" }: { initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void } = $props();
   let draft: ImpactAssessment | null = $state(null);
   let consumedSearch = $state("");
   $effect(() => {
     if (initialActivityId && consumedSearch !== initialActivityId && !draft) {
       consumedSearch = initialActivityId;
-      if (workspace.impactAssessments.some((p) => p.activityId === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); }
+      if (workspace.impactAssessments.some((p) => p.activityId === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); if (initialView === "read") step = 6; }
     }
   });
   let activityId = $state("");
@@ -85,7 +85,7 @@
     {#each workspace.impactAssessments as pia}<div class="pia-ledger"><div><strong>{workspace.activities.find((a) => a.id === pia.activityId)?.title}</strong><p>{pia.reviews.length} revue(s) conservée(s) · {piaReviewState(workspace, pia) === "changed" ? "Contexte ou étude modifié depuis la dernière revue : réexamen à instruire" : pia.reviews.length ? "Pas de changement détecté depuis la dernière revue" : "Aucune décision enregistrée"}</p></div><button class="secondary" disabled={busy} onclick={() => { activityId = pia.activityId; draft = structuredClone($state.snapshot(pia)); step = 6; reviewIndex = null; onEditing(true); }}>Lire le dossier</button></div>{/each}
     <p class="help">Trame RGPDESK du 22 septembre 2026, appuyée sur l’article 35, les guides CNIL et les critères du G29. Aucune conclusion juridique n’est produite par l’outil.</p>
   {:else if context}
-    <div class="section-heading"><div><p class="eyebrow">Atelier AIPD · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2>{context.activity.title}</h2></div><span class="pia-save-state">{dirty ? "Modifications à enregistrer" : demo ? "Étude conservée pour cette visite" : "Étude enregistrée dans le coffre"}</span></div>
+    <div class="section-heading"><div><p class="eyebrow">Atelier AIPD · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2>{context.activity.title}</h2></div><div class="pia-header-actions"><span class="pia-save-state">{dirty ? "Modifications à enregistrer" : demo ? "Étude conservée pour cette visite" : "Étude enregistrée dans le coffre"}</span><button class="secondary" disabled={busy} onclick={close}>{dirty ? "Quitter sans enregistrer" : "Fermer l’étude"}</button></div></div>
     <p class="help">Enregistrez avant de fermer l’étude. Les modifications non enregistrées seront abandonnées. {context.activity.role === "processor" ? "L’assistance du sous-traitant ne remplace pas la décision du responsable (article 28 §3 f)." : ""}</p>
     {#if saved && piaReviewState(workspace, saved) === "changed"}<aside class="method-callout"><Icon name="analysis" /><div><strong>Des éléments ont changé depuis la dernière revue.</strong><p>Examinez leurs conséquences. La version historique reste consultable telle qu’elle a été enregistrée.</p></div></aside>{/if}
     <nav class="pia-steps" aria-label="Parcours AIPD">{#each PIA_STEPS as title, index}<button class="secondary" disabled={busy} aria-current={index === step ? "step" : undefined} onclick={() => void go(index)}><span>0{index + 1}</span>{title}</button>{/each}</nav>
@@ -151,7 +151,7 @@
       {#if reviewIndex !== null && draft.reviews[reviewIndex]}{@const review = draft.reviews[reviewIndex]!}<aside class="pia-history"><strong>{PIA_OUTCOMES[review.outcome]}</strong><p>{review.author} · {review.at} · révision {review.revision}</p><p>{review.reason}</p><small>Version conservée. Les modifications ultérieures du registre n’en changent pas le contenu.</small></aside><PiaDossier content={review.content} context={review.context} />{:else}<PiaDossier content={draft.content} {context} />{/if}
       <p class="help">Ces notes restent dans le dossier de travail et dans sa sauvegarde chiffrée, si vous en téléchargez une. Les exports de registre n’incluent pas les notes AIPD. Il n’existe pas encore d’échange de fichiers avec le logiciel PIA de la CNIL.</p>
     {/if}
-    <div class="actions pia-toolbar"><button onclick={() => void save()}>{busy ? "Enregistrement…" : "Enregistrer l’étude"}</button>{#if step < PIA_STEPS.length - 1}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}<button class="secondary" onclick={close}>{dirty ? "Quitter sans enregistrer" : "Fermer l’étude"}</button></div>
+    <div class="actions pia-toolbar"><button onclick={() => void save()}>{busy ? "Enregistrement…" : "Enregistrer l’étude"}</button>{#if step < PIA_STEPS.length - 1}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}</div>
     </fieldset>
   {/if}
 </section>

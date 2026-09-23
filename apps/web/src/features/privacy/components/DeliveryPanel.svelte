@@ -42,7 +42,7 @@
     <button type="submit" disabled={!options.activityIds.length}>{preparing ? "Préparation locale…" : "Prévisualiser le dossier"}<Icon name="arrow" /></button>
   </fieldset></form>{:else}
     <div class="review-banner"><Icon name="eye" size={26} /><div><strong>{COVERAGE_LABELS[prepared.register.coverage]}</strong><p>{PROFILE_LABELS[prepared.register.profile]} · Destinataire : {prepared.register.recipient} · Révision examinée : {prepared.revision}</p></div></div>
-    <p class="help">Voici le contenu qui alimentera les fichiers JSON, CSV et HTML. Les rubriques renseignées ne constituent pas une conclusion juridique. Les identifiants visibles sont propres à cette livraison.</p>
+    <p class="help">Le rapport HTML présente une vue d’ensemble et des fiches visuelles, générées à partir de cette sélection. Voici le contenu qui alimentera les fichiers JSON, CSV et HTML. Les rubriques renseignées ne constituent pas une conclusion juridique. Les identifiants visibles sont propres à cette livraison.</p>
     <div class="table-scroll preview-table"><table><caption>Contenu exact à partager</caption><thead><tr><th>Rubrique</th><th>Déclaration</th></tr></thead><tbody>{#each shareRows(prepared.register) as row}<tr><th scope="row">{row[0]}</th><td>{row[1]}</td></tr>{/each}</tbody></table></div>
     <p class="help">{SHARE_LIMITATION}</p>
     <label class="check"><input type="checkbox" disabled={busy} bind:checked={confirmed} />J’ai relu ce contenu en clair, ses réserves et son destinataire. Je confirme ce partage pour cette révision.</label>

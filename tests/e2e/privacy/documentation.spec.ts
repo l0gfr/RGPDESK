@@ -98,14 +98,14 @@ test("entry explains the product, keeps the guide separate from an open vault an
 });
 
 
-test("FAQ and support work without JavaScript and the mobile navigation stays local", async ({ browser, baseURL }) => {
+test("FAQ works without JavaScript and the mobile navigation stays local", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
   try {
     const page = await context.newPage();
     const origins: string[] = [];
     page.on("request", (request) => origins.push(new URL(request.url()).origin));
     await page.goto("/app/privacy/faq/");
-    await expect(page.locator(".faq-question")).toHaveCount(16);
+    await expect(page.locator(".faq-question")).toHaveCount(24);
     await page.locator("#sauvegarde > summary").press("Enter");
     await expect(page.locator("#sauvegarde .faq-answer")).toBeVisible();
     await expect(page.locator("#sauvegarde .faq-answer")).toContainText("les sauvegardes du serveur ne contiennent pas les coffres");
@@ -113,8 +113,9 @@ test("FAQ and support work without JavaScript and the mobile navigation stays lo
     await page.locator(".desk-menu > summary").click();
     await expect(page.getByRole("navigation", { name: "Navigation mobile" })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.getByRole("navigation", { name: "Navigation mobile" }).getByRole("link", { name: /Nous soutenir/ }).click();
-    await expect(page.getByRole("heading", { name: "Le soutien financier ouvrira prochainement." })).toBeVisible();
+    await expect(page.locator('a[href="/app/privacy/soutenir/"]')).toHaveCount(0);
+    await page.getByRole("navigation", { name: "Navigation mobile" }).getByRole("link", { name: /Guide/ }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Menez l’entretien.");
     await expect(page.locator('a[href*="stripe.com"], script, iframe, form')).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     expect(new Set(origins)).toEqual(new Set([new URL(baseURL!).origin]));

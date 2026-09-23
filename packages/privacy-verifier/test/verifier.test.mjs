@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import JSZip from "jszip";
 import { packageFiles, zipFiles, verifyPackage, verifyFiles, sha256 } from "../src/index.js";
-import { canonicalJson, renderShareFiles } from "../../privacy-core/src/share-format.js";
+import { canonicalJson, renderShareFiles, renderLegacyShareFiles } from "../../privacy-core/src/share-format.js";
 const uid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const u = () => ({ state: "unknown" });
 function fixture() {
@@ -94,4 +94,60 @@ test("text is safely encoded in all files and files do not accidentally carry us
   assert.ok(files["report.html"].includes("&lt;script&gt;")); assert.ok(!files["report.html"].includes("<script>"));
   assert.equal((await verifyFiles(files)).register.activities[0].title, r.activities[0].title);
   assert.deepEqual(renderShareFiles(r)["register.csv"], files["register.csv"]);
+});
+
+
+test("visual report is passive, CSP-pinned, compact and preserves every reviewed row", async () => {
+  const register = fixture();
+  register.activities[0].dataSubjects = { state: "documented", value: 'Fictional <svg onload="alert(1)">people</svg>' };
+  register.activities[0].recipients = { state: "documented", value: '"/><img src="https://example.invalid/private">' };
+  const { files } = await packageFiles(register);
+  const html = files["report.html"];
+  assert.ok(html.includes('content="rgpdesk-register-folio-1"'));
+  assert.ok(html.includes('class="relationship"'));
+  assert.ok(html.includes('class="unknown">Non renseigné'));
+  assert.ok(html.includes('&lt;svg onload='));
+  assert.ok(html.includes('&lt;img src='));
+  assert.doesNotMatch(html, /<(?:script|iframe|img|image|foreignObject|form|link)\b/i);
+  assert.doesNotMatch(html, /<[^>]+\s(?:onload|onclick|src)=/i);
+  const style = html.match(/<style>([\s\S]*?)<\/style>/)[1];
+  const digest = Buffer.from(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(style))).toString("base64");
+  assert.ok(html.includes(`style-src 'sha256-${digest}'`));
+  assert.ok(html.includes("default-src 'none'"));
+  assert.ok(!html.includes("unsafe-inline"));
+  assert.ok(Buffer.byteLength(html) < 35_000);
+  // Only the rendering changes. The data, CSV neutralisation and README stay identical.
+  const previous = renderLegacyShareFiles(register);
+  for (const name of ["register.json", "register.csv", "README.txt"]) assert.equal(files[name], previous[name]);
+  const oldRows = previous["report.html"].match(/<tbody>([\s\S]*?)<\/tbody>/)[1];
+  assert.ok(html.includes(oldRows));
+  assert.equal((await verifyPackage(await zipFiles(files))).valid, true);
+});
+
+test("historical report rendering remains verifiable but both renderings reject even rehashed edits", async () => {
+  for (const legacy of [true, false]) {
+    const register = fixture();
+    const { files } = await packageFiles(register);
+    if (legacy) files["report.html"] = renderLegacyShareFiles(register)["report.html"];
+    await rehash(files);
+    assert.equal((await verifyPackage(await zipFiles(files))).valid, true);
+    files["report.html"] = files["report.html"].replace("Infolettre fictive", "Different declared activity");
+    await rehash(files);
+    assert.equal((await verifyPackage(await zipFiles(files))).valid, false);
+  }
+});
+
+test("visual report handles empty selections and processor links without inventing information", async () => {
+  const empty = fixture(); empty.activities = [];
+  const emptyHtml = (await packageFiles(empty)).files["report.html"];
+  assert.ok(emptyHtml.includes('0<small>activités sélectionnées'));
+  assert.ok(!emptyHtml.includes('class="relationship"'));
+  const register = fixture(); register.profile = "client-excerpt"; register.coverage = "excerpt";
+  register.parties = [{ id: uid(4), name: "Client fictif", contact: u() }];
+  const activity = register.activities[0]; delete activity.purposes;
+  activity.role = "processor"; activity.controllerIds = [uid(4)]; activity.operations = u();
+  const html = (await packageFiles(register)).files["report.html"];
+  assert.ok(html.includes("Opérations confiées")); assert.ok(html.includes("Client fictif"));
+  assert.ok(!html.includes("Pourquoi ces données ?</h3><section class=\"purpose\""));
+  assert.ok(!html.includes("undefined"));
 });

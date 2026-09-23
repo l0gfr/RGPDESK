@@ -118,7 +118,7 @@ for (const attack of ["extra", "corrupt", "symlink", "dirty", "commit", "duplica
 
 test("public help pages do not prevent verification of historical archives", (t) => {
   const { root, manifest, save, run } = verifierFixture(t);
-  const additions = new Set(["site/app/privacy/faq/index.html", "site/app/privacy/soutenir/index.html"]);
+  const additions = new Set(["site/app/privacy/faq/index.html"]);
   for (const path of additions) rmSync(join(root, path));
   manifest.files.splice(0, manifest.files.length, ...manifest.files.filter((file) => !additions.has(file.path)));
   save();
@@ -134,4 +134,25 @@ test("a checksummed but unlisted public page is refused", (t) => {
   manifest.files.push({ path, bytes: bytes.length, sha256: digest(bytes) });
   save();
   assert.equal(run().status, 1);
+});
+
+
+test("withdrawn support page is excluded from new distributions even if left in an old build", async (t) => {
+  const { root, put } = fixture(t);
+  put("app/privacy/soutenir/index.html", "historical support page");
+  const files = await collectPrivacyFiles(root);
+  assert.equal(files.has("app/privacy/soutenir/index.html"), false);
+});
+
+
+test("historical archives containing the retired support page remain verifiable", (t) => {
+  const { root, manifest, save, run } = verifierFixture(t);
+  const path = "site/app/privacy/soutenir/index.html";
+  const bytes = Buffer.from("historical support page fixture");
+  mkdirSync(dirname(join(root, path)), { recursive: true });
+  writeFileSync(join(root, path), bytes);
+  manifest.files.push({ path, bytes: bytes.length, sha256: digest(bytes) });
+  save();
+  const result = run();
+  assert.equal(result.status, 0, result.stderr);
 });

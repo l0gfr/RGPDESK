@@ -26,6 +26,7 @@
   import { DemoSession } from "../demo-session";
   import DemoOverview from "./DemoOverview.svelte";
   import DemoGuide from "./DemoGuide.svelte";
+  import type { DemoPanel } from "../demo-journey";
   import { startingPoints, type StartingPoint } from "../guidance";
   import WorkspaceSearch from "./WorkspaceSearch.svelte";
   import type { SearchResult } from "../search";
@@ -331,6 +332,35 @@
     });
   }
 
+  async function navigateDemo(next: DemoPanel | "overview") {
+    if (!demo || !master || busy || editor || piaEditing) return;
+    const current = session();
+    dpoCaseId = documentId = piaActivityId = "";
+    panel = next;
+    await tick();
+    if (current.signal.aborted || !demo || !master) return;
+    workspaceHeading?.focus({ preventScroll: true });
+    workspaceHeading?.scrollIntoView({ block: "start" });
+  }
+  async function openDemoExample() {
+    if (!demo || !master || busy || editor || piaEditing) return;
+    const current = session();
+    const activity = master.activities.find((a) => a.id === master!.impactAssessments[0]?.activityId) ?? master.activities[0];
+    if (!activity) return;
+    if (panel === "register") {
+      editorSection = "record"; editorExample = undefined;
+      editor = structuredClone($state.snapshot(activity));
+    } else if (panel === "pia" && master.impactAssessments.some((p) => p.activityId === activity.id)) {
+      piaActivityId = activity.id;
+      searchNavigation += 1;
+    }
+    await tick();
+    if (current.signal.aborted || !demo || !master) return;
+    const heading = panel === "pia" ? document.querySelector<HTMLElement>(".pia-dossier h3") : document.getElementById("activity-editor-title");
+    heading?.focus({ preventScroll: true });
+    heading?.scrollIntoView({ block: "start" });
+  }
+
   async function downloadBackup() {
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
@@ -454,20 +484,22 @@
     {#if !demo}<div class="client-switcher"><span>Registre de <strong>{master.organization.name}</strong><small>Repère du coffre : {master.id}</small></span><div><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Verrouiller ce registre et revenir aux coffres" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient()}>Changer de registre</button><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Créer un coffre distinct" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient(true)}>Ajouter un client</button></div></div>{/if}
     <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "dpo" ? "Les dossiers de votre mission." : panel === "pia-sharing" ? "Restituer votre analyse d’impact." : panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
     {#if !demo}<p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>{/if}
-    {#if demo && !editor}<DemoGuide {panel} busy={busy || piaEditing} onNavigate={(next) => panel = next} />{/if}
+    {#if demo}<DemoGuide {panel} {busy} editing={editor !== null || piaEditing}
+      actionLabel={panel === "register" && master.activities.length ? "Ouvrir la fiche d’exemple" : panel === "pia" && master.impactAssessments.length ? "Lire l’AIPD d’exemple" : undefined}
+      onAction={() => void openDemoExample()} onNavigate={(next) => void navigateDemo(next)} />{/if}
     {#if editor}
       <p class="help">Enregistrez avant de quitter cette fiche. Le verrouillage abandonne les modifications non enregistrées.</p>
       {#key editor.id}<ActivityEditor initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if panel === "overview"}
-      {#if demo}<DemoOverview {busy} onNavigate={(next) => panel = next} />{:else}<MissionOverview workspace={master} {busy} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
+      {#if demo}<DemoOverview {busy} onNavigate={(next) => void navigateDemo(next)} />{:else}<MissionOverview workspace={master} {busy} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
     {:else if panel === "dpo"}
       {#key searchNavigation}<DpoCases workspace={master} {busy} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "pia-sharing"}
       {#key master.revision}<PiaSharing workspace={$state.snapshot(master)} {busy} onDeliver={deliverPia} onDownload={downloadPia} />{/key}
     {:else if panel === "pia"}
-      {#key searchNavigation}<PiaPanel workspace={master} {busy} {demo} initialActivityId={piaActivityId} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
+      {#key searchNavigation}<PiaPanel workspace={master} {busy} {demo} initialActivityId={piaActivityId} initialView={demo ? "read" : "edit"} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "analysis" || panel === "flows"}
-      {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo && panel === "analysis" ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
+      {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
       {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button></div></aside>{/if}
       {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}

@@ -459,3 +459,12 @@ Les références juridiques servent à orienter la lecture, sans remplacer l’e
 - [Catalogue de conception et références détaillées du dépôt](https://github.com/l0gfr/RGPDESK/blob/main/docs/rgpd/SOURCES.md).
 
 Appuyez-vous sur ces sources pour examiner vos choix, en tenant compte de votre situation et des règles de votre secteur. RGPDESK vous aide à documenter ce travail ; il ne remplace pas votre analyse et ne délivre pas de certification.
+
+
+### Lecture et démonstration : repères du 23 septembre 2026
+
+Dans la démonstration, « Ouvrir la fiche d’exemple » donne accès au projet de badges. La cartographie et l’analyse reprennent ce même projet. Le repère de visite reste visible pendant l’édition ; la navigation vers la suite demeure bloquée tant que le dossier est ouvert. Les essais restent en mémoire pour cette visite.
+
+« Lire l’AIPD d’exemple » ouvre directement le dossier rempli. La lecture s’organise en cinq chapitres : contexte, choix, risques, mesures et avis. Le menu « Version du dossier » permet de lire le contexte conservé d’une revue. Les points à instruire restent accessibles dans un encart dédié. Fermer l’étude permet de reprendre la visite.
+
+Le fichier `report.html` du partage propose une vue d’ensemble, un index des activités et une fiche visuelle par activité. Les repères personnes/données/destinataires reprennent uniquement la projection autorisée ; ils ne représentent pas les flux opérationnels, qui ne font pas partie du format partagé v1. Aucune saisie supplémentaire n’est demandée pour cette mise en forme. L’annexe conserve toutes les déclarations sélectionnées. La version JSON et le CSV sont inchangés ; les anciens rapports HTML restent vérifiables selon leur rendu d’origine.

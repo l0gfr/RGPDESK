@@ -1,7 +1,7 @@
 // Bounded ZIP preflight and stream adapter adapted from BLACKPROOF verifier at 211166d.
 // Historical verifier is unchanged; differential regression tests cover shared ZIP properties.
 import JSZip from "jszip";
-import { assertShare, canonicalJson, renderShareFiles, SHARE_FILES, SHARE_LIMITATION } from "../../privacy-core/src/share-format.js";
+import { assertShare, canonicalJson, renderShareFiles, renderLegacyShareFiles, SHARE_FILES, SHARE_LIMITATION } from "../../privacy-core/src/share-format.js";
 import validateManifest from "../../privacy-core/src/generated/manifest-validator.js";
 export const MAX_ZIP_BYTES = 2 * 1024 * 1024;
 const MAX_DELIVERY_FILE_BYTES = 512 * 1024;
@@ -187,7 +187,10 @@ export async function verifyFiles(files) {
   }
   const canonical = renderShareFiles(register);
   // Recomputed hashes cannot bless active HTML or divergent CSV/JSON sidecars.
-  if (Object.entries(canonical).some(([name, content]) => content !== files[name]) || files["manifest.json"] !== canonicalJson(manifest) + "\n") throw new Error("INVALID_CANONICAL");
+  const sameFile = (name, content) => content === files[name]
+    || name === "report.html" && renderLegacyShareFiles(register)[name] === files[name];
+  // Exactly two controlled HTML renderings are supported. Neither accepts supplied markup.
+  if (Object.entries(canonical).some(([name, content]) => !sameFile(name, content)) || files["manifest.json"] !== canonicalJson(manifest) + "\n") throw new Error("INVALID_CANONICAL");
   return { register, manifestHash: expected };
 }
 export async function verifyPackage(input) {

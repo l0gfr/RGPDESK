@@ -15,3 +15,6 @@ Limites : ZIP 2 Mio, fichier décompressé 512 Kio, somme 2 Mio ; JSON profondeu
 Canonicalisation `rgpdesk-sorted-json-v1` : clés d’objets triées selon l’ordre JavaScript par défaut (UTF-16), ordre des tableaux conservé, chaînes/nombres par JSON.stringify, pas d’espaces. Valeurs limitées par les schémas, aucun undefined ni non-fini. L’empreinte propre du manifeste porte sur sa forme canonique UTF-8 sans la propriété `sha256` et sans le saut de ligne terminal du fichier. Les autres empreintes portent sur les octets UTF-8 exacts livrés, saut de ligne inclus.
 
 **Limite d’authenticité :** un attaquant peut modifier le registre et recalculer tous les fichiers et empreintes. Le résultat ne prouve pas la vérité, la licéité, l’auteur, la réception ni un horodatage de confiance. Les dates et identités sont des déclarations. Un profil renseigné ne représente pas une certification juridique.
+
+
+Le HTML du registre dispose de deux rendus exacts admis : le tableau historique et le folio visuel du 23 septembre 2026. Le vérificateur reconstruit chacun depuis le JSON validé ; seules ces sorties déterministes sont acceptées. Les CSV/JSON/README restent identiques. Aucune modification de contenu ou de CSS, même réempreintée, n’est autorisée. Les anciennes livraisons chiffrées ne sont pas régénérées.

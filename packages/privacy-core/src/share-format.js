@@ -1,3 +1,4 @@
+import { visualRegisterReport } from "./share-report.js";
 import validate from "./generated/share-validator.js";
 export const SHARE_LIMITATION = "Vérification technique locale : structure, liens, inventaire et empreintes. Elle ne prouve ni la vérité des déclarations, ni leur auteur, ni la conformité juridique, ni un horodatage de confiance. Un tiers peut modifier les fichiers et recalculer toutes les empreintes.";
 export const SHARE_FILES = ["README.txt", "manifest.json", "register.csv", "register.json", "report.html"];
@@ -54,7 +55,7 @@ export function shareRows(register) {
   return rows;
 }
 const REPORT_STYLE = "body{margin:0;background:#f6f6ef;color:#142f3c;font:14px/1.7 system-ui,sans-serif}header,main,footer{max-width:1100px;margin:auto;padding:36px}header{border-bottom:1px solid #dce2d3}header>p:first-child{letter-spacing:.16em;font-size:10px;color:#8a713f}h1{font:40px/1.15 Georgia,serif;letter-spacing:-.03em}table{border-collapse:collapse;width:100%;background:#fffefa}caption{font-size:18px;text-align:left;padding:20px 0}th,td{border-bottom:1px solid #e3e5dc;text-align:left;vertical-align:top;padding:12px 16px}th{font-size:11px;font-weight:500;width:36%;background:#f0f3e8}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}footer{font-size:11px;color:#64716f}thead{display:table-header-group}@media(max-width:600px){header,main,footer{padding:20px}th,td{padding:8px}h1{font-size:30px}}@media print{body{background:white;font-size:10pt}header,main,footer{padding:12px}tr{break-inside:avoid}thead{display:table-header-group}footer{font-size:8pt}}";
-export function renderShareFiles(register) {
+export function renderLegacyShareFiles(register) {
   assertShare(register);
   const rows = shareRows(register);
   const csv = [["Rubrique", "Déclaration"], ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n";
@@ -62,4 +63,10 @@ export function renderShareFiles(register) {
   const html = '<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; base-uri \'none\'; form-action \'none\'; style-src \'sha256-HjKvt33E9zKZNFLTaLmRcFkleKDU5Bj3FDv8lNx7Oqw=\'"><style>' + REPORT_STYLE + '</style><title>RGPDESK · Dossier documentaire</title></head><body><header><p>RGPDESK / DOSSIER DOCUMENTAIRE</p><h1>' + escapeHtml(PROFILE_LABELS[register.profile]) + '</h1><p>' + escapeHtml(COVERAGE_LABELS[register.coverage]) + '</p></header><main><p>Les rubriques renseignées ne prouvent pas une conformité juridique. Les réserves restent applicables. Les dates et identités sont déclarées.</p><table><caption>Registre et réserves partagés</caption><thead><tr><th scope="col">Rubrique</th><th scope="col">Déclaration</th></tr></thead><tbody>' + rows.map(([key, value]) => '<tr><th scope="row">' + escapeHtml(key) + '</th><td><pre>' + escapeHtml(value) + '</pre></td></tr>').join('') + '</tbody></table></main><footer><p>' + escapeHtml(SHARE_LIMITATION) + '</p></footer></body></html>\n';
   return { "register.json": canonicalJson(register) + "\n", "register.csv": csv, "report.html": html,
     "README.txt": "RGPDESK / rgpd-share-v1\n" + SHARE_LIMITATION + "\nFichiers en clair. Conservez-les et transmettez-les selon le périmètre examiné. Les identifiants ne permettent pas de retrouver ceux du coffre. Le CSV neutralise les préfixes de formules ; ne retirez pas leur apostrophe de protection.\nCatalogue proposé sans revue juridique humaine. Ce dossier ne remplace pas une analyse juridique.\n" };
+}
+
+export function renderShareFiles(register) {
+  const files = renderLegacyShareFiles(register);
+  files["report.html"] = visualRegisterReport(register, shareRows(register), PROFILE_LABELS, COVERAGE_LABELS, SHARE_LIMITATION);
+  return files;
 }

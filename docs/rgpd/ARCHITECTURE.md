@@ -235,3 +235,29 @@ Le déploiement cible reste un répertoire statique sous HTTPS, avec les en-têt
 Conserver une documentation de sauvegarde, de restauration, de changement de domaine et de changement de profil navigateur. Publier une notice de confidentialité propre au nouveau site : ne pas copier aveuglément celle de BLACKPROOF.
 
 La sortie du build, les schémas, la version du catalogue et la référence Git sont reliés dans les métadonnées de release. Ne jamais recalculer un ancien snapshot avec le catalogue du jour sans créer une nouvelle évaluation identifiable.
+
+
+## Cible métier précisée le 23 septembre 2026 : un inventaire, quatre analyses
+
+Orientation demandée par l’utilisateur, à construire progressivement. Un même inventaire augmenté décrit les activités, finalités, personnes, données, acteurs, systèmes, accès, opérations et flux. Le registre réglementaire et les restitutions sont des vues de cet inventaire.
+
+Quatre angles d’analyse s’appuient sur ces faits :
+
+1. Examen des exigences RGPD.
+2. Nécessité et proportionnalité du traitement.
+3. Risques pour le système d’information.
+4. Risques pour les droits et libertés des personnes.
+
+Chaque analyse garde sa méthode, son périmètre, ses hypothèses, ses arguments, ses mesures et ses revues humaines. Un risque pour le SI ne détermine pas automatiquement une atteinte aux droits et libertés ; une mesure technique ne justifie pas automatiquement la proportionnalité. Les éléments pertinents peuvent être reliés, jamais assimilés par un score commun.
+
+### Saisie et dépendances
+
+- Saisir les faits une fois dans l’inventaire, puis les lire par référence dans les vues ; ne pas recréer des formulaires d’organisation ou de cartographie dans chaque analyse.
+- Demander dans les analyses uniquement les éléments spécifiques manquants. Préserver la distinction entre fait inconnu, fait déclaré et appréciation humaine.
+- Signaler un changement de faits à réexaminer ; ne pas réécrire les arguments ni les revues historiques. Conserver le contexte figé de chaque revue.
+- Générer les synthèses et schémas depuis ces liens, sans formulaire de présentation supplémentaire. Pour un partage, conserver la sélection explicite, la liste blanche et la relecture du contenu.
+- Privilégier HTML/CSS et petits SVG statiques ; aucun moteur de graphe, rendu distant ou inférence de flux non décrits.
+
+### État de l’implémentation
+
+L’analyse RGPD et l’AIPD disposent déjà de leurs parcours. L’AIPD rassemble actuellement nécessité/proportionnalité et risques pour les personnes. L’analyse de risque SI autonome et la navigation unifiée entre quatre analyses restent à concevoir et à qualifier. Aucun import de domaine cyber ni changement du format de coffre n’est introduit par la refonte de lecture du 23 septembre.
