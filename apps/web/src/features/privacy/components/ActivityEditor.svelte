@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { tick, untrack } from "svelte";
-  import { createPurpose, knowledgeText, type Activity, type Workspace } from "@rgpdesk/privacy-core";
+  import { onMount, tick, untrack } from "svelte";
+  import { canonicalJson, createPurpose, knowledgeText, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { fieldHints, type StartingPoint } from "../guidance";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import FlowEditor from "./FlowEditor.svelte";
@@ -15,8 +15,15 @@
   let draft: Activity = $state(untrack(() => structuredClone(initial)));
   let section = $state<"record" | "analysis" | "flows" | "evidence">(untrack(() => initialSection));
   let documentIds = $state(untrack(() => workspace.documents.filter((doc) => doc.activityIds.includes(initial.id)).map((doc) => doc.id)));
+  const initialDraft = untrack(() => canonicalJson(initial));
+  const initialDocuments = untrack(() => canonicalJson([...documentIds].sort()));
+  export function hasUnsavedChanges() {
+    return !workspace.activities.some((a) => a.id === draft.id) || canonicalJson(draft) !== initialDraft || canonicalJson([...documentIds].sort()) !== initialDocuments;
+  }
   let step = $state(0);
   let whole = $state(false);
+  let draftHeading: HTMLHeadingElement | undefined = $state();
+  onMount(() => { void tick().then(() => { if (draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } }); });
   let sectionTitle: HTMLHeadingElement | undefined = $state();
   let form: HTMLFormElement | undefined = $state();
   const steps = ["L’activité", "Les objectifs", "Les données", "La protection", "Les précisions", "La relecture"];
@@ -35,6 +42,7 @@
   }
   async function save() {
     if (!draft.title.trim()) { section = "record"; whole = false; await go(0); form?.reportValidity(); return; }
+    if (form && !form.reportValidity()) return;
     await onSave($state.snapshot(draft), $state.snapshot(documentIds));
   }
   function toggle(field: "systemIds" | "participantIds" | "controllerIds", id: string, checked: boolean) {
@@ -46,9 +54,10 @@
 
 <section class="panel guided-editor" aria-labelledby="activity-editor-title">
   <div class="section-heading">
-    <div><p class="eyebrow">{draft.role === "controller" ? "Registre responsable" : "Registre sous-traitant"}</p><h2 id="activity-editor-title" tabindex="-1">Fiche de traitement</h2></div>
+    <div><p class="eyebrow">{draft.role === "controller" ? "Registre responsable" : "Registre sous-traitant"}</p><h2 bind:this={draftHeading} id="activity-editor-title" data-draft-heading tabindex="-1">Fiche de traitement</h2></div>
     <button type="button" class="secondary" disabled={busy} onclick={() => { section = "record"; whole = !whole; }}>{whole ? "Revenir au parcours guidé" : "Voir toute la fiche"}</button>
   </div>
+  <div class="draft-toolbar"><span>{hasUnsavedChanges() ? "Saisie à enregistrer" : "Fiche enregistrée"}</span><div class="actions"><button type="button" disabled={busy} onclick={() => void save()}>{busy ? "Chiffrement en cours…" : "Enregistrer la fiche"}</button><button type="button" class="secondary" disabled={busy} onclick={onCancel}>Annuler l’édition</button></div></div>
   <p class="help">Vous pouvez enregistrer à tout moment. Les champs laissés vides resteront à examiner.</p>
   <nav class="activity-views" aria-label="Vues de l’activité">{#each [["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"], ["evidence", "Les justificatifs", "documents"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
   {#if example && section === "record"}<aside class="interview-card"><strong>Votre fil conducteur</strong><p>{example.question}</p><details><summary>Retrouver les questions métier et leurs sources</summary><InterviewPlaybook {example} /></details></aside>{/if}
@@ -142,7 +151,7 @@
       {#if !whole && step === 5}<div class="review-summary"><h3>Votre fiche avant enregistrement</h3><dl><dt>Activité</dt><dd>{draft.title || "À nommer"}</dd><dt>Rôle choisi</dt><dd>{draft.role === "controller" ? "Responsable de traitement" : "Sous-traitant"}</dd>{#if draft.role === "controller"}{#each draft.purposes as purpose, i}<dt>Finalité {i + 1}</dt><dd>{knowledgeText(purpose.description) || "À examiner"}</dd><dt>Fondement juridique {i + 1}</dt><dd>{knowledgeText(purpose.legalBasis) || "À examiner"}</dd><dt>Conservation {i + 1}</dt><dd>{knowledgeText(purpose.retention.period) || "À examiner"}</dd>{/each}{:else}<dt>Opérations</dt><dd>{knowledgeText(draft.operations) || "À examiner"}</dd>{/if}<dt>Personnes concernées</dt><dd>{knowledgeText(draft.dataSubjects) || "À examiner"}</dd><dt>Données utilisées</dt><dd>{knowledgeText(draft.dataCategories) || "À examiner"}</dd><dt>Destinataires</dt><dd>{knowledgeText(draft.recipients) || "À examiner"}</dd></dl><p>Après enregistrement, ouvrez Actions & décisions pour préparer vos prochaines vérifications. Une fiche peut rester en brouillon pendant cette collecte.</p></div>{/if}
       {#if !whole}<div class="step-navigation">{#if step > 0}<button type="button" class="secondary" onclick={() => void go(step - 1)}>Étape précédente</button>{/if}{#if step < steps.length - 1}<button type="button" onclick={() => void go(step + 1)}>Continuer<Icon name="arrow" /></button>{/if}</div>{/if}
       {/if}
-      <div class="actions editor-save"><button type="submit">{busy ? "Chiffrement en cours…" : "Enregistrer la fiche"}</button><button type="button" class="secondary" onclick={onCancel}>Annuler l’édition</button></div>
+
     </fieldset>
   </form>
 </section>

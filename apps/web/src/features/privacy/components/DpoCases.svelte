@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import { onDestroy, tick } from "svelte";
   import { appendDpoEvent, canonicalJson, createDpoCase, dpoChanges, dpoChangeDetails, knowledge, knowledgeText, putDpoCase, recordDpoReview, rightsDeadline, breachDeadline, type DpoCase, type DpoKind, type DpoReview, type Workspace } from "@rgpdesk/privacy-core";
   import { DPO_TITLES, DPO_INTRO, DPO_METHODS } from "../dpo-methods";
   import { RGPD_OFFICIAL } from "../review-methods";
@@ -8,17 +8,22 @@
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, onSave, onEditing, onRegister, onActions, onDocument, initialCaseId = "" }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void; onActions: (activityId: string) => void; onDocument: (id: string) => void; initialCaseId?: string } = $props();
+  let { workspace, busy, onSave, onEditing, onLeave, onRegister, onActions, onDocument, initialCaseId = "" }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onActions: (activityId: string) => void; onDocument: (id: string) => void; initialCaseId?: string } = $props();
   let kind = $state<DpoKind>("interest"), draft = $state<DpoCase | null>(null), step = $state("scope"), error = $state("");
+  let draftHeading: HTMLHeadingElement | undefined = $state();
   let filter = $state("all"), ownerFilter = $state("");
   let reviewAuthor = $state(""), reviewReason = $state(""), outcome = $state<DpoReview["outcome"]>("rework");
   let eventAt = $state(""), eventAuthor = $state(""), eventText = $state(""), eventEvidence = $state("");
-  let historical = $state(""), discarded = $state(false), consumed = $state("");
+  let historical = $state(""), consumed = $state("");
   $effect(() => { if (initialCaseId && consumed !== initialCaseId) { consumed = initialCaseId; const item = workspace.dpoCases.find((c) => c.id === initialCaseId); if (item) { kind = item.kind; open(item); } } });
   const today = () => new Date().toISOString().slice(0, 10);
   const now = () => new Date().toISOString();
   const exists = () => !!draft && workspace.dpoCases.some((c) => c.id === draft!.id);
   const changed = () => !draft || canonicalJson(workspace.dpoCases.find((c) => c.id === draft!.id)) !== canonicalJson($state.snapshot(draft));
+  export function hasUnsavedChanges() {
+    return !!draft && (changed() || !!(reviewAuthor || reviewReason || eventAt || eventAuthor || eventText || eventEvidence) || outcome !== "rework");
+  }
+  function clearPendingReview() { reviewAuthor = reviewReason = eventAt = eventAuthor = eventText = eventEvidence = ""; outcome = "rework"; }
   function deadline(item: DpoCase) {
     try { return item.kind === "rights" ? rightsDeadline(item.content.rights).due : item.kind === "breach" ? breachDeadline(item.content.breach.awarenessAt, item.content.breach.role) : item.content.reviewDue; }
     catch { return null; }
@@ -27,9 +32,11 @@
   function open(item?: DpoCase) {
     draft = item ? structuredClone($state.snapshot(item)) : createDpoCase(workspace.id, crypto.randomUUID(), kind);
     if (!item) draft.title = "";
-    discarded = false; step = "scope"; historical = ""; error = ""; onEditing(true);
+    clearPendingReview(); step = "scope"; historical = ""; error = ""; onEditing(true);
+    const id = draft.id;
+    void tick().then(() => { if (draft?.id === id && draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } });
   }
-  function close() { if (changed() && !discarded) { discarded = true; return; } discarded = false; draft = null; error = ""; onEditing(false); }
+  function close() { draft = null; error = ""; clearPendingReview(); onEditing(false); }
   onDestroy(() => onEditing(false));
   async function save() {
     if (!draft) return;
@@ -45,7 +52,7 @@
       const master = $state.snapshot(workspace), at = now();
       const next = which === "event" ? appendDpoEvent(master, draft.id, { id: crypto.randomUUID(), at: eventAt, author: eventAuthor.trim(), description: eventText.trim(), evidence: knowledge(eventEvidence) }, master.revision, at)
         : recordDpoReview(master, draft.id, { id: crypto.randomUUID(), author: reviewAuthor.trim(), reason: reviewReason.trim(), outcome }, master.revision, at);
-      if (await onSave(next)) { draft = structuredClone(next.dpoCases.find((c) => c.id === draft!.id)!); error = ""; eventAt = eventAuthor = eventText = eventEvidence = reviewReason = ""; }
+      if (await onSave(next)) { draft = structuredClone(next.dpoCases.find((c) => c.id === draft!.id)!); error = ""; if (which === "event") eventAt = eventAuthor = eventText = eventEvidence = ""; else { reviewAuthor = reviewReason = ""; outcome = "rework"; } }
     } catch { error = "Ajout refusé. Renseignez l’auteur, le contenu, une date UTC valide pour l’événement et vérifiez les limites d’historique."; }
   }
 </script>
@@ -59,13 +66,13 @@
     {#if !visible.length}<p class="empty">Aucun dossier pour cette sélection. Commencez par un cas concret, même si certaines réponses manquent.</p>{/if}
     <p class="help">Les dossiers sont conservés dans le coffre et sa sauvegarde chiffrée. Aucune réponse ou notification n’est envoyée. Aucun rappel n’est garanti lorsque la page est fermée.</p>
   {:else}
-    <header class="section-heading"><div><p class="eyebrow">{DPO_TITLES[draft.kind]} / dossier de travail</p><h2>{draft.title || "Nouveau dossier"}</h2></div><button class="secondary" disabled={busy} onclick={close}>Fermer le dossier</button></header>
-    <p class="help">Enregistrez avant de fermer. Les saisies non enregistrées seront abandonnées. Une revue conserve l’analyse et le contexte du registre à sa date.</p>
+    <header class="section-heading"><div><p class="eyebrow">{DPO_TITLES[draft.kind]} / dossier de travail</p><h2 bind:this={draftHeading} data-draft-heading tabindex="-1">{draft.title || "Nouveau dossier"}</h2></div></header>
+    <div class="draft-toolbar"><span>{changed() ? "Dossier à enregistrer" : "Dossier enregistré"}{#if !changed() && hasUnsavedChanges()} · Événement ou revue à consigner{/if}</span><div class="actions"><button disabled={busy} onclick={save}>Enregistrer le dossier</button><button class="secondary" disabled={busy} onclick={() => onLeave(close)}>Fermer le dossier</button></div></div>
+    <p class="help">Enregistrez vos modifications ici. Les événements et les revues se consignent dans leurs étapes dédiées. Une revue conserve l’analyse et le contexte du registre à sa date.</p>
     <nav class="dpo-step-nav" aria-label="Parcours du dossier">{#each [["scope","01 Cadrage"],["analysis","02 Analyse"],["events","03 Chronologie"],["review","04 Revue & historique"]] as [key,label]}<button class="secondary" class:active={step === key} disabled={busy} onclick={() => step = key}>{label}</button>{/each}</nav>
     <ReviewChanges changes={dpoChangeDetails(workspace, draft)} review={draft.reviews.at(-1)} dirty={changed()} />
-    <ReviewEvidence documents={workspace.documents.filter((d) => d.activityIds.some((id) => draft!.activityIds.includes(id)))} disabled={busy || changed()} onOpen={(id) => { if (!busy && !changed()) { draft = null; onEditing(false); onDocument(id); } }} />
+    <ReviewEvidence documents={workspace.documents.filter((d) => d.activityIds.some((id) => draft!.activityIds.includes(id)))} disabled={busy || changed()} onOpen={(id) => onLeave(() => { close(); onDocument(id); })} />
     <fieldset disabled={busy}>
-    {#if discarded}<p class="notice">Des modifications ne sont pas enregistrées. Enregistrez-les ou fermez à nouveau pour les abandonner.</p><button onclick={async () => { await save(); discarded = false; }}>Enregistrer les modifications</button>{/if}
     {#if step === "scope"}
       <div class="grid-two"><label class="field">Titre du dossier<input maxlength="160" bind:value={draft.title} placeholder="Une référence de dossier, sans nom de personne" /></label><label class="field">Responsable du suivi<input maxlength="160" bind:value={draft.owner} placeholder="Fonction ou équipe" /></label></div>
       <p class="help">Évitez les données nominatives inutiles. Conservez pièces d’identité, listes de personnes et documents originaux dans les circuits sécurisés de votre organisation.</p>
@@ -75,7 +82,7 @@
         <label class="field">Finalité examinée<select disabled={exists()} bind:value={draft.purposeId}><option value={null}>Choisir une finalité</option>{#if activity?.role === "controller"}{#each activity.purposes as p,index}<option value={p.id}>{knowledgeText(p.description) || `Finalité ${index + 1} à décrire`}</option>{/each}{/if}</select></label>
         <p class="help">Une analyse par finalité. Le fondement du registre reste inchangé : aucun choix automatique. Si la finalité manque, fermez ce dossier puis complétez la fiche du registre.</p>
       {:else}<fieldset class="choices"><legend>Activités concernées, si identifiées</legend>{#each workspace.activities as a}<label><input type="checkbox" checked={draft.activityIds.includes(a.id)} onchange={(e) => { if (draft) draft.activityIds = e.currentTarget.checked ? [...draft.activityIds,a.id] : draft.activityIds.filter((id) => id !== a.id); }} />{a.title}</label>{/each}</fieldset>{/if}
-      {#if draft.activityIds.length}<details class="panel"><summary>Contexte relié, documents et actions</summary>{#each draft.activityIds as aid}{@const a = workspace.activities.find((v) => v.id === aid)}{#if a}<h4>{a.title}</h4><p>{a.flows.length} flux décrit(s) · {workspace.actions.filter((action) => action.activityId === aid && !action.closure).length} action(s) ouverte(s)</p><ul>{#each workspace.documents.filter((d) => d.activityIds.includes(aid)) as doc}<li>{doc.title} · {doc.status === "reviewed" ? "Revue déclarée" : "À examiner"}</li>{/each}</ul><button class="secondary" disabled={changed()} onclick={() => { draft = null; onEditing(false); onActions(aid); }}>Voir les actions de cette activité</button>{/if}{/each}<p class="help">Enregistrez avant de rejoindre les actions. La prochaine revue conservera le contexte actuel des activités, flux, acteurs et références.</p></details>{/if}
+      {#if draft.activityIds.length}<details class="panel"><summary>Contexte relié, documents et actions</summary>{#each draft.activityIds as aid}{@const a = workspace.activities.find((v) => v.id === aid)}{#if a}<h4>{a.title}</h4><p>{a.flows.length} flux décrit(s) · {workspace.actions.filter((action) => action.activityId === aid && !action.closure).length} action(s) ouverte(s)</p><ul>{#each workspace.documents.filter((d) => d.activityIds.includes(aid)) as doc}<li>{doc.title} · {doc.status === "reviewed" ? "Revue déclarée" : "À examiner"}</li>{/each}</ul><button class="secondary" disabled={changed()} onclick={() => onLeave(() => { close(); onActions(aid); })}>Voir les actions de cette activité</button>{/if}{/each}<p class="help">Enregistrez avant de rejoindre les actions. La prochaine revue conservera le contexte actuel des activités, flux, acteurs et références.</p></details>{/if}
       <label class="field">Prochain réexamen<input type="date" value={draft.content.reviewDue ?? ""} onchange={(e) => { if (draft) draft.content.reviewDue = e.currentTarget.value || null; }} /></label>
       {#if draft.kind === "rights"}
         <h3>Échéance et régime applicable</h3><p>Le calcul général concerne l’article 12. Les accès aux dossiers médicaux, régimes particuliers et situations de suspension nécessitent un examen distinct et une échéance manuelle motivée.</p>
@@ -94,10 +101,10 @@
         <label class="field">Rôle dans cet incident<select bind:value={draft.content.breach.role}><option value="unknown">À examiner</option><option value="controller">Responsable</option><option value="processor">Sous-traitant</option></select></label>
         <p class="notice">{draft.content.breach.role === "processor" ? "Informer le responsable dans les meilleurs délais. Aucun délai standard de 72 heures n’est attribué au sous-traitant." : `Repère 72 heures : ${deadline(draft) || "À déterminer"}. Ce repère ne décide pas si une notification est requise ; le responsable examine les risques et notifie dans les meilleurs délais, si possible avant ce repère.`}</p><a href={RGPD_OFFICIAL} target="_blank" rel="noopener noreferrer">RGPD, articles 33 et 34</a>
       {/if}
-      <div class="actions"><button onclick={() => step = "analysis"}>Poursuivre l’analyse <Icon name="arrow" /></button><button class="secondary" onclick={save}>Enregistrer le dossier</button></div>
+      <div class="actions"><button onclick={() => step = "analysis"}>Poursuivre l’analyse <Icon name="arrow" /></button></div>
     {:else if step === "analysis"}
       <ReviewNotebook bind:notes={draft.content.notes} questions={DPO_METHODS[draft.kind]} prefix={DPO_TITLES[draft.kind]} edition="Questions RGPDESK · 23 septembre 2026" />
-      <div class="actions"><button onclick={save}>Enregistrer le dossier</button><button class="secondary" onclick={() => step = "review"}>Préparer la revue</button></div>
+      <div class="actions"><button class="secondary" onclick={() => step = "review"}>Préparer la revue</button></div>
     {:else if step === "events"}
       <h3>Une chronologie conservée</h3><p>Déclarez les faits, décisions opérationnelles, envois initiaux et compléments. Une erreur se corrige par un nouvel événement explicatif ; les événements enregistrés restent intacts.</p>
       <ol class="dpo-timeline">{#each draft.events as e}<li><strong>{e.at} · {e.author}</strong><p>{e.description}</p><p>{knowledgeText(e.evidence) || "Référence non renseignée"}</p></li>{/each}</ol>

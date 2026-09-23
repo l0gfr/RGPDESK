@@ -62,7 +62,7 @@ test("guided practice exposes populated register, flows, PIA history and every p
   await expect(reader.getByRole("heading", { name: "Nécessité et proportionnalité", exact: true })).toBeFocused();
   await expect(reader.getByRole("region", { name: "Contexte et déclenchement" })).toBeHidden();
   await expect(reader.locator(".pia-reader-option")).toHaveCount(2);
-  await expect(page.getByRole("complementary", { name: "Repère de démonstration" }).getByRole("button", { name: /^Continuer :/ })).toBeDisabled();
+  await expect(page.getByRole("complementary", { name: "Repère de démonstration" }).getByRole("button", { name: /^Continuer :/ })).toBeEnabled();
   for (const width of [1440, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `AIPD ${width}`).toBe(true);
@@ -148,7 +148,10 @@ test("demo opens the filled example and keeps guidance without losing an unfinis
   await expect(guide).toBeVisible();
   await expect(page.getByLabel("Nom de l’activité", { exact: true })).toHaveValue(/badge/i);
   await page.getByLabel("Nom de l’activité", { exact: true }).fill("Fictional unsaved badge project");
-  await expect(guide.getByRole("button", { name: "Continuer : Suivre les données" })).toBeDisabled();
+  await guide.getByRole("button", { name: "Continuer : Suivre les données" }).click();
+  await expect(page.getByRole("button", { name: "Reprendre ma saisie", exact: true })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByLabel("Nom de l’activité", { exact: true })).toHaveValue("Fictional unsaved badge project");
   await nav(page, "Annuler l’édition");
   await expect(page.getByRole("button", { name: "Modifier Fictional unsaved badge project" })).toHaveCount(0);
   await guide.getByRole("button", { name: "Continuer : Suivre les données" }).click();

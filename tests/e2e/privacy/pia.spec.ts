@@ -25,7 +25,10 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   const atelier = page.getByRole("region", { name: "Atelier AIPD", exact: true });
   await expect(atelier.getByLabel("Position sur la réalisation de l’AIPD")).toHaveValue("unknown");
   await atelier.getByLabel("Champ applicable, cas légaux et listes examinées", { exact: true }).fill(marker);
-  await expect(page.getByRole("button", { name: "Registre", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "Registre", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "Avant de changer de rubrique" })).toBeVisible();
+  await page.getByRole("button", { name: "Reprendre ma saisie", exact: true }).click();
+  await expect(atelier.getByLabel("Champ applicable, cas légaux et listes examinées", { exact: true })).toHaveValue(marker);
   await atelier.getByRole("button", { name: "Enregistrer l’étude", exact: true }).click();
   await expect(atelier.getByText("Étude enregistrée dans le coffre", { exact: true })).toBeVisible();
   await atelier.getByRole("button", { name: /Risques humains/ }).click();

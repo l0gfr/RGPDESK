@@ -11,7 +11,7 @@
   import PiaDossier from "./PiaDossier.svelte";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, demo = false, onSave, onEditing, onRegister, onDocument, initialActivityId = "", initialView = "edit" }: { initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
+  let { workspace, busy, demo = false, onSave, onEditing, onLeave, onRegister, onDocument, initialActivityId = "", initialView = "edit" }: { initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
   let draft: ImpactAssessment | null = $state(null);
   let consumedSearch = $state("");
   $effect(() => {
@@ -29,10 +29,12 @@
   let localError = $state("");
   let reviewIndex: number | null = $state(null);
   let beforeRemoval: ({ kind: "alternatives"; item: PiaAlternative; index: number } | { kind: "risks"; item: PiaRisk; index: number } | { kind: "measures"; item: PiaMeasure; index: number }) | null = $state(null);
+  let draftHeading: HTMLHeadingElement | undefined = $state();
   let stepHeading: HTMLHeadingElement | undefined = $state();
   let selected = $derived(workspace.activities.find((a) => a.id === activityId) ?? workspace.activities[0]);
   let saved = $derived.by(() => draft ? workspace.impactAssessments.find((p) => p.id === draft!.id) : undefined);
   let dirty = $derived.by(() => draft ? !saved || canonicalJson(draft.content) !== canonicalJson(saved.content) : false);
+  export function hasUnsavedChanges() { return !!draft && (dirty || !!author || !!reason || acknowledged || outcome !== "rework"); }
   let points = $derived.by(() => draft ? piaOpenPoints(draft.content) : []);
   let context = $derived.by(() => draft ? piaContext(workspace, draft.activityId) : null);
   async function go(index: number) { step = index; await tick(); stepHeading?.focus(); }
@@ -42,6 +44,8 @@
     const existing = workspace.impactAssessments.find((p) => p.activityId === target.id);
     draft = existing ? structuredClone($state.snapshot(existing)) : createImpactAssessment(workspace.id, $state.snapshot(target), crypto.randomUUID());
     step = 0; beforeRemoval = null; localError = ""; reviewIndex = null; author = ""; reason = ""; acknowledged = false; outcome = "rework"; onEditing(true);
+    const id = draft.id;
+    void tick().then(() => { if (draft?.id === id && draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } });
   }
   async function save() {
     if (!draft) return;
@@ -56,7 +60,7 @@
     try {
       if (await onSave(recordPiaReview($state.snapshot(workspace), draft.id, { id: crypto.randomUUID(), author, reason, outcome }, workspace.revision, new Date().toISOString()))) {
         draft = structuredClone($state.snapshot(workspace.impactAssessments.find((p) => p.id === draft!.id)!));
-        author = ""; reason = ""; acknowledged = false; reviewIndex = draft.reviews.length - 1; await go(6);
+        author = ""; reason = ""; acknowledged = false; outcome = "rework"; reviewIndex = draft.reviews.length - 1; await go(6);
       }
     } catch { localError = "La décision n’a pas été enregistrée. Vérifiez les points à instruire et la limite de huit revues conservées."; }
   }
@@ -84,13 +88,14 @@
     <ol class="pia-route">{#each [["Décrire", "Le traitement et ses usages"], ["Questionner", "Son utilité et les alternatives"], ["Protéger", "Les personnes et leurs droits"], ["Décider", "Avec des preuves et des réserves"]] as [title, text], index}<li><span>0{index + 1}</span><strong>{title}</strong><small>{text}</small></li>{/each}</ol>
     {#if selected}<label class="field">Traitement à étudier<select aria-label="Traitement à étudier" value={selected.id} onchange={(e) => activityId = e.currentTarget.value}>{#each workspace.activities as activity}<option value={activity.id}>{activity.title}</option>{/each}</select></label><button disabled={busy || (!workspace.impactAssessments.some((p) => p.activityId === selected!.id) && workspace.impactAssessments.length >= 40)} onclick={() => open()}>{workspace.impactAssessments.some((p) => p.activityId === selected!.id) ? "Reprendre l’AIPD" : "Ouvrir une étude d’impact"}<Icon name="arrow" /></button>{:else}<p>Commencez par décrire une activité dans votre registre. Son contexte et ses flux serviront de point de départ.</p><button onclick={onRegister}>Ouvrir le registre</button>{/if}
     <p class="help">Une étude peut être commencée volontairement. Son ouverture ne signifie pas qu’elle est obligatoire. Vos notes d’analyse existantes sont reprises à l’ouverture, puis évoluent dans ce dossier.</p>
-    {#each workspace.impactAssessments as pia}<div class="pia-ledger"><div><strong>{workspace.activities.find((a) => a.id === pia.activityId)?.title}</strong><p>{pia.reviews.length} revue(s) conservée(s) · {piaReviewState(workspace, pia) === "changed" ? "Contexte ou étude modifié depuis la dernière revue : réexamen à instruire" : pia.reviews.length ? "Pas de changement détecté depuis la dernière revue" : "Aucune décision enregistrée"}</p></div><button class="secondary" disabled={busy} onclick={() => { activityId = pia.activityId; draft = structuredClone($state.snapshot(pia)); step = 6; reviewIndex = null; onEditing(true); }}>Lire le dossier</button></div>{/each}
+    {#each workspace.impactAssessments as pia}<div class="pia-ledger"><div><strong>{workspace.activities.find((a) => a.id === pia.activityId)?.title}</strong><p>{pia.reviews.length} revue(s) conservée(s) · {piaReviewState(workspace, pia) === "changed" ? "Contexte ou étude modifié depuis la dernière revue : réexamen à instruire" : pia.reviews.length ? "Pas de changement détecté depuis la dernière revue" : "Aucune décision enregistrée"}</p></div><button class="secondary" disabled={busy} onclick={() => { activityId = pia.activityId; open(pia.activityId); step = 6; }}>Lire le dossier</button></div>{/each}
     <p class="help">Trame RGPDESK du 22 septembre 2026, appuyée sur l’article 35, les guides CNIL et les critères du G29. Aucune conclusion juridique n’est produite par l’outil.</p>
   {:else if context}
-    <div class="section-heading"><div><p class="eyebrow">Atelier AIPD · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2>{context.activity.title}</h2></div><div class="pia-header-actions"><span class="pia-save-state">{dirty ? "Modifications à enregistrer" : demo ? "Étude conservée pour cette visite" : "Étude enregistrée dans le coffre"}</span><button class="secondary" disabled={busy} onclick={close}>{dirty ? "Quitter sans enregistrer" : "Fermer l’étude"}</button></div></div>
-    <p class="help">Enregistrez avant de fermer l’étude. Les modifications non enregistrées seront abandonnées. {context.activity.role === "processor" ? "L’assistance du sous-traitant ne remplace pas la décision du responsable (article 28 §3 f)." : ""}</p>
+    <div class="section-heading"><div><p class="eyebrow">Atelier AIPD · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2 bind:this={draftHeading} data-draft-heading tabindex="-1">{context.activity.title}</h2></div></div>
+    <div class="draft-toolbar"><span>{dirty ? "Modifications à enregistrer" : demo ? "Étude conservée pour cette visite" : "Étude enregistrée dans le coffre"}{#if !dirty && hasUnsavedChanges()} · Revue à consigner{/if}</span><div class="actions"><button disabled={busy} onclick={() => void save()}>{busy ? "Enregistrement…" : "Enregistrer l’étude"}</button><button class="secondary" disabled={busy} onclick={() => onLeave(close)}>Fermer l’étude</button></div></div>
+    <p class="help">Enregistrez vos modifications ici. Une décision se consigne séparément dans « Avis & décision ». {context.activity.role === "processor" ? "L’assistance du sous-traitant ne remplace pas la décision du responsable (article 28 §3 f)." : ""}</p>
     <ReviewChanges changes={piaChanges(workspace, draft)} review={draft.reviews.at(-1)} {dirty} />
-    <ReviewEvidence documents={context.documents} disabled={busy || dirty} onOpen={(id) => { if (!busy && !dirty) { close(); onDocument(id); } }} />
+    <ReviewEvidence documents={context.documents} disabled={busy || dirty} onOpen={(id) => onLeave(() => { close(); onDocument(id); })} />
     <nav class="pia-steps" aria-label="Parcours AIPD">{#each PIA_STEPS as title, index}<button class="secondary" disabled={busy} aria-current={index === step ? "step" : undefined} onclick={() => void go(index)}><span>0{index + 1}</span>{title}</button>{/each}</nav>
     <h3 bind:this={stepHeading} tabindex="-1">{PIA_STEPS[step]}</h3>
     {#if localError}<p role="alert">{localError}</p>{/if}
@@ -154,7 +159,7 @@
       {#if reviewIndex !== null && draft.reviews[reviewIndex]}{@const review = draft.reviews[reviewIndex]!}<aside class="pia-history"><strong>{PIA_OUTCOMES[review.outcome]}</strong><p>{review.author} · {review.at} · révision {review.revision}</p><p>{review.reason}</p><small>Version conservée. Les modifications ultérieures du registre n’en changent pas le contenu.</small></aside><ReviewEvidence documents={review.context.documents} historical /><PiaDossier content={review.content} context={review.context} />{:else}<PiaDossier content={draft.content} {context} />{/if}
       <p class="help">Ces notes restent dans le dossier de travail et dans sa sauvegarde chiffrée, si vous en téléchargez une. Les exports de registre n’incluent pas les notes AIPD. Il n’existe pas encore d’échange de fichiers avec le logiciel PIA de la CNIL.</p>
     {/if}
-    <div class="actions pia-toolbar"><button onclick={() => void save()}>{busy ? "Enregistrement…" : "Enregistrer l’étude"}</button>{#if step < PIA_STEPS.length - 1}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}</div>
+    <div class="actions pia-toolbar">{#if step < PIA_STEPS.length - 1}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}</div>
     </fieldset>
   {/if}
 </section>

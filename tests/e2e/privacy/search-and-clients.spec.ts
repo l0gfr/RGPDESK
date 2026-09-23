@@ -25,7 +25,7 @@ test("search stays offline and volatile, opens the exact activity and clears whe
   await nav(page, "Ouvrir Recrutement · exemple fictif");
   await expect(page.getByLabel("Nom de l’activité", { exact: true })).toHaveValue("Recrutement · exemple fictif");
   await search(page, "fictif");
-  for (const button of await page.locator(".search-results button").all()) await expect(button).toBeDisabled();
+  for (const button of await page.locator(".search-results button").all()) await expect(button).toBeEnabled();
   await nav(page, "Fermer la recherche");
   await nav(page, "Quitter la démo");
   await expect(page.locator("#workspace-search")).toHaveCount(0);
