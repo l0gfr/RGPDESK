@@ -1,3 +1,4 @@
+import JSZip from "jszip";
 import type { EvidenceReference } from "@rgpdesk/privacy-core";
 
 export const FILING_FOLDERS = [
@@ -40,7 +41,6 @@ Classement proposé par RGPDESK, sans portée normative. Sources consultées le 
 `;
 
 export async function createFilingKit(): Promise<Uint8Array<ArrayBuffer>> {
-  const { default: JSZip } = await import("jszip");
   const zip = new JSZip();
   const date = new Date("2026-09-23T12:00:00.000Z");
   for (const folder of FILING_FOLDERS) zip.file(`Mission-client/${folder.path}/`, null, { dir: true, date });
