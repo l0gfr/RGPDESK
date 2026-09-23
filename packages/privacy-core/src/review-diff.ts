@@ -136,6 +136,9 @@ export function compareReviewContent(before: PiaContent | DpoContent, after: Pia
       }
       if ("state" in value) { f.add(key, subject, label, "analysis", value as Knowledge); return; }
       if (Array.isArray(value)) {
+        // Empty collections of records have no facts. Only these primitive lists
+        // carry an explicit empty value, such as a measure with no risk links.
+        if (!value.length && !key.endsWith("/riskIds") && !key.endsWith("/holidays")) return;
         if (value.every((v) => typeof v === "string")) {
           if (key.endsWith("/riskIds")) f.links(key, subject, label, "security", value, riskNames);
           else f.add(key, subject, label, "analysis", [...value].sort());

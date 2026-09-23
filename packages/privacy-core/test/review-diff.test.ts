@@ -133,6 +133,14 @@ describe("review facts, evidence and changes", () => {
     expect(next.documents).toHaveLength(1); expect(next.documents[0]!.purposeIds).toEqual([]);
     expect(w.documents[0]!.purposeIds).toEqual(doc.purposeIds);
   });
+  it("reports removed scenarios and measures without inventing an added empty record", () => {
+    const w = fixture(); const p = w.impactAssessments[0]!;
+    p.content.measures = []; p.content.risks = [];
+    assertWorkspace(w);
+    const changes = piaChanges(w, p);
+    expect(changes.length).toBeGreaterThan(0);
+    expect(changes.every((change) => change.kind === "removed")).toBe(true);
+  });
   it("does not invent an old position for a dossier without a review", () => {
     const w=fixture(), p=createImpactAssessment(w.id,w.activities[0]!,id()), d=createDpoCase(w.id,id(),"rights");
     expect(piaChanges(w,p)).toEqual([]); expect(piaReviewState(w,p)).toBe("unreviewed"); expect(dpoChangeDetails(w,d)).toEqual([]);
