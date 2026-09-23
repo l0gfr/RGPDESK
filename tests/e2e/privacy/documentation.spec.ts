@@ -29,7 +29,9 @@ test("guide is readable without JavaScript and every local link and chapter reso
     await page.goto("/app/privacy/guide/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Menez l’entretien.");
     const chapters = page.getByRole("navigation", { name: "Sommaire du guide" }).getByRole("link");
-    await expect(chapters).toHaveCount(15);
+    await expect(chapters).toHaveCount(17);
+    await expect(chapters.filter({ hasText: "Les dossiers du DPO" })).toHaveCount(1);
+    await expect(chapters.filter({ hasText: "Restituer une AIPD" })).toHaveCount(1);
     await expect(page.locator(".business-chapter")).toHaveCount(6);
     await page.locator("#entretien-recruitment summary").first().click();
     await expect(page.locator("#entretien-recruitment .business-questions > li")).toHaveCount(6);

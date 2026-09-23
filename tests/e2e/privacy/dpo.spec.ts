@@ -25,7 +25,7 @@ test("DPO cases work offline with saved chronology, reviews and responsive label
   await page.getByLabel("Auteur déclaré de la revue", { exact: true }).fill("DPO fictif");
   await page.getByLabel("Motivation et suites", { exact: true }).fill("Projet à relire, aucune réponse envoyée.");
   await page.getByRole("button", { name: "Conserver cette revue", exact: true }).click();
-  await expect(page.getByLabel("Revue historique", { exact: true }).locator("option")).toHaveCount(3);
+  await expect(page.getByRole("combobox", { name: "Revue historique", exact: true }).locator("option")).toHaveCount(3);
   for (const width of [1440, 768, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `DPO ${width}`).toBe(true);
@@ -39,7 +39,7 @@ test("AIPD restitution is explicitly selected, reviewed and downloaded without i
   await page.getByRole("button", { name: "Explorer la démo", exact: true }).click();
   await context.setOffline(true);
   await page.getByRole("button", { name: "Restitution AIPD", exact: true }).click();
-  await page.getByLabel("Étude à restituer", { exact: true }).selectOption({ index: 1 });
+  await page.getByRole("combobox", { name: "Étude à restituer", exact: true }).selectOption({ index: 1 });
   await expect(page.locator('.choices input:checked')).toHaveCount(0);
   await page.getByLabel("Destinataire de l’AIPD", { exact: true }).fill("Comité fictif de recette");
   await page.getByLabel("Périmètre de la restitution", { exact: true }).fill("Projet de badges fictif");
