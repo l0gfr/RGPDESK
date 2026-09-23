@@ -170,7 +170,10 @@
 .rgpdesk .analysis-context h3 { color:#ffffff; font-size:25px; margin:10px 0; }
 .rgpdesk .analysis-context .eyebrow { color:#a1b7eb; margin:0; font-size:9px; }
 .rgpdesk .analysis-context p { margin:0; font-size:12px; }
-.rgpdesk .analysis-context button { background:#9db6f0; border-color:#9db6f0; color:#273046; }
+.rgpdesk .analysis-context button { max-width:100%; min-width:0; min-height:48px; white-space:normal; text-align:left; background:#e3ebf5; border-color:#e3ebf5; color:#1c314b; }
+.rgpdesk .analysis-context button:hover:not(:disabled) { background:#fff; border-color:#fff; color:#1c314b; }
+.rgpdesk .analysis-context button:focus-visible { outline:2px solid #e3ebf5; outline-offset:4px; }
+.rgpdesk .analysis-context button > svg { flex-shrink:0; }
 .rgpdesk .analysis-summary { margin:25px 0; display:grid; gap:18px; }
 .rgpdesk .analysis-summary > div { padding:20px; background:#eaeef6; border:1px solid #c8cfe1; }
 .rgpdesk .analysis-summary dt { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:#425379; margin-bottom:10px; }
@@ -823,8 +826,13 @@
 .rgpdesk .demo-cover-copy h2 { font:normal clamp(38px,4.1vw,63px)/1.02 Georgia,serif; letter-spacing:-.055em; color:#f3f6fb; margin:25px 0; }
 .rgpdesk .demo-cover-copy h2 em { color:#bdcede; font-weight:400; }
 .rgpdesk .demo-cover-copy > p:not(.eyebrow) { font-size:14px; color:#d2dce8; line-height:1.9; max-width:420px; }
-.rgpdesk .demo-cover-copy button { margin:15px 0; background:#e3ebf5; border-color:#e3ebf5; color:#1c314b; }
-.rgpdesk .demo-cover-copy button:hover { background:#fff; }
+.rgpdesk .demo-cover-actions { display:flex; flex-wrap:wrap; align-items:stretch; gap:12px; margin:24px 0 18px; }
+.rgpdesk .demo-cover-actions button { margin:0; min-width:0; max-width:100%; min-height:48px; white-space:normal; text-align:left; background:#e3ebf5; border-color:#e3ebf5; color:#1c314b; }
+.rgpdesk .demo-cover-actions button > svg { flex-shrink:0; }
+.rgpdesk .demo-cover-actions button:hover:not(:disabled) { background:#fff; border-color:#fff; color:#1c314b; }
+.rgpdesk .demo-cover-actions .demo-cover-secondary { padding:12px 16px; background:#243a52; border-color:#849bb3; color:#edf3fa; font-size:12px; }
+.rgpdesk .demo-cover-actions .demo-cover-secondary:hover:not(:disabled) { background:#354e68; border-color:#c2d0e2; color:#fff; }
+.rgpdesk .demo-cover-actions button:focus-visible { outline:2px solid #e3ebf5; outline-offset:4px; }
 .rgpdesk .demo-cover-copy > small { display:block; font-size:10px; color:#bfcede; line-height:1.7; max-width:340px; }
 .rgpdesk .demo-dossier { min-width:0; padding:25px 9px 9px; position:relative; transform:rotate(2deg); }
 .rgpdesk .dossier-tab { position:absolute; top:0; left:9px; display:block; background:#ced9e8; padding:9px 14px; color:#354c69; border-radius:4px 14px 0 0; font:9px/1.4 ui-monospace,monospace; letter-spacing:.05em; }

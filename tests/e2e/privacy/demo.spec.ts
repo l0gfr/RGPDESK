@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page, type Locator } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import JSZip from "jszip";
 
@@ -153,4 +153,54 @@ test("demo opens the filled example and keeps guidance without losing an unfinis
   await expect(page.getByRole("button", { name: "Modifier Fictional unsaved badge project" })).toHaveCount(0);
   await guide.getByRole("button", { name: "Continuer : Suivre les données" }).click();
   await expect(page.getByRole("heading", { name: "Votre carte des flux." })).toBeFocused();
+});
+
+
+test("demo entry actions stay separated and readable at rest, on hover and by keyboard", async ({ page }) => {
+  await ready(page); await demo(page);
+  const actions = page.locator(".demo-cover-actions button");
+  const contrast = async (button: Locator) => button.evaluate((el) => {
+    const style = getComputedStyle(el);
+    const luminance = (color: string) => {
+      const rgb = color.match(/[\d.]+/g)!.map(Number);
+      if (rgb.length > 3 && rgb[3] !== 1) throw new Error("Contrast requires an opaque button background");
+      return rgb.slice(0,3).map((v) => { const c = v / 255; return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4; }).reduce((sum, v, i) => sum + v * [.2126,.7152,.0722][i], 0);
+    };
+    const a = luminance(style.color), b = luminance(style.backgroundColor);
+    return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+  });
+  for (const width of [1440,768,390,320]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.mouse.move(0,0);
+    const boxes = await actions.evaluateAll((els) => els.map((el) => { const r = el.getBoundingClientRect(); return { top:r.top, bottom:r.bottom, left:r.left, right:r.right }; }));
+    expect(boxes).toHaveLength(2);
+    expect(boxes[1].top - boxes[0].bottom >= 11 || boxes[1].left - boxes[0].right >= 11).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    for (let i=0; i<2; i++) {
+      expect(await contrast(actions.nth(i))).toBeGreaterThanOrEqual(4.5);
+      await actions.nth(i).hover(); expect(await contrast(actions.nth(i))).toBeGreaterThanOrEqual(4.5);
+      await page.mouse.move(0,0);
+    }
+    await actions.first().focus(); await page.keyboard.press("Tab");
+    await expect(actions.last()).toBeFocused();
+    expect(await actions.last().evaluate((el) => el.matches(":focus-visible") && parseFloat(getComputedStyle(el).outlineWidth) >= 2)).toBe(true);
+    expect(await contrast(actions.last())).toBeGreaterThanOrEqual(4.5);
+  }
+  await actions.last().press("Enter");
+  await expect(page.getByRole("heading", {name:"Préparer un dossier à partager.", exact:true})).toBeVisible();
+  for (const panel of ["Cartographie", "Analyse"]) {
+    await nav(page, panel);
+    const action = page.locator(".analysis-context button");
+    for (const width of [1440,390,320]) {
+      await page.setViewportSize({width,height:1000}); await page.mouse.move(0,0);
+      expect(await contrast(action)).toBeGreaterThanOrEqual(4.5);
+      await action.hover(); expect(await contrast(action)).toBeGreaterThanOrEqual(4.5);
+      await page.mouse.move(0,0); await action.focus();
+      await page.keyboard.press("Tab"); await page.keyboard.press("Shift+Tab");
+      await expect(action).toBeFocused();
+      expect(await action.evaluate((el) => el.matches(":focus-visible") && parseFloat(getComputedStyle(el).outlineWidth) >= 2)).toBe(true);
+      expect(await contrast(action)).toBeGreaterThanOrEqual(4.5);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+  }
 });
