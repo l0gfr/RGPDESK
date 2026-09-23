@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Emblem from "./Emblem.svelte";
   import {tick} from "svelte";
   import { createPurpose, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import KnowledgeField from "./KnowledgeField.svelte";
@@ -9,7 +10,7 @@
   async function go(i: number) { step=i; await tick(); heading?.focus(); }
 </script>
 <nav class="editor-steps" aria-label="Étapes de l’entretien">{#each labels as label,i}<button type="button" class="secondary" aria-current={step===i ? "step" : undefined} onclick={()=>void go(i)}><span>{i+1}</span>{label}</button>{/each}</nav>
-<div class="step-heading"><p class="eyebrow">Entretien · {step+1} / 6</p><h3 tabindex="-1" bind:this={heading}>{labels[step]}</h3><p>Les réponses alimentent directement votre fiche. Une réponse inconnue peut attendre : rien n’est déduit à votre place.</p></div>
+<div class="step-heading illustrated-step"><Emblem name={["interview", "parties", "systems", "flows", "evidence", "actions"][step]} /><div><p class="eyebrow">Entretien · {step+1} / 6</p><h3 tabindex="-1" bind:this={heading}>{labels[step]}</h3><p>Les réponses alimentent directement votre fiche. Une réponse inconnue peut attendre : rien n’est déduit à votre place.</p></div></div>
 {#if step===0}
   <label class="field">Comment appelez-vous cette activité ?<input required maxlength="160" bind:value={draft.title} /></label>
   {#if draft.role==='controller'}{#each draft.purposes as purpose,i}<KnowledgeField label={`À quoi servent ces données ? Objectif ${i+1}`} bind:value={purpose.description} />{/each}<button type="button" class="secondary" disabled={draft.purposes.length>=20} onclick={()=>{if(draft.role==='controller')draft.purposes=[...draft.purposes,createPurpose(crypto.randomUUID())];}}>Ajouter un objectif</button>{:else}<KnowledgeField label="Que faites-vous pour le compte du client ?" bind:value={draft.operations} />{/if}

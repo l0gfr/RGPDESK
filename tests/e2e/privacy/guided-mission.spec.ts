@@ -53,7 +53,7 @@ test("guided interview becomes an activity-specific follow-up, without legal def
   await page.getByRole("button", { name: "Enregistrer l’action", exact: true }).click();
   await expect(page.locator(".records")).toContainText("Interlocuteur RH fictif");
   expect(requests).toEqual([]);
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#actions");
   await page.getByRole("button", { name: "Verrouiller le coffre", exact: true }).click();
   await expect(page.getByText("Mission entièrement fictive", { exact: true })).toHaveCount(0);
   await expect(page.getByText("PRIVATE_GUIDED_INTERVIEW_63AF")).toHaveCount(0);

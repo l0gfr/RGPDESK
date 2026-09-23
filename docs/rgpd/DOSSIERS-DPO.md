@@ -33,6 +33,6 @@ Le fichier est en clair. La liste blanche n’identifie pas une donnée personne
 
 ## Qualification humaine et limites
 
-Les questionnaires sont rédigés par RGPDESK avec des sources identifiées. La grille personnelle d’intérêt légitime et l’Excel de conformité proposés par l’experte n’ont pas été reçus ; leur intégration ou sa validation ne sont pas revendiquées. Le support public d’Estelle De Marco déjà référencé reste une lecture méthodologique, distincte d’une approbation du produit.
+Les questionnaires sont rédigés par RGPDESK avec des sources identifiées. Les guides d’analyse RGPD v1.0 et de nécessité/proportionnalité v1.2 ont été reçus le 23 septembre 2026. Des aides contextuelles en adaptent certains points, sans reprendre les exemples fournis. Leur intégration complète et la validation experte ne sont pas revendiquées ; voir METHODE-GRILLES.md. Le support public d’Estelle De Marco déjà référencé reste une lecture méthodologique, distincte d’une approbation du produit.
 
 Les tests logiciels, une revue technique de code et la sauvegarde planifiée de Zen ne remplacent pas un audit indépendant, une qualification de tous les navigateurs ou une restauration réelle. Les sauvegardes Zen protègent le site et ses éléments serveur ; elles ne contiennent pas les coffres des visiteurs. Chaque utilisateur doit conserver sa sauvegarde `.rgpdesk` et sa phrase.

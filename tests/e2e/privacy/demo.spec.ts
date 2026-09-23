@@ -77,7 +77,7 @@ test("guided practice exposes populated register, flows, PIA history and every p
     await expect(page.getByRole("complementary", { name: "Mode démonstration", exact: true })).toBeVisible();
   }
   await expect(page.getByRole("button", { name: "Effacer les coffres RGPDESK de ce profil", exact: true })).toHaveCount(0);
-  await page.reload(); await expect(page.getByRole("button", { name: "Explorer la démo", exact: true })).toBeEnabled();
+  await page.reload(); await expect(page.getByRole("complementary", { name: "Mode démonstration", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /^Ouvrir le coffre/ })).toHaveCount(0);
 });
 
@@ -161,7 +161,7 @@ test("demo opens the filled example and keeps guidance without losing an unfinis
 
 test("demo entry actions stay separated and readable at rest, on hover and by keyboard", async ({ page }) => {
   await ready(page); await demo(page);
-  const actions = page.locator(".demo-cover-actions button");
+  const actions = page.locator(".demo-cover-actions button, .demo-cover-actions a");
   const contrast = async (button: Locator) => button.evaluate((el) => {
     const style = getComputedStyle(el);
     const luminance = (color: string) => {
@@ -189,8 +189,11 @@ test("demo entry actions stay separated and readable at rest, on hover and by ke
     expect(await actions.last().evaluate((el) => el.matches(":focus-visible") && parseFloat(getComputedStyle(el).outlineWidth) >= 2)).toBe(true);
     expect(await contrast(actions.last())).toBeGreaterThanOrEqual(4.5);
   }
+  const openedReport = page.waitForEvent("popup");
   await actions.last().press("Enter");
-  await expect(page.getByRole("heading", {name:"Préparer un dossier à partager.", exact:true})).toBeVisible();
+  const report = await openedReport;
+  await expect(report.getByRole("heading", {name:"Parcourez le dossier.", exact:true})).toBeVisible();
+  await report.close();
   for (const panel of ["Cartographie", "Analyse"]) {
     await nav(page, panel);
     const action = page.locator(".analysis-context button");

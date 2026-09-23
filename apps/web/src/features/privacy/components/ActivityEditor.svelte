@@ -8,6 +8,7 @@
   import FlowEditor from "./FlowEditor.svelte";
   import { ANALYSIS_METHOD } from "../review-methods";
   import Icon from "./Icon.svelte";
+  import Emblem from "./Emblem.svelte";
   import InterviewPlaybook from "./InterviewPlaybook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
   let { initial, workspace, busy, example, initialSection = "record", initialStep = 0, onSave, onCancel }: {
@@ -62,9 +63,9 @@
   </div>
   <div class="draft-toolbar"><span>{hasUnsavedChanges() ? "Saisie à enregistrer" : "Fiche enregistrée"}</span><div class="actions"><button type="button" disabled={busy} onclick={() => void save()}>{busy ? "Chiffrement en cours…" : "Enregistrer la fiche"}</button><button type="button" class="secondary" disabled={busy} onclick={onCancel}>Annuler l’édition</button></div></div>
   <p class="help">Vous pouvez enregistrer à tout moment. Les champs laissés vides resteront à examiner.</p>
-  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["interview", "Mener l’entretien", "help"], ["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"], ["evidence", "Les justificatifs", "documents"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
+  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["interview", "Mener l’entretien", "interview"], ["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"], ["evidence", "Les justificatifs", "evidence"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
   {#if example && section === "record"}<aside class="interview-card"><strong>Votre fil conducteur</strong><p>{example.question}</p><details><summary>Retrouver les questions métier et leurs sources</summary><InterviewPlaybook {example} /></details></aside>{/if}
-  {#if section === "record" && !whole}<nav class="editor-steps" aria-label="Étapes de la fiche">{#each steps as label, index}<button type="button" class="secondary" disabled={busy} aria-current={step === index ? "step" : undefined} onclick={() => void go(index)}><span>{index + 1}</span>{label}</button>{/each}</nav><div class="step-heading"><p class="eyebrow">Étape {step + 1} sur {steps.length}</p><h3 bind:this={sectionTitle} tabindex="-1">{steps[step]}</h3><p>{introductions[step]}</p></div>{/if}
+  {#if section === "record" && !whole}<nav class="editor-steps" aria-label="Étapes de la fiche">{#each steps as label, index}<button type="button" class="secondary" disabled={busy} aria-current={step === index ? "step" : undefined} onclick={() => void go(index)}><span>{index + 1}</span>{label}</button>{/each}</nav><div class="step-heading illustrated-step"><Emblem name={["register", "target", "parties", "security", "systems", "eye"][step]} /><div><p class="eyebrow">Étape {step + 1} sur {steps.length}</p><h3 bind:this={sectionTitle} tabindex="-1">{steps[step]}</h3><p>{introductions[step]}</p></div></div>{/if}
   {#if section !== "interview" && draft.interviewQuestions?.length}<aside class="notice"><strong>À demander au métier</strong><ul>{#each draft.interviewQuestions as q}<li>{q}</li>{/each}</ul><button type="button" class="secondary" onclick={()=>{section="interview";step=5;}}>Reprendre les questions de l’entretien</button></aside>{/if}
   <form bind:this={form} onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <fieldset disabled={busy}>
@@ -81,7 +82,7 @@
         <KnowledgeField label="Opérations détaillées du traitement" bind:value={draft.analysis.operations} hint="Décrivez la collecte, l’enregistrement, les consultations, les calculs ou rapprochements, les transmissions, l’archivage et l’effacement, selon le fonctionnement réel." />
         <KnowledgeField label="Personnes habilitées et droits d’accès" bind:value={draft.analysis.access} hint="Décrivez les rôles, équipes ou organismes autorisés, leurs droits de lecture, modification, extraction ou suppression et le circuit d’autorisation. Pas de liste nominative." />
         <InventoryContext activities={[draft]} />
-        <ReviewNotebook documents={workspace.documents.filter((d) => documentIds.includes(d.id))} bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} prefix="Analyse" legitimateInterest={draft.role === "controller"} />
+        <ReviewNotebook documents={workspace.documents.filter((d) => documentIds.includes(d.id))} bind:notes={draft.analysis.notes} questions={ANALYSIS_METHOD} guide="rgpd" prefix="Analyse" legitimateInterest={draft.role === "controller"} />
         <p class="help">Cette analyse accompagne le registre. La nécessité et la proportionnalité de l’AIPD se travaillent dans son atelier distinct. Référence : <a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr" target="_blank" rel="noopener noreferrer">RGPD, articles 5, 6, 24, 25 et 32</a>. Après enregistrement, consignez les décisions et affectez les correctifs dans Actions & décisions.</p>
       {:else if section === "flows"}<FlowEditor activity={draft} {workspace} bind:flows={draft.flows} />
       {:else}

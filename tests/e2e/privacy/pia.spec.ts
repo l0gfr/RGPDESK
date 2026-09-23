@@ -71,7 +71,7 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await page.getByRole("button", { name: "Verrouiller le coffre", exact: true }).click();
   await expect(page.getByText(marker, { exact: true })).toHaveCount(0);
   expect(requests).toEqual([]); expect(logs.join("\n")).not.toContain("PRIVATE_PIA_");
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#sauvegarde");
   await context.setOffline(false);
   await page.reload();
   await page.getByRole("button", { name: "Ouvrir le coffre 1", exact: true }).click();

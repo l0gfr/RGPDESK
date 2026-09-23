@@ -1,0 +1,6 @@
+/* Reading view only: canonical downloadable reports remain byte-identical. */
+body { font-size:1rem; }
+.eyebrow, .cover-meta, .cover-meta strong, .count small, .scope strong,
+.coverage, .reservations ol, .quiet, .index small, .activity-heading small,
+figcaption, .node h3, .node p, .facts dt, .unknown, th, td, body > footer, .stamp { font-size:.875rem; }
+@media print { body { font-size:12pt; } .cover-meta, th, td { font-size:10.5pt; } }

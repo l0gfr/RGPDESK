@@ -55,7 +55,7 @@ test("dirty search navigation keeps the draft on Escape and discards only after 
   await expect(page.getByLabel("Nom de l’activité", { exact: true })).toHaveValue("Recrutement · exemple fictif");
   expect(await page.evaluate(() => ({ local: {...localStorage}, session: {...sessionStorage} }))).toEqual(storage);
   expect(requests).toEqual([]);
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#demo/registre");
 });
 
 test("DPO chronology and review drafts remain protected even after saving the dossier", async ({ page }) => {

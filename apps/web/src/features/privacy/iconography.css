@@ -1,0 +1,117 @@
+/* DPO instruments: the same engraved line, with a distinct mark for each task. */
+.rgpdesk .desk-emblem {
+  position:relative; isolation:isolate; display:inline-grid; place-items:center;
+  width:72px; height:72px; flex:0 0 72px; color:#36566e;
+  border:1px solid #9eb4c5; border-radius:6px 22px 6px 6px;
+  background:radial-gradient(ellipse at 15% 0,#fff9,transparent 65%),linear-gradient(145deg,#e9f0f4,#c9dae5);
+  box-shadow:inset 0 1px #fff,0 5px 12px #243d5010;
+}
+.rgpdesk .desk-emblem::before { content:""; position:absolute; inset:5px; border:1px solid #5b7b9626; border-radius:3px 17px 3px 3px; pointer-events:none; }
+.rgpdesk .desk-emblem::after { content:""; position:absolute; bottom:9px; right:9px; width:7px; height:2px; background:#66879e; box-shadow:-10px 0 #66879e55; pointer-events:none; }
+.rgpdesk .desk-emblem.compact { width:54px; height:54px; flex-basis:54px; border-radius:5px 17px 5px 5px; }
+.rgpdesk .desk-emblem.compact::before { border-radius:2px 12px 2px 2px; }
+.rgpdesk .desk-emblem .desk-icon { flex:none; position:relative; z-index:1; }
+.rgpdesk .desk-icon { flex-shrink:0; }
+.rgpdesk .workspace-identity { display:flex; gap:22px; align-items:center; min-width:0; }
+.rgpdesk .workspace-identity > div { min-width:0; }
+.rgpdesk .workspace-identity .eyebrow { margin:0 0 9px; }
+.rgpdesk .workspace-heading { gap:22px; }
+.rgpdesk .workspace-heading h1 { margin:0; font-size:clamp(28px,3.2vw,44px); line-height:1.12; }
+.rgpdesk .section-heading { gap:18px; }
+.rgpdesk .section-heading > div:first-child { min-width:0; flex:1; }
+.rgpdesk .section-heading > .desk-emblem { width:58px; height:58px; flex-basis:58px; }
+.rgpdesk .section-heading > .desk-emblem .desk-icon { width:28px; height:28px; }
+.rgpdesk .section-heading > button { flex-shrink:0; }
+
+/* Four complementary readings, visible before entering a long form. */
+.rgpdesk .analysis-lenses { gap:16px; margin:28px 0 20px; }
+.rgpdesk .analysis-lenses button {
+  position:relative; display:grid; grid-template-columns:54px minmax(0,1fr); column-gap:19px; row-gap:6px;
+  align-content:start; padding:25px; border:1px solid #b1c3d0; border-radius:8px 25px 8px 8px;
+  background:radial-gradient(ellipse at 0 0,#fff9,transparent 60%),linear-gradient(120deg,#e5eef4,#f1f5f7);
+  box-shadow:inset 0 1px #fff,0 7px 18px #1f3b5106; color:#263f54;
+  transition:background .15s,border-color .15s,box-shadow .15s;
+}
+.rgpdesk .analysis-lenses button:nth-child(2),.rgpdesk .analysis-lenses button:nth-child(3) { background:linear-gradient(135deg,#f2f4f6,#dce7f0); }
+.rgpdesk .analysis-lenses .desk-emblem { grid-row:1 / 4; }
+.rgpdesk .analysis-lenses .lens-label { color:#506b80; font:.875rem/1.55 ui-monospace,monospace; letter-spacing:.055em; text-transform:uppercase; }
+.rgpdesk .analysis-lenses strong { font:500 clamp(18px,1.6vw,23px)/1.3 Georgia,serif; color:#203d51; }
+.rgpdesk .analysis-lenses small { color:#486275; font-size:.875rem; line-height:1.65; }
+.rgpdesk .analysis-lenses button:hover:not(:disabled) { color:#203d51; border-color:#6b879c; background:linear-gradient(120deg,#d8e6ef,#edf3f7); box-shadow:0 7px 20px #2c4d6114; }
+.rgpdesk .analysis-lenses button:hover .desk-emblem { border-color:#68879c; }
+.rgpdesk .analysis-lenses button:focus-visible { outline:3px solid #3f617c; outline-offset:4px; }
+
+/* Short, illustrated chapter openings; no additional input or persistent UI state. */
+.rgpdesk .illustrated-step { display:flex; align-items:flex-start; gap:22px; padding:25px; margin:25px 0; border:1px solid #b7c9d5; border-radius:6px 22px 6px 6px; background:linear-gradient(110deg,#dee9f0,#f2f5f6); }
+.rgpdesk .illustrated-step > div { min-width:0; }
+.rgpdesk .illustrated-step h3 { margin:7px 0 12px; color:#294458; }
+.rgpdesk .illustrated-step p:last-child { margin:0; max-width:70ch; color:#435e72; }
+.rgpdesk .activity-views { gap:9px; padding-block:6px; }
+.rgpdesk .activity-views button { border-radius:5px 12px 5px 5px; gap:9px; }
+.rgpdesk .activity-views button .desk-icon { width:20px; height:20px; }
+.rgpdesk .activity-views button.active { box-shadow:inset 0 -3px #a5bdcf; }
+.rgpdesk .mission-facts { gap:14px; }
+.rgpdesk .mission-facts button { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-start; gap:10px; padding:21px 23px; color:#36546b; background:linear-gradient(130deg,#eef4f7,#dce8ef); border:1px solid #b2c6d4; border-radius:5px 18px 5px 5px; }
+.rgpdesk .mission-facts button > svg { margin-right:5px; color:#53778f; }
+.rgpdesk .mission-facts button strong { font:normal 30px/1 Georgia,serif; }
+.rgpdesk .mission-facts button:hover { color:#203b50; background:#d9e7f0; }
+.rgpdesk .mission-route article { background:radial-gradient(ellipse at 90% 0,#ccdde999,transparent 62%),linear-gradient(135deg,#f5f8f9,#e8eff3); }
+.rgpdesk .mission-route .desk-emblem { margin:6px 0 14px; }
+.rgpdesk .mission-route h3 { font-family:Georgia,serif; font-weight:400; font-size:23px; }
+.rgpdesk .record-icon { width:43px; height:47px; flex:0 0 43px; display:grid; place-items:center; border:1px solid #bdcdda; color:#43647d; border-radius:4px 12px 4px 4px; background:linear-gradient(145deg,#f3f7f9,#d4e2ec); box-shadow:inset 0 1px #fff; }
+.rgpdesk .records li { gap:15px; }
+.rgpdesk .records .grow { min-width:0; }
+.rgpdesk .dpo-kind-nav { gap:10px; }
+.rgpdesk .dpo-kind-nav button { align-items:center; gap:12px; padding:17px; border-radius:5px 16px 5px 5px; }
+.rgpdesk .dpo-kind-nav button > svg { width:27px; height:27px; padding:7px; box-sizing:content-box; color:inherit; background:#7696b222; border:1px solid #90a8bb66; border-radius:4px 11px 4px 4px; }
+.rgpdesk .dpo-cover-index { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+.rgpdesk .dpo-cover-index .desk-emblem,.rgpdesk .pia-cover-mark .desk-emblem { width:106px; height:106px; flex-basis:106px; color:#dce9f3; background:linear-gradient(145deg,#58748d,#2c455c); border-color:#99b1c577; box-shadow:7px 7px 0 #98b1c51c; border-radius:6px 32px 6px 6px; }
+.rgpdesk .dpo-cover-index .desk-emblem::before,.rgpdesk .pia-cover-mark .desk-emblem::before { border-color:#d7e4ef38; border-radius:3px 27px 3px 3px; }
+.rgpdesk .dpo-cover-index .desk-emblem svg,.rgpdesk .pia-cover-mark .desk-emblem svg { width:52px; height:52px; }
+.rgpdesk .flow-empty > .desk-emblem { margin-bottom:12px; }
+.rgpdesk .desk-nav .nav-glyph { display:grid; place-items:center; padding:6px; border:1px solid transparent; border-radius:4px 10px 4px 4px; background:linear-gradient(135deg,#eaf1f66b,#b4cadb35); }
+.rgpdesk .desk-nav a:hover .nav-glyph,.rgpdesk .desk-nav a[aria-current="page"] .nav-glyph { border-color:#7898af77; background:#d9e6ef; }
+
+/* Method prompts expand on demand and refer to the existing note below. */
+.rgpdesk .method-hints { margin:22px 0; border:1px solid #b0c5d4; border-radius:5px 18px 5px 5px; background:linear-gradient(125deg,#e5eef4,#f0f5f7); }
+.rgpdesk .method-hints > summary { display:flex; gap:12px; align-items:center; padding:16px 20px; color:#294c64; cursor:pointer; list-style:none; font-weight:600; }
+.rgpdesk .method-hints > summary::-webkit-details-marker { display:none; }
+.rgpdesk .method-hints > summary > svg:last-child { margin-left:auto; }
+.rgpdesk .method-hints[open] > summary > svg:last-child { transform:rotate(90deg); }
+.rgpdesk .method-hints > div { padding:0 20px 20px; }
+.rgpdesk .method-hints ul { margin:0; padding-left:21px; }
+.rgpdesk .method-hints li { margin:0; padding:10px 0; color:#304e64; font-size:.875rem; line-height:1.8; border-top:1px solid #bccedb80; }
+.rgpdesk .method-hints .help { margin:14px 0 0; color:#456077; font-size:.875rem; }
+.rgpdesk .method-hints a { color:#294f6d; }
+@media (max-width:850px) {
+  .rgpdesk .workspace-heading { flex-wrap:wrap; }
+  .rgpdesk .workspace-identity { gap:16px; }
+  .rgpdesk .workspace-identity > .desk-emblem { width:55px; height:55px; flex-basis:55px; }
+  .rgpdesk .analysis-lenses button { padding:20px; column-gap:14px; }
+  .rgpdesk .section-heading { flex-wrap:wrap; }
+  .rgpdesk .section-heading > button { flex-shrink:1; }
+}
+@media (max-width:550px) {
+  .rgpdesk .workspace-heading h1 { font-size:28px; }
+  .rgpdesk .workspace-identity { align-items:flex-start; }
+  .rgpdesk .workspace-identity .eyebrow { font-size:.875rem; }
+  .rgpdesk .illustrated-step { gap:15px; padding:18px; flex-wrap:wrap; }
+  .rgpdesk .illustrated-step > .desk-emblem { width:52px; height:52px; flex-basis:52px; }
+  .rgpdesk .mission-facts button { padding:18px; }
+  .rgpdesk .dpo-kind-nav button { flex-basis:100%; }
+  .rgpdesk .analysis-lenses strong { font-size:20px; }
+  .rgpdesk .method-hints > summary { padding:15px; }
+  .rgpdesk .method-hints > div { padding:0 15px 15px; }
+}
+@media (prefers-reduced-motion:reduce) { .rgpdesk .analysis-lenses button { transition:none; } }
+@media (forced-colors:active) { .rgpdesk .desk-emblem,.rgpdesk .record-icon { color:CanvasText; border-color:CanvasText; box-shadow:none; }.rgpdesk .desk-emblem::before,.rgpdesk .desk-emblem::after { display:none; } }
+@media print { .rgpdesk .desk-emblem { background:none; box-shadow:none; }.rgpdesk .method-hints { break-inside:avoid; background:none; } }
+
+/* Comfortable reading sizes; secondary information is never microscopic. */
+.rgpdesk input:not([type=checkbox]), .rgpdesk textarea, .rgpdesk select { font-size:1rem; }
+.rgpdesk .field { font-size:.9375rem; line-height:1.6; }
+.rgpdesk button, .rgpdesk .button { white-space:normal; overflow-wrap:anywhere; }
+.rgpdesk .eyebrow, .rgpdesk .nav-label { letter-spacing:.07em; line-height:1.6; }
+.rgpdesk .processing-atlas figcaption { flex-wrap:wrap; }
+.rgpdesk .atlas-node > div, .rgpdesk .atlas-access > div { min-width:0; }
+.rgpdesk .demo-guide-navigation, .rgpdesk .draft-toolbar { flex-wrap:wrap; }

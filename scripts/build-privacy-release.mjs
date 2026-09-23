@@ -15,6 +15,10 @@ export const privacyPages = [
   "app/privacy/confidentialite/index.html",
   "app/privacy/guide/index.html",
   "app/privacy/faq/index.html",
+  "app/privacy/demo/index.html",
+  "app/privacy/demo/registre/index.html",
+  "app/privacy/demo/sous-traitance/index.html",
+  "app/privacy/demo/aipd/index.html",
 ];
 const assetName = /^_astro\/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|svg|png|webp)$/;
 export const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");

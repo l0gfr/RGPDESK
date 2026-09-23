@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Emblem from "./Emblem.svelte";
+  import Icon from "./Icon.svelte";
   import { canonicalJson, unknown, type Party, type System, type Workspace } from "@rgpdesk/privacy-core";
   import EntityDossier from "./EntityDossier.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
@@ -20,10 +22,10 @@
   }
 </script>
 <section class="panel">
-  <h2>{kind === "parties" ? "Intervenants" : "Systèmes"}</h2>
+  <div class="section-heading"><div><p class="eyebrow">L’inventaire partagé</p><h2>{kind === "parties" ? "Intervenants" : "Systèmes"}</h2></div><Emblem name={kind} /></div>
   <p class="help">{kind === "parties" ? "Recensez les organismes avec lesquels vous travaillez : client, prestataire, partenaire. Vous préciserez leur rôle en les reliant à chaque fiche." : "Listez les outils, applications et supports utilisés par les équipes. Vous pourrez ensuite les relier aux activités du registre."}</p>
   <aside class="interview-card"><strong>{kind === "parties" ? "La question à poser" : "À demander à l’équipe"}</strong><p>{kind === "parties" ? "À quels organismes transmettez-vous des données, et qui intervient pour vous ? Retrouvez un contact professionnel et le contrat ou document qui décrit cette relation." : "Dans quels outils les informations sont-elles saisies, consultées ou conservées ? Pensez aussi aux tableurs, aux messageries et aux archives papier."}</p><p class="help">Après l’ajout, ouvrez la fiche concernée et sélectionnez ces liens dans Les précisions.</p></aside>
-  <ul class="records">{#each workspace[kind] as item (item.id)}<li><span>{item.name}</span><button class="secondary" disabled={busy} onclick={()=>onLeave(()=>{party=system=null;selected=item.id;})}>Voir la fiche</button><button class="secondary" disabled={busy} onclick={() => onLeave(() => { selected=""; if (kind === "parties") party = structuredClone(item as Party); else system = structuredClone(item as System); })}>Modifier {item.name}</button></li>{/each}</ul>
+  <ul class="records">{#each workspace[kind] as item (item.id)}<li><span class="record-icon"><Icon name={kind} /></span><strong class="grow">{item.name}</strong><button class="secondary" disabled={busy} onclick={()=>onLeave(()=>{party=system=null;selected=item.id;})}>Voir la fiche</button><button class="secondary" disabled={busy} onclick={() => onLeave(() => { selected=""; if (kind === "parties") party = structuredClone(item as Party); else system = structuredClone(item as System); })}>Modifier {item.name}</button></li>{/each}</ul>
   <button class="secondary" disabled={busy} onclick={()=>onLeave(()=>{selected="";newEntity();})}>{kind === "parties" ? "Ajouter un intervenant" : "Ajouter un système"}</button>
   {#if selected}<EntityDossier {workspace} kind={kind==='parties'?'party':'system'} id={selected} {busy} {onActivity} {onDocument} {onActions} />{/if}
   {#if party}

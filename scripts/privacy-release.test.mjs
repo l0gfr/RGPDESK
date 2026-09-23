@@ -82,7 +82,7 @@ test("Apache serves every packaged public page and rejects unlisted routes", () 
     assert.ok(allowed.test("/" + page), `Packaged page blocked: ${page}`);
     assert.ok(allowed.test("/" + page.slice(0, -"index.html".length)), `Directory route blocked: ${page}`);
   }
-  for (const path of ["/app/privacy/soutenir/", "/app/privacy/soutenir/index.html", "/app/privacy/faq/private.html", "/app/privacy/faq/more/", "/app/cases/", "/deploy/", "/private.html", "/manifest.json"]) {
+  for (const path of ["/app/privacy/soutenir/", "/app/privacy/soutenir/index.html", "/app/privacy/faq/private.html", "/app/privacy/faq/more/", "/app/privacy/demo/private/", "/app/privacy/demo/registre/more/", "/app/cases/", "/deploy/", "/private.html", "/manifest.json"]) {
     assert.equal(allowed.test(path), false, `Unlisted route allowed: ${path}`);
   }
 });

@@ -33,7 +33,7 @@
     RewriteCond %{REQUEST_URI} (^|/)\.
     RewriteRule ^ - [R=404,END]
     # Exact public routes; unknown paths never fall back to application HTML.
-    RewriteCond %{REQUEST_URI} !^/(?:$|index\.html$|app/privacy/(?:index\.html|verify/(?:index\.html)?|confidentialite/(?:index\.html)?|guide/(?:index\.html)?|faq/(?:index\.html)?)?$|_astro/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|svg|png|webp)$|(?:LICENSE|NOTICE|THIRD_PARTY_NOTICES|TRADEMARKS)\.txt$|robots\.txt$|release\.json$)
+    RewriteCond %{REQUEST_URI} !^/(?:$|index\.html$|app/privacy/(?:index\.html|verify/(?:index\.html)?|confidentialite/(?:index\.html)?|guide/(?:index\.html)?|faq/(?:index\.html)?|demo/(?:index\.html|(?:registre|sous-traitance|aipd)/(?:index\.html)?)?)?$|_astro/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|svg|png|webp)$|(?:LICENSE|NOTICE|THIRD_PARTY_NOTICES|TRADEMARKS)\.txt$|robots\.txt$|release\.json$)
     RewriteRule ^ - [R=404,END]
     Header always set Content-Security-Policy "__RGPDESK_CSP__"
     Header always set X-Content-Type-Options "nosniff"

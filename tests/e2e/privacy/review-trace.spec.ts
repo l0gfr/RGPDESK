@@ -60,7 +60,7 @@ test("one fact update explains its effect in AIPD and DPO reviews; references re
   await expect(page.locator(".review-trace,.review-evidence")).toHaveCount(0);
   await expect(page.locator("body")).not.toContainText("RECETTE_LOCALE");
   expect(requests).toEqual([]); expect(errors).toEqual([]); expect(logs.join("\n")).not.toContain("RECETTE_LOCALE");
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#main");
 });
 
 test("public browser entry retains CSP denial of business requests and form submission", async ({ page }) => {

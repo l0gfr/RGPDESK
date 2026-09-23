@@ -1,6 +1,17 @@
 <script lang="ts">
   let { name = "folder", size = 20 }: { name?: string; size?: number } = $props();
   const paths: Record<string, string> = {
+    interview: "M3 4h13v10H9l-4 4v-4H3ZM7 8h5M19 8h2v12h-3l-3 2v-5",
+    target: "M20 12a8 8 0 1 1-8-8M16 12a4 4 0 1 1-4-4M12 12l8-8M17 3h4v4",
+    balance: "M12 3v18M7 21h10M4 7h16M5 7l-3 7h6ZM19 7l-3 7h6ZM3 17h4M17 17h4M10 4h4",
+    rights: "M15 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6 20v-3a6 6 0 0 1 12 0v3M2 12v5M22 12v5M9 16v5M15 16v5",
+    security: "M12 3 3 7v5c0 4 4 7 9 10 5-3 9-6 9-10V7ZM9 12h6v5H9ZM10 12v-2a2 2 0 0 1 4 0v2",
+    incident: "M10 4a2.3 2.3 0 0 1 4 0l8 14a2 2 0 0 1-2 3H4a2 2 0 0 1-2-3ZM12 9v5M12 17h.01",
+    transfer: "M2 6h16m-4-4 4 4-4 4M22 18H6m4-4-4 4 4 4M3 11v5M21 8v5",
+    evidence: "M4 3h10l4 4v5M14 3v5h4M4 3v18h7M8 8h2M8 12h3M14 17l4-4a2.1 2.1 0 0 1 3 3l-5 5a3.5 3.5 0 0 1-5-5l4-4",
+    impact: "M12 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6M6 20v-2a6 6 0 0 1 12 0v2M3 4 1 9l2 5M21 4l2 5-2 5",
+    briefcase: "M3 7h18v14H3ZM8 7V3h8v4M3 11l9 4 9-4M10 13h4v4h-4Z",
+    history: "M3 10a9 9 0 1 1 1 7M3 4v6h6M12 7v6l4 2",
     help: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3h.01",
     support: "M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z",
     search: "M16 10a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-1 5 6 6",
@@ -26,6 +37,11 @@
     check: "m5 12 4 4L19 6", chevron: "m9 5 7 7-7 7", key: "M14 8a5 5 0 1 1-5-5 5 5 0 0 1 5 5Zm-1 3 8 8v2h-3v-3h-3l-3-3",
   };
   const accents: Record<string, string> = {
+    interview: "M3 4h13v10H9l-4 4v-4H3Z", target: "M12 12V4a8 8 0 1 0 8 8Z",
+    balance: "M5 7l-3 7h6ZM19 7l-3 7h6Z", rights: "M6 20v-3a6 6 0 0 1 12 0v3Z",
+    security: "M12 3 3 7v5c0 4 4 7 9 10V3Z", incident: "M10 4a2.3 2.3 0 0 1 4 0l8 14a2 2 0 0 1-2 3H4a2 2 0 0 1-2-3Z",
+    evidence: "M4 3h10v5h4v4l-7 9H4Z", impact: "M6 20v-2a6 6 0 0 1 12 0v2Z",
+    briefcase: "M3 7h18v4l-9 4-9-4Z",
     flows: "M3 3h6v6H3ZM15 15h6v6h-6ZM15 3h6v6h-6Z",
     analysis: "M4 3h11l4 4v5M4 3v18h7M8 7h3M8 11h4M8 15h2M21 16a5 5 0 1 1-10 0 5 5 0 0 1 10 0M20 20l3 3",
     overview: "M3 3h7v7H3ZM14 14h7v7h-7Z", folder: "M3 8h18v13H3Z",
@@ -39,4 +55,4 @@
     clock: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0", book: "M12 5v16c3-3 6-4 10-2V4c-4-2-7-1-10 1",
   };
 </script>
-<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="desk-icon">{#if accents[name]}<path d={accents[name]} fill="currentColor" fill-opacity=".16" stroke="none" />{/if}<path d={paths[name] ?? paths.folder} /></svg>
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="desk-icon">{#if accents[name]}<path d={accents[name]} fill="currentColor" fill-opacity=".16" stroke="none" />{/if}<path d={paths[name] ?? paths.folder} /></svg>

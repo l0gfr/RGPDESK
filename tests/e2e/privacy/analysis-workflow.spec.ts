@@ -95,7 +95,7 @@ test("declared flows, analysis and clause notes stay private, encrypted and usab
   await page.getByRole("button", { name: "Les flux", exact: true }).click();
   await expect(page.getByLabel("Flux 1 · Origine", { exact: true })).toHaveValue('PRIVATE_FLOW_<img src=x onerror="alert(1)">');
   expect(requests).toEqual([]); expect(diagnostics.join("\n")).not.toContain("PRIVATE_");
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#analyse");
 });
 
 test("atelier layout and long declared flow labels remain readable across viewport widths", async ({ page }, testInfo) => {

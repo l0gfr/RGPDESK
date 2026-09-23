@@ -3,7 +3,8 @@ import SiteHeader from "./SiteHeader.astro";
 import favicon from "../assets/rgpdesk-symbol.svg?url";
 import "../privacy.css";
 import "../atelier.css";
-interface Props { title: string; description: string; current: "faq" }
+import "../iconography.css";
+interface Props { title: string; description: string; current: "faq" | "demo" }
 const { title, description, current } = Astro.props;
 ---
 <!doctype html>

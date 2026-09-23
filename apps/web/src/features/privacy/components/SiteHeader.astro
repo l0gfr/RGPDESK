@@ -2,7 +2,7 @@
 import Brand from "./Brand.astro";
 import Icon from "./Icon.svelte";
 import "../public.css";
-interface Props { current: "workspace" | "guide" | "faq" | "verify" | "privacy" }
+interface Props { current: "workspace" | "guide" | "faq" | "verify" | "privacy" | "demo" }
 const { current } = Astro.props;
 const inWorkspace = current === "workspace";
 const items = [

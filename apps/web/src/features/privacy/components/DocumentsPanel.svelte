@@ -5,6 +5,7 @@
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import { CONTRACT_METHOD } from "../review-methods";
   import Icon from "./Icon.svelte";
+  import Emblem from "./Emblem.svelte";
   let { workspace, busy, onSave, onLeave, initialDocumentId = "", initialActivityId = "" }: { onLeave:(action:()=>void)=>void; initialActivityId?: string; initialDocumentId?: string; workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean> } = $props();
   let draft = $state<EvidenceReference | null>(null); let reviewed = $state(false); let due = $state("");
   export function hasUnsavedChanges(){return !!draft&&(canonicalJson(draft)!==canonicalJson(workspace.documents.find(d=>d.id===draft!.id)??null)||reviewed||due!==(draft.reviewDue??""));}
@@ -34,7 +35,7 @@
   }
 </script>
 <section class="panel">
-  <div class="section-heading"><div><p class="eyebrow">Bibliothèque de références</p><h2>Les documents, à leur place.</h2></div><button disabled={busy} onclick={()=>onLeave(create)}><Icon name="plus" />Ajouter une référence</button></div>
+  <div class="section-heading"><div><p class="eyebrow">Bibliothèque de références</p><h2>Les documents, à leur place.</h2></div><Emblem name="evidence" /><button disabled={busy} onclick={()=>onLeave(create)}><Icon name="plus" />Ajouter une référence</button></div>
   <p class="help">Rattachez un contrat, une notice ou une analyse. Le dossier conserve sa référence, jamais le fichier. Une référence disponible ne valide ni les clauses ni les faits déclarés.</p>
   {#if !workspace.documents.length && !draft}<div class="empty"><span class="icon-tile"><Icon name="documents" size={30} /></span><h3>Un dossier qui garde ses sources.</h3><p>Pour votre première activité, recherchez la notice remise aux personnes, le contrat du prestataire ou la procédure utilisée. Ajoutez leur titre, leur emplacement et le périmètre qu’ils couvrent.</p></div>{/if}
   <ul class="records">{#each workspace.documents as doc}<li><span class="record-icon"><Icon name="documents" /></span><div class="grow"><strong>{doc.title}</strong><p>{categories[doc.category]} · {doc.scope} · {doc.status === "reviewed" && doc.reviewedRevision === workspace.revision && (!doc.reviewDue || doc.reviewDue > new Date().toISOString().slice(0, 10)) ? "Revue déclarée" : "À réexaminer / déclaré"}</p></div><button class="secondary" disabled={busy} onclick={() => onLeave(()=>edit(doc))}>Examiner {doc.title}</button></li>{/each}</ul>

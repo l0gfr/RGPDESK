@@ -16,6 +16,8 @@ La CNIL présente le registre comme un outil de recensement et d’analyse des t
 
 Le menu reste accessible pendant la lecture et la saisie d’une fiche, d’un dossier DPO ou d’une AIPD. Si rien n’a changé, le passage à une autre rubrique est immédiat. Sinon, **Reprendre ma saisie** revient au dossier sans rien perdre ; **Quitter sans enregistrer** abandonne uniquement les changements en cours. Une revue ou un événement préparé, mais pas encore consigné, déclenche aussi cette protection. L’enregistrement du dossier ne consigne pas automatiquement ces décisions.
 
+Chaque rubrique a un lien direct : par exemple [le registre](/app/privacy/#registre), [l’AIPD](/app/privacy/#aipd) ou [le registre de démonstration](/app/privacy/#demo/registre). Copiez l’adresse affichée après avoir ouvert la rubrique. **Le lien désigne un écran, pas un dossier client.** Son destinataire doit ouvrir son propre coffre ; aucun contenu ni identifiant de coffre n’est placé dans l’adresse. Les liens de démo ouvrent un nouvel exercice fictif. Retour et Avancer suivent les rubriques visitées et protègent les changements non enregistrés.
+
 Les commandes **Enregistrer** et **Fermer** sont placées en haut du dossier et restent accessibles au défilement. Dans une fiche, **Annuler l’édition** abandonne explicitement le brouillon. Le verrouillage de sécurité conserve son fonctionnement : il efface les saisies non enregistrées, y compris lorsqu’une fenêtre de recherche ou de navigation est ouverte.
 
 ## 2. Votre premier registre, pas à pas
@@ -25,6 +27,8 @@ Les commandes **Enregistrer** et **Fermer** sont placées en haut du dossier et 
 Depuis l’accueil, **Explorer la démo** ouvre le dossier de **Maison Sillage**, un organisme entièrement fictif. Aucune phrase secrète ni inscription n’est nécessaire. Dix étapes vous conduisent du registre à la sauvegarde ; les rubriques latérales restent accessibles pour une visite libre.
 
 Le dossier comprend quatre activités, sept flux, quatre intervenants, quatre systèmes, quatre références documentaires, trois actions, une AIPD à approfondir et quatre dossiers DPO fictifs. Vous pouvez modifier les exemples, importer un CSV fictif, examiner le contrat du prestataire de badges et consulter la revue conservée de l’AIPD. Les fondements juridiques, durées et conclusions manquants restent à examiner. Ces textes illustrent une démarche ; ils ne constituent ni un modèle de conformité, ni des pièces justificatives réelles.
+
+**Voir le dossier final** donne immédiatement accès à [un exemple complet de restitution](/app/privacy/demo/), sans formulaire à remplir : registre responsable, registre sous-traitant et AIPD. Vous lisez les véritables rendus des exports, avec synthèse direction, schémas des flux sélectionnés, fiches et annexes. Ces pages peuvent être imprimées depuis le navigateur. Elles présentent une sélection fictive fixe, pas vos essais en cours. Les réserves et points manquants restent visibles ; les notes internes restent exclues.
 
 Dans **Partager un dossier**, utilisez **Charger la sélection d’exemple**, puis prévisualisez et relisez le contenu. Après votre confirmation, le ZIP contient le véritable rendu HTML, les tableaux CSV et les données JSON. Ouvrez `report.html` pour lire le dossier. Les notes internes et l’AIPD sont exclues de cet export, comme dans un coffre personnel.
 
@@ -168,11 +172,13 @@ Relisez le contexte repris du registre et les flux déclarés. Les carnets couvr
 
 ### 3 · Mettre la nécessité à l’épreuve
 
-Les notes d’analyse RGPD déjà présentes dans la fiche sont **copiées une fois à l’ouverture**. Réexaminez-les selon les questions propres à l’AIPD : cette reprise ne vaut pas évaluation de nécessité et proportionnalité. Elles deviennent les notes de cette étude : modifier la fiche ne les remplace pas. Examinez les opérations et les accès, puis les huit questions argumentées.
+Les faits restent liés au registre. Les nouvelles appréciations de nécessité et de proportionnalité commencent sans conclusion héritée de l’analyse RGPD. Examinez les opérations et les accès déjà décrits, puis les huit questions argumentées. Les notes d’une étude existante restent conservées ; modifier la fiche ne remplace pas ses appréciations.
+
+Dans l’analyse RGPD et dans l’étape Nécessité de l’AIPD, ouvrez **Points à examiner** pour approfondir une question. Ces aides abordent notamment les usages ultérieurs, les preuves du besoin, les alternatives, les effets sur les libertés et la mise en œuvre des garanties. Elles se lisent à la demande : complétez les notes existantes, sans ressaisir les faits du registre.
 
 **Comparer une alternative** ouvre une fiche par option : finalité visée, moyen envisagé, efficacité attendue, effets sur les droits, preuves et choix motivé. Comparez une option sans données personnelles lorsqu’elle est envisageable. Distinguez résultat démontré, hypothèse, contrainte et préférence.
 
-Le [cours d’Estelle De Marco, ESIEA 2025–2026, version 2.12, p.74–90](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=74) apporte un éclairage sur ce raisonnement. RGPDESK propose ses propres questions ; il ne reproduit pas intégralement sa grille et ne revendique pas son approbation.
+Le [cours d’Estelle De Marco, ESIEA 2025–2026, version 2.12, p.74–90](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=74) apporte un éclairage sur ce raisonnement. Les aides « Points à examiner » sont adaptées des guides d’Estelle De Marco : analyse RGPD v1.0 et nécessité/proportionnalité v1.2 du 20 septembre 2026, sous [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Les questions sont reformulées et les exemples exclus. Chaque aide précise les rubriques dont elle s’inspire. Cette adaptation partielle ne reproduit pas toute la grille et ne vaut pas approbation de l’autrice.
 
 ### 4 · Décrire ce qui peut arriver aux personnes
 
@@ -479,7 +485,7 @@ Appuyez-vous sur ces sources pour examiner vos choix, en tenant compte de votre 
 
 ### Lecture et démonstration : repères du 23 septembre 2026
 
-Dans la démonstration, « Ouvrir la fiche d’exemple » donne accès au projet de badges. La cartographie et l’analyse reprennent ce même projet. Le repère de visite reste visible pendant l’édition ; la navigation vers la suite demeure bloquée tant que le dossier est ouvert. Les essais restent en mémoire pour cette visite.
+Dans la démonstration, « Ouvrir la fiche d’exemple » donne accès au projet de badges. La cartographie et l’analyse reprennent ce même projet. Le repère de visite reste visible pendant l’édition. Vous pouvez poursuivre la visite ; seuls les changements non enregistrés demandent de confirmer le départ. Les essais restent en mémoire pour cette visite.
 
 « Lire l’AIPD d’exemple » ouvre directement le dossier rempli. La lecture s’organise en cinq chapitres : contexte, choix, risques, mesures et avis. Le menu « Version du dossier » permet de lire le contexte conservé d’une revue. Les points à instruire restent accessibles dans un encart dédié. Fermer l’étude permet de reprendre la visite.
 

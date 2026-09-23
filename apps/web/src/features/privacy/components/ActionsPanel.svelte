@@ -3,6 +3,7 @@
   import { untrack } from "svelte";
   import { questionPlaybook } from "../guidance";
   import Icon from "./Icon.svelte";
+  import Emblem from "./Emblem.svelte";
   let { workspace, busy, initialActivityId = "", onSave }: { workspace: Workspace; busy: boolean; initialActivityId?: string; onSave: (next: Workspace) => Promise<void> } = $props();
   let scope = $state(untrack(() => initialActivityId)); let ownerFilter = $state(""); let dueFilter = $state(""); let ruleFilter = $state("");
   let selected: Finding | null = $state(null); let owner = $state(""); let due = $state(""); let closing = $state(""); let author = $state(""); let justification = $state("");
@@ -13,7 +14,7 @@
   let actions = $derived(workspace.actions.filter((a) => (!scope || a.activityId === scope) && (!ownerFilter || a.owner.toLocaleLowerCase().includes(ownerFilter.toLocaleLowerCase())) && (!dueFilter || a.due !== null && a.due <= dueFilter)));
 </script>
 <section class="panel">
-  <div class="section-heading"><div><p class="eyebrow">Suivi documentaire</p><h2>Chaque question trouve sa suite.</h2></div><span class="icon-tile"><Icon name="actions" size={26} /></span></div>
+  <div class="section-heading"><div><p class="eyebrow">Suivi documentaire</p><h2>Chaque question trouve sa suite.</h2></div><Emblem name="actions" /></div>
   <p class="help">Choisissez une question à clarifier, identifiez la personne qui peut y répondre et fixez votre prochaine étape. Une action clôturée reste dans l’historique.</p>
   <div class="filters"><label class="field">Périmètre<select aria-label="Périmètre" bind:value={scope}><option value="">Toutes les activités</option>{#each workspace.activities as a}<option value={a.id}>{a.title}</option>{/each}</select></label><label class="field">Information manquante<select aria-label="Information manquante" bind:value={ruleFilter}><option value="">Tous les contrôles</option>{#each CATALOG.filter((r) => r.id !== "R-010") as r}<option value={r.id}>{r.title}</option>{/each}</select></label></div>
   <div class="interview-card"><strong>Par exemple, la conservation n’est pas précisée</strong><p>Créez une action pour retrouver la règle applicable avec l’équipe concernée. Quand la réponse est établie, complétez la fiche puis consignez la clôture et sa justification.</p></div><h3>Questions ouvertes <span class="count">{visible.length}</span></h3>

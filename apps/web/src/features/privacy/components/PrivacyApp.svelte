@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { PRIVACY_ROUTES, privacyAnchor, parsePrivacyAnchor, type PrivacyPanel } from "../navigation";
   import { VaultInventory } from "../persistence/inventory";
   import { onMount, tick } from "svelte";
   import { checkpointExists, type WorkCheckpoint, recordPiaPublication, renderPiaPublication, type PiaPublication, createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
@@ -8,6 +9,7 @@
   import { errorMessage, fr } from "../i18n/fr";
   import { zipFiles } from "@rgpdesk/privacy-verifier";
   import Icon from "./Icon.svelte";
+  import Emblem from "./Emblem.svelte";
   import ProcessingAtlas from "./ProcessingAtlas.svelte";
   import DpoCases from "./DpoCases.svelte";
   import PiaSharing from "./PiaSharing.svelte";
@@ -72,7 +74,38 @@
   let searchOpen = $state(false);
   let searchNavigation = $state(0);
   let searchButton: HTMLButtonElement | undefined = $state();
-  let panel: "dpo" | "pia-sharing" | "pia" | "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
+  let panel = $state<PrivacyPanel>("overview");
+  let readingAnchor = $state(false);
+  let linkedPanel = $state<PrivacyPanel | null>(null);
+  $effect(() => {
+    if (!hydrated || !master || busy || readingAnchor) return;
+    const hash = privacyAnchor(panel, demo);
+    if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+  });
+  async function followAnchor() {
+    const destination = parsePrivacyAnchor(window.location.hash);
+    if (!destination) return;
+    if (!master) {
+      linkedPanel = destination.demo ? null : destination.panel;
+      if (destination.demo && !busy && !stale) {
+        readingAnchor = true;
+        try { await exploreDemo(); if (master) { resetEditor(); panel = destination.panel; await tick(); workspaceHeading?.focus(); } }
+        finally { readingAnchor = false; }
+      }
+      return;
+    }
+    if (destination.demo === demo && destination.panel === panel) return;
+    // Restore the current address while a draft guard is open, or a save is running.
+    window.history.replaceState(null, "", privacyAnchor(panel, demo));
+    if (destination.demo !== demo) {
+      message = "Ce lien vise un autre mode. Quittez le coffre ou la démo avant de l’ouvrir.";
+      return;
+    }
+    requestNavigation(() => {
+      resetEditor(); panel = destination.panel;
+      window.history.replaceState(null, "", privacyAnchor(panel, demo));
+    });
+  }
   let piaEditing = $state(false);
   type DraftGuard = { hasUnsavedChanges: () => boolean; getCheckpoint?:()=>WorkCheckpoint|undefined };
   let activityGuard: DraftGuard | undefined = $state();
@@ -193,6 +226,7 @@
   }
 
   async function revealWorkspace(current: VaultSession) {
+    if (!demo && linkedPanel) { panel = linkedPanel; linkedPanel = null; }
     await tick();
     checkSession(current);
     workspaceHeading?.focus({ preventScroll: true });
@@ -221,6 +255,8 @@
     });
   }
   function leaveDemo() {
+    window.history.replaceState(null, "", "#main");
+    linkedPanel = null;
     lock("Démo terminée. Vos coffres personnels n’ont pas été modifiés.");
     void inventory?.refresh();
     void tick().then(() => document.getElementById("explorer-demo")?.focus());
@@ -522,6 +558,9 @@
       }
     });
     void inventory.refresh();
+    const onAnchor = () => { void followAnchor(); };
+    window.addEventListener("hashchange", onAnchor);
+    void followAnchor();
     const refreshLocked = () => { if (!master && !busy && !stale && document.visibilityState === "visible") void inventory?.refresh(); };
     const inventorySubscription = vault.watchInventory(refreshLocked);
     window.addEventListener("focus", refreshLocked);
@@ -537,7 +576,7 @@
         void inventory?.refresh();
       }
     };
-    return () => { disposed = true; inventorySubscription.unsubscribe(); inventory?.dispose(); window.removeEventListener("focus", refreshLocked); window.removeEventListener("pageshow", refreshLocked); document.removeEventListener("visibilitychange", refreshLocked); lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
+    return () => { disposed = true; window.removeEventListener("hashchange", onAnchor); inventorySubscription.unsubscribe(); inventory?.dispose(); window.removeEventListener("focus", refreshLocked); window.removeEventListener("pageshow", refreshLocked); document.removeEventListener("visibilitychange", refreshLocked); lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
   });
 </script>
 
@@ -549,20 +588,21 @@
   {#if stale}<a class="button" href="/app/privacy/">Recharger l’application</a>{/if}
   {#if inventoryStatus === "loading"}<p role="status">Lecture des coffres de ce navigateur…</p>{/if}
 
+  {#if !master && linkedPanel}<p class="notice">Ce lien mène à « {PRIVACY_ROUTES[linkedPanel][1]} ». Ouvrez le coffre souhaité pour y accéder ; le lien ne contient aucune donnée de votre registre.</p>{/if}
   {#if master}
     <div class="desk-layout">
     <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>{demo ? "DOSSIER FICTIF" : "VOTRE ESPACE"}</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
       {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["dpo", "Dossiers DPO"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
-        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy} onclick={() => navigateTo(key as typeof panel)}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
-      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy} onclick={() => navigateTo(key as typeof panel)}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
+        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy} onclick={() => navigateTo(key as typeof panel)}><Icon name={key === "pia" ? "impact" : key === "dpo" ? "briefcase" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
+      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy} onclick={() => navigateTo(key as typeof panel)}><Icon name={key === "pia" ? "impact" : key === "dpo" ? "briefcase" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
       <div class="sidebar-security"><Icon name="shield" size={25} /><strong>{demo ? "Un espace pour essayer." : "Votre appareil. Votre coffre."}</strong><p>{demo ? "L’exercice reste en mémoire dans cet onglet. Aucun enregistrement automatique." : "Les informations restent ici. Pensez à votre sauvegarde chiffrée."}</p></div>
     </aside><div class="desk-workspace">
     <div class="workspace-utilities"><span><Icon name="lock" size={14} />{demo ? "Démonstration locale" : "Coffre ouvert sur cet appareil"}</span><button bind:this={searchButton} class="secondary" aria-expanded={searchOpen} aria-controls="workspace-search" disabled={busy} onclick={() => { searchOpen = !searchOpen; }}><Icon name="search" size={18} />Rechercher dans le coffre</button></div>
     {#if pendingNavigation}<LeaveDraftDialog onStay={() => void resumeDraft()} onDiscard={() => pendingNavigation?.()} />{/if}
     {#if searchOpen}<WorkspaceSearch workspace={master} canNavigate={searchCanNavigate} onOpen={openSearchResult} onClose={closeSearch} />{/if}
     {#if !demo}<div class="client-switcher"><span>Registre de <strong>{master.organization.name}</strong><small>Repère du coffre : {master.id}</small></span><div><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Verrouiller ce registre et revenir aux coffres" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient()}>Changer de registre</button><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Créer un coffre distinct" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient(true)}>Ajouter un client</button></div></div>{/if}
-    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "dpo" ? "Les dossiers de votre mission." : panel === "pia-sharing" ? "Restituer votre analyse d’impact." : panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
+    <header class="workspace-heading"><div class="workspace-identity"><Emblem name={panel === "pia" ? "impact" : panel === "dpo" ? "briefcase" : panel === "pia-sharing" ? "delivery" : panel} /><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "dpo" ? "Les dossiers de votre mission." : panel === "pia-sharing" ? "Restituer votre analyse d’impact." : panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
     {#if !demo}<p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>{/if}
     {#if demo && !referenceCase}<DemoGuide {panel} {busy} editing={editor !== null || piaEditing}
       actionLabel={panel === "register" && master.activities.length ? "Ouvrir la fiche d’exemple" : panel === "pia" && master.impactAssessments.length ? "Lire l’AIPD d’exemple" : undefined}
@@ -617,7 +657,7 @@
     <p class="catalog-caption">Un doute pendant votre travail ? <a href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">Retrouver une explication dans le guide</a>.</p></div></div>
   {:else}
     <div class="welcome-hero"><header class="intro"><p class="eyebrow"><span class="eyebrow-line"></span>{fr.welcome.eyebrow}</p><h1>{fr.welcome.title}<br /><em>{fr.welcome.subtitle}</em></h1><p>{fr.welcome.description}</p><div class="actions hero-actions"><button id="explorer-demo" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Explorer la démo <Icon name="arrow" size={17} /></button><a class="button secondary" href="#creer-registre">{fr.welcome.start}</a></div><p class="hero-demo-caption">Un dossier déjà rempli. Sans compte, sans phrase secrète à créer.</p><div class="trust-row"><span><Icon name="lock" size={17} />Coffre chiffré</span><span><Icon name="shield" size={17} />Sans compte</span><span><Icon name="documents" size={17} />Partage choisi</span></div></header><ProcessingAtlas /></div>
-    <section class="demo-invitation"><span class="demo-invitation-mark" aria-hidden="true">S.</span><div><p class="eyebrow">Entrez dans un dossier, pas devant une page vide</p><h2>Rencontrez Maison Sillage.</h2><p>4 activités, 7 flux, une AIPD et un dossier à partager. Un cas fictif pour essayer les gestes de votre prochaine mission.</p></div><button class="secondary" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Ouvrir le dossier fictif <Icon name="arrow" /></button></section>
+    <section class="demo-invitation"><span class="demo-invitation-mark" aria-hidden="true">S.</span><div><p class="eyebrow">Entrez dans un dossier, pas devant une page vide</p><h2>Rencontrez Maison Sillage.</h2><p>4 activités, 7 flux, une AIPD et un dossier à partager. Un cas fictif pour essayer les gestes de votre prochaine mission.</p></div><button class="secondary" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Ouvrir le dossier fictif <Icon name="arrow" /></button><a class="text-button" href="/app/privacy/demo/" target="_blank" rel="noopener noreferrer">Voir le dossier final <Icon name="arrow" size={17} /><span class="sr-only"> (nouvel onglet)</span></a></section>
     <p class="business-entry"><Icon name="book" size={20} /><a href="/app/privacy/guide/#trames-metier" target="_blank" rel="noopener noreferrer">Préparer un entretien : {startingPoints.length} trames métier sourcées</a><span>RH · Commercial · Achats · Accueil · Sécurité · Prestations</span></p>
     <section class="use-cases" aria-label="Ce que vous pouvez faire avec RGPDESK">
       <article><Pictogram kind="register" /><p class="eyebrow">01 / Décrire</p><h2>Un registre structuré.</h2><p>Une fiche par activité : pourquoi ces données, pour quelles personnes, avec quels intervenants et quelles mesures.</p></article>

@@ -102,7 +102,7 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
   const bytes = await backup(page);
   expect(bytes.toString()).not.toContain(organization);
   expect(bytes.toString()).not.toContain("NEVER_LEAK_INTERNAL_NOTE_7D31");
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#sauvegarde");
   expect(await page.title()).toBe("RGPDESK | Votre registre RGPD, de la fiche au dossier partagé");
   expect(attempts).toEqual([]);
   expect(await page.evaluate(() => (window as unknown as { privacyNetworkCalls: string[] }).privacyNetworkCalls)).toEqual([]);
@@ -170,7 +170,7 @@ test("hostile strings remain text and sensitive values stay out of stores, URLs 
   expect(JSON.stringify(storage)).not.toContain(phrase);
   expect(logs.join("\n")).not.toContain("FICTIONAL_CANARY_7D31");
   expect(dialogs).toEqual([]);
-  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("");
+  expect(new URL(page.url()).search + new URL(page.url()).hash).toBe("#registre");
 });
 
 test("two open tabs reject stale writes and clear both views after local wipe", async ({ page, context }) => {

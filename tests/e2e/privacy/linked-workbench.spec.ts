@@ -30,7 +30,7 @@ test("reference case, linked map, precise citation and four readings remain usab
 
 test("graphical sharing is opt-in, reviewed and bounded to selected flows",async({page})=>{
  await page.goto("/app/privacy/"); await page.getByRole("button",{name:"Explorer la démo",exact:true}).click();
- await page.getByRole("button",{name:"Voir directement le résultat à partager",exact:false}).click();
+ await page.getByRole("button",{name:"Partager un dossier",exact:true}).click();
  await page.getByRole("button",{name:"Charger la sélection d’exemple",exact:true}).click();
  await page.getByText("Ajouter une synthèse direction et des flux choisis",{exact:true}).click();
  const choices=page.getByRole("group",{name:"Flux à communiquer (60 maximum)",exact:true}); await expect(choices.getByRole("checkbox").first()).not.toBeChecked(); await choices.getByRole("checkbox").first().check();
