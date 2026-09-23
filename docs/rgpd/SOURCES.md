@@ -219,3 +219,10 @@ Portée : réponses d’orientation pour les DPO de PME et d’associations, san
 | A06 | Estelle De Marco, Guide d’analyse de nécessité et de proportionnalité, v1.2 du 20/09/2026 | Introduction, cartographie, CC1 à CC4 et références. Mention CC BY 4.0 dans chaque onglet. Aides reformulées avec attribution et référence de section ; aucune intégration exhaustive ni validation attribuée. |
 
 Les classeurs transmis ne sont pas liés à une URL publique présumée. La mention de leur publication prochaine n'est pas une preuve de publication. Les aides citent leurs titres, versions, sections et [licence CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) ; le cours public demeure une lecture distincte. La jurisprudence de la bibliographie n'a pas été vérifiée arrêt par arrêt.
+
+
+### Organisation des pièces, 23 septembre 2026
+
+- CNIL, [Sécurité : Sauvegarder](https://www.cnil.fr/fr/securite-sauvegarder) : protection des copies, séparation, restauration.
+- CNIL, [Sécurité : Gérer les habilitations](https://www.cnil.fr/fr/securite-gerer-les-habilitations) : accès limités au besoin, attribution et revue des habilitations.
+- Les six dossiers et les codes DOC sont une proposition de classement de RGPDESK, pas une obligation légale ni une méthode attribuée à ces sources. Le SHA-256 compare des octets ; il ne vaut pas signature ni horodatage certifié.

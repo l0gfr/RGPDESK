@@ -18,7 +18,7 @@ describe("DPO dossier integrity", () => {
     const { master } = fixture(); const legacy = JSON.parse(JSON.stringify(master));
     legacy.format = "rgpd-master-v4"; delete legacy.dpoCases; delete legacy.piaPublications;
     const original = JSON.stringify(legacy); const next = migrateWorkspace(legacy);
-    expect(next).toEqual({ ...legacy, format: "rgpd-master-v6", dpoCases: [], piaPublications: [] });
+    expect(next).toEqual({ ...legacy, format: "rgpd-master-v7", dpoCases: [], piaPublications: [] });
     expect(JSON.stringify(legacy)).toBe(original);
     expect(() => migrateWorkspace({ ...legacy, dpoCases: [] })).toThrow("INVALID");
   });

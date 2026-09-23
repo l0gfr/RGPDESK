@@ -77,7 +77,7 @@ export interface CitationReview {
 export interface Workspace {
   workCheckpoint?: WorkCheckpoint;
   citationReviews?: CitationReview[];
-  format: "rgpd-master-v6";
+  format: "rgpd-master-v7";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];
@@ -102,7 +102,12 @@ export const unknown = (): Knowledge => ({ state: "unknown" });
 export const knowledge = (value: string): Knowledge => value.trim() ? { state: "documented", value: value.trim() } : unknown();
 export const knowledgeText = (value: Knowledge): string => value.state === "documented" ? value.value : "";
 
+export interface DocumentFingerprint {
+  algorithm: "SHA-256"; sha256: string; bytes: number; capturedAt: string; version: string;
+}
 export interface EvidenceReference {
+  documentCode?: string;
+  fingerprint?: DocumentFingerprint;
   contractReview: ContractReview | null;
   id: string; workspaceId: string; title: string;
   category: "contract" | "notice" | "policy" | "analysis" | "other";

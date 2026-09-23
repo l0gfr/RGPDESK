@@ -103,7 +103,7 @@ test("IndexedDB v1 upgrade preserves the old encrypted master and v1 backup migr
     const [backupEnvelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(old.id, 1, "backup"), value: payload }], phrase);
     const decoded = await api.decodeArchive(JSON.stringify({ format: "rgpd-backup-v1", workspaceId: old.id, revision: 1, envelope: backupEnvelope }), phrase);
     return { untouched, format: opened.format, oldRevision: opened.revision, same: api.canonicalJson(opened) === api.canonicalJson(decoded.master) };
-  }); expect(result).toEqual({ untouched: true, format: "rgpd-master-v6", oldRevision: 1, same: true });
+  }); expect(result).toEqual({ untouched: true, format: "rgpd-master-v7", oldRevision: 1, same: true });
 });
 
 
@@ -132,7 +132,7 @@ test("v2 encrypted content migrates without rewriting disk and v3 analysis survi
     const restored = await vault.restore(backup, phrase, session);
     return { untouched, format: restored.format, revision: restored.revision, equal: api.canonicalJson(restored) === api.canonicalJson(next), leaked: (encrypted + backup).includes("PRIVATE_V3"), sourceUnchanged: old.format === "rgpd-master-v2" && !old.activities[0].analysis };
   });
-  expect(result).toEqual({ untouched: true, format: "rgpd-master-v6", revision: 2, equal: true, leaked: false, sourceUnchanged: true });
+  expect(result).toEqual({ untouched: true, format: "rgpd-master-v7", revision: 2, equal: true, leaked: false, sourceUnchanged: true });
 });
 
 test("a genuine v3 vault remains intact on opening and AIPD reviews survive native backup restore", async ({ page }) => {
@@ -161,7 +161,7 @@ test("a genuine v3 vault remains intact on opening and AIPD reviews survive nati
     const restored = await vault.restore(backup, phrase, session);
     return { untouched, equal: api.canonicalJson(next) === api.canonicalJson(restored), count: (await vault.listCurrent(session.epoch)).length, format: restored.format, leaked: (raw + backup).includes("PRIVATE_") };
   });
-  expect(result).toEqual({ untouched: true, equal: true, count: 1, format: "rgpd-master-v6", leaked: false });
+  expect(result).toEqual({ untouched: true, equal: true, count: 1, format: "rgpd-master-v7", leaked: false });
 });
 
 
@@ -202,7 +202,7 @@ test("v4 migrates read-only then DPO v5 reviews and publications survive native 
       reviews: restored.dpoCases.reduce((n,c) => n + c.reviews.length, 0), publications: restored.piaPublications.length,
       listed: (await vault.listCurrent(session.epoch)).length };
   });
-  expect(result).toEqual({ untouched: true, equal: true, format: "rgpd-master-v6", leaked: false, cases: 4, reviews: 4, publications: 1, listed: 1 });
+  expect(result).toEqual({ untouched: true, equal: true, format: "rgpd-master-v7", leaked: false, cases: 4, reviews: 4, publications: 1, listed: 1 });
 });
 
 test("v5 encrypted vault migrates in memory then saves linked flows and v2 delivery without data loss", async ({page}) => {
@@ -222,5 +222,25 @@ test("v5 encrypted vault migrates in memory then saves linked flows and v2 deliv
   const restoredFiles=await vault.deliveryFiles(restored,dto.id,phrase,restoredSession); const raw=JSON.stringify(await vault.table("records").toArray())+JSON.stringify(await vault.table("snapshots").toArray());
   return {unchanged,format:reopened.format,operation:reopened.activities[0]!.flows[0]!.operation,same:api.canonicalJson(archive.master)===api.canonicalJson(reopened) && api.canonicalJson(restored)===api.canonicalJson(reopened) && api.canonicalJson(restoredFiles)===api.canonicalJson(pack.files),snapshots:archive.snapshots.length,valid:(await api.verifyPackage(await api.zipFiles(pack.files))).valid,leak:raw.includes("PRIVATE_"),version:dto.format};
  });
- expect(result).toEqual({unchanged:true,format:"rgpd-master-v6",operation:{state:"documented",value:"PRIVATE_LINKED_OPERATION"},same:true,snapshots:1,valid:true,leak:false,version:"rgpd-share-v2"});
+ expect(result).toEqual({unchanged:true,format:"rgpd-master-v7",operation:{state:"documented",value:"PRIVATE_LINKED_OPERATION"},same:true,snapshots:1,valid:true,leak:false,version:"rgpd-share-v2"});
+});
+
+test("v6 documentary vault opens without writing and v7 metadata survives encrypted backup and restore", async ({page}) => {
+ const result=await page.evaluate(async()=>{
+  const api=window.privacyTest,vault=new api.PrivacyVault(),phrase="Fictional documentary backup phrase 2026",now=new Date().toISOString();
+  let session={epoch:await vault.initialize(),signal:new AbortController().signal};
+  const w=api.createWorkspace(crypto.randomUUID(),"PRIVATE_V6_DOCUMENTS",now);
+  const doc={id:crypto.randomUUID(),workspaceId:w.id,title:"PRIVATE_REFERENCE",category:"other" as const,contractReview:null,activityIds:[],purposeIds:[],partyIds:[],scope:"Exemple",version:"v1",declaredAuthor:"",internalRef:"PRIVATE_LOCATION",publicReference:"",reservations:"",sensitivity:"internal" as const,status:"declared" as const,reviewedRevision:null,reviewedAt:null,reviewDue:null,audience:"",channel:"",availability:api.unknown()};
+  w.documents=[doc];const legacy={...w,format:"rgpd-master-v6"};
+  const [envelope]=await api.encryptLocalPayloadBatch([{aad:api.contextFor(w.id,1,"master"),value:legacy}],phrase);
+  await vault.table("records").put({id:w.id,revision:1,format:"rgpd-envelope-v1",envelope});const before=JSON.stringify(await vault.table("records").toArray());
+  const opened=await vault.unlock(w.id,phrase,session);const unchanged=before===JSON.stringify(await vault.table("records").toArray());
+  const fingerprint={algorithm:"SHA-256" as const,sha256:"b".repeat(64),bytes:3,capturedAt:now,version:"v1"};
+  const changed=api.putDocument(opened,{...doc,documentCode:"DOC-0001",fingerprint},now);await vault.save(changed,phrase,opened.revision,session);
+  const backup=await vault.backup(changed,phrase,session);const disk=JSON.stringify(await vault.table("records").toArray());
+  await vault.wipe(session.epoch);session={epoch:await vault.initialize(),signal:new AbortController().signal};
+  const restored=await vault.restore(backup,phrase,session);
+  return{unchanged,format:restored.format,equal:api.canonicalJson(changed)===api.canonicalJson(restored),code:restored.documents[0]!.documentCode,fingerprint:restored.documents[0]!.fingerprint,leak:["PRIVATE_","DOC-0001",fingerprint.sha256].some(s=>(backup+disk).includes(s))};
+ });
+ expect(result).toEqual({unchanged:true,format:"rgpd-master-v7",equal:true,code:"DOC-0001",fingerprint:{algorithm:"SHA-256",sha256:"b".repeat(64),bytes:3,capturedAt:expect.any(String),version:"v1"},leak:false});
 });

@@ -57,4 +57,9 @@ Le 22 septembre 2026, le lancement global demandé par l’ancienne procédure a
 
 ### Retour arrière et formats des coffres
 
-La release précédente et son vhost permettent un retour arrière du site par l’opérateur après contrôle Apache. Cela ne restaure pas les coffres des visiteurs. Un enregistrement fait par la nouvelle application emploie `rgpd-master-v6`, qu’une application ancienne limitée à v5 ne sait pas lire. En cas de retour arrière du site, ne pas supprimer de coffre : conserver les sauvegardes, rétablir une version compatible v6 ou examiner une sauvegarde antérieure dans un profil distinct. Aucun script de déploiement ne modifie IndexedDB des visiteurs.
+La release précédente et son vhost permettent un retour arrière du site par l’opérateur après contrôle Apache. Cela ne restaure pas les coffres des visiteurs. Un enregistrement fait par la nouvelle application emploie `rgpd-master-v7`, qu’une application ancienne limitée à v6 ne sait pas lire. En cas de retour arrière du site, ne pas supprimer de coffre : conserver les sauvegardes, rétablir une version compatible v7 ou examiner une sauvegarde antérieure dans un profil distinct. Aucun script de déploiement ne modifie IndexedDB des visiteurs.
+
+
+## Références documentaires v7
+
+Le format `rgpd-master-v7` ajoute les repères et empreintes facultatifs des références. Les schémas v1 à v6 restent inchangés et les anciennes sauvegardes sont ouvertes par migration en mémoire ; le disque n’est modifié qu’après un enregistrement protégé. Une version de l’application limitée au v6 ne peut pas rouvrir un coffre enregistré en v7. Conserver une sauvegarde avant mise à jour et utiliser la version actuelle pour la restauration. Les formats de partage et l’enveloppe chiffrée ne changent pas.

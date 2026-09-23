@@ -5,7 +5,7 @@ import addFormats from "ajv-formats";
 import standaloneCode from "ajv/dist/standalone/index.js";
 import { build } from "esbuild";
 
-for (const [name, version] of [["master", 1], ["backup", 1], ["master", 2], ["master", 3], ["master", 4], ["master", 5], ["master", 6], ["share", 1], ["share", 2], ["manifest", 1], ["backup", 2]]) {
+for (const [name, version] of [["master", 1], ["backup", 1], ["master", 2], ["master", 3], ["master", 4], ["master", 5], ["master", 6], ["master", 7], ["share", 1], ["share", 2], ["manifest", 1], ["backup", 2]]) {
   const schema = JSON.parse(await readFile(`packages/privacy-core/schemas/rgpd-${name}-v${version}.schema.json`, "utf8"));
   const ajv = new Ajv2020({ strict: true, allErrors: false, code: { source: true, esm: true } });
   addFormats(ajv);

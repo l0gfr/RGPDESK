@@ -2,7 +2,7 @@ import { assertWorkbench } from "./workbench";
 import { assertLinkedFacts } from "./linked-facts";
 import { assertDpoWorkspace } from "./dpo";
 import { assertPiaWorkspace } from "./pia";
-import validate from "./generated/master-v6-validator.js";
+import validate from "./generated/master-v7-validator.js";
 import { ANALYSIS_QUESTIONS, CONTRACT_QUESTIONS, type ReviewNote, type Workspace } from "./model";
 
 export const MAX_MASTER_BYTES = 2 * 1024 * 1024;
@@ -80,7 +80,13 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
     registerId(entity.id);
     if (entity.workspaceId !== master.id) throw new PrivacyError("INVALID");
   }
+  const documentCodes = new Set<string>();
   for (const doc of master.documents) {
+    if (doc.documentCode) {
+      if (Number(doc.documentCode.slice(4)) < 1 || documentCodes.has(doc.documentCode)) throw new PrivacyError("INVALID");
+      documentCodes.add(doc.documentCode);
+    }
+    if (doc.fingerprint && doc.fingerprint.capturedAt > master.updatedAt) throw new PrivacyError("INVALID");
     if (doc.contractReview) {
       if (doc.category !== "contract") throw new PrivacyError("INVALID");
       checkNotes(doc.contractReview.notes, CONTRACT_QUESTIONS);

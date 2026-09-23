@@ -39,7 +39,7 @@ export function searchWorkspace(workspace: Workspace | null, query: string, kind
       ...(a.role === "controller" ? a.purposes.flatMap((p) => text(p.description, p.legalBasis, p.retention.period, p.retention.trigger)) : text(a.operations, a.instructions)),
     ]);
   }
-  for (const d of workspace.documents) add("document", d.id, d.title, "Référence documentaire", [d.scope, d.version, d.declaredAuthor, d.internalRef, d.publicReference, d.reservations, d.audience, d.channel, ...text(d.availability), ...notes(d.contractReview?.notes ?? [])]);
+  for (const d of workspace.documents) add("document", d.id, d.title, "Référence documentaire", [d.documentCode ?? "", d.scope, d.version, d.declaredAuthor, d.internalRef, d.publicReference, d.reservations, d.audience, d.channel, ...text(d.availability), ...notes(d.contractReview?.notes ?? [])]);
   for (const d of workspace.dpoCases) add("dpo", d.id, d.title, DPO_TITLES[d.kind], [d.owner, ...notes(d.content.notes), ...d.events.flatMap((e) => [e.description, e.author, knowledgeText(e.evidence)])]);
   for (const p of workspace.impactAssessments) {
     const a = workspace.activities.find((v) => v.id === p.activityId);
