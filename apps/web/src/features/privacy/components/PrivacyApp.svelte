@@ -26,7 +26,9 @@
   import { DemoSession } from "../demo-session";
   import DemoOverview from "./DemoOverview.svelte";
   import DemoGuide from "./DemoGuide.svelte";
-  import type { StartingPoint } from "../guidance";
+  import { startingPoints, type StartingPoint } from "../guidance";
+  import WorkspaceSearch from "./WorkspaceSearch.svelte";
+  import type { SearchResult } from "../search";
 
   let demo = $state(false);
   let hydrated = $state(false);
@@ -55,12 +57,18 @@
   let wipeConfirmation = $state("");
   let showWipe = $state(false);
   let dpoCaseId = $state("");
+  let documentId = $state("");
+  let piaActivityId = $state("");
+  let searchOpen = $state(false);
+  let searchNavigation = $state(0);
+  let searchButton: HTMLButtonElement | undefined = $state();
   let panel: "dpo" | "pia-sharing" | "pia" | "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
   let piaEditing = $state(false);
   let missingOnly = $state(false);
   let registerRole = $state("");
   let findings = $derived(master ? evaluateWorkspace(master, new Date().toISOString().slice(0, 10)) : []);
   let editor: Activity | null = $state(null);
+  let searchCanNavigate = $derived(!busy && !editor && !piaEditing && ["overview", "register", "analysis", "flows", "pia", "dpo"].includes(panel));
   let editorSection: "record" | "analysis" | "flows" = $state("record");
   let editorExample: StartingPoint | undefined = $state();
   let showStarters = $state(false);
@@ -88,6 +96,8 @@
     confirmation = "";
     organizationName = "";
     master = null;
+    searchOpen = false;
+    dpoCaseId = documentId = piaActivityId = "";
     editor = null;
     piaEditing = false;
     editorSection = "record";
@@ -198,6 +208,45 @@
     editorExample = example;
     panel = "register";
     showStarters = false;
+  }
+
+  async function changeClient(createNew = false) {
+    if (!searchCanNavigate || demo) return;
+    lock("Registre verrouillé. Choisissez un autre coffre ou créez celui de votre prochain client.");
+    await inventory?.refresh();
+    await tick();
+    document.getElementById(createNew ? "create-client-name" : "client-vaults-title")?.focus();
+    document.getElementById(createNew ? "creer-registre" : "client-vaults")?.scrollIntoView({ block: "start" });
+  }
+
+  async function closeSearch() {
+    searchOpen = false;
+    await tick();
+    searchButton?.focus();
+  }
+  async function openSearchResult(result: SearchResult) {
+    if (!master || !searchCanNavigate) return;
+    if (result.kind === "activity") {
+      const activity = master.activities.find((item) => item.id === result.id);
+      if (!activity) return;
+      editorSection = "record"; editorExample = undefined;
+      editor = structuredClone($state.snapshot(activity)); panel = "register";
+    } else if (result.kind === "dpo") {
+      if (!master.dpoCases.some((item) => item.id === result.id)) return;
+      dpoCaseId = result.id; panel = "dpo";
+    } else if (result.kind === "document") {
+      if (!master.documents.some((item) => item.id === result.id)) return;
+      documentId = result.id; panel = "documents";
+    } else {
+      const pia = master.impactAssessments.find((item) => item.id === result.id);
+      if (!pia) return;
+      piaActivityId = pia.activityId; panel = "pia";
+    }
+    searchOpen = false;
+    searchNavigation += 1;
+    await tick();
+    workspaceHeading?.focus({ preventScroll: true });
+    workspaceHeading?.scrollIntoView({ block: "start" });
   }
 
   async function saveActivity(activity: Activity) {
@@ -396,10 +445,13 @@
     <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>{demo ? "DOSSIER FICTIF" : "VOTRE ESPACE"}</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
       {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["dpo", "Dossiers DPO"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
-        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
-      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
+        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = documentId = piaActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
+      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = documentId = piaActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
       <div class="sidebar-security"><Icon name="shield" size={25} /><strong>{demo ? "Un espace pour essayer." : "Votre appareil. Votre coffre."}</strong><p>{demo ? "L’exercice reste en mémoire dans cet onglet. Aucun enregistrement automatique." : "Les informations restent ici. Pensez à votre sauvegarde chiffrée."}</p></div>
     </aside><div class="desk-workspace">
+    <div class="workspace-utilities"><span><Icon name="lock" size={14} />{demo ? "Démonstration locale" : "Coffre ouvert sur cet appareil"}</span><button bind:this={searchButton} class="secondary" aria-expanded={searchOpen} aria-controls="workspace-search" disabled={busy} onclick={() => { searchOpen = !searchOpen; }}><Icon name="search" size={18} />Rechercher dans le coffre</button></div>
+    {#if searchOpen}<WorkspaceSearch workspace={master} canNavigate={searchCanNavigate} onOpen={openSearchResult} onClose={closeSearch} />{/if}
+    {#if !demo}<div class="client-switcher"><span>Registre de <strong>{master.organization.name}</strong><small>Repère du coffre : {master.id}</small></span><div><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Verrouiller ce registre et revenir aux coffres" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient()}>Changer de registre</button><button class="text-button" disabled={!searchCanNavigate} title={searchCanNavigate ? "Créer un coffre distinct" : "Terminez votre saisie puis revenez à Ma mission"} onclick={() => changeClient(true)}>Ajouter un client</button></div></div>{/if}
     <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "dpo" ? "Les dossiers de votre mission." : panel === "pia-sharing" ? "Restituer votre analyse d’impact." : panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
     {#if !demo}<p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>{/if}
     {#if demo && !editor}<DemoGuide {panel} busy={busy || piaEditing} onNavigate={(next) => panel = next} />{/if}
@@ -409,11 +461,11 @@
     {:else if panel === "overview"}
       {#if demo}<DemoOverview {busy} onNavigate={(next) => panel = next} />{:else}<MissionOverview workspace={master} {busy} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
     {:else if panel === "dpo"}
-      <DpoCases workspace={master} {busy} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
+      {#key searchNavigation}<DpoCases workspace={master} {busy} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "pia-sharing"}
       {#key master.revision}<PiaSharing workspace={$state.snapshot(master)} {busy} onDeliver={deliverPia} onDownload={downloadPia} />{/key}
     {:else if panel === "pia"}
-      <PiaPanel workspace={master} {busy} {demo} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
+      {#key searchNavigation}<PiaPanel workspace={master} {busy} {demo} initialActivityId={piaActivityId} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "analysis" || panel === "flows"}
       {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo && panel === "analysis" ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
@@ -436,7 +488,7 @@
     {:else if panel === "import"}
       {#key master.revision}<ImportPanel workspace={$state.snapshot(master)} {busy} onSave={saveNext} />{/key}
     {:else if panel === "documents"}
-      {#key master.revision}<DocumentsPanel workspace={$state.snapshot(master)} {busy} onSave={saveNext} />{/key}
+      {#key master.revision}<DocumentsPanel workspace={$state.snapshot(master)} {busy} initialDocumentId={documentId} onSave={saveNext} />{/key}
     {:else if panel === "actions"}
       {#key master.revision}<ActionsPanel workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} />{/key}
     {:else if panel === "delivery"}
@@ -449,17 +501,18 @@
   {:else}
     <div class="welcome-hero"><header class="intro"><p class="eyebrow"><span class="eyebrow-line"></span>{fr.welcome.eyebrow}</p><h1>{fr.welcome.title}<br /><em>{fr.welcome.subtitle}</em></h1><p>{fr.welcome.description}</p><div class="actions hero-actions"><button id="explorer-demo" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Explorer la démo <Icon name="arrow" size={17} /></button><a class="button secondary" href="#creer-registre">{fr.welcome.start}</a></div><p class="hero-demo-caption">Un dossier déjà rempli. Sans compte, sans phrase secrète à créer.</p><div class="trust-row"><span><Icon name="lock" size={17} />Coffre chiffré</span><span><Icon name="shield" size={17} />Sans compte</span><span><Icon name="documents" size={17} />Partage choisi</span></div></header><ProcessingAtlas /></div>
     <section class="demo-invitation"><span class="demo-invitation-mark" aria-hidden="true">S.</span><div><p class="eyebrow">Entrez dans un dossier, pas devant une page vide</p><h2>Rencontrez Maison Sillage.</h2><p>4 activités, 7 flux, une AIPD et un dossier à partager. Un cas fictif pour essayer les gestes de votre prochaine mission.</p></div><button class="secondary" disabled={!hydrated || busy || stale} onclick={exploreDemo}>Ouvrir le dossier fictif <Icon name="arrow" /></button></section>
-    <p class="business-entry"><Icon name="book" size={20} /><a href="/app/privacy/guide/#trames-metier" target="_blank" rel="noopener noreferrer">Préparer un entretien : 6 trames métier sourcées</a><span>Recrutement · RH · Clients · Associations · Contact · Prestations</span></p>
+    <p class="business-entry"><Icon name="book" size={20} /><a href="/app/privacy/guide/#trames-metier" target="_blank" rel="noopener noreferrer">Préparer un entretien : {startingPoints.length} trames métier sourcées</a><span>RH · Commercial · Achats · Accueil · Sécurité · Prestations</span></p>
     <section class="use-cases" aria-label="Ce que vous pouvez faire avec RGPDESK">
       <article><Pictogram kind="register" /><p class="eyebrow">01 / Décrire</p><h2>Un registre structuré.</h2><p>Une fiche par activité : pourquoi ces données, pour quelles personnes, avec quels intervenants et quelles mesures.</p></article>
       <article><Pictogram kind="analysis" /><p class="eyebrow">02 / Examiner</p><h2>Des choix argumentés.</h2><p>Des flux à l’AIPD : comparez les alternatives, examinez les risques pour les personnes et reliez vos sources aux mesures et à une revue motivée.</p></article>
       <article><Pictogram kind="delivery" /><p class="eyebrow">03 / Communiquer</p><h2>Un dossier choisi et relu.</h2><p>Sélectionnez le destinataire et les activités, relisez le contenu, puis téléchargez un dossier HTML, CSV et JSON.</p></article>
     </section>
     <div class="onboarding-note"><div><h2>Votre travail reste sur votre appareil.</h2><p>Le coffre protège votre registre dans ce navigateur. Sans compte ni synchronisation, vous gardez la main sur vos sauvegardes chiffrées et vos partages.</p></div><a href="/app/privacy/guide/#2-votre-premier-registre-pas-à-pas" target="_blank" rel="noopener noreferrer">Me guider pour commencer <Icon name="arrow" size={17} /></a></div>
+    <aside class="cabinet-intro"><span class="cabinet-monogram" aria-hidden="true"><Icon name="organization" size={34} /></span><div><p class="eyebrow">Un organisme, un espace dédié</p><h2>Plusieurs clients. Des registres séparés.</h2><p>DPO externe : créez un coffre par client. Chaque organisation garde ses activités, ses analyses et sa sauvegarde. Ouvrez le coffre du client concerné pour reprendre sa mission.</p><p class="help">Les noms restent chiffrés jusqu’à l’ouverture. Notez le repère de chaque coffre avec sa phrase dans votre gestionnaire de mots de passe. La recherche porte uniquement sur le client ouvert.</p></div></aside>
     <div class="grid-two vault-panels">
-      <section class="panel" id="creer-registre"><p class="eyebrow">Votre premier registre</p><h2>Créer le registre de mon organisation</h2><p class="help">Choisissez la phrase qui chiffre votre espace de travail. Conservez-la : elle sera nécessaire pour rouvrir le coffre et restaurer une sauvegarde.</p>
+      <section class="panel" id="creer-registre"><p class="eyebrow">Nouvel organisme ou nouveau client</p><h2>Créer le registre de mon organisation</h2><p class="help">Choisissez la phrase qui chiffre votre espace de travail. Conservez-la : elle sera nécessaire pour rouvrir le coffre et restaurer une sauvegarde.</p>
         <form onsubmit={(event) => { event.preventDefault(); void create(); }}><fieldset disabled={!ready || busy || stale}>
-          <label class="field"><span>Nom de l’organisme</span><input maxlength="160" required bind:value={organizationName} autocomplete="off" placeholder="Association fictive Les Alizés" /></label>
+          <label class="field"><span>Nom de l’organisme</span><input id="create-client-name" maxlength="160" required bind:value={organizationName} autocomplete="off" placeholder="Association fictive Les Alizés" /></label>
           <label class="field"><span>Nouvelle phrase secrète</span><input type="password" required minlength="12" maxlength="1024" bind:value={phraseInput} autocomplete="new-password" /></label>
           <label class="field"><span>Confirmer la phrase secrète</span><input type="password" required maxlength="1024" bind:value={confirmation} autocomplete="new-password" /></label>
           <p class="help">Préférez une phrase longue et unique. Aucun titre métier n’est visible après verrouillage.</p>
@@ -467,7 +520,7 @@
           <button type="submit">{busy ? "Opération en cours…" : "Créer le coffre chiffré"}</button>
         </fieldset></form>
       </section>
-      <section class="panel"><p class="eyebrow">02 / Coffres de ce navigateur</p><h2>Reprendre votre travail</h2>
+      <section class="panel" id="client-vaults"><p class="eyebrow">Vos clients et organisations</p><h2 id="client-vaults-title" tabindex="-1">Reprendre votre travail</h2>
         <p class="help">Vos coffres sont enregistrés sur cet appareil, dans ce navigateur. Leur contenu n’est pas envoyé au serveur RGPDESK.</p>
         {#if inventoryStatus === "loading"}<p role="status">Recherche des coffres enregistrés…</p>
         {:else if inventoryStatus === "error"}<p class="notice error" role="alert">La liste des coffres n’a pas pu être lue. Cela ne signifie pas qu’ils ont été effacés. Aucun coffre n’est créé ni remplacé par cette vérification.</p>
@@ -475,7 +528,7 @@
         {:else if records.length === 0}<p class="empty">Aucun coffre trouvé à cette adresse dans ce profil navigateur.</p>{/if}
         <button class="secondary" disabled={busy || stale || inventoryStatus === "loading"} onclick={() => void inventory?.refresh()}>Actualiser la liste des coffres</button>
         <details><summary>Je ne retrouve pas un coffre</summary><p>Site associé à ce stockage local : <strong>{storageOrigin || "Vérification en cours"}</strong>. Cette adresse permet au navigateur de retrouver les coffres ; elle ne désigne pas un stockage sur le serveur.</p><p>Revenez à l’adresse exacte et au profil navigateur utilisés lors de sa création. Le site rgpdesk.fr, la version locale et les différents ports locaux ont des stockages séparés. Une fenêtre privée peut aussi utiliser un espace distinct.</p><p>Ne créez pas un coffre de remplacement et n’effacez pas les données du site pour résoudre ce problème. Si vous avez une sauvegarde chiffrée, la restauration ci-dessous refuse d’écraser un coffre existant.</p></details>
-        <ul class="records">{#each records as item, index (item.id)}<li><span>Coffre {index + 1}<small>Révision {item.revision}</small></span><button class="secondary" disabled={!ready || busy || stale} onclick={() => { selectedId = item.id; phraseInput = ""; }}>Ouvrir le coffre {index + 1}</button></li>{/each}</ul>
+        <ul class="records">{#each records as item, index (item.id)}<li><span>Coffre {index + 1}<small>Révision {item.revision}</small><small class="vault-reference">Repère : {item.id}</small></span><button class="secondary" disabled={!ready || busy || stale} onclick={() => { selectedId = item.id; phraseInput = ""; }}>Ouvrir le coffre {index + 1}</button></li>{/each}</ul>
         {#if selectedId}<form onsubmit={(event) => { event.preventDefault(); void unlock(); }}><fieldset disabled={!ready || busy || stale}><label class="field"><span>Phrase secrète du coffre</span><input type="password" maxlength="1024" required bind:value={phraseInput} autocomplete="off" /></label><button type="submit">Déverrouiller</button></fieldset></form>{/if}
         <p class="help">Les noms et contenus restent chiffrés. Ce stockage dépend du domaine et du profil navigateur ; il peut être effacé par le navigateur ou son utilisateur.</p>
       </section>

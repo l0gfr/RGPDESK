@@ -6,6 +6,60 @@ export const startingPoints = [
   { id: "members", title: "Gestion des adhésions", icon: "register", team: "Secrétariat, trésorerie, responsables de l’association", question: "Comment sont gérées les inscriptions et les renouvellements ?", prepare: "Bulletin d’adhésion, notice aux adhérents, outils utilisés et règles d’accès.", prompt: "Décrivez les informations demandées aux adhérents et les destinataires. Ne recopiez pas le fichier nominatif des membres." },
   { id: "contact", title: "Gestion des demandes de contact", icon: "delivery", team: "Accueil, communication, équipe qui répond", question: "Qui reçoit les demandes et comment leur réponse est-elle suivie ?", prepare: "Formulaire en ligne, boîte de réception, notice affichée et prestataire du site.", prompt: "Suivez une demande fictive jusqu’à sa clôture. Une inscription à une lettre d’information constitue un autre usage à examiner." },
   { id: "service", title: "Prestation pour un client", icon: "systems", team: "Responsable de la prestation, équipe technique, interlocuteur client", question: "Quelles opérations réalisez-vous sur les données confiées par votre client ?", prepare: "Contrat, instructions du client, liste des outils et des autres prestataires.", prompt: "Précisez le périmètre du service et les clients concernés. Le choix du rôle dépend des opérations réelles, pas du nom de la prestation." },
+  {
+  "id": "prospecting",
+  "title": "Prospection et lettres commerciales",
+  "icon": "delivery",
+  "team": "Communication, marketing, équipe commerciale",
+  "question": "Comment une adresse entre-t-elle dans la liste et comment en sort-elle ?",
+  "prepare": "Formulaire, message type, preuve de choix et circuit de désinscription.",
+  "prompt": "Distinguez messages de service, prospection et suivi des ouvertures."
+},
+  {
+  "id": "suppliers",
+  "title": "Achats et gestion des fournisseurs",
+  "icon": "folder",
+  "team": "Achats, comptabilité, responsable du contrat",
+  "question": "Qui utilise les coordonnées des fournisseurs et pour quelles opérations ?",
+  "prepare": "Fiche fournisseur vierge, circuit de commande et règle d’archivage.",
+  "prompt": "Décrivez les données des contacts et entrepreneurs individuels, sans importer les factures."
+},
+  {
+  "id": "support",
+  "title": "Assistance et réclamations clients",
+  "icon": "documents",
+  "team": "Support, service après-vente, responsables produit",
+  "question": "Que contient un ticket, qui le reçoit et quand est-il clôturé ?",
+  "prepare": "Formulaire de ticket, procédure d’escalade et notice du support.",
+  "prompt": "Distinguez assistance, contentieux et réutilisation des échanges pour un autre objectif."
+},
+  {
+  "id": "premises",
+  "title": "Badges et accès aux locaux",
+  "icon": "key",
+  "team": "Services généraux, accueil, sécurité des locaux",
+  "question": "Comment sont attribués, utilisés puis désactivés les accès ?",
+  "prepare": "Plan des accès, profils d’habilitation et notice aux salariés ou visiteurs.",
+  "prompt": "Séparez la sécurité des locaux du suivi du temps de travail."
+},
+  {
+  "id": "video",
+  "title": "Vidéosurveillance des locaux",
+  "icon": "eye",
+  "team": "Sécurité des locaux, direction, représentants du personnel",
+  "question": "Pourquoi chaque caméra est-elle installée et qui regarde les images ?",
+  "prepare": "Plan des caméras, panneaux d’information et règles de consultation.",
+  "prompt": "Délimitez les zones filmées, les publics concernés et les accès à distance."
+},
+  {
+  "id": "logging",
+  "title": "Journaux et sécurité informatique",
+  "icon": "shield",
+  "team": "Équipe informatique, sécurité, responsables des applications",
+  "question": "Quels événements sont enregistrés et pour quelle utilisation ?",
+  "prepare": "Exemple de structure de journal sans données réelles, habilitations et règle de purge.",
+  "prompt": "Décrivez les catégories de traces, jamais des mots de passe, secrets ou journaux réels."
+},
 ] as const;
 export type StartingPoint = typeof startingPoints[number];
 

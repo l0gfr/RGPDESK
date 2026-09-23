@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { businessGuides, businessSources, sourceConsultation, type BusinessSourceId } from "../business-guides";
+  import { businessGuides, businessSources, sourceConsultation, type BusinessGuide, type BusinessSourceId } from "../business-guides";
   import type { StartingPoint } from "../guidance";
   import Icon from "./Icon.svelte";
   let { example }: { example: StartingPoint } = $props();
-  let guide = $derived(businessGuides[example.id]);
+  let guide: BusinessGuide = $derived(businessGuides[example.id]);
   let sources = $derived([...new Set<BusinessSourceId>([guide.attentionSource, ...guide.questions.map((question) => question.source)])]);
 </script>
 
@@ -17,5 +17,5 @@
     {/each}
   </ol>
   <div class="business-outcome"><Icon name="actions" size={24} /><div><strong>À la fin de l’entretien</strong><p>Dans la fiche, consignez les faits établis. Pour chaque réponse manquante, notez qui la recherche et quel document manque. Après enregistrement, utilisez <b>Préparer les questions de cette activité</b> pour organiser les actions.</p></div></div>
-  <details class="business-sources"><summary>Sources et portée de cette trame</summary><p>Consultation des sources : {sourceConsultation}. Les questions ci-dessus sont une aide au travail, pas un questionnaire officiel de la CNIL. Le texte du règlement, les recommandations et les exemples n’ont pas la même portée. Aucun choix de base légale ou de conservation n’est repris automatiquement.</p><ul>{#each sources as id}<li><a href={businessSources[id].url} target="_blank" rel="noopener noreferrer">{businessSources[id].title}</a><br /><small>{businessSources[id].nature} · {businessSources[id].edition}</small></li>{/each}</ul></details>
+  <details class="business-sources"><summary>Sources et portée de cette trame</summary><p>Consultation des sources : {guide.consultedAt ?? sourceConsultation}. Les questions ci-dessus sont une aide au travail, pas un questionnaire officiel de la CNIL. Le texte du règlement, les recommandations et les exemples n’ont pas la même portée. Aucun choix de base légale ou de conservation n’est repris automatiquement.</p><ul>{#each sources as id}<li><a href={businessSources[id].url} target="_blank" rel="noopener noreferrer">{businessSources[id].title}</a><br /><small>{businessSources[id].nature} · {businessSources[id].edition}</small></li>{/each}</ul></details>
 </div>

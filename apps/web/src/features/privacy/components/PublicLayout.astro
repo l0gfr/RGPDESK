@@ -1,0 +1,23 @@
+---
+import SiteHeader from "./SiteHeader.astro";
+import favicon from "../assets/rgpdesk-symbol.svg?url";
+import "../privacy.css";
+import "../atelier.css";
+interface Props { title: string; description: string; current: "faq" | "support" }
+const { title, description, current } = Astro.props;
+---
+<!doctype html>
+<html lang="fr">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" /><meta name="referrer" content="no-referrer" />
+    <link rel="icon" type="image/svg+xml" href={favicon} /><meta name="description" content={description} />
+    <title>RGPDESK | {title}</title>
+  </head>
+  <body class="rgpdesk"><a class="skip-link" href="#main">Aller au contenu</a><SiteHeader current={current} />
+    <main id="main" class="public-main"><slot /></main>
+    <footer class="privacy-footer"><p>RGPDESK · Votre registre, vos références, vos décisions.</p>
+      <p><a href="/app/privacy/guide/">Guide</a> · <a href="/app/privacy/faq/">FAQ</a> · <a href="/app/privacy/soutenir/">Nous soutenir</a> · <a href="/app/privacy/confidentialite/">Confidentialité et limites</a></p>
+      <p><a href="https://github.com/l0gfr/RGPDESK" target="_blank" rel="noopener noreferrer">Code source</a> · <a href="/LICENSE.txt">AGPL-3.0-only</a> · Dérivé de BLACKPROOF-AGPL.</p>
+    </footer>
+  </body>
+</html>

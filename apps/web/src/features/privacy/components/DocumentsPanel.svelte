@@ -4,8 +4,10 @@
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import { CONTRACT_METHOD } from "../review-methods";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, onSave }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<void> } = $props();
+  let { workspace, busy, onSave, initialDocumentId = "" }: { initialDocumentId?: string; workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<void> } = $props();
   let draft = $state<EvidenceReference | null>(null); let reviewed = $state(false); let due = $state("");
+  let consumedSearch = $state("");
+  $effect(() => { if (initialDocumentId && consumedSearch !== initialDocumentId) { consumedSearch = initialDocumentId; const doc = workspace.documents.find((d) => d.id === initialDocumentId); if (doc) edit(doc); } });
   const categories = { contract: "Contrat / acte", notice: "Notice d’information", policy: "Politique", analysis: "Analyse", other: "Autre" };
   function create() { draft = { id: crypto.randomUUID(), workspaceId: workspace.id, title: "", category: "contract", contractReview: null, activityIds: [], purposeIds: [], partyIds: [], scope: "", version: "", declaredAuthor: "", internalRef: "", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: null, audience: "", channel: "", availability: unknown() }; reviewed = false; due = ""; }
   function edit(doc: EvidenceReference) { draft = structuredClone($state.snapshot(doc)); reviewed = false; due = doc.reviewDue ?? ""; }

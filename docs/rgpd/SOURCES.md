@@ -174,3 +174,19 @@ Les contrôles de complétude, plafonds et règles de conservation des revues so
 | [CNIL, notifier une violation](https://www.cnil.fr/fr/services-en-ligne/notifier-une-violation-de-donnees-personnelles) | Démarche externe de notification ; aucune connexion, saisie ou transmission automatique depuis RGPDESK. |
 
 Les plafonds, le suivi de changements, la conservation des revues et les règles de projection des rapports sont des choix produit. Ils ne sont pas présentés comme des obligations de la réglementation. Les questions ont une édition datée et une référence affichée ; aucun avis humain indépendant n’est présumé.
+
+
+## Extension des entretiens PME / associations (23 septembre 2026)
+
+Questions originales RGPDESK, sans reprise de durée ni de fondement par défaut. Les sources CNIL ci-dessous ont été consultées le 23 septembre 2026. Leur portée est méthodologique et dépend du contexte ; elles ne valident aucun traitement. Les nouvelles trames portent leur propre date de consultation dans `business-guides.ts`.
+
+| Source et version | Usage dans les entretiens |
+| --- | --- |
+| [CNIL, prospection par courrier électronique, SMS-MMS et automate d’appel](https://www.cnil.fr/fr/la-prospection-commerciale-par-courrier-electronique-sms-mms-et-automate-dappel), 10 juin 2026 | Public, origine des coordonnées, consentement ou exception à examiner, opposition. La nouvelle trame est limitée au courriel ; elle ne tranche pas les régimes des autres canaux ou traceurs. |
+| [CNIL, accès aux locaux et horaires](https://www.cnil.fr/fr/acces-locaux-controle-des-horaires-au-travail), mise à jour du 17 juin 2026 | Distinction des finalités, habilitations, information et cycle de vie des accès. |
+| [CNIL, vidéosurveillance au travail](https://www.cnil.fr/fr/la-videosurveillance-videoprotection-au-travail), page datée du 23 juillet 2018 | Objectif, cadrage, consultation, information, conservation et formalités selon le lieu. Aucun avis automatique de licéité. |
+| [CNIL, tracer les opérations](https://www.cnil.fr/fr/securite-tracer-les-operations), 14 mars 2024 | Contenu et usages des traces, accès, information, exploitation et suppression. Aucune collecte de vrais journaux dans RGPDESK. |
+| [CNIL, référentiel des activités commerciales](https://www.cnil.fr/sites/cnil/files/atoms/files/referentiel_traitements-donnees-caractere-personnel_gestion-activites-commerciales.pdf), sections 2, 3 et 5 à 8 | Assistance, réclamations et service après-vente. Trame volontairement distincte de la prospection. |
+| [RGPD, source officielle EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), articles 5, 6, 28 et 30 ; ressource CNIL « Informer les personnes » déjà référencée | Questions sur les données des contacts fournisseurs, les finalités, le périmètre, les destinataires et l’archivage. Le texte intégral EUR-Lex a de nouveau répondu par une protection JavaScript lors de cette consultation ; les références déjà documentées du dépôt ont été conservées et les extraits institutionnels indexés des articles 5 et 6 recoupés. |
+
+Le choix « un coffre par client » et la recherche limitée au coffre ouvert sont des choix de cloisonnement du produit, pas des prescriptions attribuées au règlement. La recherche ne constitue ni un diagnostic de conformité ni une recherche dans les justificatifs originaux.

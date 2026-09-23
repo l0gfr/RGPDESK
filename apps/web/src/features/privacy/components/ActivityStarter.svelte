@@ -4,6 +4,9 @@
   import Icon from "./Icon.svelte";
   import InterviewPlaybook from "./InterviewPlaybook.svelte";
   let { busy, onStart }: { busy: boolean; onStart: (role: Activity["role"], example?: StartingPoint) => void } = $props();
+  import { normalizeSearch } from "../search";
+  let filter = $state("");
+  let visible = $derived(startingPoints.filter((entry) => normalizeSearch(`${entry.title} ${entry.team} ${entry.prompt}`).includes(normalizeSearch(filter.slice(0, 160)))));
   let selected: StartingPoint | null = $state(null);
 </script>
 
@@ -11,8 +14,10 @@
   <p class="eyebrow">Un point de départ pour votre entretien</p>
   <h2 id="starter-title">Quelle activité souhaitez-vous décrire ?</h2>
   <p>Partez d’une activité que vous connaissez. Ces trames vous aident à préparer les questions ; vous remplirez la fiche avec les réponses de votre organisation.</p>
+  <label class="field catalogue-filter">Trouver une activité<input type="search" bind:value={filter} maxlength="160" autocomplete="off" placeholder="RH, fournisseurs, sécurité…" /></label>
+  <p class="help" role="status">{visible.length} trame(s) disponible(s). Vous pouvez aussi partir d’une fiche libre.</p>
   <div class="starter-grid" role="group" aria-label="Points de départ métier">
-    {#each startingPoints as example}
+    {#each visible as example}
       <button class="starter-card secondary" class:selected={selected?.id === example.id} aria-pressed={selected?.id === example.id} disabled={busy} onclick={() => selected = example}><Icon name={example.icon} size={22} /><span>{example.title}</span></button>
     {/each}
   </div>

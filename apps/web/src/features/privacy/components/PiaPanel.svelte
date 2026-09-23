@@ -9,8 +9,15 @@
   import PiaDossier from "./PiaDossier.svelte";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, demo = false, onSave, onEditing, onRegister }: { workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void } = $props();
+  let { workspace, busy, demo = false, onSave, onEditing, onRegister, initialActivityId = "" }: { initialActivityId?: string; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void } = $props();
   let draft: ImpactAssessment | null = $state(null);
+  let consumedSearch = $state("");
+  $effect(() => {
+    if (initialActivityId && consumedSearch !== initialActivityId && !draft) {
+      consumedSearch = initialActivityId;
+      if (workspace.impactAssessments.some((p) => p.activityId === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); }
+    }
+  });
   let activityId = $state("");
   let step = $state(0);
   let author = $state("");
@@ -27,10 +34,11 @@
   let points = $derived.by(() => draft ? piaOpenPoints(draft.content) : []);
   let context = $derived.by(() => draft ? piaContext(workspace, draft.activityId) : null);
   async function go(index: number) { step = index; await tick(); stepHeading?.focus(); }
-  function open() {
-    if (!selected) return;
-    const existing = workspace.impactAssessments.find((p) => p.activityId === selected.id);
-    draft = existing ? structuredClone($state.snapshot(existing)) : createImpactAssessment(workspace.id, $state.snapshot(selected), crypto.randomUUID());
+  function open(requestedId?: string) {
+    const target = requestedId ? workspace.activities.find((a) => a.id === requestedId) : selected;
+    if (!target) return;
+    const existing = workspace.impactAssessments.find((p) => p.activityId === target.id);
+    draft = existing ? structuredClone($state.snapshot(existing)) : createImpactAssessment(workspace.id, $state.snapshot(target), crypto.randomUUID());
     step = 0; beforeRemoval = null; localError = ""; reviewIndex = null; author = ""; reason = ""; acknowledged = false; outcome = "rework"; onEditing(true);
   }
   async function save() {
@@ -72,7 +80,7 @@
   {#if !draft}
     <div class="pia-cover"><div><p class="eyebrow">L’atelier d’impact</p><h2>Une décision que l’on peut expliquer.</h2><p>Du traitement envisagé aux effets sur les personnes : confrontez vos hypothèses, comparez les options et gardez la trace des arbitrages.</p></div><span class="pia-cover-mark" aria-hidden="true"><Icon name="analysis" size={76} /></span></div>
     <ol class="pia-route">{#each [["Décrire", "Le traitement et ses usages"], ["Questionner", "Son utilité et les alternatives"], ["Protéger", "Les personnes et leurs droits"], ["Décider", "Avec des preuves et des réserves"]] as [title, text], index}<li><span>0{index + 1}</span><strong>{title}</strong><small>{text}</small></li>{/each}</ol>
-    {#if selected}<label class="field">Traitement à étudier<select aria-label="Traitement à étudier" value={selected.id} onchange={(e) => activityId = e.currentTarget.value}>{#each workspace.activities as activity}<option value={activity.id}>{activity.title}</option>{/each}</select></label><button disabled={busy || (!workspace.impactAssessments.some((p) => p.activityId === selected!.id) && workspace.impactAssessments.length >= 40)} onclick={open}>{workspace.impactAssessments.some((p) => p.activityId === selected!.id) ? "Reprendre l’AIPD" : "Ouvrir une étude d’impact"}<Icon name="arrow" /></button>{:else}<p>Commencez par décrire une activité dans votre registre. Son contexte et ses flux serviront de point de départ.</p><button onclick={onRegister}>Ouvrir le registre</button>{/if}
+    {#if selected}<label class="field">Traitement à étudier<select aria-label="Traitement à étudier" value={selected.id} onchange={(e) => activityId = e.currentTarget.value}>{#each workspace.activities as activity}<option value={activity.id}>{activity.title}</option>{/each}</select></label><button disabled={busy || (!workspace.impactAssessments.some((p) => p.activityId === selected!.id) && workspace.impactAssessments.length >= 40)} onclick={() => open()}>{workspace.impactAssessments.some((p) => p.activityId === selected!.id) ? "Reprendre l’AIPD" : "Ouvrir une étude d’impact"}<Icon name="arrow" /></button>{:else}<p>Commencez par décrire une activité dans votre registre. Son contexte et ses flux serviront de point de départ.</p><button onclick={onRegister}>Ouvrir le registre</button>{/if}
     <p class="help">Une étude peut être commencée volontairement. Son ouverture ne signifie pas qu’elle est obligatoire. Vos notes d’analyse existantes sont reprises à l’ouverture, puis évoluent dans ce dossier.</p>
     {#each workspace.impactAssessments as pia}<div class="pia-ledger"><div><strong>{workspace.activities.find((a) => a.id === pia.activityId)?.title}</strong><p>{pia.reviews.length} revue(s) conservée(s) · {piaReviewState(workspace, pia) === "changed" ? "Contexte ou étude modifié depuis la dernière revue : réexamen à instruire" : pia.reviews.length ? "Pas de changement détecté depuis la dernière revue" : "Aucune décision enregistrée"}</p></div><button class="secondary" disabled={busy} onclick={() => { activityId = pia.activityId; draft = structuredClone($state.snapshot(pia)); step = 6; reviewIndex = null; onEditing(true); }}>Lire le dossier</button></div>{/each}
     <p class="help">Trame RGPDESK du 22 septembre 2026, appuyée sur l’article 35, les guides CNIL et les critères du G29. Aucune conclusion juridique n’est produite par l’outil.</p>

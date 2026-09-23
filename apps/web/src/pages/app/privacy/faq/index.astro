@@ -1,0 +1,169 @@
+---
+import PublicLayout from "../../../../features/privacy/components/PublicLayout.astro";
+import Icon from "../../../../features/privacy/components/Icon.svelte";
+const groups = [
+  {
+    "id": "commencer",
+    "title": "Prendre ses repères",
+    "icon": "book",
+    "questions": [
+      {
+        "id": "a-quoi-sert",
+        "title": "À quoi sert RGPDESK ?",
+        "answers": [
+          "À tenir votre registre de traitements et à préparer vos analyses dans un même dossier : finalités, données, intervenants, systèmes, flux, références et décisions. Les demandes de droits, violations, transferts et études AIPD ont aussi leur espace de travail.",
+          "Vous décrivez les faits, réunissez les éléments utiles et suivez ce qui reste à examiner. RGPDESK ne délivre ni score de conformité ni conclusion juridique automatique."
+        ]
+      },
+      {
+        "id": "pour-qui",
+        "title": "Est-ce adapté à une PME ou une association ?",
+        "answers": [
+          "Oui. Les trames métier donnent un point de départ pour les entretiens : salariés, recrutement, clients, adhérents, prospection, prestataires ou demandes d’assistance, par exemple.",
+          "Ce sont des questions et des exemples à adapter. Aucun fondement juridique ni délai de conservation n’est choisi à votre place."
+        ]
+      },
+      {
+        "id": "demo",
+        "title": "Puis-je essayer sans créer de coffre ?",
+        "answers": [
+          "Oui : choisissez « Explorer la démo » sur la page du bureau. Le dossier fictif contient des traitements, des flux, des analyses et des exemples de restitution.",
+          "La démo reste dans la mémoire de l’onglet et disparaît à sa fermeture ou à son rechargement. Pour garder l’exercice, téléchargez sa sauvegarde chiffrée ; vous pourrez la restaurer ensuite dans un coffre fictif distinct."
+        ]
+      },
+      {
+        "id": "multi-clients",
+        "title": "Je suis DPO externe. Puis-je gérer plusieurs clients ?",
+        "answers": [
+          "Créez un coffre par client avec « Ajouter un client ». Chaque coffre contient son propre registre ; « Changer de registre » permet de passer de l’un à l’autre après enregistrement.",
+          "Une fois verrouillés, les coffres portent des repères techniques, pas le nom en clair du client. La recherche porte uniquement sur le registre ouvert. Il n’y a pas de tableau de bord consolidé ni d’accès partagé entre collaborateurs."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "donnees",
+    "title": "Garder la main sur son travail",
+    "icon": "lock",
+    "questions": [
+      {
+        "id": "local",
+        "title": "Mes données sont-elles stockées sur rgpdesk.fr ?",
+        "answers": [
+          "Votre registre est chiffré et enregistré dans le stockage local de votre navigateur. Le serveur fournit l’application ; il ne reçoit pas le contenu de votre coffre.",
+          "L’adresse du site sert au navigateur à séparer les espaces de stockage. Changer de domaine, de navigateur, de profil ou d’appareil ne retrouve donc pas automatiquement le même coffre."
+        ]
+      },
+      {
+        "id": "coffre-invisible",
+        "title": "Je ne vois plus mon coffre. Que vérifier ?",
+        "answers": [
+          "Revenez à l’adresse, au navigateur et au profil utilisés lors de sa création. Attendez la fin du chargement de la liste. Si l’application signale une erreur de lecture, ne la confondez pas avec une liste vide.",
+          "Ne supprimez pas les données du navigateur pour tenter de réparer la situation. Si le stockage a été effacé, une sauvegarde chiffrée et sa phrase secrète sont nécessaires pour restaurer le coffre."
+        ]
+      },
+      {
+        "id": "sauvegarde",
+        "title": "La sauvegarde du serveur protège-t-elle mon registre ?",
+        "answers": [
+          "Non : les sauvegardes du serveur ne contiennent pas les coffres enregistrés dans votre navigateur. Utilisez la rubrique « Sauvegarde » de chaque coffre et conservez le fichier chiffré dans un emplacement que vous maîtrisez.",
+          "Vérifiez sa restauration. Un export partageable ne remplace pas cette sauvegarde complète."
+        ]
+      },
+      {
+        "id": "phrase-perdue",
+        "title": "Pouvez-vous retrouver ma phrase secrète ?",
+        "answers": [
+          "Non. Il n’existe ni compte ni procédure de réinitialisation permettant de récupérer une phrase perdue. La phrase du coffre est aussi nécessaire pour restaurer sa sauvegarde chiffrée.",
+          "Conservez-la séparément et de manière sûre. Le chiffrement ne protège pas les informations affichées dans un coffre ouvert sur un appareil compromis."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "travailler",
+    "title": "Construire et relire le dossier",
+    "icon": "analysis",
+    "questions": [
+      {
+        "id": "flux",
+        "title": "Dois-je décrire les flux deux fois ?",
+        "answers": [
+          "Les flux se renseignent depuis la fiche du traitement : étapes, données qui circulent, intervenants et systèmes concernés. La cartographie reprend ces éléments déclarés.",
+          "Elle vous aide à relire le parcours des données ; elle ne découvre pas automatiquement les échanges de vos logiciels."
+        ]
+      },
+      {
+        "id": "analyse-pia",
+        "title": "Quelle différence entre l’analyse RGPD et l’AIPD ?",
+        "answers": [
+          "L’analyse RGPD accompagne l’examen du traitement : finalités, fondements juridiques, minimisation, conservation, droits, sécurité et autres points à documenter. L’atelier AIPD est un dossier distinct avec sa propre étude, ses risques, ses mesures et ses revues.",
+          "L’outil organise votre raisonnement et vos références. Il ne décide pas seul si une AIPD est requise et ne valide pas votre étude."
+        ]
+      },
+      {
+        "id": "recherche",
+        "title": "La recherche envoie-t-elle mes mots-clés à un service ?",
+        "answers": [
+          "Non. Elle fonctionne dans le registre déverrouillé, sans moteur distant. Elle retrouve les traitements, flux, dossiers DPO, études AIPD et références documentaires pris en charge.",
+          "Elle ne cherche pas dans les autres coffres verrouillés ni dans des pièces jointes. La requête et l’index de recherche ne sont pas conservés après le verrouillage."
+        ]
+      },
+      {
+        "id": "excel",
+        "title": "Puis-je importer mon fichier Excel ?",
+        "answers": [
+          "L’import porte sur un fichier CSV. Exportez la feuille utile depuis votre tableur, puis associez les colonnes aux champs proposés et relisez l’aperçu avant de confirmer.",
+          "Un classeur complet, ses formules et ses macros ne sont pas importés. Gardez l’original : aucun modèle de tableur n’est repris intégralement de façon automatique."
+        ]
+      }
+    ]
+  },
+  {
+    "id": "partager",
+    "title": "Transmettre sans tout dévoiler",
+    "icon": "delivery",
+    "questions": [
+      {
+        "id": "partage",
+        "title": "Que reçoit le destinataire d’un dossier ?",
+        "answers": [
+          "Les champs que vous avez sélectionnés et prévisualisés dans « Partager un dossier ». Le ZIP contient un rapport HTML lisible, des tableaux CSV, des données JSON et un inventaire technique.",
+          "Il s’agit d’une copie en clair. Relisez les textes avant de transmettre : une information personnelle peut se trouver dans un champ autorisé. Les notes internes et l’étude AIPD ne font pas partie de cet export du registre."
+        ]
+      },
+      {
+        "id": "restitution-pia",
+        "title": "Puis-je remettre une AIPD à mon client ?",
+        "answers": [
+          "La rubrique « Restitution AIPD » prépare un rapport HTML à partir d’une étude choisie. Sélectionnez les éléments, prévisualisez puis confirmez le contenu à remettre.",
+          "Cette restitution est distincte du dossier partageable du registre. Le rapport reflète vos saisies et vos revues, sans constituer une certification."
+        ]
+      },
+      {
+        "id": "verification",
+        "title": "Le vérificateur prouve-t-il que le dossier est conforme ?",
+        "answers": [
+          "Non. Il contrôle localement la structure et l’intégrité technique d’un dossier RGPDESK. Il ne confirme ni l’identité de son auteur, ni la vérité des faits déclarés, ni leur validité juridique.",
+          "Le fichier choisi pour cette vérification n’est pas téléversé."
+        ]
+      },
+      {
+        "id": "collaboration",
+        "title": "Peut-on modifier le même registre à plusieurs ?",
+        "answers": [
+          "RGPDESK est conçu pour une personne à la fois dans son navigateur, sans compte ni synchronisation. Un dossier envoyé à un collègue ou à un client est une copie à examiner.",
+          "Les retours doivent être repris dans votre registre. Il n’y a pas de fusion automatique de deux versions modifiées séparément."
+        ]
+      }
+    ]
+  }
+];
+---
+<PublicLayout title="FAQ : les réponses pour travailler sereinement" description="Stockage local, sauvegardes, plusieurs clients, AIPD et exports : les réponses aux questions sur RGPDESK." current="faq">
+  <header class="public-hero"><div><p class="eyebrow">Les repères du bureau</p><h1>Les bonnes questions.<br /><em>Des réponses claires.</em></h1><p>Avant de commencer, au fil d’un dossier ou juste avant de le transmettre. Retrouvez ici les règles du jeu.</p></div><div class="public-seal" aria-hidden="true"><Icon name="help" size={74} /><span>LE CARNET<br />DES RÉPONSES</span></div></header>
+  <div class="faq-layout"><aside class="faq-index"><p class="eyebrow">Dans cette FAQ</p><nav aria-label="Rubriques de la FAQ">{groups.map((group, index) => <a href={`#${group.id}`}><span>0{index + 1}</span>{group.title}<Icon name={group.icon} size={19} /></a>)}</nav><p>Vous cherchez le mode d’emploi complet ?</p><a class="quiet-link" href="/app/privacy/guide/">Ouvrir le guide <Icon name="arrow" size={18} /></a></aside>
+    <div class="faq-sections">{groups.map((group, index) => <section id={group.id} aria-labelledby={`${group.id}-title`}><div class="public-section-title"><span class="section-number">0{index + 1}</span><h2 id={`${group.id}-title`}>{group.title}</h2></div>{group.questions.map((question) => <details class="faq-question" id={question.id}><summary>{question.title}<span aria-hidden="true">+</span></summary><div class="faq-answer">{question.answers.map((answer) => <p>{answer}</p>)}</div></details>)}</section>)}</div>
+  </div>
+  <aside class="public-closing"><Icon name="book" size={30} /><div><h2>Passer de la réponse à la pratique.</h2><p>Le guide détaille les étapes ; la démo vous montre le résultat.</p></div><a href="/app/privacy/guide/">Consulter le guide <Icon name="arrow" size={18} /></a></aside>
+</PublicLayout>

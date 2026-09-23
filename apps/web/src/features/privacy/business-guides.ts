@@ -1,6 +1,31 @@
 /** Human-readable interview support, never inputs to a legal decision or vault default. */
 export const sourceConsultation = "22 septembre 2026";
 export const businessSources = {
+  prospecting: {
+  "title": "CNIL · Prospection par voie électronique",
+  "url": "https://www.cnil.fr/fr/la-prospection-commerciale-par-courrier-electronique-sms-mms-et-automate-dappel",
+  "nature": "Explications de la CNIL",
+  "edition": "10 juin 2026"
+},
+  premises: {
+  "title": "CNIL · Accès aux locaux et horaires",
+  "url": "https://www.cnil.fr/fr/acces-locaux-controle-des-horaires-au-travail",
+  "nature": "Explications de la CNIL",
+  "edition": "Mise à jour du 17 juin 2026"
+},
+  video: {
+  "title": "CNIL · Vidéosurveillance au travail",
+  "url": "https://www.cnil.fr/fr/la-videosurveillance-videoprotection-au-travail",
+  "nature": "Explications de la CNIL",
+  "edition": "Page datée du 23 juillet 2018, consultée le 23 septembre 2026"
+},
+  logging: {
+  "title": "CNIL · Tracer les opérations",
+  "url": "https://www.cnil.fr/fr/securite-tracer-les-operations",
+  "nature": "Guide de sécurité CNIL",
+  "edition": "14 mars 2024"
+},
+
   recruitment: { title: "CNIL · Guide du recrutement", url: "https://www.cnil.fr/sites/default/files/atoms/files/guide_-_recrutement.pdf", nature: "Guide CNIL", edition: "30 janvier 2023" },
   staff: { title: "CNIL · Référentiel de gestion du personnel", url: "https://www.cnil.fr/sites/cnil/files/2023-09/referentiel_gestion_des_ressources_humaines.pdf", nature: "Référentiel CNIL", edition: "Modifié le 23 mai 2022" },
   staffRetention: { title: "CNIL · Conservation des données RH", url: "https://www.cnil.fr/sites/default/files/2026-04/referentiel_durees_de_conservation_gestion_des_ressources_humaines.pdf", nature: "Référentiel CNIL distinguant textes obligatoires et recommandations", edition: "Mis à jour le 20 mai 2026" },
@@ -25,6 +50,7 @@ export interface InterviewQuestion {
   location: string;
 }
 export interface BusinessGuide {
+  consultedAt?: string;
   scope: string;
   attention: string;
   attentionSource: BusinessSourceId;
@@ -110,4 +136,310 @@ export const businessGuides = {
       { topic: "Fin du service", ask: "Comment le client choisit-il entre restitution et suppression, et comment les copies sont-elles traitées ?", evidence: "Clause de sortie, procédure et éventuelle obligation de conservation.", source: "obligations", location: "Article 28, paragraphe 3, g" },
     ],
   },
+  prospecting: {
+  "scope": "Envois commerciaux par courriel. Examiner séparément les autres canaux et les traceurs éventuels.",
+  "attention": "Les règles dépendent du public et du contexte. Une relation commerciale ne dispense pas automatiquement d’examiner les conditions de prospection.",
+  "attentionSource": "prospecting",
+  "attentionLocation": "Particuliers, professionnels et exceptions",
+  "consultedAt": "23 septembre 2026",
+  "questions": [
+    {
+      "topic": "Public visé",
+      "ask": "S’adresse-t-on à des particuliers ou à des professionnels, et pour quel objet ?",
+      "evidence": "Ciblage et message type.",
+      "source": "prospecting",
+      "location": "Pour les particuliers / pour les professionnels"
+    },
+    {
+      "topic": "Origine",
+      "ask": "Comment les adresses ont-elles été obtenues et les personnes informées ?",
+      "evidence": "Parcours de collecte.",
+      "source": "prospecting",
+      "location": "Information des personnes"
+    },
+    {
+      "topic": "Choix des personnes",
+      "ask": "Comment démontrez-vous le choix exprimé ou les conditions de l’exception invoquée ?",
+      "evidence": "Version du formulaire et preuve.",
+      "source": "prospecting",
+      "location": "Consentement et exceptions"
+    },
+    {
+      "topic": "Arrêt des envois",
+      "ask": "Comment une opposition devient-elle effective dans toutes les listes concernées ?",
+      "evidence": "Test de désinscription.",
+      "source": "prospecting",
+      "location": "Opposition simple et gratuite"
+    },
+    {
+      "topic": "Prestataire d’envoi",
+      "ask": "Quelles opérations et quels accès sont confiés au routeur ?",
+      "evidence": "Contrat et schéma des échanges.",
+      "source": "obligations",
+      "location": "Articles 28 et 30"
+    },
+    {
+      "topic": "Fin d’usage",
+      "ask": "Quelle règle distingue liste active et informations nécessaires au respect des oppositions ?",
+      "evidence": "Règle justifiée et procédure.",
+      "source": "retention",
+      "location": "Cycle de vie et limitation de la conservation"
+    }
+  ]
+},
+  suppliers: {
+  "scope": "Contacts fournisseurs, entrepreneurs individuels et personnes intervenant dans le circuit d’achat.",
+  "attention": "Une entreprise fournisseur n’est pas automatiquement sous-traitante au sens du RGPD. Examinez les opérations réellement confiées.",
+  "attentionSource": "obligations",
+  "attentionLocation": "Article 28",
+  "consultedAt": "23 septembre 2026",
+  "questions": [
+    {
+      "topic": "Finalités",
+      "ask": "Quels usages distinguez-vous : sélection, commande, paiement, suivi du contrat ?",
+      "evidence": "Circuit d’achat.",
+      "source": "principles",
+      "location": "Article 5, paragraphe 1, b"
+    },
+    {
+      "topic": "Informations",
+      "ask": "Quelles données de personnes sont nécessaires à chaque usage ?",
+      "evidence": "Fiche fournisseur vierge.",
+      "source": "principles",
+      "location": "Article 5, paragraphe 1, c"
+    },
+    {
+      "topic": "Fondement",
+      "ask": "Quelle analyse justifie le fondement de chacun de ces usages ?",
+      "evidence": "Référence de l’analyse.",
+      "source": "principles",
+      "location": "Article 6"
+    },
+    {
+      "topic": "Destinataires",
+      "ask": "Quels services et organismes reçoivent ces informations ?",
+      "evidence": "Circuit de validation et transmissions.",
+      "source": "obligations",
+      "location": "Article 30, paragraphe 1, d"
+    },
+    {
+      "topic": "Conservation",
+      "ask": "Quelles pièces restent actives, puis archivées, selon quelle règle applicable ?",
+      "evidence": "Source et procédure d’archivage.",
+      "source": "principles",
+      "location": "Article 5, paragraphe 1, e"
+    },
+    {
+      "topic": "Information",
+      "ask": "Comment les contacts obtiennent-ils l’information sur leurs données et leurs droits ?",
+      "evidence": "Notice et canal de remise.",
+      "source": "information",
+      "location": "Information en cas de collecte directe ou indirecte"
+    }
+  ]
+},
+  support: {
+  "scope": "Assistance, réclamations et service après-vente. Les contentieux et nouveaux usages demandent leur propre examen.",
+  "attention": "Le référentiel commercial inclut les réclamations et le service après-vente ; son champ n’englobe pas tous les traitements d’une entreprise.",
+  "attentionSource": "commercial",
+  "attentionLocation": "Sections 2 et 3",
+  "consultedAt": "23 septembre 2026",
+  "questions": [
+    {
+      "topic": "Circuit du ticket",
+      "ask": "Comment une demande arrive-t-elle jusqu’à sa résolution ?",
+      "evidence": "Parcours d’un ticket fictif.",
+      "source": "commercial",
+      "location": "Section 3 : finalités"
+    },
+    {
+      "topic": "Contenu utile",
+      "ask": "Quels champs et pièces sont nécessaires, et quelles informations faut-il éviter ?",
+      "evidence": "Formulaire et consigne aux équipes.",
+      "source": "commercial",
+      "location": "Section 5 : données concernées"
+    },
+    {
+      "topic": "Accès",
+      "ask": "Qui consulte les échanges, y compris lors d’une escalade ?",
+      "evidence": "Profils d’accès.",
+      "source": "commercial",
+      "location": "Section 6 : destinataires"
+    },
+    {
+      "topic": "Information",
+      "ask": "Comment informe-t-on la personne lorsqu’elle contacte le support ?",
+      "evidence": "Notice du support.",
+      "source": "commercial",
+      "location": "Section 8 : information"
+    },
+    {
+      "topic": "Clôture",
+      "ask": "Quelle règle gouverne la conservation après résolution ou contentieux ?",
+      "evidence": "Règle et événement de départ.",
+      "source": "commercial",
+      "location": "Section 7 : durées de conservation"
+    },
+    {
+      "topic": "Réutilisations",
+      "ask": "Les échanges servent-ils à des statistiques, à la formation ou à une autre finalité ?",
+      "evidence": "Usages et analyse distincte.",
+      "source": "commercial",
+      "location": "Section 3 : finalités et réutilisation"
+    }
+  ]
+},
+  premises: {
+  "scope": "Attribution et suivi des accès physiques, pour les employés et visiteurs.",
+  "attention": "Contrôler l’accès aux locaux et contrôler les horaires sont des objectifs distincts. La trame ne qualifie pas leur licéité.",
+  "attentionSource": "premises",
+  "attentionLocation": "Dans quel but ?",
+  "consultedAt": "23 septembre 2026",
+  "questions": [
+    {
+      "topic": "Périmètre",
+      "ask": "Quels espaces et quelles personnes sont concernés ?",
+      "evidence": "Plan des accès.",
+      "source": "premises",
+      "location": "Pour l’accès aux locaux"
+    },
+    {
+      "topic": "Choix du dispositif",
+      "ask": "Quelles informations le dispositif collecte-t-il, avec ou sans biométrie ?",
+      "evidence": "Description du dispositif.",
+      "source": "premises",
+      "location": "Quels dispositifs mettre en œuvre ?"
+    },
+    {
+      "topic": "Usages réels",
+      "ask": "Les relevés sont-ils réutilisés pour contrôler horaires ou déplacements ?",
+      "evidence": "Procédure et usages déclarés.",
+      "source": "premises",
+      "location": "Quelles garanties pour la vie privée ?"
+    },
+    {
+      "topic": "Habilitations",
+      "ask": "Qui attribue les badges et consulte les historiques ?",
+      "evidence": "Matrice d’habilitation.",
+      "source": "premises",
+      "location": "Qui peut accéder aux données ?"
+    },
+    {
+      "topic": "Information",
+      "ask": "Comment salariés et visiteurs sont-ils informés ?",
+      "evidence": "Notice, affichage et procédure.",
+      "source": "premises",
+      "location": "L’information des salariés"
+    },
+    {
+      "topic": "Cycle de vie",
+      "ask": "Que devient l’habilitation au départ et quelle purge s’applique aux traces ?",
+      "evidence": "Règles et contrôles.",
+      "source": "premises",
+      "location": "Quelles durées de conservation ?"
+    }
+  ]
+},
+  video: {
+  "scope": "Caméras sur un lieu de travail. Examiner séparément les espaces ouverts au public et les dispositifs particuliers.",
+  "attention": "L’objectif et le cadrage de chaque caméra doivent être examinés. Une capacité de stockage ne justifie pas la conservation des images.",
+  "attentionSource": "video",
+  "attentionLocation": "Précautions et conservation",
+  "consultedAt": "23 septembre 2026",
+  "questions": [
+    {
+      "topic": "Objectif",
+      "ask": "Quel objectif précis justifie chaque caméra ?",
+      "evidence": "Plan et justification.",
+      "source": "video",
+      "location": "À retenir"
+    },
+    {
+      "topic": "Cadrage",
+      "ask": "Quelles zones et quelles personnes entrent dans le champ ?",
+      "evidence": "Angles de vue.",
+      "source": "video",
+      "location": "Précautions d’installation"
+    },
+    {
+      "topic": "Consultation",
+      "ask": "Qui visionne, extrait ou consulte à distance les images ?",
+      "evidence": "Habilitations et procédure.",
+      "source": "video",
+      "location": "Qui peut consulter les images ?"
+    },
+    {
+      "topic": "Information",
+      "ask": "Quels panneaux et quelles notices sont présentés aux personnes ?",
+      "evidence": "Supports d’information.",
+      "source": "video",
+      "location": "Quelle information ?"
+    },
+    {
+      "topic": "Conservation",
+      "ask": "Quelle règle distingue effacement habituel et extraction pour une procédure ?",
+      "evidence": "Règles et registre d’extractions.",
+      "source": "video",
+      "location": "Pendant combien de temps conserver les images ?"
+    },
+    {
+      "topic": "Cadre applicable",
+      "ask": "Le lieu est-il ouvert au public et quelles démarches ont été examinées ?",
+      "evidence": "Qualification du lieu et analyse.",
+      "source": "video",
+      "location": "Quelles formalités ?"
+    }
+  ]
+},
+  logging: {
+  "scope": "Traces applicatives et techniques utilisées pour la sécurité du système d’information.",
+  "attention": "Les journaux peuvent eux-mêmes contenir des données personnelles. Examiner leur contenu, leurs accès et leur utilisation.",
+  "attentionSource": "logging",
+  "attentionLocation": "Précautions élémentaires et ce qu’il ne faut pas faire",
+  "consultedAt": "23 septembre 2026",
+  "questions": [
+    {
+      "topic": "Événements",
+      "ask": "Quels événements doit-on pouvoir expliquer avec les traces ?",
+      "evidence": "Liste d’événements.",
+      "source": "logging",
+      "location": "Les précautions élémentaires"
+    },
+    {
+      "topic": "Contenu",
+      "ask": "Quelles catégories de données sont enregistrées sans recopier de secrets ?",
+      "evidence": "Structure vierge du journal.",
+      "source": "logging",
+      "location": "Ce qu’il ne faut pas faire"
+    },
+    {
+      "topic": "Accès",
+      "ask": "Qui consulte les traces et comment protège-t-on leur intégrité ?",
+      "evidence": "Habilitations et contrôles.",
+      "source": "logging",
+      "location": "Les précautions élémentaires"
+    },
+    {
+      "topic": "Information",
+      "ask": "Comment les utilisateurs sont-ils informés de cette journalisation ?",
+      "evidence": "Notice ou charte.",
+      "source": "logging",
+      "location": "Les précautions élémentaires"
+    },
+    {
+      "topic": "Usages",
+      "ask": "Comment évite-t-on de réutiliser les traces pour surveiller le temps travaillé ?",
+      "evidence": "Finalités et règles d’usage.",
+      "source": "logging",
+      "location": "Ce qu’il ne faut pas faire"
+    },
+    {
+      "topic": "Exploitation",
+      "ask": "Quelles règles encadrent analyse, conservation et suppression des traces ?",
+      "evidence": "Procédure et justification.",
+      "source": "logging",
+      "location": "Les précautions élémentaires"
+    }
+  ]
+},
 } as const satisfies Record<string, BusinessGuide>;

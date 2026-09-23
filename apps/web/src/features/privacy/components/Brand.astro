@@ -1,9 +1,9 @@
 ---
 import logo from "../assets/rgpdesk-logo.svg?url";
-interface Props { caption?: string }
-const { caption = "LE BUREAU DU DPO" } = Astro.props;
+interface Props { caption?: string; href?: string }
+const { caption = "LE BUREAU DU DPO", href = "/app/privacy/" } = Astro.props;
 ---
-<a class="wordmark" href="/app/privacy/" aria-label="RGPDESK, accueil">
+<a class="wordmark" href={href} aria-label="RGPDESK, accueil">
   <img class="brand-logo" src={logo} alt="RGPDESK" width="352" height="68" />
   <span class="brand-suffix">{caption}</span>
 </a>

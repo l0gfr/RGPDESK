@@ -1,5 +1,5 @@
 ---
-import Brand from "../../../features/privacy/components/Brand.astro";
+import SiteHeader from "../../../features/privacy/components/SiteHeader.astro";
 import favicon from "../../../features/privacy/assets/rgpdesk-symbol.svg?url";
 import PrivacyApp from "../../../features/privacy/components/PrivacyApp.svelte";
 import "../../../features/privacy/privacy.css";
@@ -17,7 +17,7 @@ import "../../../features/privacy/atelier.css";
   </head>
   <body class="rgpdesk">
     <a class="skip-link" href="#main">Aller au contenu</a>
-    <header class="site-bar"><Brand caption="LE BUREAU DU DPO" /><nav class="site-nav" aria-label="Aide"><a href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">Guide d’utilisation<span class="sr-only"> (nouvel onglet)</span></a><a href="/app/privacy/verify/" target="_blank" rel="noopener noreferrer">Vérifier un dossier<span class="sr-only"> (nouvel onglet)</span></a></nav></header>
+    <SiteHeader current="workspace" />
     <main id="main"><PrivacyApp client:load /><noscript>JavaScript est nécessaire pour le chiffrement et le stockage local. Aucune donnée ne sera envoyée à un serveur.</noscript></main>
     <footer class="privacy-footer"><p>RGPDESK · Registre, suivi documentaire et partage examiné</p><p>Dérivé de BLACKPROOF-AGPL. <a href="/LICENSE.txt">Licence AGPL-3.0-only</a> · <a href="/app/privacy/guide/" target="_blank" rel="noopener noreferrer">Guide d’utilisation</a> · <a href="/app/privacy/confidentialite/" target="_blank" rel="noopener noreferrer">Confidentialité et limites</a> · <a href="https://github.com/l0gfr/RGPDESK" rel="noreferrer noopener" target="_blank">Dépôt RGPDESK</a> · <a href="https://github.com/l0gfr/BLACKPROOF-AGPL" rel="noreferrer noopener" target="_blank">Source du socle</a></p><p>Un espace pour tenir votre registre, préparer vos échanges et suivre vos décisions.</p></footer>
   </body>

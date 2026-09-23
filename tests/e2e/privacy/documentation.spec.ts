@@ -32,7 +32,7 @@ test("guide is readable without JavaScript and every local link and chapter reso
     await expect(chapters).toHaveCount(17);
     await expect(chapters.filter({ hasText: "Les dossiers du DPO" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Restituer une AIPD" })).toHaveCount(1);
-    await expect(page.locator(".business-chapter")).toHaveCount(6);
+    await expect(page.locator(".business-chapter")).toHaveCount(12);
     await page.locator("#entretien-recruitment summary").first().click();
     await expect(page.locator("#entretien-recruitment .business-questions > li")).toHaveCount(6);
     await expect(page.locator("#entretien-recruitment")).toContainText("Fiche 13");
@@ -77,7 +77,7 @@ test("entry explains the product, keeps the guide separate from an open vault an
   await page.goto("/app/privacy/");
   await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Voyez vos données.");
-  const guide = page.getByRole("navigation", { name: "Aide" }).getByRole("link", { name: "Guide d’utilisation" });
+  const guide = page.getByRole("navigation", { name: "Navigation principale" }).getByRole("link", { name: "Guide", exact: false });
   await expect(guide).toHaveAttribute("target", "_blank");
   await expect(guide).toHaveAttribute("rel", /noopener/);
   await page.getByRole("link", { name: "Commencer mon registre" }).click();
@@ -95,4 +95,40 @@ test("entry explains the product, keeps the guide separate from an open vault an
   await page.emulateMedia({ media: "print" });
   await expect(page.getByRole("navigation", { name: "Sommaire du guide" })).toBeHidden();
   await expect(page.getByRole("heading", { name: "9. Sauvegarder et restaurer sans perdre son travail", exact: true })).toBeVisible();
+});
+
+
+test("FAQ and support work without JavaScript and the mobile navigation stays local", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
+  try {
+    const page = await context.newPage();
+    const origins: string[] = [];
+    page.on("request", (request) => origins.push(new URL(request.url()).origin));
+    await page.goto("/app/privacy/faq/");
+    await expect(page.locator(".faq-question")).toHaveCount(16);
+    await page.locator("#sauvegarde > summary").press("Enter");
+    await expect(page.locator("#sauvegarde .faq-answer")).toBeVisible();
+    await expect(page.locator("#sauvegarde .faq-answer")).toContainText("les sauvegardes du serveur ne contiennent pas les coffres");
+    await page.setViewportSize({ width: 320, height: 800 });
+    await page.locator(".desk-menu > summary").click();
+    await expect(page.getByRole("navigation", { name: "Navigation mobile" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.getByRole("navigation", { name: "Navigation mobile" }).getByRole("link", { name: /Nous soutenir/ }).click();
+    await expect(page.getByRole("heading", { name: "Le soutien financier ouvrira prochainement." })).toBeVisible();
+    await expect(page.locator('a[href*="stripe.com"], script, iframe, form')).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(new Set(origins)).toEqual(new Set([new URL(baseURL!).origin]));
+  } finally { await context.close(); }
+});
+
+test("the header keeps the current dossier and opens auxiliary pages separately", async ({ page }) => {
+  await page.goto("/app/privacy/");
+  await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
+  await page.getByRole("button", { name: "Explorer la démo", exact: true }).click();
+  await page.getByRole("navigation", { name: "Navigation principale" }).getByRole("link", { name: "Mon bureau", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Maison Sillage · organisme fictif", exact: true })).toBeVisible();
+  for (const link of await page.locator('.desk-nav a:not([href="#main"])').all()) {
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  }
 });

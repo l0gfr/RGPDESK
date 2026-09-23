@@ -1,0 +1,42 @@
+---
+import Brand from "./Brand.astro";
+import Icon from "./Icon.svelte";
+import "../public.css";
+interface Props { current: "workspace" | "guide" | "faq" | "verify" | "support" | "privacy" }
+const { current } = Astro.props;
+const inWorkspace = current === "workspace";
+const items = [
+  { key: "workspace", href: "/app/privacy/", label: "Mon bureau", detail: "Retrouver mes registres", icon: "overview" },
+  { key: "guide", href: "/app/privacy/guide/", label: "Guide", detail: "Avancer pas à pas", icon: "book" },
+  { key: "faq", href: "/app/privacy/faq/", label: "FAQ", detail: "Les réponses utiles", icon: "help" },
+  { key: "verify", href: "/app/privacy/verify/", label: "Vérifier", detail: "Examiner un dossier reçu", icon: "shield" },
+  { key: "support", href: "/app/privacy/soutenir/", label: "Nous soutenir", detail: "Faire vivre le projet", icon: "support" },
+];
+---
+<header class="site-bar desk-header">
+  <Brand href={inWorkspace ? "#main" : "/app/privacy/"} />
+  <nav class="desk-nav" aria-label="Navigation principale">
+    {items.map((item) => <a href={inWorkspace && item.key === "workspace" ? "#main" : item.href}
+      aria-current={current === item.key ? "page" : undefined}
+      target={inWorkspace && item.key !== "workspace" ? "_blank" : undefined}
+      rel={inWorkspace && item.key !== "workspace" ? "noopener noreferrer" : undefined}>
+      <span class="nav-glyph"><Icon name={item.icon} size={21} /></span><span>{item.label}</span>
+      {inWorkspace && item.key !== "workspace" && <span class="sr-only"> (nouvel onglet)</span>}
+    </a>)}
+  </nav>
+  <details class="desk-menu">
+    <summary><Icon name="overview" size={19} /><span>Menu</span><span class="menu-sign" aria-hidden="true">+</span></summary>
+    <nav aria-label="Navigation mobile">
+      <p class="menu-caption">Votre bureau, ses repères.</p>
+      {items.map((item) => <a href={inWorkspace && item.key === "workspace" ? "#main" : item.href}
+        aria-current={current === item.key ? "page" : undefined}
+        target={inWorkspace && item.key !== "workspace" ? "_blank" : undefined}
+        rel={inWorkspace && item.key !== "workspace" ? "noopener noreferrer" : undefined}>
+        <span class="nav-glyph"><Icon name={item.icon} size={22} /></span>
+        <span><strong>{item.label}</strong><small>{item.detail}</small></span>
+        {inWorkspace && item.key !== "workspace" && <span class="sr-only"> (nouvel onglet)</span>}
+      </a>)}
+      <a class="menu-privacy" href="/app/privacy/confidentialite/" target={inWorkspace ? "_blank" : undefined} rel={inWorkspace ? "noopener noreferrer" : undefined}>Confidentialité et limites{inWorkspace && <span class="sr-only"> (nouvel onglet)</span>}</a>
+    </nav>
+  </details>
+</header>

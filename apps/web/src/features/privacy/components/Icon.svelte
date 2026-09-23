@@ -1,6 +1,9 @@
 <script lang="ts">
   let { name = "folder", size = 20 }: { name?: string; size?: number } = $props();
   const paths: Record<string, string> = {
+    help: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M9 9a3 3 0 0 1 6 0c0 2-3 2-3 4m0 3h.01",
+    support: "M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z",
+    search: "M16 10a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm-1 5 6 6",
     flows: "M3 3h6v6H3ZM15 15h6v6h-6ZM6 9v9h9M15 3h6v6h-6ZM9 6h6M18 9v6",
     analysis: "M4 3h11l4 4v5M4 3v18h7M8 7h3M8 11h4M8 15h2M21 16a5 5 0 1 1-10 0 5 5 0 0 1 10 0M20 20l3 3",
     overview: "M3 3h7v7H3ZM14 3h7v7h-7ZM3 14h7v7H3ZM14 14h7v7h-7Z",

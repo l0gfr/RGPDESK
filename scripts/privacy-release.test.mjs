@@ -114,3 +114,24 @@ for (const attack of ["extra", "corrupt", "symlink", "dirty", "commit", "duplica
     assert.equal(run().status, 1);
   });
 }
+
+
+test("public help pages do not prevent verification of historical archives", (t) => {
+  const { root, manifest, save, run } = verifierFixture(t);
+  const additions = new Set(["site/app/privacy/faq/index.html", "site/app/privacy/soutenir/index.html"]);
+  for (const path of additions) rmSync(join(root, path));
+  manifest.files.splice(0, manifest.files.length, ...manifest.files.filter((file) => !additions.has(file.path)));
+  save();
+  const result = run();
+  assert.equal(result.status, 0, result.stderr);
+});
+
+test("a checksummed but unlisted public page is refused", (t) => {
+  const { root, manifest, save, run } = verifierFixture(t);
+  const path = "site/app/privacy/faq/private.html";
+  const bytes = Buffer.from("synthetic page outside the public allowlist");
+  writeFileSync(join(root, path), bytes);
+  manifest.files.push({ path, bytes: bytes.length, sha256: digest(bytes) });
+  save();
+  assert.equal(run().status, 1);
+});

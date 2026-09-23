@@ -432,10 +432,10 @@
 .rgpdesk .vault-panels .eyebrow { font-size:9px; }
 .rgpdesk .vault-panels h2 { font-size:25px; }
 .rgpdesk input:not([type=checkbox]),.rgpdesk textarea,.rgpdesk select { border-radius:2px; background:white; border-color:#bbc9df; }
-.rgpdesk input:focus,.rgpdesk textarea:focus,.rgpdesk select:focus { outline:2px solid #3157d5; outline-offset:2px; box-shadow:none; }
+.rgpdesk input:focus,.rgpdesk textarea:focus,.rgpdesk select:focus { outline:2px solid #526d83; outline-offset:2px; box-shadow:none; }
 .rgpdesk button,.rgpdesk .button { border-radius:2px; background:var(--accent); border-color:var(--accent); font-weight:500; }
-.rgpdesk button:hover:not(:disabled),.rgpdesk .button:hover { background:#2343ad; }
-.rgpdesk button:focus-visible,.rgpdesk a:focus-visible,.rgpdesk summary:focus-visible { outline:2px solid #3157d5; outline-offset:4px; }
+.rgpdesk button:hover:not(:disabled),.rgpdesk .button:hover { background:#2a3e4e; }
+.rgpdesk button:focus-visible,.rgpdesk a:focus-visible,.rgpdesk summary:focus-visible { outline:2px solid #526d83; outline-offset:4px; }
 .rgpdesk .secondary { background:transparent; border-color:#b5c6e7; color:#264896; }
 .rgpdesk .secondary:hover:not(:disabled),.rgpdesk .button.secondary:hover { background:#e7eefc; }
 .rgpdesk .text-button { background:transparent; border-color:transparent; color:#2d50a7; }
@@ -658,7 +658,7 @@
 @media (max-width: 700px) { .pia-cover-mark { display: none; } .pia-route { grid-template-columns: repeat(2,minmax(0,1fr)); } .pia-ledger { align-items: flex-start; flex-direction: column; } .pia-steps { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 
 /* Folio identity: quiet ink, a ruled margin, a folded corner. */
-.rgpdesk { --ink:#192638; --accent:#354e83; --gold:#576983; }
+.rgpdesk { --ink:#1f2e3b; --accent:#3d5366; --gold:#617283; }
 .rgpdesk .welcome-hero h1, .rgpdesk .workspace-heading h1, .rgpdesk .guide-content h2, .rgpdesk .use-cases h2, .rgpdesk .vault-panels h2 { color:#192638; }
 .rgpdesk .welcome-hero h1 em { color:#52617b; }
 .rgpdesk .eyebrow { color:#52637e; }
@@ -680,7 +680,14 @@
 @media (prefers-reduced-motion:no-preference) { .rgpdesk .pia-steps button { transition:background .18s,color .18s; } }
 
 /* Folio details: registration marks, a document tab and blue-grey ink. */
-.rgpdesk { background:radial-gradient(ellipse at 95% 5%,#dde4ed66,transparent 45%),#f7f7f5; --canvas:#f7f7f5; --forest:#1b2b40; --acid:#d2deed; }
+.rgpdesk {
+  --canvas:#eff0ee; --paper:#f8f9f7; --forest:#1b2b40; --acid:#d2deed;
+  background:
+    radial-gradient(ellipse 90vw 800px at 100% 0,#b6c4d46b 0,transparent 76%),
+    radial-gradient(ellipse 80vw 900px at 0 500px,#e0e3e6b3 0,transparent 80%),
+    repeating-linear-gradient(0deg,#334c6e03 0 1px,transparent 1px 4px),
+    linear-gradient(125deg,#f3f2ee,#e8edf0 55%,#f0f0ed);
+}
 .rgpdesk .site-bar { min-height:96px; border-bottom-color:#c9ced5; }
 .rgpdesk .site-nav a { font-weight:400; }
 .rgpdesk .welcome-hero { padding-block:52px 60px; gap:clamp(32px,5vw,74px); }
@@ -694,8 +701,8 @@
 .rgpdesk .hero-actions .button:not(.secondary) { background:linear-gradient(110deg,#25374f,#3c5270); border-color:#33465f; }
 .rgpdesk .hero-actions .button:not(.secondary):hover { background:#1c2e45; }
 .rgpdesk .hero-actions .secondary { border-color:transparent; border-bottom-color:#aeb9c7; padding-inline:8px; }
-.rgpdesk .processing-atlas { overflow:visible; border:1px solid #597089; border-radius:2px 18px 2px 2px; background:radial-gradient(ellipse at 100% 0,#526984,transparent 70%),linear-gradient(145deg,#2c4058,#1c2f47); box-shadow:6px 7px 0 -1px #f7f7f5,6px 7px 0 0 #b6c2cf; }
-.rgpdesk .processing-atlas::before { border-radius:inherit; background-image:repeating-radial-gradient(ellipse at 140% 150%,transparent 0 38px,#dae4f01c 39px 40px),repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 3px); }
+.rgpdesk .processing-atlas { overflow:visible; border:1px solid #597089; border-radius:2px 18px 2px 2px; background:radial-gradient(ellipse at 100% 0,#62758666,transparent 65%),linear-gradient(150deg,#2d4050,#182b39); box-shadow:6px 7px 0 -1px #edf0ef,6px 7px 0 0 #aebbc5,0 22px 38px -20px #1c304744; }
+.rgpdesk .processing-atlas::before { border-radius:inherit; background-image:repeating-radial-gradient(ellipse at 140% 150%,transparent 0 38px,#dae4f012 39px 40px),repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 3px); }
 .rgpdesk .processing-atlas::after { content:""; position:absolute; right:26px; top:-8px; height:15px; width:57px; border:1px solid #8d9eaf; border-radius:2px; background:linear-gradient(110deg,#edf1f5,#d4dfeb); box-shadow:0 3px 6px #13233618; }
 .rgpdesk .processing-atlas figcaption { padding:20px 24px 17px; font-size:8px; border-bottom-color:#dbe5f031; }
 .rgpdesk .atlas-heading > span { color:#c1cede; font:italic 52px/1 Georgia,serif; letter-spacing:-.075em; }
@@ -803,7 +810,13 @@
 @media print { .rgpdesk { background:white; } .rgpdesk .guide-hero { background:white; } .rgpdesk .guide-hero h1 em { color:#111; } }
 
 /* The Sillage case study: an open folio, with a quiet steel-blue index. */
-.rgpdesk .hero-actions button { background:#dce5f2; color:#172b45; border-color:#dce5f2; padding:13px 20px; }
+/* Foreground and background travel together in every interactive state. */
+.rgpdesk .hero-actions > button { background:linear-gradient(125deg,#223240,#344b5b); color:#fbfcfe; border:1px solid #314856; border-radius:3px 11px 3px 3px; padding:15px 21px; box-shadow:inset 0 1px #d6e2e326,0 4px 8px #243b4f14; }
+.rgpdesk .hero-actions > button:hover:not(:disabled) { background:linear-gradient(125deg,#314756,#425c6d); color:#fff; border-color:#486274; box-shadow:inset 0 1px #e1ebed30,0 6px 14px #243b4f20; }
+.rgpdesk .hero-actions > button:active:not(:disabled) { background:#213643; color:#fff; box-shadow:inset 0 2px 4px #13253144; }
+.rgpdesk .hero-actions > button:focus-visible { outline:2px solid #486478; outline-offset:4px; color:#fbfcfe; }
+.rgpdesk .hero-actions > button svg { color:inherit; }
+.rgpdesk .hero-actions > .secondary:hover { color:#263c4d; background:#dfe6eaaa; border-bottom-color:#6d8291; }
 .rgpdesk .welcome-hero .intro > .hero-demo-caption { font-size:12px; line-height:1.5; color:#cad6e5; margin:15px 0 24px; }
 .rgpdesk .demo-invitation { display:flex; align-items:center; gap:26px; padding:28px 32px; margin-top:25px; border:1px solid #c8d2df; background:linear-gradient(110deg,#e4ebf4,#f7f8fa 75%); position:relative; }
 .rgpdesk .demo-invitation::before { content:""; position:absolute; inset:9px; border:1px solid #c1cede66; pointer-events:none; }
@@ -928,3 +941,59 @@
 .dpo-workbench dd, .dpo-timeline p { white-space: pre-wrap; overflow-wrap: anywhere; }
 .dpo-workbench fieldset { min-width: 0; }
 @media (max-width: 600px) { .dpo-case-cover { grid-template-columns: minmax(0, 1fr); } .dpo-cover-index { display: none; } .dpo-step-nav button { flex: 1 1 45%; } }
+
+/* Blue folio: translucent paper, an engraved index and a local reading desk. */
+.rgpdesk .panel { background:linear-gradient(135deg,#fafbf8ed,#edf1f3ed); border-color:#bbc6cc; box-shadow:0 10px 30px -18px #233c5030,inset 0 1px #fff; }
+.rgpdesk .use-cases { background:linear-gradient(110deg,#dfe6eaaa,#f5f5f0aa); border-color:#bdc7ce; }
+.rgpdesk .workspace-heading { position:relative; padding-bottom:25px; border-bottom:1px solid #b7c6d9; }
+.rgpdesk .workspace-heading::after { content:""; position:absolute; left:0; bottom:-2px; width:54px; height:3px; background:linear-gradient(90deg,#526d92 0 68%,#b2c3db 68%); }
+.rgpdesk .workspace-utilities { display:flex; justify-content:space-between; align-items:center; gap:15px; padding:0 0 25px; }
+.rgpdesk .workspace-utilities > span { display:inline-flex; align-items:center; gap:7px; color:#52647d; font-size:11px; }
+.rgpdesk .workspace-utilities button { background:#eef3fa; border-color:#acbdd3; font-size:12px; box-shadow:0 2px 0 #cbd7e580; }
+.rgpdesk .workspace-search { margin-bottom:30px; padding:clamp(20px,3vw,34px); background:linear-gradient(120deg,#dce5eb,#f1f2ee); border:1px solid #a9bdd6; border-top:3px solid #536c8f; border-radius:2px 22px 2px 2px; box-shadow:0 12px 35px #273e5b0c; min-width:0; }
+.rgpdesk .workspace-search h2 { font:normal clamp(25px,3vw,37px)/1.15 Georgia,serif; margin:8px 0; }
+.rgpdesk .workspace-search .section-heading { align-items:flex-start; }
+.rgpdesk .workspace-search .text-button { flex-shrink:0; font-size:12px; }
+.rgpdesk .search-controls { display:grid; grid-template-columns:minmax(0,1fr) minmax(155px,.38fr); gap:17px; margin-top:25px; }
+.rgpdesk .search-controls .field { min-width:0; margin:0; }
+.rgpdesk .search-input { position:relative; display:block; }
+.rgpdesk .search-input > svg { position:absolute; left:14px; top:16px; color:#526d8d; pointer-events:none; }
+.rgpdesk .search-input input { padding-left:47px; min-height:56px; background:#f9fbff; border-color:#98aec9; }
+.rgpdesk .search-controls select { min-height:56px; background:#f9fbff; border-color:#98aec9; }
+.rgpdesk .search-confidential { display:flex; align-items:flex-start; gap:7px; font-size:11px; line-height:1.65; color:#475c77; }
+.rgpdesk .search-confidential svg { flex-shrink:0; margin-top:2px; }
+.rgpdesk .search-count,.rgpdesk .search-empty { font-size:13px; line-height:1.7; color:#475a73; }
+.rgpdesk .search-results { list-style:none; padding:0; margin:16px 0 0; }
+.rgpdesk .search-results li { padding:22px 0; border-top:1px solid #b4c3d7; overflow-wrap:anywhere; }
+.rgpdesk .search-result-kind { font:9px/1.5 ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; color:#485e7a; }
+.rgpdesk .search-results h3 { font-size:19px; margin:8px 0; font-weight:550; color:#20334c; }
+.rgpdesk .search-results p { font-size:12px; line-height:1.7; white-space:pre-wrap; max-width:80ch; }
+.rgpdesk .search-results button { max-width:100%; text-align:left; overflow-wrap:anywhere; white-space:normal; font-size:12px; margin-top:6px; }
+.rgpdesk .search-results button svg { flex-shrink:0; }
+.rgpdesk .catalogue-filter { max-width:560px; margin:25px 0 10px; }
+.rgpdesk .starter-card { background:linear-gradient(130deg,#f5f8fc,#e4edf7); }
+.rgpdesk .starter-card.selected { background:linear-gradient(130deg,#d8e4f3,#edf2f9); border-color:#6d88ad; box-shadow:inset 3px 0 #627fa2; }
+@media (max-width:700px) {
+  .rgpdesk .workspace-utilities { flex-wrap:wrap; gap:12px; }
+  .rgpdesk .workspace-utilities button { width:100%; justify-content:flex-start; }
+  .rgpdesk .search-controls { grid-template-columns:minmax(0,1fr); }
+  .rgpdesk .workspace-search .section-heading { flex-wrap:wrap; gap:8px; }
+  .rgpdesk .workspace-search .text-button { padding-left:0; }
+}
+@media (prefers-contrast:more) {
+  .rgpdesk .panel,.rgpdesk .workspace-search { background:#fff; border-color:#465b76; }
+}
+@media print {
+  .rgpdesk { background:#fff; }
+  .rgpdesk .panel,.rgpdesk .use-cases { background:#fff; box-shadow:none; }
+  .rgpdesk .workspace-utilities,.rgpdesk .workspace-search { display:none; }
+}
+.rgpdesk .cabinet-intro { display:flex; gap:24px; padding:28px; margin:0 0 28px; border:1px solid #b1c3d9; background:linear-gradient(115deg,#dce5eb,#eef0ec); border-radius:2px 20px 2px 2px; }
+.rgpdesk .cabinet-monogram { display:grid; place-items:center; width:70px; height:80px; flex-shrink:0; background:linear-gradient(145deg,#6c83a0,#314a6c); color:#edf3fa; border-radius:2px 17px 2px 2px; box-shadow:4px 4px 0 #bacbe0; }
+.rgpdesk .cabinet-intro h2 { font:normal 29px/1.25 Georgia,serif; margin:8px 0 16px; }
+.rgpdesk .cabinet-intro p { max-width:85ch; font-size:13px; }
+.rgpdesk .client-switcher { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:28px; padding:16px 20px; border:1px solid #bdcce0; background:#dfe6eca6; font-size:12px; }
+.rgpdesk .client-switcher small,.rgpdesk .vault-reference { display:block; font:9px/1.7 ui-monospace,monospace; overflow-wrap:anywhere; margin-top:6px; color:#566781; }
+.rgpdesk .client-switcher > div { display:flex; flex-wrap:wrap; gap:5px 14px; }
+.rgpdesk .client-switcher .text-button { font-size:12px; padding-inline:0; }
+@media (max-width:700px) { .rgpdesk .client-switcher,.rgpdesk .cabinet-intro { flex-wrap:wrap; padding:20px; } .rgpdesk .cabinet-monogram { width:45px; height:53px; } .rgpdesk .cabinet-intro h2 { font-size:25px; } }

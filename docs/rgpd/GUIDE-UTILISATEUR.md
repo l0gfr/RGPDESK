@@ -28,6 +28,23 @@ Dans **Partager un dossier**, utilisez **Charger la sélection d’exemple**, pu
 
 Pour conserver une copie de l’exercice, **Sauvegarde** permet de choisir une phrase et de télécharger un fichier chiffré. Si vous décidez de le restaurer depuis l’accueil, un coffre fictif distinct sera créé explicitement ; aucun coffre existant ne sera remplacé. Pour votre travail réel, quittez la démo et créez votre propre registre vide.
 
+### DPO externe : tenir plusieurs registres clients
+
+Créez **un coffre par organisation cliente**. Le nom saisi à la création est celui de l’organisation dont vous documentez les traitements. Une mission de DPO externe ne change pas automatiquement le rôle du client : choisissez responsable ou sous-traitant pour chaque activité selon les opérations réelles. Les obligations de tenue du registre sont décrites à l’[article 30 du RGPD](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+1. Créez le premier coffre, puis relevez son **repère** affiché dans l’espace ouvert. Conservez l’association client / repère / phrase dans votre gestionnaire de mots de passe.
+2. Après enregistrement de vos saisies, revenez à **Ma mission** et choisissez **Ajouter un client**. Le coffre ouvert se verrouille ; le nouveau coffre sera distinct.
+3. **Changer de registre** revient à la liste locale. Identifiez le coffre par son repère et utilisez sa phrase pour l’ouvrir. Les noms ne sont pas exposés dans la liste verrouillée.
+4. Préparez une sauvegarde chiffrée pour **chaque client**. La sauvegarde d’un coffre ne contient pas les autres. Vérifiez aussi le périmètre de chaque dossier partagé.
+
+Un seul client est ouvert à la fois dans cet onglet. Il n’y a ni vue consolidée du portefeuille, ni recherche dans les coffres fermés, ni partage automatique entre clients. Le guide et les trames sont communs, les dossiers sont séparés.
+
+### Retrouver une information dans le client ouvert
+
+**Rechercher dans le coffre** parcourt les activités et leurs flux, les noms des intervenants et systèmes reliés à ces activités, les références documentaires, les dossiers DPO et les AIPD enregistrées. Vous pouvez filtrer par rubrique. Plusieurs mots sont recherchés ensemble ; accents et majuscules ne bloquent pas les résultats.
+
+La recherche utilise la mémoire de l’onglet, sans requête réseau ni historique conservé. Fermer la recherche ou verrouiller le coffre retire ses résultats. Les pièces originales, anciennes revues, actions et décisions autonomes ne sont pas parcourues. Les autres coffres restent hors du périmètre. Terminez une saisie avant d’ouvrir un résultat ; le bouton n’abandonne pas un formulaire en cours.
+
 ### Commencer votre propre registre
 
 Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emplacement pour vos sauvegardes. Pour commencer, utilisez Chrome ou Edge à jour sur ordinateur. Choisissez une première activité simple à décrire et rassemblez vos informations avant de saisir des données.
@@ -35,7 +52,7 @@ Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emp
 1. Ouvrez [le registre](/app/privacy/). Dans **Créer le registre de mon organisation**, renseignez le nom de l’organisme et deux fois votre phrase secrète. Le minimum accepté est de 12 caractères ; la longueur et l’unicité restent importantes.
 2. Lisez l’avertissement sur la perte de la phrase et la sauvegarde. Cochez votre accord, puis **Créer le coffre chiffré**. Aucun compte ni adresse électronique ne sont demandés. Le coffre est l’espace chiffré qui contient votre travail.
 3. **Ma mission** vous présente le fil du travail. Commencez par **Décrire l’organisation** pour noter le périmètre et les contacts, ou par **Choisir ma première activité** si vous connaissez déjà ce cadre.
-4. Choisissez un point de départ dans **Registre** : candidatures, personnel, clients, adhésions, contact ou prestation. Lisez les questions de préparation, puis choisissez explicitement le rôle de votre organisme. Seul le titre de départ est proposé dans la fiche ; aucune réponse juridique n’est ajoutée.
+4. Choisissez un point de départ dans **Registre** : candidatures, personnel, clients, adhésions, contact, prestation, prospection, fournisseurs, support, accès aux locaux, vidéosurveillance ou journalisation. Le filtre permet de retrouver une trame par activité ou équipe. Lisez les questions de préparation, puis choisissez explicitement le rôle de votre organisme. Seul le titre de départ est proposé dans la fiche ; aucune réponse juridique n’est ajoutée.
 5. Parcourez les six étapes : **L’activité**, **Les objectifs**, **Les données**, **La protection**, **Les précisions**, **La relecture**. Vous pouvez changer d’étape, choisir **Voir toute la fiche** et **Enregistrer la fiche** à tout moment. Les réponses manquantes restent à examiner. Attendez le message **Enregistré dans le coffre chiffré.**
 6. Ouvrez **Actions & décisions** pour examiner les questions documentaires et organiser la suite du travail.
 7. Ouvrez **Sauvegarde**, puis **Télécharger la sauvegarde chiffrée**. Vérifiez que le fichier `.rgpdesk` se trouve réellement dans vos téléchargements et placez-en une copie dans l’emplacement choisi.
@@ -48,7 +65,7 @@ Vous avez terminé ce premier parcours lorsque vous pouvez verrouiller, rouvrir 
 
 ### Préparer votre entretien métier
 
-[Les six trames métier du guide](/app/privacy/guide/#trames-metier) approfondissent le recrutement, les RH, la relation client, les adhésions, les demandes de contact et les prestations pour un client. Chaque question renvoie à une ressource officielle et à la partie pertinente. Les questions sont proposées par RGPDESK ; les référentiels, recommandations et textes cités gardent leur portée propre.
+[Les douze trames métier du guide](/app/privacy/guide/#trames-metier) couvrent le recrutement, les RH, les clients, les adhésions, le contact, les prestations, la prospection, les fournisseurs, le support, les accès aux locaux, la vidéosurveillance et la journalisation. Chaque question renvoie à une ressource officielle et à la partie pertinente. Les questions sont proposées par RGPDESK ; les référentiels, recommandations et textes cités gardent leur portée propre.
 
 Choisissez une personne qui connaît l’activité au quotidien. Envoyez-lui les thèmes ci-dessous, puis travaillez ensemble sur un cas fictif. Votre objectif est d’obtenir une description vérifiable, pas de faire remplir des cases à l’aveugle.
 
@@ -425,7 +442,7 @@ Pour une vulnérabilité, suivez la politique [SECURITY.md du dépôt](https://g
 
 ## 12. Sources, version et portée de ce guide
 
-Guide mis à jour le **22 septembre 2026**. Vous pouvez consulter la [version du logiciel](/release.json). Le code est ouvert sous [licence AGPL-3.0-only](/LICENSE.txt), avec les [notices du socle](/NOTICE.txt) conservées.
+Guide mis à jour le **23 septembre 2026**. Vous pouvez consulter la [version du logiciel](/release.json). Le code est ouvert sous [licence AGPL-3.0-only](/LICENSE.txt), avec les [notices du socle](/NOTICE.txt) conservées.
 
 Ce guide accompagne la version de RGPDESK que vous utilisez. Son contenu est [consultable dans le dépôt](https://github.com/l0gfr/RGPDESK/blob/main/docs/rgpd/GUIDE-UTILISATEUR.md).
 
