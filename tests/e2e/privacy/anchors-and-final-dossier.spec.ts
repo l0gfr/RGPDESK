@@ -35,7 +35,20 @@ test("a private section link requires an explicit vault and does not create or s
   await page.getByLabel("Confirmer la phrase secrète", {exact:true}).fill("Fictional anchor phrase 2026!");
   await page.getByLabel("Je comprends qu’une phrase perdue").check();
   await page.getByRole("button",{name:"Créer le coffre chiffré",exact:true}).click();
-  await expect(page.getByRole("heading", {name:"Votre registre RGPD.",exact:true})).toBeVisible();
+  try {
+    await expect(page.getByRole("heading", {name:"Votre registre RGPD.",exact:true})).toBeVisible();
+  } catch (cause) {
+    // Structural diagnostics only: never log field values, vault contents or identifiers.
+    const state = await page.evaluate(() => ({
+      hash: location.hash,
+      heading: document.querySelector("h1")?.textContent,
+      ready: document.querySelector("[data-rgpdesk-ready]")?.getAttribute("data-rgpdesk-ready"),
+      error: !!document.querySelector('[role="alert"]'),
+      creating: [...document.querySelectorAll("button")].some(button => button.textContent?.includes("Opération en cours")),
+      inputs: [...document.querySelectorAll<HTMLInputElement>("#creer-registre input")].map(input => ({ type: input.type, valid: input.validity.valid, missing: input.validity.valueMissing, checked: input.type === "checkbox" ? input.checked : undefined })),
+    }));
+    throw new Error(`Private section navigation state: ${JSON.stringify(state)}`, { cause });
+  }
   await expect(page).toHaveURL(/#registre$/);
   expect(new URL(page.url()).search).toBe("");
 });

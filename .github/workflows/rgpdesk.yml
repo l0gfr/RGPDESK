@@ -32,6 +32,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
+      - name: Check private entry and shared section navigation
+        run: pnpm build && pnpm exec playwright test tests/e2e/privacy/anchors-and-final-dossier.spec.ts --workers=1
       - name: All source, security, build and browser regression gates
         run: pnpm verify:all
       - name: Validate isolated activation and rollback without starting backups
