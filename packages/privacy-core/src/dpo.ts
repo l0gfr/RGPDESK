@@ -1,6 +1,7 @@
 import { type Workspace } from "./model";
 import { createDpoCase, DPO_QUESTIONS, type DpoCase, type DpoContext, type DpoEvent, type DpoReview } from "./dpo-model";
 import { canonicalJson } from "./share-format.js";
+import { CHANGE_AREAS, compareReviewContexts, compareReviewContent, type ReviewChange } from "./review-diff";
 import { piaContext } from "./pia";
 import { reviseWorkspace } from "./commands";
 import { assertWorkspace, PrivacyError } from "./validation";
@@ -9,23 +10,15 @@ import { validInstant, rightsDeadline } from "./deadlines";
 export function dpoContext(master: Workspace, item: DpoCase): DpoContext {
   return { organization: master.organization, activities: item.activityIds.map((id) => piaContext(master, id)) };
 }
-export function dpoChanges(master: Workspace, item: DpoCase): string[] {
+export function dpoChangeDetails(master: Workspace, item: DpoCase): ReviewChange[] {
   const review = item.reviews.at(-1);
-  if (!review) return ["Première revue à préparer"];
-  const result: string[] = [];
+  if (!review) return [];
   const current = dpoContext(master, item);
-  if (canonicalJson(review.content) !== canonicalJson(item.content)) result.push("Analyse modifiée");
-  if (canonicalJson(review.context.organization) !== canonicalJson(current.organization)) result.push("Organisation modifiée");
-  for (const ctx of current.activities) {
-    const old = review.context.activities.find((c) => c.activity.id === ctx.activity.id);
-    if (!old) { result.push(`Activité ajoutée : ${ctx.activity.title}`); continue; }
-    if (canonicalJson(ctx.scope) !== canonicalJson(old.scope) || canonicalJson(ctx.jurisdiction) !== canonicalJson(old.jurisdiction)) result.push("Périmètre ou juridiction modifiés");
-    if (canonicalJson(ctx.activity) !== canonicalJson(old.activity)) result.push(`Traitement ou flux modifiés : ${ctx.activity.title}`);
-    if (canonicalJson(ctx.parties) !== canonicalJson(old.parties) || canonicalJson(ctx.systems) !== canonicalJson(old.systems)) result.push(`Intervenants ou systèmes modifiés : ${ctx.activity.title}`);
-    if (canonicalJson(ctx.documents) !== canonicalJson(old.documents)) result.push(`Références modifiées : ${ctx.activity.title}`);
-  }
-  if (review.context.activities.some((c) => !item.activityIds.includes(c.activity.id))) result.push("Périmètre réduit");
-  return result;
+  return [...compareReviewContexts(review.context.activities, current.activities, review.context.organization, current.organization), ...compareReviewContent(review.content, item.content)];
+}
+export function dpoChanges(master: Workspace, item: DpoCase): string[] {
+  if (!item.reviews.length) return ["Première revue à préparer"];
+  return [...new Set(dpoChangeDetails(master, item).map((c) => CHANGE_AREAS[c.area].label))].map((label) => `${label} : changement à examiner`);
 }
 export function putDpoCase(master: Workspace, item: DpoCase, revision: number, now: string): Workspace {
   const old = master.dpoCases.find((c) => c.id === item.id);

@@ -1,5 +1,6 @@
 import { ANALYSIS_QUESTIONS, type Knowledge, type ReviewNote, type Workspace } from "./model";
 import { PIA_CRITERIA, PIA_PRINCIPLES, type ImpactAssessment, type PiaContent, type PiaContext, type PiaReview } from "./pia-model";
+import { compareReviewContexts, compareReviewContent, type ReviewChange } from "./review-diff";
 import { canonicalJson } from "./share-format.js";
 import { reviseWorkspace } from "./commands";
 import { assertWorkspace, PrivacyError } from "./validation";
@@ -16,7 +17,13 @@ export function piaContext(master: Workspace, activityId: string): PiaContext {
 export function piaReviewState(master: Workspace, pia: ImpactAssessment): "unreviewed" | "unchanged" | "changed" {
   const last = pia.reviews.at(-1);
   if (!last) return "unreviewed";
-  return canonicalJson(last.context) === canonicalJson(piaContext(master, pia.activityId)) && canonicalJson(last.content) === canonicalJson(pia.content) ? "unchanged" : "changed";
+  return piaChanges(master, pia).length ? "changed" : "unchanged";
+}
+export function piaChanges(master: Workspace, pia: ImpactAssessment): ReviewChange[] {
+  const last = pia.reviews.at(-1);
+  if (!last) return [];
+  const current = piaContext(master, pia.activityId);
+  return [...compareReviewContexts([last.context], [current], last.context.organization, current.organization), ...compareReviewContent(last.content, pia.content)];
 }
 const documented = (k: Knowledge) => k.state === "documented";
 // Editorial checks only: never a score, legal opinion or automatic authorization.

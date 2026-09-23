@@ -59,6 +59,7 @@
   let showWipe = $state(false);
   let dpoCaseId = $state("");
   let documentId = $state("");
+  let documentActivityId = $state("");
   let piaActivityId = $state("");
   let searchOpen = $state(false);
   let searchNavigation = $state(0);
@@ -98,7 +99,7 @@
     organizationName = "";
     master = null;
     searchOpen = false;
-    dpoCaseId = documentId = piaActivityId = "";
+    dpoCaseId = documentId = documentActivityId = piaActivityId = "";
     editor = null;
     piaEditing = false;
     editorSection = "record";
@@ -250,10 +251,10 @@
     workspaceHeading?.scrollIntoView({ block: "start" });
   }
 
-  async function saveActivity(activity: Activity) {
+  async function saveActivity(activity: Activity, documentIds: string[]) {
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
-      await persist(putActivity($state.snapshot(master), activity, master.revision, now()), current);
+      await persist(putActivity($state.snapshot(master), activity, master.revision, now(), documentIds), current);
       panel = "register";
       lastActivityId = activity.id;
     });
@@ -335,7 +336,7 @@
   async function navigateDemo(next: DemoPanel | "overview") {
     if (!demo || !master || busy || editor || piaEditing) return;
     const current = session();
-    dpoCaseId = documentId = piaActivityId = "";
+    dpoCaseId = documentId = documentActivityId = piaActivityId = "";
     panel = next;
     await tick();
     if (current.signal.aborted || !demo || !master) return;
@@ -475,8 +476,8 @@
     <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>{demo ? "DOSSIER FICTIF" : "VOTRE ESPACE"}</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
       {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["dpo", "Dossiers DPO"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
-        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = documentId = piaActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
-      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = documentId = piaActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
+        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = documentId = documentActivityId = piaActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
+      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = documentId = documentActivityId = piaActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
       <div class="sidebar-security"><Icon name="shield" size={25} /><strong>{demo ? "Un espace pour essayer." : "Votre appareil. Votre coffre."}</strong><p>{demo ? "L’exercice reste en mémoire dans cet onglet. Aucun enregistrement automatique." : "Les informations restent ici. Pensez à votre sauvegarde chiffrée."}</p></div>
     </aside><div class="desk-workspace">
     <div class="workspace-utilities"><span><Icon name="lock" size={14} />{demo ? "Démonstration locale" : "Coffre ouvert sur cet appareil"}</span><button bind:this={searchButton} class="secondary" aria-expanded={searchOpen} aria-controls="workspace-search" disabled={busy} onclick={() => { searchOpen = !searchOpen; }}><Icon name="search" size={18} />Rechercher dans le coffre</button></div>
@@ -491,17 +492,17 @@
       <p class="help">Enregistrez avant de quitter cette fiche. Le verrouillage abandonne les modifications non enregistrées.</p>
       {#key editor.id}<ActivityEditor initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if panel === "overview"}
-      {#if demo}<DemoOverview {busy} onNavigate={(next) => void navigateDemo(next)} />{:else}<MissionOverview workspace={master} {busy} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
+      {#if demo}<DemoOverview {busy} onNavigate={(next) => void navigateDemo(next)} />{:else}<MissionOverview workspace={master} {busy} onPia={(id) => { piaActivityId = id; searchNavigation++; panel = "pia"; }} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
     {:else if panel === "dpo"}
-      {#key searchNavigation}<DpoCases workspace={master} {busy} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
+      {#key searchNavigation}<DpoCases workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "pia-sharing"}
       {#key master.revision}<PiaSharing workspace={$state.snapshot(master)} {busy} onDeliver={deliverPia} onDownload={downloadPia} />{/key}
     {:else if panel === "pia"}
-      {#key searchNavigation}<PiaPanel workspace={master} {busy} {demo} initialActivityId={piaActivityId} initialView={demo ? "read" : "edit"} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
+      {#key searchNavigation}<PiaPanel workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} {demo} initialActivityId={piaActivityId} initialView={demo ? "read" : "edit"} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "analysis" || panel === "flows"}
       {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo ? master.impactAssessments[0]?.activityId : undefined} {busy} onPia={() => panel = "pia"} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
-      {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button></div></aside>{/if}
+      {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button><button class="secondary" disabled={busy} onclick={() => { documentId = ""; documentActivityId = lastActivityId; panel = "documents"; }}>Référencer un document pour cette activité<Icon name="documents" /></button></div></aside>{/if}
       {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}
       {#if master.activities.length > 0}<div class="metric-row"><div><span class="metric-icon"><Icon name="register" size={23} /></span><div><span class="metric-number">{master.activities.length.toString().padStart(2, "0")}</span><p>Activités documentées</p></div></div><div><span class="metric-icon"><Icon name="eye" size={23} /></span><div><span class="metric-number">{findings.length.toString().padStart(2, "0")}</span><p>Questions à examiner</p></div></div><div><span class="metric-icon"><Icon name="documents" size={23} /></span><div><span class="metric-number">{master.documents.length.toString().padStart(2, "0")}</span><p>Références reliées</p></div></div></div>{/if}
       <section class="panel"><div class="section-heading"><div><p class="eyebrow">Documenter les traitements</p><h2>Votre registre</h2></div><button class="text-button" disabled={busy} onclick={() => showStarters = !showStarters}>Choisir un point de départ</button></div>
@@ -520,7 +521,7 @@
     {:else if panel === "import"}
       {#key master.revision}<ImportPanel workspace={$state.snapshot(master)} {busy} onSave={saveNext} />{/key}
     {:else if panel === "documents"}
-      {#key master.revision}<DocumentsPanel workspace={$state.snapshot(master)} {busy} initialDocumentId={documentId} onSave={saveNext} />{/key}
+      <DocumentsPanel workspace={$state.snapshot(master)} {busy} initialDocumentId={documentId} initialActivityId={documentActivityId} onSave={async (next) => { await saveNext(next); const saved = master?.revision === next.revision; if (saved) documentId = documentActivityId = ""; return saved; }} />
     {:else if panel === "actions"}
       {#key master.revision}<ActionsPanel workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} />{/key}
     {:else if panel === "delivery"}

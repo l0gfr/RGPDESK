@@ -43,10 +43,10 @@ describe("DPO dossier integrity", () => {
     expect(dpoChanges(master, item)).toEqual([]);
     master = reviseWorkspace(master, master.revision, now, { scope: knowledge("Autre périmètre général") });
     // Scope and jurisdiction are part of the linked activity's captured context.
-    expect(dpoChanges(master, item)).toContain("Périmètre ou juridiction modifiés");
+    expect(dpoChanges(master, item)).toContain("Cadre de la mission : changement à examiner");
     const changed = structuredClone(activity); changed.title = "Titre modifié";
     master = reviseWorkspace(master, master.revision, now, { activities: [changed] });
-    expect(dpoChanges(master, item).join()).toContain("Traitement ou flux modifiés");
+    expect(dpoChanges(master, item).join()).toContain("Cadre de la mission");
     expect(JSON.stringify(item.reviews)).toBe(history);
     const forged = structuredClone(item); forged.reviews[0]!.reason = "Réécriture";
     expect(() => putDpoCase(master, forged, master.revision, now)).toThrow("INVALID");

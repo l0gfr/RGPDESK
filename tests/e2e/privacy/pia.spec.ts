@@ -77,6 +77,6 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await page.getByRole("button", { name: "AIPD / PIA", exact: true }).click();
   await page.getByRole("button", { name: "Lire le dossier", exact: true }).click();
   await atelier.getByLabel("Version du dossier").selectOption("0");
-  await expect(atelier.getByText("Vérifier les effets du projet avant toute décision.", { exact: true })).toBeVisible();
+  await expect(atelier.locator(".pia-history").getByText("Vérifier les effets du projet avant toute décision.", { exact: true })).toBeVisible();
   await expect(atelier.getByRole("article").getByRole("heading", { name: "Recrutement fictif avant revue", exact: true })).toBeVisible();
 });

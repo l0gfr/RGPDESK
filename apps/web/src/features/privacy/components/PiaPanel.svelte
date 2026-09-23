@@ -1,15 +1,17 @@
 <script lang="ts">
-  import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaOpenPoints, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
+  import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
   import { PIA_NECESSITY_METHOD } from "../review-methods";
   import { PIA_STEPS, PIA_SOURCES, PIA_PRINCIPLE_QUESTIONS, SCREENING_LABELS, PIA_LEVELS, PIA_OUTCOMES, PIA_RISK_FIELDS, PIA_ALTERNATIVE_FIELDS, PIA_MEASURE_FIELDS } from "../pia-method";
+  import ReviewChanges from "./ReviewChanges.svelte";
+  import ReviewEvidence from "./ReviewEvidence.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
   import PiaRiskMap from "./PiaRiskMap.svelte";
   import PiaDossier from "./PiaDossier.svelte";
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, demo = false, onSave, onEditing, onRegister, initialActivityId = "", initialView = "edit" }: { initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void } = $props();
+  let { workspace, busy, demo = false, onSave, onEditing, onRegister, onDocument, initialActivityId = "", initialView = "edit" }: { initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
   let draft: ImpactAssessment | null = $state(null);
   let consumedSearch = $state("");
   $effect(() => {
@@ -87,7 +89,8 @@
   {:else if context}
     <div class="section-heading"><div><p class="eyebrow">Atelier AIPD · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2>{context.activity.title}</h2></div><div class="pia-header-actions"><span class="pia-save-state">{dirty ? "Modifications à enregistrer" : demo ? "Étude conservée pour cette visite" : "Étude enregistrée dans le coffre"}</span><button class="secondary" disabled={busy} onclick={close}>{dirty ? "Quitter sans enregistrer" : "Fermer l’étude"}</button></div></div>
     <p class="help">Enregistrez avant de fermer l’étude. Les modifications non enregistrées seront abandonnées. {context.activity.role === "processor" ? "L’assistance du sous-traitant ne remplace pas la décision du responsable (article 28 §3 f)." : ""}</p>
-    {#if saved && piaReviewState(workspace, saved) === "changed"}<aside class="method-callout"><Icon name="analysis" /><div><strong>Des éléments ont changé depuis la dernière revue.</strong><p>Examinez leurs conséquences. La version historique reste consultable telle qu’elle a été enregistrée.</p></div></aside>{/if}
+    <ReviewChanges changes={piaChanges(workspace, draft)} review={draft.reviews.at(-1)} {dirty} />
+    <ReviewEvidence documents={context.documents} disabled={busy || dirty} onOpen={(id) => { if (!busy && !dirty) { close(); onDocument(id); } }} />
     <nav class="pia-steps" aria-label="Parcours AIPD">{#each PIA_STEPS as title, index}<button class="secondary" disabled={busy} aria-current={index === step ? "step" : undefined} onclick={() => void go(index)}><span>0{index + 1}</span>{title}</button>{/each}</nav>
     <h3 bind:this={stepHeading} tabindex="-1">{PIA_STEPS[step]}</h3>
     {#if localError}<p role="alert">{localError}</p>{/if}
@@ -148,7 +151,7 @@
       <button disabled={dirty || !acknowledged || !author.trim() || !reason.trim() || draft.reviews.length >= 8 || (outcome === "proceed" && (points.length > 0 || context.activity.role === "processor"))} onclick={() => void decide()}>Enregistrer la revue humaine</button>{#if dirty}<p class="help">Enregistrez les modifications de l’étude avant de consigner la revue.</p>{/if}</div>
     {:else}
       <label class="field">Version du dossier<select aria-label="Version du dossier" value={reviewIndex === null ? "current" : String(reviewIndex)} onchange={(e) => reviewIndex = e.currentTarget.value === "current" ? null : Number(e.currentTarget.value)}><option value="current">Étude en cours{dirty ? " · saisies non enregistrées" : ""}</option>{#each draft.reviews as review, index}<option value={String(index)}>Revue {index + 1} · {review.at.slice(0, 10)} · {PIA_OUTCOMES[review.outcome]}</option>{/each}</select></label>
-      {#if reviewIndex !== null && draft.reviews[reviewIndex]}{@const review = draft.reviews[reviewIndex]!}<aside class="pia-history"><strong>{PIA_OUTCOMES[review.outcome]}</strong><p>{review.author} · {review.at} · révision {review.revision}</p><p>{review.reason}</p><small>Version conservée. Les modifications ultérieures du registre n’en changent pas le contenu.</small></aside><PiaDossier content={review.content} context={review.context} />{:else}<PiaDossier content={draft.content} {context} />{/if}
+      {#if reviewIndex !== null && draft.reviews[reviewIndex]}{@const review = draft.reviews[reviewIndex]!}<aside class="pia-history"><strong>{PIA_OUTCOMES[review.outcome]}</strong><p>{review.author} · {review.at} · révision {review.revision}</p><p>{review.reason}</p><small>Version conservée. Les modifications ultérieures du registre n’en changent pas le contenu.</small></aside><ReviewEvidence documents={review.context.documents} historical /><PiaDossier content={review.content} context={review.context} />{:else}<PiaDossier content={draft.content} {context} />{/if}
       <p class="help">Ces notes restent dans le dossier de travail et dans sa sauvegarde chiffrée, si vous en téléchargez une. Les exports de registre n’incluent pas les notes AIPD. Il n’existe pas encore d’échange de fichiers avec le logiciel PIA de la CNIL.</p>
     {/if}
     <div class="actions pia-toolbar"><button onclick={() => void save()}>{busy ? "Enregistrement…" : "Enregistrer l’étude"}</button>{#if step < PIA_STEPS.length - 1}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}</div>

@@ -52,11 +52,23 @@ export function reviseWorkspace(master: Workspace, expectedRevision: number, now
   return next;
 }
 
-export function putActivity(master: Workspace, activity: Activity, expectedRevision: number, now: string): Workspace {
+export function putActivity(master: Workspace, activity: Activity, expectedRevision: number, now: string, documentIds?: string[]): Workspace {
   const previous = master.activities.find((item) => item.id === activity.id);
   if (previous && previous.role !== activity.role) throw new PrivacyError("INVALID");
   const activities = previous ? master.activities.map((item) => item.id === activity.id ? activity : item) : [...master.activities, activity];
-  return reviseWorkspace(master, expectedRevision, now, { activities });
+  if (documentIds === undefined) return reviseWorkspace(master, expectedRevision, now, { activities });
+  const selected = new Set(documentIds);
+  if (selected.size !== documentIds.length || documentIds.some((id) => !master.documents.some((doc) => doc.id === id))) throw new PrivacyError("INVALID");
+  const previousPurposes = new Set(previous?.role === "controller" ? previous.purposes.map((p) => p.id) : []);
+  const documents = master.documents.map((doc) => {
+    const linked = doc.activityIds.includes(activity.id), wanted = selected.has(doc.id);
+    if (linked === wanted) return doc;
+    return { ...doc, activityIds: wanted ? [...doc.activityIds, activity.id] : doc.activityIds.filter((id) => id !== activity.id),
+      purposeIds: wanted ? doc.purposeIds : doc.purposeIds.filter((id) => !previousPurposes.has(id)),
+      status: "declared" as const, reviewedAt: null, reviewedRevision: null };
+  });
+  // Inventory and reference links form one revision and one encrypted storage write.
+  return reviseWorkspace(master, expectedRevision, now, { activities, documents });
 }
 
 export function putParty(master: Workspace, party: Party, expectedRevision: number, now: string): Workspace {

@@ -10,10 +10,11 @@
   import KnowledgeField from "./KnowledgeField.svelte";
   let { initial, workspace, busy, example, initialSection = "record", onSave, onCancel }: {
     initialSection?: "record" | "analysis" | "flows"; initial: Activity; workspace: Workspace; busy: boolean; example?: StartingPoint;
-    onSave: (activity: Activity) => Promise<void>; onCancel: () => void;
+    onSave: (activity: Activity, documentIds: string[]) => Promise<void>; onCancel: () => void;
   } = $props();
   let draft: Activity = $state(untrack(() => structuredClone(initial)));
-  let section = $state(untrack(() => initialSection));
+  let section = $state<"record" | "analysis" | "flows" | "evidence">(untrack(() => initialSection));
+  let documentIds = $state(untrack(() => workspace.documents.filter((doc) => doc.activityIds.includes(initial.id)).map((doc) => doc.id)));
   let step = $state(0);
   let whole = $state(false);
   let sectionTitle: HTMLHeadingElement | undefined = $state();
@@ -34,7 +35,7 @@
   }
   async function save() {
     if (!draft.title.trim()) { section = "record"; whole = false; await go(0); form?.reportValidity(); return; }
-    await onSave($state.snapshot(draft));
+    await onSave($state.snapshot(draft), $state.snapshot(documentIds));
   }
   function toggle(field: "systemIds" | "participantIds" | "controllerIds", id: string, checked: boolean) {
     if (field === "controllerIds") {
@@ -49,12 +50,19 @@
     <button type="button" class="secondary" disabled={busy} onclick={() => { section = "record"; whole = !whole; }}>{whole ? "Revenir au parcours guidé" : "Voir toute la fiche"}</button>
   </div>
   <p class="help">Vous pouvez enregistrer à tout moment. Les champs laissés vides resteront à examiner.</p>
-  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
+  <nav class="activity-views" aria-label="Vues de l’activité">{#each [["record", "La fiche", "register"], ["analysis", "L’analyse", "analysis"], ["flows", "Les flux", "flows"], ["evidence", "Les justificatifs", "documents"]] as [value, label, icon]}<button type="button" class="secondary" class:active={section === value} aria-current={section === value ? "page" : undefined} disabled={busy} onclick={() => section = value as typeof section}><Icon name={icon} />{label}</button>{/each}</nav>
   {#if example && section === "record"}<aside class="interview-card"><strong>Votre fil conducteur</strong><p>{example.question}</p><details><summary>Retrouver les questions métier et leurs sources</summary><InterviewPlaybook {example} /></details></aside>{/if}
   {#if section === "record" && !whole}<nav class="editor-steps" aria-label="Étapes de la fiche">{#each steps as label, index}<button type="button" class="secondary" disabled={busy} aria-current={step === index ? "step" : undefined} onclick={() => void go(index)}><span>{index + 1}</span>{label}</button>{/each}</nav><div class="step-heading"><p class="eyebrow">Étape {step + 1} sur {steps.length}</p><h3 bind:this={sectionTitle} tabindex="-1">{steps[step]}</h3><p>{introductions[step]}</p></div>{/if}
   <form bind:this={form} onsubmit={(event) => { event.preventDefault(); void save(); }}>
     <fieldset disabled={busy}>
-      {#if section === "analysis"}
+      {#if section === "evidence"}
+        <div class="method-intro"><p class="eyebrow">Une référence, plusieurs activités</p><h3>Relier les justificatifs déjà recensés.</h3><p>Sélectionnez les documents qui concernent cette activité. Leur titre, leur version et leur emplacement restent dans la bibliothèque commune de ce coffre ; vous ne les ressaisissez pas.</p></div>
+        <fieldset class="choices evidence-picker"><legend>Références de ce coffre</legend>
+          {#each workspace.documents as doc (doc.id)}<label><input type="checkbox" checked={documentIds.includes(doc.id)} onchange={(e) => documentIds = e.currentTarget.checked ? [...documentIds, doc.id] : documentIds.filter((id) => id !== doc.id)} /><span><strong>{doc.title}</strong><small>{doc.version ? `Version ${doc.version}` : "Version à préciser"} · {doc.scope}</small><small>{doc.internalRef || "Emplacement à renseigner"}</small></span></label>{/each}
+          {#if !workspace.documents.length}<p>Aucune référence dans ce coffre. Enregistrez la fiche, puis utilisez « Référencer un document pour cette activité ».</p>{/if}
+        </fieldset>
+        <p class="help">Relier une référence ne valide pas son contenu. Détacher une référence conserve le document et les anciennes revues ; ses liens aux finalités de cette activité sont aussi retirés. Les modifications ne prennent effet qu’à l’enregistrement de la fiche.</p>
+      {:else if section === "analysis"}
         <div class="method-intro"><p class="eyebrow">Faits · arguments · appréciation · suites</p><h3>Examiner les exigences RGPD de cette activité.</h3><p>Travaillez à partir d’une finalité et des opérations réellement décrites. Notez les réserves et les avis à obtenir. Les notes sont internes au dossier ; leur saisie ne vaut pas validation.</p></div>
         <KnowledgeField label="Opérations détaillées du traitement" bind:value={draft.analysis.operations} hint="Décrivez la collecte, l’enregistrement, les consultations, les calculs ou rapprochements, les transmissions, l’archivage et l’effacement, selon le fonctionnement réel." />
         <KnowledgeField label="Personnes habilitées et droits d’accès" bind:value={draft.analysis.access} hint="Décrivez les rôles, équipes ou organismes autorisés, leurs droits de lecture, modification, extraction ou suppression et le circuit d’autorisation. Pas de liste nominative." />

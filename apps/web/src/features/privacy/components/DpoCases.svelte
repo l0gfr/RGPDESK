@@ -1,12 +1,14 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import { appendDpoEvent, canonicalJson, createDpoCase, dpoChanges, knowledge, knowledgeText, putDpoCase, recordDpoReview, rightsDeadline, breachDeadline, type DpoCase, type DpoKind, type DpoReview, type Workspace } from "@rgpdesk/privacy-core";
+  import { appendDpoEvent, canonicalJson, createDpoCase, dpoChanges, dpoChangeDetails, knowledge, knowledgeText, putDpoCase, recordDpoReview, rightsDeadline, breachDeadline, type DpoCase, type DpoKind, type DpoReview, type Workspace } from "@rgpdesk/privacy-core";
   import { DPO_TITLES, DPO_INTRO, DPO_METHODS } from "../dpo-methods";
   import { RGPD_OFFICIAL } from "../review-methods";
+  import ReviewChanges from "./ReviewChanges.svelte";
+  import ReviewEvidence from "./ReviewEvidence.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, onSave, onEditing, onRegister, onActions, initialCaseId = "" }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void; onActions: (activityId: string) => void; initialCaseId?: string } = $props();
+  let { workspace, busy, onSave, onEditing, onRegister, onActions, onDocument, initialCaseId = "" }: { workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onRegister: () => void; onActions: (activityId: string) => void; onDocument: (id: string) => void; initialCaseId?: string } = $props();
   let kind = $state<DpoKind>("interest"), draft = $state<DpoCase | null>(null), step = $state("scope"), error = $state("");
   let filter = $state("all"), ownerFilter = $state("");
   let reviewAuthor = $state(""), reviewReason = $state(""), outcome = $state<DpoReview["outcome"]>("rework");
@@ -60,6 +62,8 @@
     <header class="section-heading"><div><p class="eyebrow">{DPO_TITLES[draft.kind]} / dossier de travail</p><h2>{draft.title || "Nouveau dossier"}</h2></div><button class="secondary" disabled={busy} onclick={close}>Fermer le dossier</button></header>
     <p class="help">Enregistrez avant de fermer. Les saisies non enregistrées seront abandonnées. Une revue conserve l’analyse et le contexte du registre à sa date.</p>
     <nav class="dpo-step-nav" aria-label="Parcours du dossier">{#each [["scope","01 Cadrage"],["analysis","02 Analyse"],["events","03 Chronologie"],["review","04 Revue & historique"]] as [key,label]}<button class="secondary" class:active={step === key} disabled={busy} onclick={() => step = key}>{label}</button>{/each}</nav>
+    <ReviewChanges changes={dpoChangeDetails(workspace, draft)} review={draft.reviews.at(-1)} dirty={changed()} />
+    <ReviewEvidence documents={workspace.documents.filter((d) => d.activityIds.some((id) => draft!.activityIds.includes(id)))} disabled={busy || changed()} onOpen={(id) => { if (!busy && !changed()) { draft = null; onEditing(false); onDocument(id); } }} />
     <fieldset disabled={busy}>
     {#if discarded}<p class="notice">Des modifications ne sont pas enregistrées. Enregistrez-les ou fermez à nouveau pour les abandonner.</p><button onclick={async () => { await save(); discarded = false; }}>Enregistrer les modifications</button>{/if}
     {#if step === "scope"}
@@ -101,11 +105,11 @@
       <button disabled={!exists() || draft.events.length >= 40} onclick={() => record("event")}>Conserver cet événement</button>
     {:else}
       <h3>Décider, puis pouvoir expliquer</h3><p>La revue conserve vos notes et le contexte lié du registre. « Revue effectuée » ou « clôture » décrit votre décision ; aucun de ces états ne certifie une conformité ou un envoi.</p>
-      <ul>{#each dpoChanges(workspace, draft) as change}<li>{change}</li>{/each}</ul>
+      <p class="help">La comparaison en haut du dossier reprend les faits et références modifiés depuis la dernière revue.</p>
       <label class="field">Auteur déclaré de la revue<input bind:value={reviewAuthor} maxlength="160" /></label><label class="field">Position<select bind:value={outcome}><option value="rework">Travail à approfondir</option><option value="reviewed">Revue effectuée, position motivée ci-dessous</option><option value="closed">Clôture déclarée du dossier</option></select></label><label class="field">Motivation et suites<textarea bind:value={reviewReason} maxlength="4000"></textarea></label><button disabled={!exists() || draft.reviews.length >= 8} onclick={() => record("review")}>Conserver cette revue</button>
       <h3>Relire une revue conservée</h3><label class="field">Revue historique<select bind:value={historical}><option value="">Choisir une revue</option>{#each draft.reviews as r,index}<option value={r.id}>Revue {index + 1} · {r.at} · {r.author}</option>{/each}</select></label>
       {@const review = draft.reviews.find((r) => r.id === historical)}
-      {#if review}<article class="panel" aria-label="Revue historique"><h4>{review.at} · {review.author}</h4><p>{review.reason}</p><p>Contexte conservé : {review.context.organization.name} · {review.context.activities.map((c) => c.activity.title).join(" · ")}</p>{#each review.content.notes as note}<details><summary>{DPO_METHODS[draft.kind].find((q) => q.id === note.questionId)?.title}</summary><dl>{#each [["Faits",note.facts],["Preuves",note.evidence],["Objections",note.objections],["Appréciation",note.assessment],["Suites",note.followUp]] as pair}<dt>{pair[0]}</dt><dd>{knowledgeText(pair[1] as import("@rgpdesk/privacy-core").Knowledge) || "À documenter"}</dd>{/each}</dl></details>{/each}</article>{/if}
+      {#if review}<article class="panel" aria-label="Revue historique"><h4>{review.at} · {review.author}</h4><p>{review.reason}</p><p>Contexte conservé : {review.context.organization.name} · {review.context.activities.map((c) => c.activity.title).join(" · ")}</p><ReviewEvidence documents={review.context.activities.flatMap((c) => c.documents)} historical />{#each review.content.notes as note}<details><summary>{DPO_METHODS[draft.kind].find((q) => q.id === note.questionId)?.title}</summary><dl>{#each [["Faits",note.facts],["Preuves",note.evidence],["Objections",note.objections],["Appréciation",note.assessment],["Suites",note.followUp]] as pair}<dt>{pair[0]}</dt><dd>{knowledgeText(pair[1] as import("@rgpdesk/privacy-core").Knowledge) || "À documenter"}</dd>{/each}</dl></details>{/each}</article>{/if}
     {/if}
     </fieldset>
   {/if}

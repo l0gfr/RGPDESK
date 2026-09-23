@@ -18,7 +18,7 @@ python3 artifacts/rgpdesk/verify-release.py artifacts/rgpdesk "$(git rev-parse H
 
 `--candidate` autorise uniquement les essais locaux avec des fichiers non commités. Un tel artefact indique `dirtyWorktree: true` et le vérificateur de publication le refuse.
 
-Le générateur copie les six pages RGPD (application, guide utilisateur, confidentialité, vérificateur, FAQ et soutien), duplique l'entrée sur `/`, suit leurs dépendances compilées avec esbuild et conserve leurs octets. Il refuse les liens symboliques, chemins sortants, imports réseau et imports dynamiques non littéraux. Aucun remplacement de noms ou de formats cyber n'est effectué. Les quatre fichiers de licence et notices sont copiés sans modification. Les fichiers `robots.txt` et `release.json` complètent le site.
+Le générateur copie les cinq pages RGPD (application, guide utilisateur, confidentialité, vérificateur, FAQ), duplique l'entrée sur `/`, suit leurs dépendances compilées avec esbuild et conserve leurs octets. Il refuse les liens symboliques, chemins sortants, imports réseau et imports dynamiques non littéraux. Aucun remplacement de noms ou de formats cyber n'est effectué. Les quatre fichiers de licence et notices sont copiés sans modification. Les fichiers `robots.txt` et `release.json` complètent le site.
 
 Le ZIP `artifacts/rgpdesk-release.zip` contient `site/`, les deux configurations Apache, un manifeste fermé, les SHA-256 et un vérificateur Python autonome. Les fichiers d'exploitation sont hors du document root. La configuration TLS contient la CSP extraite des pages exactes et le commit Git. L'artefact doit être construit après la dernière modification du code, puis qualifié sans reconstruire entre les tests et le transfert.
 

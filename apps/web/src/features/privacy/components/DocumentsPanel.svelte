@@ -4,12 +4,13 @@
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import { CONTRACT_METHOD } from "../review-methods";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, onSave, initialDocumentId = "" }: { initialDocumentId?: string; workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<void> } = $props();
+  let { workspace, busy, onSave, initialDocumentId = "", initialActivityId = "" }: { initialActivityId?: string; initialDocumentId?: string; workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean> } = $props();
   let draft = $state<EvidenceReference | null>(null); let reviewed = $state(false); let due = $state("");
   let consumedSearch = $state("");
   $effect(() => { if (initialDocumentId && consumedSearch !== initialDocumentId) { consumedSearch = initialDocumentId; const doc = workspace.documents.find((d) => d.id === initialDocumentId); if (doc) edit(doc); } });
+  $effect(() => { if (!initialDocumentId && initialActivityId && consumedSearch !== initialActivityId && workspace.activities.some((a) => a.id === initialActivityId)) { consumedSearch = initialActivityId; create(); } });
   const categories = { contract: "Contrat / acte", notice: "Notice d’information", policy: "Politique", analysis: "Analyse", other: "Autre" };
-  function create() { draft = { id: crypto.randomUUID(), workspaceId: workspace.id, title: "", category: "contract", contractReview: null, activityIds: [], purposeIds: [], partyIds: [], scope: "", version: "", declaredAuthor: "", internalRef: "", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: null, audience: "", channel: "", availability: unknown() }; reviewed = false; due = ""; }
+  function create() { draft = { id: crypto.randomUUID(), workspaceId: workspace.id, title: "", category: "contract", contractReview: null, activityIds: initialActivityId && workspace.activities.some((a) => a.id === initialActivityId) ? [initialActivityId] : [], purposeIds: [], partyIds: [], scope: "", version: "", declaredAuthor: "", internalRef: "", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: null, audience: "", channel: "", availability: unknown() }; reviewed = false; due = ""; }
   function edit(doc: EvidenceReference) { draft = structuredClone($state.snapshot(doc)); reviewed = false; due = doc.reviewDue ?? ""; }
   function toggle(field: "activityIds" | "purposeIds" | "partyIds", id: string, checked: boolean) {
     if (!draft) return; draft[field] = checked ? [...draft[field], id] : draft[field].filter((v) => v !== id);
@@ -17,7 +18,8 @@
   }
   async function save() {
     if (!draft) return; const now = new Date().toISOString();
-    await onSave(putDocument(workspace, { ...$state.snapshot(draft), reviewDue: due || null, status: reviewed ? "reviewed" : "declared", reviewedAt: reviewed ? now : null, reviewedRevision: reviewed ? workspace.revision + 1 : null }, now));
+    const saved = await onSave(putDocument(workspace, { ...$state.snapshot(draft), reviewDue: due || null, status: reviewed ? "reviewed" : "declared", reviewedAt: reviewed ? now : null, reviewedRevision: reviewed ? workspace.revision + 1 : null }, now));
+    if (saved) draft = null;
   }
 </script>
 <section class="panel">
@@ -29,7 +31,7 @@
     <h3>Référence documentaire</h3><div class="grid-two"><label class="field">Titre interne<input required maxlength="160" bind:value={draft.title} /></label><label class="field">Catégorie<select aria-label="Catégorie" disabled={draft.contractReview !== null} bind:value={draft.category}>{#each Object.entries(categories) as [value, label]}<option {value}>{label}</option>{/each}</select></label></div>
     <div class="grid-two"><label class="field">Périmètre de la référence<input required maxlength="160" bind:value={draft.scope} /></label><label class="field">Version déclarée<input maxlength="160" bind:value={draft.version} /></label></div>
     <div class="grid-two"><label class="field">Auteur déclaré<input maxlength="160" bind:value={draft.declaredAuthor} /></label><label class="field">Sensibilité interne<select aria-label="Sensibilité interne" bind:value={draft.sensitivity}><option value="internal">Interne</option><option value="restricted">Restreinte</option></select></label></div>
-    <label class="field">Localisation / référence interne<textarea maxlength="4000" bind:value={draft.internalRef}></textarea><small>Indiquez où retrouver le document dans votre organisation. Cette information restera interne ; aucun lien ne sera ouvert automatiquement.</small></label>
+    <label class="field">Localisation / référence interne<textarea aria-label="Localisation / référence interne" aria-describedby="document-location-hint" maxlength="4000" bind:value={draft.internalRef}></textarea><small id="document-location-hint">Indiquez où retrouver le document dans votre organisation. Cette information restera interne ; aucun lien ne sera ouvert automatiquement.</small></label>
     <fieldset class="choices"><legend>Activités couvertes</legend>{#each workspace.activities as a}<label><input type="checkbox" checked={draft.activityIds.includes(a.id)} onchange={(e) => toggle("activityIds", a.id, e.currentTarget.checked)} />{a.title}</label>{/each}</fieldset>
     {#if draft.category === "notice"}<fieldset class="choices"><legend>Finalités couvertes</legend>{#each workspace.activities.filter((a) => draft!.activityIds.includes(a.id)) as a}{#if a.role === "controller"}{#each a.purposes as p, i}<label><input type="checkbox" checked={draft.purposeIds.includes(p.id)} onchange={(e) => toggle("purposeIds", p.id, e.currentTarget.checked)} />{a.title} · finalité {i + 1}</label>{/each}{/if}{/each}</fieldset><div class="grid-two"><label class="field">Public concerné<input maxlength="160" bind:value={draft.audience} /></label><label class="field">Canal d’information<input maxlength="160" bind:value={draft.channel} /></label></div><KnowledgeField label="Disponibilité déclarée de la notice" bind:value={draft.availability} hint="La disponibilité n’est pas une preuve de remise. Aucune URL n’est appelée." />{/if}
     <fieldset class="choices"><legend>Intervenants concernés</legend>{#each workspace.parties as p}<label><input type="checkbox" checked={draft.partyIds.includes(p.id)} onchange={(e) => toggle("partyIds", p.id, e.currentTarget.checked)} />{p.name}</label>{/each}</fieldset>

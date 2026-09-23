@@ -12,6 +12,7 @@ export { default as validateBackupV2 } from "./generated/backup-v2-validator.js"
 
 export * from "./pia-model";
 export * from "./pia";
+export * from "./review-diff";
 
 export * from "./dpo-model";
 export * from "./dpo";

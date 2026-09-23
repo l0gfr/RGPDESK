@@ -1067,3 +1067,46 @@
 }
 
 .rgpdesk #activity-editor-title, .rgpdesk .pia-reader-cover h3, .rgpdesk .pia-reader-index { scroll-margin-top:24px; }
+
+/* A marginal notebook: comparisons stay folded until the reader needs their detail. */
+.rgpdesk .review-trace,.rgpdesk .review-evidence { min-width:0; margin:22px 0; border:1px solid #adbdca; border-radius:2px 18px 2px 2px; background:linear-gradient(125deg,#dfe8ef,#f4f6f8); }
+.rgpdesk .review-trace > summary,.rgpdesk .review-evidence > summary { display:flex; align-items:center; gap:16px; padding:20px 24px; cursor:pointer; list-style:none; }
+.rgpdesk .review-trace > summary::-webkit-details-marker,.rgpdesk .review-evidence > summary::-webkit-details-marker { display:none; }
+.rgpdesk .review-trace summary > svg,.rgpdesk .review-evidence summary > svg { flex-shrink:0; color:#466079; }
+.rgpdesk .review-trace > summary > span:first-of-type,.rgpdesk .review-evidence > summary > span { flex:1; min-width:0; }
+.rgpdesk .review-trace summary strong,.rgpdesk .review-evidence summary strong { display:block; font-size:14px; line-height:1.5; color:#243d52; }
+.rgpdesk .review-trace summary small,.rgpdesk .review-evidence summary small { display:block; margin-top:4px; color:#53697d; font-size:11px; font-weight:400; }
+.rgpdesk .review-trace-sign { font:25px/1 Georgia,serif; color:#526b81; }
+.rgpdesk .review-trace[open] > summary .review-trace-sign { transform:rotate(45deg); }
+.rgpdesk .review-trace-body,.rgpdesk .review-evidence-body { padding:0 24px 22px; }
+.rgpdesk .review-trace-position { border-left:2px solid #819bad; padding:12px 18px; background:#f8fafbb3; }
+.rgpdesk .review-trace-position > p:not(.eyebrow) { font:400 18px/1.6 Georgia,serif; color:#2c4357; white-space:pre-wrap; overflow-wrap:anywhere; }
+.rgpdesk .review-trace-questions { list-style:none; margin:20px 0; padding:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.rgpdesk .review-trace-questions li { border-top:1px solid #b9cbd7; padding-top:12px; font-size:12px; line-height:1.7; }
+.rgpdesk .review-trace-questions strong { display:block; color:#2b465c; margin-bottom:5px; }
+.rgpdesk .review-trace-change { background:#f7fafb; border:1px solid #c8d5df; margin:8px 0; }
+.rgpdesk .review-trace-change > summary { display:flex; justify-content:space-between; gap:14px; padding:14px 18px; cursor:pointer; }
+.rgpdesk .review-trace-change summary small { margin:0 0 4px; overflow-wrap:anywhere; }
+.rgpdesk .review-trace-kind { font:10px/1.6 ui-monospace,monospace; color:#486178; padding-top:4px; flex-shrink:0; }
+.rgpdesk .review-trace-change dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); margin:0; border-top:1px solid #ccd8e1; }
+.rgpdesk .review-trace-change dl > div { padding:16px 18px; min-width:0; }
+.rgpdesk .review-trace-change dl > div + div { border-left:1px solid #ccd8e1; background:#eaf1f5; }
+.rgpdesk .review-trace dt,.rgpdesk .review-evidence dt { font:10px/1.8 ui-monospace,monospace; color:#546b7e; margin-bottom:8px; }
+.rgpdesk .review-trace dd,.rgpdesk .review-evidence dd { margin:0; font-size:13px; line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere; }
+.rgpdesk .review-evidence article { padding:20px 0; border-top:1px solid #b8cad7; }
+.rgpdesk .review-evidence article header { display:flex; gap:12px; align-items:flex-start; }
+.rgpdesk .review-evidence h4 { font:400 20px/1.35 Georgia,serif; color:#294157; margin:0 0 6px; overflow-wrap:anywhere; }
+.rgpdesk .review-evidence article header p { font-size:11px; margin:0; }
+.rgpdesk .review-evidence dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin:20px 0; }
+.rgpdesk .review-evidence .text-button { padding-inline:0; text-align:left; }
+@media (max-width:700px) {
+  .rgpdesk .review-trace > summary,.rgpdesk .review-evidence > summary { padding:18px 16px; gap:12px; }
+  .rgpdesk .review-trace-body,.rgpdesk .review-evidence-body { padding-inline:16px; }
+  .rgpdesk .review-trace-questions,.rgpdesk .review-trace-change dl,.rgpdesk .review-evidence dl { grid-template-columns:minmax(0,1fr); }
+  .rgpdesk .review-trace-change dl > div + div { border-left:0; border-top:1px solid #ccd8e1; }
+  .rgpdesk .review-trace-change > summary { flex-wrap:wrap; }
+}
+
+.rgpdesk .evidence-picker label { align-items: flex-start; padding: 1rem; }
+.rgpdesk .evidence-picker label > span { display: grid; gap: .35rem; min-width: 0; overflow-wrap: anywhere; }
+.rgpdesk .evidence-picker small { color: var(--muted); }
