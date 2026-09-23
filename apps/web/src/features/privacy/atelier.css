@@ -1073,11 +1073,11 @@
 .rgpdesk .review-trace > summary,.rgpdesk .review-evidence > summary { display:flex; align-items:center; gap:16px; padding:20px 24px; cursor:pointer; list-style:none; }
 .rgpdesk .review-trace > summary::-webkit-details-marker,.rgpdesk .review-evidence > summary::-webkit-details-marker { display:none; }
 .rgpdesk .review-trace summary > svg,.rgpdesk .review-evidence summary > svg { flex-shrink:0; color:#466079; }
-.rgpdesk .review-trace > summary > span:first-of-type,.rgpdesk .review-evidence > summary > span { flex:1; min-width:0; }
+.rgpdesk .review-trace > summary > span:first-of-type,.rgpdesk .review-evidence > summary > span:first-of-type { flex:1; min-width:0; }
 .rgpdesk .review-trace summary strong,.rgpdesk .review-evidence summary strong { display:block; font-size:14px; line-height:1.5; color:#243d52; }
 .rgpdesk .review-trace summary small,.rgpdesk .review-evidence summary small { display:block; margin-top:4px; color:#53697d; font-size:11px; font-weight:400; }
 .rgpdesk .review-trace-sign { font:25px/1 Georgia,serif; color:#526b81; }
-.rgpdesk .review-trace[open] > summary .review-trace-sign { transform:rotate(45deg); }
+.rgpdesk .review-trace[open] > summary .review-trace-sign,.rgpdesk .review-evidence[open] > summary .review-trace-sign { transform:rotate(45deg); }
 .rgpdesk .review-trace-body,.rgpdesk .review-evidence-body { padding:0 24px 22px; }
 .rgpdesk .review-trace-position { border-left:2px solid #819bad; padding:12px 18px; background:#f8fafbb3; }
 .rgpdesk .review-trace-position > p:not(.eyebrow) { font:400 18px/1.6 Georgia,serif; color:#2c4357; white-space:pre-wrap; overflow-wrap:anywhere; }

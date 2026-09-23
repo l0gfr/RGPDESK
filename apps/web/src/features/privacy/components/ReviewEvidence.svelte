@@ -5,7 +5,7 @@
   let unique = $derived([...new Map(documents.map((d) => [d.id, d])).values()]);
 </script>
 <details class="review-evidence">
-  <summary><Icon name="documents" size={21} /><span><strong>{historical ? "Références conservées avec cette position" : "Vos justificatifs, sans les ressaisir"}</strong><small>{unique.length} référence(s) liée(s) au périmètre</small></span></summary>
+  <summary><Icon name="documents" size={21} /><span><strong>{historical ? "Références conservées avec cette position" : "Vos justificatifs, sans les ressaisir"}</strong><small>{unique.length} référence(s) liée(s) au périmètre</small></span><span class="review-trace-sign" aria-hidden="true">+</span></summary>
   <div class="review-evidence-body">
     <p class="help">{historical ? "Les renseignements ci-dessous sont ceux de la revue choisie. Le document original reste dans votre organisation." : "Retrouvez les références liées aux traitements. Rapprochez leur version et leur contenu des arguments de l’analyse ; leur présence seule ne prouve pas une appréciation."}</p>
     {#if !unique.length}<p>Aucune référence documentaire liée. Vous pouvez en ajouter dans Documents et la rattacher au traitement, sans joindre le fichier.</p>{/if}
