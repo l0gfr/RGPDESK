@@ -1,3 +1,4 @@
+import validateV4 from "./generated/master-v4-validator.js";
 import validateV3 from "./generated/master-v3-validator.js";
 import validateV2 from "./generated/master-v2-validator.js";
 import validateV1 from "./generated/master-validator.js";
@@ -24,6 +25,10 @@ export function migrateWorkspace(value: unknown): Workspace {
   if (value && typeof value === "object" && "format" in value && value.format === "rgpd-master-v3") {
     if (!validateV3(value)) throw new PrivacyError("INVALID");
     value = { ...value, format: "rgpd-master-v4", impactAssessments: [] };
+  }
+  if (value && typeof value === "object" && "format" in value && value.format === "rgpd-master-v4") {
+    if (!validateV4(value)) throw new PrivacyError("INVALID");
+    value = { ...value, format: "rgpd-master-v5", dpoCases: [], piaPublications: [] };
   }
   assertWorkspace(value);
   return value;

@@ -85,7 +85,7 @@ test("IndexedDB v1 upgrade preserves the old encrypted master and v1 backup migr
   const result = await page.evaluate(async () => {
     const api = window.privacyTest; const phrase = "Fictional snapshot phrase 2026 correct";
     const current = api.createWorkspace(crypto.randomUUID(), "Ancien coffre fictif", new Date().toISOString());
-    const old = JSON.parse(JSON.stringify(current)); old.format = "rgpd-master-v1"; delete old.impactAssessments; delete old.organization.representatives;
+    const old = JSON.parse(JSON.stringify(current)); old.format = "rgpd-master-v1"; delete old.impactAssessments; delete old.dpoCases; delete old.piaPublications; delete old.organization.representatives;
     for (const k of ["documents", "actions", "decisions", "imports", "deliveries"]) delete old[k];
     const [envelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(old.id, 1, "master"), value: old }], phrase);
     const LegacyVault = Object.getPrototypeOf(api.PrivacyVault);
@@ -103,7 +103,7 @@ test("IndexedDB v1 upgrade preserves the old encrypted master and v1 backup migr
     const [backupEnvelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(old.id, 1, "backup"), value: payload }], phrase);
     const decoded = await api.decodeArchive(JSON.stringify({ format: "rgpd-backup-v1", workspaceId: old.id, revision: 1, envelope: backupEnvelope }), phrase);
     return { untouched, format: opened.format, oldRevision: opened.revision, same: api.canonicalJson(opened) === api.canonicalJson(decoded.master) };
-  }); expect(result).toEqual({ untouched: true, format: "rgpd-master-v4", oldRevision: 1, same: true });
+  }); expect(result).toEqual({ untouched: true, format: "rgpd-master-v5", oldRevision: 1, same: true });
 });
 
 
@@ -112,7 +112,7 @@ test("v2 encrypted content migrates without rewriting disk and v3 analysis survi
     const api = window.privacyTest; const phrase = "Fictional analysis migration phrase 2026!";
     const master = api.createWorkspace(crypto.randomUUID(), "Mission historique fictive", new Date().toISOString());
     master.activities.push(api.createActivity(master.id, crypto.randomUUID(), "controller"));
-    const old = JSON.parse(JSON.stringify(master)); old.format = "rgpd-master-v2"; delete old.impactAssessments;
+    const old = JSON.parse(JSON.stringify(master)); old.format = "rgpd-master-v2"; delete old.impactAssessments; delete old.dpoCases; delete old.piaPublications;
     for (const activity of old.activities) { delete activity.analysis; delete activity.flows; }
     const vault = new api.PrivacyVault(); let session = { epoch: await vault.initialize(), signal: new AbortController().signal };
     const [envelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(old.id, 1, "master"), value: old }], phrase);
@@ -132,10 +132,10 @@ test("v2 encrypted content migrates without rewriting disk and v3 analysis survi
     const restored = await vault.restore(backup, phrase, session);
     return { untouched, format: restored.format, revision: restored.revision, equal: api.canonicalJson(restored) === api.canonicalJson(next), leaked: (encrypted + backup).includes("PRIVATE_V3"), sourceUnchanged: old.format === "rgpd-master-v2" && !old.activities[0].analysis };
   });
-  expect(result).toEqual({ untouched: true, format: "rgpd-master-v4", revision: 2, equal: true, leaked: false, sourceUnchanged: true });
+  expect(result).toEqual({ untouched: true, format: "rgpd-master-v5", revision: 2, equal: true, leaked: false, sourceUnchanged: true });
 });
 
-test("a genuine v3 vault remains intact on opening and v4 AIPD reviews survive native backup restore", async ({ page }) => {
+test("a genuine v3 vault remains intact on opening and AIPD reviews survive native backup restore", async ({ page }) => {
   const result = await page.evaluate(async () => {
     const api = window.privacyTest, vault = new api.PrivacyVault();
     const phrase = "Fictional AIPD migration phrase 2026!";
@@ -143,7 +143,7 @@ test("a genuine v3 vault remains intact on opening and v4 AIPD reviews survive n
     const source = api.createWorkspace(crypto.randomUUID(), "Ancien dossier AIPD fictif", new Date().toISOString());
     source.activities.push(api.createActivity(source.id, crypto.randomUUID(), "controller"));
     source.activities[0]!.analysis.notes[0]!.facts = api.knowledge("PRIVATE_OLD_ANALYSIS");
-    const legacy = JSON.parse(JSON.stringify(source)); legacy.format = "rgpd-master-v3"; delete legacy.impactAssessments;
+    const legacy = JSON.parse(JSON.stringify(source)); legacy.format = "rgpd-master-v3"; delete legacy.impactAssessments; delete legacy.dpoCases; delete legacy.piaPublications;
     const [envelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(legacy.id, 1, "master"), value: legacy }], phrase);
     await vault.table("records").add({ id: legacy.id, revision: 1, format: "rgpd-envelope-v1", envelope });
     const before = JSON.stringify(await vault.table("records").toArray());
@@ -161,5 +161,46 @@ test("a genuine v3 vault remains intact on opening and v4 AIPD reviews survive n
     const restored = await vault.restore(backup, phrase, session);
     return { untouched, equal: api.canonicalJson(next) === api.canonicalJson(restored), count: (await vault.listCurrent(session.epoch)).length, format: restored.format, leaked: (raw + backup).includes("PRIVATE_") };
   });
-  expect(result).toEqual({ untouched: true, equal: true, count: 1, format: "rgpd-master-v4", leaked: false });
+  expect(result).toEqual({ untouched: true, equal: true, count: 1, format: "rgpd-master-v5", leaked: false });
+});
+
+
+test("v4 migrates read-only then DPO v5 reviews and publications survive native encrypted restore", async ({ page }) => {
+  const result = await page.evaluate(async () => {
+    const api = window.privacyTest, vault = new api.PrivacyVault();
+    const phrase = "Fictional DPO restore phrase 2026!", now = () => new Date().toISOString();
+    let session = { epoch: await vault.initialize(), signal: new AbortController().signal };
+    const source = api.createWorkspace(crypto.randomUUID(), "FICTITIOUS_PRIVATE_DPO_ORG", now());
+    const activity = api.createActivity(source.id, crypto.randomUUID(), "controller");
+    if (activity.role !== "controller") throw new Error("fixture");
+    activity.purposes.push(api.createPurpose(crypto.randomUUID())); source.activities.push(activity);
+    const legacy = JSON.parse(JSON.stringify(source)); legacy.format = "rgpd-master-v4"; delete legacy.dpoCases; delete legacy.piaPublications;
+    const [envelope] = await api.encryptLocalPayloadBatch([{ aad: api.contextFor(legacy.id, 1, "master"), value: legacy }], phrase);
+    await vault.table("records").add({ id: legacy.id, revision: 1, format: "rgpd-envelope-v1", envelope });
+    const before = JSON.stringify(await vault.table("records").toArray());
+    let current = await vault.unlock(legacy.id, phrase, session);
+    const untouched = before === JSON.stringify(await vault.table("records").toArray());
+    const persist = async (next: typeof current) => { await vault.save(next, phrase, current.revision, session); current = next; };
+    for (const kind of ["interest", "transfer", "rights", "breach"] as const) {
+      const item = api.createDpoCase(current.id, crypto.randomUUID(), kind); item.activityIds = [current.activities[0]!.id];
+      if (kind === "interest") { const a = current.activities[0]!; if (a.role !== "controller") throw new Error("fixture"); item.purposeId = a.purposes[0]!.id; }
+      item.content.notes[0]!.facts = api.knowledge("FICTITIOUS_PRIVATE_DPO_FACT");
+      await persist(api.putDpoCase(current, item, current.revision, now()));
+      await persist(api.appendDpoEvent(current, item.id, { id: crypto.randomUUID(), at: now(), author: "Fictif", description: "FICTITIOUS_PRIVATE_DPO_EVENT", evidence: api.unknown() }, current.revision, now()));
+      await persist(api.recordDpoReview(current, item.id, { id: crypto.randomUUID(), author: "Fictif", outcome: "rework", reason: "FICTITIOUS_PRIVATE_DPO_REVIEW" }, current.revision, now()));
+    }
+    const pia = api.createImpactAssessment(current.id, current.activities[0]!, crypto.randomUUID());
+    await persist(api.putImpactAssessment(current, pia, current.revision, now()));
+    const publication = api.projectPiaPublication(current, { piaId: pia.id, reviewId: null, sections: ["context"], recipient: "FICTITIOUS_PRIVATE_DPO_RECIPIENT", scope: "Essai fictif", reservations: "" }, crypto.randomUUID(), now());
+    await persist(api.recordPiaPublication(current, publication, current.revision, now()));
+    const backup = await vault.backup(current, phrase, session);
+    const disk = JSON.stringify(await vault.table("records").toArray());
+    await vault.wipe(session.epoch); session = { epoch: await vault.initialize(), signal: new AbortController().signal };
+    const restored = await vault.restore(backup, phrase, session);
+    return { untouched, equal: api.canonicalJson(current) === api.canonicalJson(restored), format: restored.format,
+      leaked: (disk + backup).includes("FICTITIOUS_PRIVATE_DPO"), cases: restored.dpoCases.length,
+      reviews: restored.dpoCases.reduce((n,c) => n + c.reviews.length, 0), publications: restored.piaPublications.length,
+      listed: (await vault.listCurrent(session.epoch)).length };
+  });
+  expect(result).toEqual({ untouched: true, equal: true, format: "rgpd-master-v5", leaked: false, cases: 4, reviews: 4, publications: 1, listed: 1 });
 });

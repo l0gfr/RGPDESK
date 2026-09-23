@@ -1,4 +1,4 @@
-import { createWorkspace, createActivity, createPurpose, createDataFlow, createContractReview, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, createAction, evaluateWorkspace, putImpactAssessment, recordPiaReview, reviseWorkspace, assertWorkspace, knowledge as k, type Activity, type EvidenceReference, type ReviewNote, type Workspace } from "@rgpdesk/privacy-core";
+import { createDpoCase, putDpoCase, appendDpoEvent, recordDpoReview, createWorkspace, createActivity, createPurpose, createDataFlow, createContractReview, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, createAction, evaluateWorkspace, putImpactAssessment, recordPiaReview, reviseWorkspace, assertWorkspace, knowledge as k, type Activity, type EvidenceReference, type ReviewNote, type Workspace } from "@rgpdesk/privacy-core";
 
 // Editorial fiction only. No real people, client data, legal defaults or credential.
 // Every opening gets independent opaque IDs; nothing in this module writes to storage.
@@ -116,6 +116,18 @@ export function createDemoWorkspace(id: () => string, at: string): Workspace {
   for (const [rule, activityId, owner] of [["R-004", recruitment.id, "Équipe RH · fictive"], ["R-005", badges.id, "Équipe achats · fictive"], ["R-006", workshops.id, "Référent client · fictif"]]) {
     const finding = evaluateWorkspace(w, at.slice(0, 10)).find((f) => f.ruleId === rule && f.activityId === activityId);
     if (finding) w = createAction(w, finding, { id: id(), owner: owner!, due: null }, at);
+  }
+  for (const kind of ["interest", "transfer", "rights", "breach"] as const) {
+    const dossier = createDpoCase(wid, id(), kind);
+    dossier.title = ({ interest: "Badges : examiner l’intérêt poursuivi · fictif", transfer: "Support à distance : éclaircir les accès · fictif", rights: "Demande d’accès DR-01 · fictive", breach: "Envoi à un destinataire erroné VI-01 · fictif" })[kind];
+    dossier.owner = "Fonction DPO du scénario · fictive";
+    dossier.activityIds = [kind === "rights" ? recruitment.id : badges.id];
+    if (kind === "interest" && badges.role === "controller") dossier.purposeId = badges.purposes[0]!.id;
+    const facts = ({ interest: "L’organisme souhaite restreindre l’accès au local sensible. La journalisation systématique reste à justifier.", transfer: "Le fournisseur évoque une assistance distante. Les pays, entités et accès effectifs ne sont pas encore documentés.", rights: "Exercice : une demande vise les informations conservées lors du recrutement. Son périmètre et le régime applicable restent à examiner.", breach: "Exercice : un fichier aurait été envoyé au mauvais destinataire. Son contenu, les personnes affectées et la prise de connaissance restent à établir." })[kind];
+    dossier.content.notes[0] = note(dossier.content.notes[0]!, facts, "Cas pédagogique incomplet : aucune conclusion juridique arrêtée.", "Mener l’entretien, réunir les éléments et justifier la position retenue.");
+    w = putDpoCase(w, dossier, w.revision, at);
+    w = appendDpoEvent(w, dossier.id, { id: id(), at, author: "DPO fictif", description: "Ouverture de l’exercice. Les informations et références sont fictives ; aucune notification ni réponse envoyée.", evidence: k("EXERCICE / entretien à préparer, aucune pièce réelle") }, w.revision, at);
+    w = recordDpoReview(w, dossier.id, { id: id(), author: "DPO fictif", outcome: "rework", reason: "Scénario à approfondir : faits incomplets, aucune décision de traitement ou de notification." }, w.revision, at);
   }
   assertWorkspace(w);
   return w;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { VaultInventory } from "../persistence/inventory";
   import { onMount, tick } from "svelte";
-  import { createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
+  import { recordPiaPublication, renderPiaPublication, type PiaPublication, createActivity, createWorkspace, evaluateWorkspace, putActivity, putParty, putSystem, reviseWorkspace, MAX_BACKUP_BYTES, PrivacyError, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { assertLocalPassphrase } from "../../../lib/local-encryption";
   import { subscribeToSensitivePageLock } from "../../../lib/sensitive-page-lock";
   import { checkSession, PrivacyVault, PRIVACY_CHANNEL, type VaultItem, type VaultSession } from "../persistence/vault";
@@ -9,6 +9,8 @@
   import { zipFiles } from "@rgpdesk/privacy-verifier";
   import Icon from "./Icon.svelte";
   import ProcessingAtlas from "./ProcessingAtlas.svelte";
+  import DpoCases from "./DpoCases.svelte";
+  import PiaSharing from "./PiaSharing.svelte";
   import PiaPanel from "./PiaPanel.svelte";
   import AnalysisOverview from "./AnalysisOverview.svelte";
   import Pictogram from "./Pictogram.svelte";
@@ -52,7 +54,8 @@
   let fileInput: HTMLInputElement | undefined = $state();
   let wipeConfirmation = $state("");
   let showWipe = $state(false);
-  let panel: "pia" | "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
+  let dpoCaseId = $state("");
+  let panel: "dpo" | "pia-sharing" | "pia" | "analysis" | "flows" | "overview" | "register" | "organization" | "parties" | "systems" | "backup" | "import" | "documents" | "actions" | "delivery" = $state("overview");
   let piaEditing = $state(false);
   let missingOnly = $state(false);
   let registerRole = $state("");
@@ -234,6 +237,38 @@
       message = "Dossier préparé et instantané chiffré conservé. Vérifiez le fichier téléchargé avant de le transmettre.";
     });
   }
+  function downloadHtml(html: string) {
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    try { anchor.href = url; anchor.download = "rgpdesk-aipd.html"; document.body.append(anchor); anchor.click(); }
+    finally { anchor.remove(); URL.revokeObjectURL(url); }
+  }
+  async function deliverPia(p: PiaPublication) {
+    let completed = false;
+    await run(async (current) => {
+      if (!master || master.id !== p.workspaceId || master.revision !== p.revision) throw new PrivacyError("CONFLICT");
+      const html = await renderPiaPublication(p);
+      checkSession(current);
+      if (!master || master.revision !== p.revision) throw new PrivacyError("CONFLICT");
+      const next = recordPiaPublication($state.snapshot(master), p, p.revision, now());
+      await persist(next, current);
+      if (!demoSession) await vault!.assertCurrent(next.id, next.revision, current);
+      checkSession(current); downloadHtml(html);
+      completed = true;
+      message = "Contenu de la restitution conservé. Vérifiez le rapport HTML téléchargé avant de le transmettre.";
+    });
+    return completed;
+  }
+  async function downloadPia(id: string) {
+    await run(async (current) => {
+      if (!master) throw new PrivacyError("LOCKED");
+      const frozen = $state.snapshot(master), p = frozen.piaPublications.find((p) => p.id === id);
+      if (!p) throw new PrivacyError("INVALID");
+      const html = await renderPiaPublication(p);
+      if (!demoSession) await vault!.assertCurrent(frozen.id, frozen.revision, current);
+      checkSession(current); downloadHtml(html);
+    });
+  }
   async function downloadDelivery(id: string) {
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
@@ -360,19 +395,23 @@
     <div class="desk-layout">
     <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>{demo ? "DOSSIER FICTIF" : "VOTRE ESPACE"}</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
       <p class="nav-label">Dossier de l’organisation</p><nav class="tabs" aria-label="Espace RGPD">
-      {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
-        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" ? "analysis" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
-      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" ? "analysis" : key} /><span>{label}</span></button>{/each}</nav>
+      {#each [["overview", "Ma mission"], ["register", "Registre"], ["flows", "Cartographie"], ["analysis", "Analyse"], ["pia", "AIPD / PIA"], ["dpo", "Dossiers DPO"], ["organization", "Organisation"], ["parties", "Intervenants"], ["systems", "Systèmes"], ["documents", "Documents"], ["actions", "Actions & décisions"]] as [key, label]}
+        <button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span>{#if key === "register"}<small>{master.activities.length}</small>{/if}</button>
+      {/each}</nav><p class="nav-label">Circulation du dossier</p><nav class="tabs" aria-label="Opérations locales">{#each [["import", "Importer un CSV"], ["delivery", "Partager un dossier"], ["pia-sharing", "Restitution AIPD"], ["backup", "Sauvegarde"]] as [key, label]}<button aria-label={label} class:active={panel === key} aria-current={panel === key ? "page" : undefined} disabled={busy || editor !== null || piaEditing} onclick={() => { actionActivityId = ""; dpoCaseId = ""; panel = key as typeof panel; }}><Icon name={key === "pia" || key === "dpo" ? "analysis" : key === "pia-sharing" ? "delivery" : key} /><span>{label}</span></button>{/each}</nav>
       <div class="sidebar-security"><Icon name="shield" size={25} /><strong>{demo ? "Un espace pour essayer." : "Votre appareil. Votre coffre."}</strong><p>{demo ? "L’exercice reste en mémoire dans cet onglet. Aucun enregistrement automatique." : "Les informations restent ici. Pensez à votre sauvegarde chiffrée."}</p></div>
     </aside><div class="desk-workspace">
-    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
+    <header class="workspace-heading"><div><p class="eyebrow">{master.organization.name} · Espace de travail</p><h1 bind:this={workspaceHeading} tabindex="-1">{panel === "dpo" ? "Les dossiers de votre mission." : panel === "pia-sharing" ? "Restituer votre analyse d’impact." : panel === "pia" ? "Votre atelier d’impact." : panel === "analysis" ? "Votre analyse, point par point." : panel === "flows" ? "Votre carte des flux." : panel === "overview" ? "Votre mission, étape par étape." : panel === "register" ? "Votre registre RGPD." : panel === "documents" ? "Vos références documentaires." : panel === "actions" ? "Vos actions et décisions." : panel === "delivery" ? "Préparer un dossier à partager." : panel === "import" ? "Importer un registre CSV." : panel === "backup" ? "Sauvegarder votre travail." : panel === "organization" ? "Votre organisation." : panel === "parties" ? "Les acteurs du traitement." : "Les moyens du traitement."}</h1></div><button class="secondary lock-button" onclick={() => demo ? leaveDemo() : lock()}><Icon name={demo ? "arrow" : "lock"} />{demo ? "Retrouver mes coffres" : "Verrouiller le coffre"}</button></header>
     {#if !demo}<p class="backup-status"><Icon name="backup" size={15} />{backupRevision === master.revision ? "Sauvegarde préparée pendant cette séance : vérifiez le fichier sur votre disque." : "Avant de terminer votre séance, téléchargez une sauvegarde de votre travail."}</p>{/if}
     {#if demo && !editor}<DemoGuide {panel} busy={busy || piaEditing} onNavigate={(next) => panel = next} />{/if}
     {#if editor}
       <p class="help">Enregistrez avant de quitter cette fiche. Le verrouillage abandonne les modifications non enregistrées.</p>
       {#key editor.id}<ActivityEditor initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if panel === "overview"}
-      {#if demo}<DemoOverview {busy} onNavigate={(next) => panel = next} />{:else}<MissionOverview workspace={master} {busy} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
+      {#if demo}<DemoOverview {busy} onNavigate={(next) => panel = next} />{:else}<MissionOverview workspace={master} {busy} onCase={(id) => { dpoCaseId = id; panel = "dpo"; }} onNavigate={(next) => { actionActivityId = ""; panel = next; }} onEdit={(activity) => { editorSection = "record"; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); panel = "register"; }} />{/if}
+    {:else if panel === "dpo"}
+      <DpoCases workspace={master} {busy} initialCaseId={dpoCaseId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
+    {:else if panel === "pia-sharing"}
+      {#key master.revision}<PiaSharing workspace={$state.snapshot(master)} {busy} onDeliver={deliverPia} onDownload={downloadPia} />{/key}
     {:else if panel === "pia"}
       <PiaPanel workspace={master} {busy} {demo} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />
     {:else if panel === "analysis" || panel === "flows"}

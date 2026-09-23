@@ -12,3 +12,8 @@ export { default as validateBackupV2 } from "./generated/backup-v2-validator.js"
 
 export * from "./pia-model";
 export * from "./pia";
+
+export * from "./dpo-model";
+export * from "./dpo";
+export * from "./deadlines";
+export * from "./pia-share";

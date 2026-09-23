@@ -20,6 +20,8 @@ describe("isolated fictional practice workspace", () => {
     const w = createDemoWorkspace(id, at);
     expect(() => assertWorkspace(w)).not.toThrow();
     expect(w.activities).toHaveLength(4);
+    expect(w.dpoCases.map((c) => c.kind)).toEqual(["interest", "transfer", "rights", "breach"]);
+    expect(w.dpoCases.every((c) => c.reviews[0]?.outcome === "rework" && c.events.length === 1)).toBe(true);
     expect(w.activities.flatMap((a) => a.flows)).toHaveLength(7);
     expect(w.documents).toHaveLength(4);
     expect(w.actions).toHaveLength(3);

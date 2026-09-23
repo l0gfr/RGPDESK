@@ -8,9 +8,9 @@ Il s’adresse à la personne qui tient ce registre pour une association, une en
 
 La CNIL présente le registre comme un outil de recensement et d’analyse des traitements. Les rubriques diffèrent selon que l’organisme agit comme responsable ou comme sous-traitant. RGPDESK distingue ces deux registres. [Présentation du registre par la CNIL](https://www.cnil.fr/fr/RGPD-le-registre-des-activites-de-traitement).
 
-**Disponible aujourd’hui :** coffre local, fiches de traitement, cartographie des flux déclarés, analyse des exigences RGPD, atelier AIPD avec risques, mesures et historique des revues, revue des contrats article 28, intervenants, systèmes, références documentaires, import CSV, questions à examiner, actions, décisions, exports examinés, vérification technique et sauvegarde chiffrée.
+**Disponible aujourd’hui :** coffre local, fiches de traitement, cartographie des flux déclarés, analyse des exigences RGPD, atelier AIPD avec risques, mesures, historique des revues et restitution examinée, dossiers d’intérêt légitime par finalité, transferts, demandes de droits et violations, revue des contrats article 28, intervenants, systèmes, références documentaires, import CSV, questions à examiner, actions, décisions, exports examinés, vérification technique et sauvegarde chiffrée.
 
-**Pas encore disponible :** gestion des demandes d’exercice de droits, registre des violations, calcul de leurs délais, export de l’AIPD vers un tiers et échange de fichiers avec le logiciel PIA de la CNIL. Le logiciel ne scanne pas vos systèmes, ne supprime pas des données dans vos outils et n’envoie rien à une autorité. Il ne choisit aucun fondement juridique, durée de conservation ou conclusion juridique.
+**Pas encore disponible :** échange de fichiers avec le logiciel PIA de la CNIL, rappels hors de la page ouverte et calcul automatique des régimes particuliers. Le logiciel ne scanne pas vos systèmes, ne supprime pas des données dans vos outils et n’envoie rien à une autorité. Il ne choisit aucun fondement juridique, durée de conservation ou conclusion juridique.
 
 <figure class="guide-visual guide-route"><div class="visual-kicker">Le résultat de votre travail</div><div class="visual-cards"><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><circle cx="45" cy="31" r="16" fill="#fff" stroke="#313d58" stroke-width="3"/><path d="M13 88V74c0-24 64-24 64 0v14Z" fill="#ccd7ef" stroke="#313d58" stroke-width="3"/><circle cx="87" cy="42" r="12" fill="#9db6f0" stroke="#303d5d" stroke-width="3"/><path d="M85 63c23 0 23 14 23 25H89" fill="#9db6f0" stroke="#303d5d" stroke-width="3"/></svg><h3>Un entretien préparé</h3><p>Les bonnes questions, avec le bon interlocuteur.</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><rect x="27" y="16" width="66" height="80" rx="8" fill="#bbc9ea" transform="rotate(8 60 56)"/><rect x="19" y="9" width="66" height="80" rx="8" fill="#fff" stroke="#313d58" stroke-width="3"/><rect x="31" y="25" width="20" height="20" rx="5" fill="#cdd8f1"/><path d="M59 29h14M59 39h10M31 58h42M31 69h31" stroke="#313d58" stroke-width="3" stroke-linecap="round"/><circle cx="86" cy="78" r="17" fill="#9db6f0"/><path d="m78 78 6 6 10-13" fill="none" stroke="#303d5d" stroke-width="3" stroke-linecap="round"/></svg><h3>Une fiche exploitable</h3><p>Les faits connus et les réponses encore à obtenir.</p></div><div><svg viewBox="0 0 120 110" fill="none" aria-hidden="true" class="guide-drawing"><path d="M17 45 60 16l43 29v44H17Z" fill="#d6e3ff" stroke="#3157d5" stroke-width="3"/><rect x="33" y="9" width="54" height="63" rx="5" fill="#fff" stroke="#3157d5" stroke-width="3"/><path d="M43 24h33M43 36h25M17 45l43 31 43-31M17 89l31-22M103 89 72 67" stroke="#3157d5" fill="none" stroke-width="3" stroke-linecap="round"/></svg><h3>Un dossier à remettre</h3><p>Une sélection relue pour votre destinataire.</p></div></div><figcaption>RGPDESK relie ces étapes dans un même espace de travail.</figcaption></figure>
 
@@ -18,9 +18,9 @@ La CNIL présente le registre comme un outil de recensement et d’analyse des t
 
 ### Essayer avant de créer un coffre
 
-Depuis l’accueil, **Explorer la démo** ouvre le dossier de **Maison Sillage**, un organisme entièrement fictif. Aucune phrase secrète ni inscription n’est nécessaire. Huit étapes vous conduisent du registre à la sauvegarde ; les rubriques latérales restent accessibles pour une visite libre.
+Depuis l’accueil, **Explorer la démo** ouvre le dossier de **Maison Sillage**, un organisme entièrement fictif. Aucune phrase secrète ni inscription n’est nécessaire. Dix étapes vous conduisent du registre à la sauvegarde ; les rubriques latérales restent accessibles pour une visite libre.
 
-Le dossier comprend quatre activités, sept flux, quatre intervenants, quatre systèmes, quatre références documentaires, trois actions et une AIPD à approfondir. Vous pouvez modifier les exemples, importer un CSV fictif, examiner le contrat du prestataire de badges et consulter la revue conservée de l’AIPD. Les fondements juridiques, durées et conclusions manquants restent à examiner. Ces textes illustrent une démarche ; ils ne constituent ni un modèle de conformité, ni des pièces justificatives réelles.
+Le dossier comprend quatre activités, sept flux, quatre intervenants, quatre systèmes, quatre références documentaires, trois actions, une AIPD à approfondir et quatre dossiers DPO fictifs. Vous pouvez modifier les exemples, importer un CSV fictif, examiner le contrat du prestataire de badges et consulter la revue conservée de l’AIPD. Les fondements juridiques, durées et conclusions manquants restent à examiner. Ces textes illustrent une démarche ; ils ne constituent ni un modèle de conformité, ni des pièces justificatives réelles.
 
 Dans **Partager un dossier**, utilisez **Charger la sélection d’exemple**, puis prévisualisez et relisez le contenu. Après votre confirmation, le ZIP contient le véritable rendu HTML, les tableaux CSV et les données JSON. Ouvrez `report.html` pour lire le dossier. Les notes internes et l’AIPD sont exclues de cet export, comme dans un coffre personnel.
 
@@ -177,7 +177,7 @@ Vous pouvez conserver une demande de réexamen, un renoncement ou une préparati
 
 Dans **Dossier & historique**, sélectionnez l’étude en cours ou une revue conservée. L’historique restitue le contexte, les flux, les références et les appréciations enregistrés à cette date. Une modification ultérieure ne réécrit pas une revue. Le signalement d’un changement vous invite à en examiner les conséquences ; l’absence de signalement n’est pas une certification d’actualité.
 
-**Enregistrer l’étude** conserve vos saisies chiffrées. **Sauvegarde** emporte ensuite l’ensemble du coffre, études et revues comprises. Les exports de registre actuels excluent les notes AIPD. La lecture du dossier reste interne ; aucun export AIPD ni échange automatique avec le logiciel CNIL n’est proposé dans cette version.
+**Enregistrer l’étude** conserve vos saisies chiffrées. **Sauvegarde** emporte ensuite l’ensemble du coffre, études et revues comprises. Les exports de registre actuels excluent les notes AIPD. La rubrique **Restitution AIPD** permet un rapport HTML sélectionné et relu, distinct de ces exports de registre. Aucun échange automatique avec le logiciel CNIL n’est proposé.
 
 Vous pouvez retirer une option, un scénario ou une mesure de l’étude en cours puis **Annuler le dernier retrait** avant enregistrement. Retirez d’abord les liens d’une mesure vers un scénario pour pouvoir retirer ce scénario. Les revues déjà conservées restent inchangées.
 
@@ -270,6 +270,50 @@ Ouvrez [le vérificateur local](/app/privacy/verify/), puis choisissez **Dossier
 Les empreintes ne sont pas une signature. Une personne capable de reconstruire le dossier et ses empreintes peut produire un autre dossier cohérent. **Ce contrôle n’authentifie pas l’auteur, ne certifie pas la date et ne valide ni la vérité des déclarations ni leur portée juridique.**
 
 Ce lecteur accepte les ZIP de partage, pas les sauvegardes `.rgpdesk`. Pour un usage technique hors interface, le dépôt fournit aussi le vérificateur CLI : `node packages/privacy-verifier/bin/rgpdesk-verify.mjs dossier.zip`.
+
+## Les dossiers du DPO : du fait à la revue
+
+Dans **Dossiers DPO**, choisissez le type de dossier puis **Ouvrir un dossier**. Le parcours comporte quatre étapes : cadrage, analyse, chronologie, revue et historique. Affectez une fonction responsable, reliez les activités connues et fixez le prochain réexamen. Les faits, références justificatives, objections, appréciations et suites restent distingués dans chaque carnet.
+
+**Ma mission** rassemble les dossiers en suivi, triés par échéance ou repère lorsqu’il existe. Vous pouvez reprendre directement un dossier. La liste des dossiers se filtre par responsable, changement depuis la revue ou échéance atteinte. Le contexte relié permet de retrouver les documents et les actions de chaque activité, sans saisir une seconde fois ses flux.
+
+### Intérêt légitime : une analyse par finalité
+
+Choisissez une activité responsable et la finalité étudiée. Une autre finalité appelle son propre dossier. Examinez successivement l’intérêt poursuivi, la nécessité des opérations, les alternatives, la mise en balance avec les intérêts, droits et libertés des personnes, les garanties et la position retenue. Le fondement juridique du registre n’est jamais modifié automatiquement. Le choix reste au responsable, au vu des faits et du droit applicable. [RGPD, article 6 §1 f) et considérant 47](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), [CNIL, intérêt légitime](https://www.cnil.fr/fr/les-bases-legales/interet-legitime).
+
+### Transferts : suivre la chaîne et éprouver les garanties
+
+Décrivez le périmètre, les entités, les pays, les accès à distance et les transferts ultérieurs. Examinez le mécanisme invoqué et son champ, puis, lorsque l’analyse est applicable, le droit et les pratiques pertinents, les mesures supplémentaires, leur mise en œuvre et leur réévaluation. Documentez pourquoi l’analyse est ou non requise. Aucune liste automatique de pays ou de fournisseurs « sûrs » n’est utilisée. [RGPD, articles 44 à 49](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), [CNIL, guide AITD, janvier 2025](https://www.cnil.fr/sites/cnil/files/2025-02/guide_aitd_pdf.pdf).
+
+### Demandes de droits : préparer et suivre la réponse
+
+Utilisez une référence de dossier, choisissez les activités concernées et décrivez la demande. Examinez la vérification d’identité uniquement lorsqu’un doute raisonnable la justifie ; ne conservez pas de copie de pièce ici. Le carnet organise les recherches, les restrictions motivées, le projet de réponse et les références d’envoi. La réponse est rédigée et relue par vous ; aucun envoi n’est réalisé. [RGPD, articles 12 et 15 à 23](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+Le calcul du régime général nécessite une date de réception, le choix explicite de ce régime et la confirmation du calendrier applicable. Le mois est calendaire, avec report au prochain jour ouvrable si le dernier jour est un samedi, dimanche ou jour férié que vous avez renseigné. Une prolongation d’un ou deux mois supplémentaires ne modifie le résultat qu’avec un motif et une date d’information déclarée dans le délai initial. Le calcul n’atteste pas que cette information a été envoyée. [CEPD, lignes directrices 01/2022, version 2.1, §160 à 164](https://www.edpb.europa.eu/system/files/documents/2023-04/edpb_guidelines_202201_data_subject_rights_access_v2_en.pdf).
+
+Pour un régime particulier ou une situation qui appelle un autre calcul, utilisez **Échéance manuelle motivée** et expliquez votre fondement. Sans paramètres suffisants, l’échéance reste à déterminer. Aucune suspension n’est déduite automatiquement d’un échange. Répondez dans les meilleurs délais ; l’échéance affichée n’est pas une invitation à attendre.
+
+### Violations : consigner aussi les cas non notifiés
+
+Distinguez détection et prise de connaissance, faits établis et hypothèses. Documentez les catégories de données et de personnes, les volumes estimés, les conséquences, les mesures et les décisions d’information. Un responsable dispose d’un repère de 72 heures écoulées à partir de la prise de connaissance renseignée ; ce repère ne décide pas si la notification est nécessaire. Le sous-traitant doit informer le responsable dans les meilleurs délais : l’application ne lui attribue pas un délai standard de 72 heures. [RGPD, article 33](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+L’appréciation du risque, la notification à l’autorité, l’information des personnes, leurs éventuelles exceptions et les motifs d’une absence de notification restent des décisions humaines documentées. Conservez les compléments, les références d’envoi et les raisons d’un retard dans la chronologie. Les dossiers non notifiés restent dans le coffre. [RGPD, articles 33 §3 à §5 et 34](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+### Enregistrer, puis conserver une revue
+
+Enregistrez vos saisies avant d’ajouter un événement ou une revue. Les événements sont conservés : corrigez une erreur par un nouvel événement explicatif. Une revue fige les notes et le contexte lié du registre à sa date. Son auteur est déclaré, sans authentification d’identité. Une clôture déclarée ne certifie ni conformité ni réception d’un envoi.
+
+Après une modification des activités, flux, acteurs ou références liés, le dossier indique ce qui a changé depuis sa dernière revue. Les anciennes revues restent intactes. La limite est de 200 dossiers par coffre, 20 activités par dossier, 40 événements et 8 revues par dossier, dans la limite globale de taille. Les références documentaires sont conservées ; les pièces originales ne sont pas jointes. Aucun rappel n’est garanti lorsque la page est fermée.
+
+## Restituer une AIPD à un destinataire
+
+Ouvrez **Restitution AIPD**. Choisissez l’étude de travail ou une revue conservée, précisez le destinataire et le périmètre, puis cochez les rubriques à communiquer. Aucune rubrique n’est présélectionnée. Une décision ne peut être incluse qu’en choisissant une revue conservée. Pour communiquer les mesures, incluez les scénarios auxquels elles se rapportent.
+
+Relisez le tableau de toutes les valeurs retenues, ajoutez les réserves destinées au lecteur, puis confirmez **Conserver et télécharger l’AIPD**. Le rapport HTML autonome peut être ouvert et imprimé depuis votre navigateur. Il est en clair : protégez son fichier et son canal de transmission. Le rapport indique qu’il s’agit d’un extrait choisi, sans autorisation de traitement ni certification.
+
+Les faits, preuves et objections des carnets internes, chemins de documents, autres dossiers et identifiants techniques ne sont pas projetés dans le rapport. En revanche, les appréciations, suites et champs libres expressément retenus peuvent contenir une information sensible que vous y avez écrite : la relecture est indispensable. Le coffre conserve les valeurs partagées, le destinataire et les réserves, sans suivre les modifications ultérieures de l’étude. Huit restitutions AIPD peuvent être conservées ; elles entrent dans la limite de taille du coffre.
+
+Ce rapport n’est ni la sauvegarde chiffrée, ni le ZIP du registre, ni un fichier d’échange avec le logiciel PIA de la CNIL. Le vérificateur du registre n’accepte pas ce rapport AIPD. Aucun envoi ou accusé de réception n’est réalisé.
 
 ## 9. Sauvegarder et restaurer sans perdre son travail
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createWorkspace, createActivity, createImpactAssessment, createPiaRisk, knowledge, recordPiaReview, putImpactAssessment, MAX_BACKUP_BYTES } from "@rgpdesk/privacy-core";
+import { createDpoCase, putDpoCase, recordDpoReview, projectPiaPublication, recordPiaPublication, createWorkspace, createActivity, createImpactAssessment, createPiaRisk, knowledge, recordPiaReview, putImpactAssessment, MAX_BACKUP_BYTES } from "@rgpdesk/privacy-core";
 import { encryptLocalPayloadBatch } from "../../../lib/local-encryption";
 import { contextFor, decodeBackup, encodeBackup, openMaster, sealMaster } from "./crypto";
 
@@ -73,14 +73,14 @@ describe("privacy adapter with real WebCrypto", () => {
 });
 
 describe("AIPD schema evolution with real WebCrypto", () => {
-  it("opens the exact historical v3 envelope then backs up and restores v4 with frozen reviews", async () => {
+  it("opens the exact historical v3 envelope then backs up and restores v5 with frozen reviews", async () => {
     const original = fixture(); original.activities.push(createActivity(original.id, other, "controller"));
     original.activities[0]!.analysis.notes[0]!.facts = knowledge("PRIVATE_EXISTING_V3_NOTE");
-    const legacy = JSON.parse(JSON.stringify(original)); legacy.format = "rgpd-master-v3"; delete legacy.impactAssessments;
+    const legacy = JSON.parse(JSON.stringify(original)); legacy.format = "rgpd-master-v3"; delete legacy.impactAssessments; delete legacy.dpoCases; delete legacy.piaPublications;
     const legacyBytes = JSON.stringify(legacy);
     const [envelope] = await encryptLocalPayloadBatch([{ aad: contextFor(id, 1, "master"), value: legacy }], phrase);
     let next = await openMaster(envelope, phrase, id, 1);
-    expect(next.format).toBe("rgpd-master-v4"); expect(next.activities).toEqual(original.activities);
+    expect(next.format).toBe("rgpd-master-v5"); expect(next.activities).toEqual(original.activities);
     const pia = createImpactAssessment(id, next.activities[0]!, "00000000-0000-4000-8000-000000000003");
     const risk = createPiaRisk("00000000-0000-4000-8000-000000000004"); risk.rights = knowledge("PRIVATE_PIA_RIGHTS"); pia.content.risks.push(risk);
     next = putImpactAssessment(next, pia, next.revision, next.updatedAt);
@@ -89,5 +89,24 @@ describe("AIPD schema evolution with real WebCrypto", () => {
     expect(await decodeBackup(backup, phrase)).toEqual(next);
     expect(JSON.stringify(legacy)).toBe(legacyBytes);
     expect(await openMaster(envelope, phrase, id, 1)).toEqual(original);
+  });
+});
+
+describe("DPO v5 encrypted recovery", () => {
+  it("preserves all new dossiers, reviews and frozen AIPD publications in a real encrypted backup", async () => {
+    let master = fixture(); master.activities.push(createActivity(master.id, other, "controller"));
+    const pia = createImpactAssessment(master.id, master.activities[0]!, crypto.randomUUID());
+    master = putImpactAssessment(master, pia, master.revision, master.updatedAt);
+    for (const kind of ["transfer", "rights", "breach"] as const) {
+      const item = createDpoCase(master.id, crypto.randomUUID(), kind); item.activityIds = [other];
+      item.content.notes[0]!.facts = knowledge("NEVER_LEAK_DPO_CASE");
+      master = putDpoCase(master, item, master.revision, master.updatedAt);
+      master = recordDpoReview(master, item.id, { id: crypto.randomUUID(), author: "Auteur fictif", outcome: "rework", reason: "NEVER_LEAK_REVIEW" }, master.revision, master.updatedAt);
+    }
+    const p = projectPiaPublication(master, { piaId: pia.id, reviewId: null, sections: ["context"], recipient: "NEVER_LEAK_RECIPIENT", scope: "Restitution fictive", reservations: "" }, crypto.randomUUID(), master.updatedAt);
+    master = recordPiaPublication(master, p, master.revision, master.updatedAt);
+    const backup = await encodeBackup(master, phrase);
+    expect(backup).not.toContain("NEVER_LEAK"); expect(await decodeBackup(backup, phrase)).toEqual(master);
+    await expect(decodeBackup(backup, "Wrong fictional passphrase 2026!")).rejects.toThrow("CRYPTO");
   });
 });

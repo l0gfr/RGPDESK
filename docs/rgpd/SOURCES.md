@@ -162,3 +162,15 @@ Les contrôles de complétude, plafonds et règles de conservation des revues so
 - [RGPD, Journal officiel, texte EUR-Lex en français](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr) : articles 5, 6, 12 à 25, 32 et 35. L’analyse générale ne présuppose pas une AIPD ; la question 06 examine les risques de sécurité et leurs effets pour les personnes, au titre de l’article 32. L’article 35 §7 b) reste associé à la grille AIPD. Le test de nécessité n’est pas exclusivement réservé à l’AIPD : articles 5 §1 c), e), 6 §1 b) à f).
 - [CNIL, L’intérêt légitime, 29 novembre 2019](https://www.cnil.fr/fr/les-bases-legales/interet-legitime) : recommandation explicative pour l’examen des trois conditions, des attentes raisonnables et des garanties additionnelles. La première trame RGPDESK utilise les notes internes existantes ; elle ne sélectionne aucun fondement et ne reproduit pas une grille externe non fournie.
 - Les guides CNIL, CEPD et EDPS restent des sources méthodologiques distinctes du règlement. Les supports De Marco ne sont pas présentés comme une validation du produit.
+
+## Dossiers DPO et échéances (23 septembre 2026)
+
+| Source et version | Usage et limites |
+| --- | --- |
+| [RGPD, texte officiel EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr), articles 5, 6, 12 à 23, 28, 32 à 36, 44 à 49 | Cadrage des questionnaires. Le logiciel ne détermine pas l’applicabilité ou la conclusion juridique. Le téléchargement EUR-Lex du 23 septembre a rencontré une protection JavaScript ; les passages ont été recoupés sur la reproduction CNIL des chapitres III et IV. |
+| [CEPD 01/2022, version 2.1, 17 avril 2023](https://www.edpb.europa.eu/system/files/documents/2023-04/edpb_guidelines_202201_data_subject_rights_access_v2_en.pdf), §158 à 164 | Repères du droit d’accès : échéance calendaire et jours non ouvrés, motifs de prolongation. Les suspensions et régimes sectoriels ne sont pas déduits automatiquement. |
+| [CNIL, intérêt légitime, 29 novembre 2019](https://www.cnil.fr/fr/les-bases-legales/interet-legitime) | Trois conditions, analyse contextuelle et réexamen. Questions originales RGPDESK ; aucune reproduction de la grille personnelle d’un expert. |
+| [CNIL, guide AITD, janvier 2025](https://www.cnil.fr/sites/cnil/files/2025-02/guide_aitd_pdf.pdf) | Six étapes du guide : périmètre, mécanisme, droit/pratiques, mesures supplémentaires, mise en œuvre, réévaluation. Applicabilité à examiner, notamment dans le contexte des garanties article 46. |
+| [CNIL, notifier une violation](https://www.cnil.fr/fr/services-en-ligne/notifier-une-violation-de-donnees-personnelles) | Démarche externe de notification ; aucune connexion, saisie ou transmission automatique depuis RGPDESK. |
+
+Les plafonds, le suivi de changements, la conservation des revues et les règles de projection des rapports sont des choix produit. Ils ne sont pas présentés comme des obligations de la réglementation. Les questions ont une édition datée et une référence affichée ; aucun avis humain indépendant n’est présumé.

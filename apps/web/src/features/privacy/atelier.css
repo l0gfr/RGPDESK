@@ -911,3 +911,20 @@
 .rgpdesk .demo-mode ~ .desk-layout .workspace-heading { scroll-margin-top:110px; }
 
 @media (max-width:650px) { .rgpdesk .demo-mode { position:static; } }
+
+/* Mission dossiers: a restrained folio system, sharing the existing blue identity. */
+.dpo-workbench { min-width: 0; }
+.dpo-kind-nav, .dpo-step-nav { display: flex; flex-wrap: wrap; gap: .6rem; margin-block: 1rem 1.7rem; }
+.dpo-kind-nav button { flex: 1 1 10rem; justify-content: flex-start; }
+.dpo-kind-nav .active, .dpo-step-nav .active { background: #253a55; color: #fff; border-color: #253a55; }
+.dpo-case-cover { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, .35fr); gap: 2rem; padding: clamp(1.3rem, 4vw, 3rem); background: radial-gradient(ellipse at 95% 10%, #627b9a55, transparent 55%), repeating-linear-gradient(0deg, #ffffff03 0 1px, transparent 1px 4px), #24374e; color: #f6f7fa; border-radius: 2px 2rem 2px 2px; border-top: 3px solid #a2b6d3; margin-bottom: 2rem; }
+.dpo-case-cover h2 { color: inherit; font-family: Georgia, serif; font-size: clamp(2rem, 4vw, 3.6rem); font-weight: 400; margin-block: .7rem; }
+.dpo-case-cover .eyebrow { color: #c1d0e3; }
+.dpo-cover-index { display: flex; flex-direction: column; align-items: center; justify-content: center; font: italic clamp(4rem, 9vw, 8rem)/1 Georgia, serif; border: 1px solid #b0c3df55; outline: 1px solid #b0c3df22; outline-offset: -8px; color: #d7e3f2; }
+.dpo-cover-index span { font: .65rem/1.5 monospace; letter-spacing: .08em; text-align: center; margin: 1rem; }
+.dpo-timeline { list-style: none; padding-left: 1.3rem; border-left: 1px solid #a8b8cb; }
+.dpo-timeline li { position: relative; padding: .5rem 0 1.3rem 1rem; }
+.dpo-timeline li::before { content: ''; position: absolute; left: -1.6rem; top: .9rem; width: .5rem; height: .5rem; background: #587294; border: 3px solid #f6f7f9; border-radius: 50%; }
+.dpo-workbench dd, .dpo-timeline p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.dpo-workbench fieldset { min-width: 0; }
+@media (max-width: 600px) { .dpo-case-cover { grid-template-columns: minmax(0, 1fr); } .dpo-cover-index { display: none; } .dpo-step-nav button { flex: 1 1 45%; } }

@@ -85,9 +85,9 @@ describe("documentary history", () => {
   it("explicitly migrates v1 without modifying original IDs, revision or source", () => {
     const m = fixture(); const legacy = JSON.parse(JSON.stringify(m));
     for (const key of ["documents", "actions", "decisions", "imports", "deliveries"]) delete legacy[key];
-    legacy.format = "rgpd-master-v1"; delete legacy.impactAssessments; delete legacy.organization.representatives; legacy.activities.forEach((a: Record<string, unknown>) => { delete a.review; delete a.analysis; delete a.flows; });
+    legacy.format = "rgpd-master-v1"; delete legacy.impactAssessments; delete legacy.dpoCases; delete legacy.piaPublications; delete legacy.organization.representatives; legacy.activities.forEach((a: Record<string, unknown>) => { delete a.review; delete a.analysis; delete a.flows; });
     const bytes = JSON.stringify(legacy); const migrated = migrateWorkspace(legacy);
-    expect(migrated.format).toBe("rgpd-master-v4"); expect(migrated.revision).toBe(m.revision); expect(migrated.activities[0]?.id).toBe(m.activities[0]?.id); expect(JSON.stringify(legacy)).toBe(bytes);
+    expect(migrated.format).toBe("rgpd-master-v5"); expect(migrated.revision).toBe(m.revision); expect(migrated.activities[0]?.id).toBe(m.activities[0]?.id); expect(JSON.stringify(legacy)).toBe(bytes);
     expect(() => migrateWorkspace({ ...legacy, unknown: true })).toThrow();
   });
 });

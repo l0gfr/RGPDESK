@@ -16,8 +16,8 @@ export class DemoSession {
     const previous = this.read();
     assertWorkspace(next);
     if (next.id !== previous.id || next.revision !== previous.revision + 1) throw new PrivacyError("CONFLICT");
-    const { organization, scope, jurisdiction, parties, systems, activities, documents, decisions, actions, imports, deliveries, impactAssessments } = next;
-    const checked = reviseWorkspace(previous, previous.revision, next.updatedAt, { organization, scope, jurisdiction, parties, systems, activities, documents, decisions, actions, imports, deliveries, impactAssessments });
+    const { organization, scope, jurisdiction, parties, systems, activities, documents, decisions, actions, imports, deliveries, impactAssessments, dpoCases, piaPublications } = next;
+    const checked = reviseWorkspace(previous, previous.revision, next.updatedAt, { organization, scope, jurisdiction, parties, systems, activities, documents, decisions, actions, imports, deliveries, impactAssessments, dpoCases, piaPublications });
     if (canonicalJson(checked) !== canonicalJson(next) || canonicalJson(deliveries) !== canonicalJson(previous.deliveries)) throw new PrivacyError("INVALID");
     this.workspace = structuredClone(checked);
     return this.read();
