@@ -25,6 +25,9 @@ test("one fact update explains its effect in AIPD and DPO reviews; references re
   await expect(trace.locator("dd b")).toHaveCount(0);
   await page.locator(".review-evidence > summary").click();
   await page.getByRole("button", { name: "Examiner Contrat du prestataire de badges · fictif", exact: true }).click();
+  const referenceHeading = page.getByRole("heading", { name: "Référence documentaire", exact: true });
+  await expect(referenceHeading).toBeFocused();
+  await expect(referenceHeading).toBeInViewport({ ratio: 1 });
   await expect(page.getByLabel("Titre interne", { exact: true })).toHaveValue("Contrat du prestataire de badges · fictif");
   await page.getByLabel("Version déclarée", { exact: true }).fill("Exercice v2");
   await page.getByLabel("Localisation / référence interne", { exact: true }).fill("RECETTE_LOCALE / armoire fictive B");

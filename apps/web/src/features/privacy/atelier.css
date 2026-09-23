@@ -1066,7 +1066,7 @@
   .rgpdesk .pia-reader-pagination .text-button { padding-left:0; }
 }
 
-.rgpdesk #activity-editor-title, .rgpdesk .pia-reader-cover h3, .rgpdesk .pia-reader-index { scroll-margin-top:24px; }
+.rgpdesk #activity-editor-title, .rgpdesk .reference-editor-title, .rgpdesk .pia-reader-cover h3, .rgpdesk .pia-reader-index { scroll-margin-top:24px; }
 
 /* A marginal notebook: comparisons stay folded until the reader needs their detail. */
 .rgpdesk .review-trace,.rgpdesk .review-evidence { min-width:0; margin:22px 0; border:1px solid #adbdca; border-radius:2px 18px 2px 2px; background:linear-gradient(125deg,#dfe8ef,#f4f6f8); }

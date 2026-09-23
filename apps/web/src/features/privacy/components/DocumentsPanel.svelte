@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from "svelte";
   import { unknown, createContractReview, putDocument, type EvidenceReference, type Workspace } from "@rgpdesk/privacy-core";
   import KnowledgeField from "./KnowledgeField.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
@@ -7,11 +8,19 @@
   let { workspace, busy, onSave, initialDocumentId = "", initialActivityId = "" }: { initialActivityId?: string; initialDocumentId?: string; workspace: Workspace; busy: boolean; onSave: (next: Workspace) => Promise<boolean> } = $props();
   let draft = $state<EvidenceReference | null>(null); let reviewed = $state(false); let due = $state("");
   let consumedSearch = $state("");
+  let referenceHeading: HTMLHeadingElement | undefined = $state();
+  async function focusReference(id: string) {
+    await tick();
+    if (draft?.id === id && referenceHeading?.isConnected) {
+      referenceHeading.focus({ preventScroll: true });
+      referenceHeading.scrollIntoView({ block: "start" });
+    }
+  }
   $effect(() => { if (initialDocumentId && consumedSearch !== initialDocumentId) { consumedSearch = initialDocumentId; const doc = workspace.documents.find((d) => d.id === initialDocumentId); if (doc) edit(doc); } });
   $effect(() => { if (!initialDocumentId && initialActivityId && consumedSearch !== initialActivityId && workspace.activities.some((a) => a.id === initialActivityId)) { consumedSearch = initialActivityId; create(); } });
   const categories = { contract: "Contrat / acte", notice: "Notice d’information", policy: "Politique", analysis: "Analyse", other: "Autre" };
-  function create() { draft = { id: crypto.randomUUID(), workspaceId: workspace.id, title: "", category: "contract", contractReview: null, activityIds: initialActivityId && workspace.activities.some((a) => a.id === initialActivityId) ? [initialActivityId] : [], purposeIds: [], partyIds: [], scope: "", version: "", declaredAuthor: "", internalRef: "", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: null, audience: "", channel: "", availability: unknown() }; reviewed = false; due = ""; }
-  function edit(doc: EvidenceReference) { draft = structuredClone($state.snapshot(doc)); reviewed = false; due = doc.reviewDue ?? ""; }
+  function create() { draft = { id: crypto.randomUUID(), workspaceId: workspace.id, title: "", category: "contract", contractReview: null, activityIds: initialActivityId && workspace.activities.some((a) => a.id === initialActivityId) ? [initialActivityId] : [], purposeIds: [], partyIds: [], scope: "", version: "", declaredAuthor: "", internalRef: "", publicReference: "", reservations: "", sensitivity: "internal", status: "declared", reviewedRevision: null, reviewedAt: null, reviewDue: null, audience: "", channel: "", availability: unknown() }; reviewed = false; due = ""; void focusReference(draft.id); }
+  function edit(doc: EvidenceReference) { draft = structuredClone($state.snapshot(doc)); reviewed = false; due = doc.reviewDue ?? ""; void focusReference(draft.id); }
   function toggle(field: "activityIds" | "purposeIds" | "partyIds", id: string, checked: boolean) {
     if (!draft) return; draft[field] = checked ? [...draft[field], id] : draft[field].filter((v) => v !== id);
     if (field === "activityIds") { const allowed = new Set(workspace.activities.filter((a) => draft!.activityIds.includes(a.id)).flatMap((a) => a.role === "controller" ? a.purposes.map((p) => p.id) : [])); draft.purposeIds = draft.purposeIds.filter((id) => allowed.has(id)); }
@@ -28,7 +37,7 @@
   {#if !workspace.documents.length && !draft}<div class="empty"><span class="icon-tile"><Icon name="documents" size={30} /></span><h3>Un dossier qui garde ses sources.</h3><p>Pour votre première activité, recherchez la notice remise aux personnes, le contrat du prestataire ou la procédure utilisée. Ajoutez leur titre, leur emplacement et le périmètre qu’ils couvrent.</p></div>{/if}
   <ul class="records">{#each workspace.documents as doc}<li><span class="record-icon"><Icon name="documents" /></span><div class="grow"><strong>{doc.title}</strong><p>{categories[doc.category]} · {doc.scope} · {doc.status === "reviewed" && doc.reviewedRevision === workspace.revision && (!doc.reviewDue || doc.reviewDue > new Date().toISOString().slice(0, 10)) ? "Revue déclarée" : "À réexaminer / déclaré"}</p></div><button class="secondary" disabled={busy} onclick={() => edit(doc)}>Examiner {doc.title}</button></li>{/each}</ul>
   {#if draft}<form class="subpanel" onsubmit={(e) => { e.preventDefault(); void save(); }}><fieldset disabled={busy}>
-    <h3>Référence documentaire</h3><div class="grid-two"><label class="field">Titre interne<input required maxlength="160" bind:value={draft.title} /></label><label class="field">Catégorie<select aria-label="Catégorie" disabled={draft.contractReview !== null} bind:value={draft.category}>{#each Object.entries(categories) as [value, label]}<option {value}>{label}</option>{/each}</select></label></div>
+    <h3 class="reference-editor-title" bind:this={referenceHeading} tabindex="-1">Référence documentaire</h3><div class="grid-two"><label class="field">Titre interne<input required maxlength="160" bind:value={draft.title} /></label><label class="field">Catégorie<select aria-label="Catégorie" disabled={draft.contractReview !== null} bind:value={draft.category}>{#each Object.entries(categories) as [value, label]}<option {value}>{label}</option>{/each}</select></label></div>
     <div class="grid-two"><label class="field">Périmètre de la référence<input required maxlength="160" bind:value={draft.scope} /></label><label class="field">Version déclarée<input maxlength="160" bind:value={draft.version} /></label></div>
     <div class="grid-two"><label class="field">Auteur déclaré<input maxlength="160" bind:value={draft.declaredAuthor} /></label><label class="field">Sensibilité interne<select aria-label="Sensibilité interne" bind:value={draft.sensitivity}><option value="internal">Interne</option><option value="restricted">Restreinte</option></select></label></div>
     <label class="field">Localisation / référence interne<textarea aria-label="Localisation / référence interne" aria-describedby="document-location-hint" maxlength="4000" bind:value={draft.internalRef}></textarea><small id="document-location-hint">Indiquez où retrouver le document dans votre organisation. Cette information restera interne ; aucun lien ne sera ouvert automatiquement.</small></label>
