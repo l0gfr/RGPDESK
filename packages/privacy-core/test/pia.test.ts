@@ -25,7 +25,7 @@ describe("AIPD working dossier", () => {
   it("migrates v3 without mutating existing notes, identifiers or revision", () => {
     const { master } = fixture(); const old = JSON.parse(JSON.stringify(master)); old.format = "rgpd-master-v3"; delete old.impactAssessments; delete old.dpoCases; delete old.piaPublications;
     const original = JSON.stringify(old); const next = migrateWorkspace(old);
-    expect(next.format).toBe("rgpd-master-v8"); expect(next.impactAssessments).toEqual([]);
+    expect(next.format).toBe("rgpd-master-v9"); expect(next.impactAssessments).toEqual([]);
     expect(next.activities).toEqual(old.activities); expect(next.revision).toBe(old.revision); expect(JSON.stringify(old)).toBe(original);
     old.impactAssessments = []; expect(() => migrateWorkspace(old)).toThrow("INVALID");
   });

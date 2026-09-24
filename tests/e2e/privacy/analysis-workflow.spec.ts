@@ -26,7 +26,8 @@ test("declared flows, analysis and clause notes stay private, encrypted and usab
   const requests: string[] = []; page.on("request", (request) => requests.push(request.url()));
   await page.getByRole("button", { name: "Modifier Recrutement fictif", exact: true }).click();
   await page.getByRole("navigation", { name: "Étapes de la fiche", exact: true }).getByRole("button").nth(2).click();
-  await expect(page.getByRole("heading", { name: "Décrire les données et leurs flux.", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Un groupe, son parcours, ses limites.", exact: true })).toBeVisible();
+  await page.getByText("Descriptions générales et flux déjà saisis", { exact: true }).click();
   await page.getByRole("button", { name: "Ajouter un flux", exact: true }).click();
   await page.getByLabel("Flux 1 · Origine", { exact: true }).fill('PRIVATE_FLOW_<img src=x onerror="alert(1)">');
   await page.getByLabel("Flux 1 · Destination", { exact: true }).fill("Outil fictif de recrutement");

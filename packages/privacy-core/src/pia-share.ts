@@ -1,3 +1,4 @@
+import { dataGroupRows, activityFacts, purposeRetention } from "./data-groups";
 import { createPiaReportBody, serializePiaReport } from "./pia-report";
 import { PIA_REPORT_CSS } from "./pia-report-style";
 export type { PiaReportNode } from "./pia-report";
@@ -7,7 +8,7 @@ import { piaContext } from "./pia";
 import { assertWorkspace, PrivacyError } from "./validation";
 import { reviseWorkspace } from "./commands";
 
-export const PIA_SHARE_SECTIONS = { context: "Traitement et périmètre", principles: "Examen des principes RGPD", necessity: "Appréciations de nécessité", alternatives: "Alternatives examinées", risks: "Scénarios et niveaux déclarés", measures: "Mesures et suivi", opinions: "Avis et consultations", decision: "Revue humaine conservée" } as const;
+export const PIA_SHARE_SECTIONS = { context: "Traitement et périmètre", inventory: "Groupes de données, flux et minimisation", principles: "Examen des principes RGPD", necessity: "Appréciations de nécessité", alternatives: "Alternatives examinées", risks: "Scénarios et niveaux déclarés", measures: "Mesures et suivi", opinions: "Avis et consultations", decision: "Revue humaine conservée" } as const;
 export type PiaShareSection = keyof typeof PIA_SHARE_SECTIONS;
 export interface PiaShareOptions { piaId: string; reviewId: string | null; sections: PiaShareSection[]; recipient: string; scope: string; reservations: string }
 const value = (k: Knowledge) => k.state === "documented" ? k.value : "À documenter";
@@ -17,7 +18,7 @@ const principleLabels: Record<string, string> = { scope: "Périmètre", governan
 export function projectPiaPublication(master: Workspace, options: PiaShareOptions, id: string, now: string): PiaPublication {
   assertWorkspace(master);
   const pia = master.impactAssessments.find((p) => p.id === options.piaId);
-  if (!pia || !options.recipient.trim() || !options.scope.trim() || !options.sections.length || new Set(options.sections).size !== options.sections.length
+  if (!pia || pia.scope === "risks" || !options.recipient.trim() || !options.scope.trim() || !options.sections.length || new Set(options.sections).size !== options.sections.length
     || options.sections.some((s) => !Object.hasOwn(PIA_SHARE_SECTIONS, s))) throw new PrivacyError("INVALID");
   if (options.sections.includes("measures") && !options.sections.includes("risks")) throw new PrivacyError("INVALID");
   const review = options.reviewId ? pia.reviews.find((r) => r.id === options.reviewId) : null;
@@ -29,13 +30,14 @@ export function projectPiaPublication(master: Workspace, options: PiaShareOption
     if (section === "context") {
       row(section, "Organisation", context.organization.name); row(section, "Activité", context.activity.title);
       row(section, "Rôle déclaré", context.activity.role === "controller" ? "Responsable de traitement" : "Sous-traitant contributeur");
-      row(section, "Personnes", context.activity.dataSubjects); row(section, "Données", context.activity.dataCategories); row(section, "Destinataires", context.activity.recipients);
+      row(section, "Personnes", activityFacts(context.activity, context).dataSubjects); row(section, "Données", activityFacts(context.activity, context).dataCategories); row(section, "Destinataires", activityFacts(context.activity, context).recipients);
       row(section, "Opérations", content.necessity.operations); row(section, "Accès", content.necessity.access);
       row(section, "Champ examiné", content.applicability); row(section, "Motif de réalisation", content.screeningReason);
       if (context.activity.role === "controller") for (const [i, p] of context.activity.purposes.entries()) {
-        row(section, `Finalité ${i + 1}`, p.description); row(section, `Fondement ${i + 1}`, p.legalBasis); row(section, `Conservation ${i + 1}`, p.retention.period); row(section, `Déclencheur ${i + 1}`, p.retention.trigger);
+        row(section, `Finalité ${i + 1}`, p.description); row(section, `Fondement ${i + 1}`, p.legalBasis); row(section, `Conservation ${i + 1}`, purposeRetention(context.activity, p).period); row(section, `Déclencheur ${i + 1}`, purposeRetention(context.activity, p).trigger);
       }
     }
+    if (section === "inventory") for (const group of dataGroupRows(context.activity, context)) for (const field of group.rows) row(section, `${group.group} · ${field.label}`, field.value);
     if (section === "necessity" || section === "principles") (section === "necessity" ? content.necessity.notes : content.principles).forEach((n) => { const label = (section === "necessity" ? necessityLabels : principleLabels)[n.questionId]!; row(section, label, n.assessment); row(section, `${label} : suites`, n.followUp); });
     if (section === "alternatives") for (const [i, a] of content.alternatives.entries()) {
       for (const [key, label] of [["purpose", "Finalité"], ["description", "Option"], ["effectiveness", "Efficacité et limites"], ["impacts", "Effets"], ["choice", "Choix motivé"]] as const) row(section, `Option ${i + 1} · ${label}`, a[key]);

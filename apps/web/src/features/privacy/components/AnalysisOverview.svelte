@@ -4,7 +4,7 @@
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
   import Emblem from "./Emblem.svelte";
-  let { workspace, mode, busy, initialActivityId, onEdit, onRegister, onPia, onSecurity }: { workspace: Workspace; mode: "analysis" | "flows"; busy: boolean; initialActivityId?: string; onEdit: (activity: Activity, section: "analysis" | "flows") => void; onRegister: () => void; onPia: (id: string, step?: number) => void; onSecurity: (id: string) => void } = $props();
+  let { workspace, mode, busy, initialActivityId, onEdit, onRegister, onPia, onRisks, onSecurity }: { workspace: Workspace; mode: "analysis" | "flows"; busy: boolean; initialActivityId?: string; onEdit: (activity: Activity, section: "analysis" | "flows") => void; onRegister: () => void; onPia: (id: string, step?: number) => void; onRisks: (id: string) => void; onSecurity: (id: string) => void } = $props();
   let selected = $state("");
   let activity = $derived(workspace.activities.find((item) => item.id === selected) ?? workspace.activities.find((item) => item.id === initialActivityId) ?? workspace.activities[0]);
 </script>
@@ -18,7 +18,7 @@
       <button class="secondary" disabled={busy} onclick={() => onEdit(activity!, "analysis")}><Emblem name="register" compact /><span class="lens-label">01 / RGPD</span><strong>Exigences du traitement</strong><small>Finalités, fondements, droits et sécurité</small></button>
       <button class="secondary" disabled={busy} onclick={() => onPia(activity!.id, 2)}><Emblem name="balance" compact /><span class="lens-label">02 / Nécessité & proportionnalité</span><strong>Éprouver les choix</strong><small>Options et atteintes, dans l’atelier AIPD</small></button>
       <button class="secondary" disabled={busy} onclick={() => onSecurity(activity!.id)}><Emblem name="security" compact /><span class="lens-label">03 / Risques SI</span><strong>Protéger l’activité</strong><small>Événements, dépendances et mesures</small></button>
-      <button class="secondary" disabled={busy} onclick={() => onPia(activity!.id, 3)}><Emblem name="rights" compact /><span class="lens-label">04 / Droits & libertés</span><strong>Examiner les effets humains</strong><small>Scénarios et garanties, dans l’atelier AIPD</small></button>
+      <button class="secondary" disabled={busy} onclick={() => onRisks(activity!.id)}><Emblem name="rights" compact /><span class="lens-label">04 / Droits & libertés</span><strong>Examiner les effets humains</strong><small>Scénarios et garanties, même sans AIPD</small></button>
     </nav><p class="help">Un inventaire commun, des appréciations distinctes. Ouvrir un atelier ne signifie pas qu’une AIPD est obligatoire ou que le traitement est autorisé.</p>
     {#if mode === "flows"}
       {#if activity.flows.length}<FlowMap flows={resolvedFlows(activity, workspace)} />{:else}<div class="flow-empty"><Emblem name="flows" /><h3>Les flux de cette activité restent à décrire.</h3><p>Le lien avec un prestataire ou un logiciel ne renseigne pas, à lui seul, la circulation des données.</p></div>{/if}

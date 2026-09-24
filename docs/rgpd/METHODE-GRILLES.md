@@ -8,9 +8,9 @@ Sources A05/A06 dans SOURCES.md. Les attributions sont visibles dans chaque aide
 
 La correction PC en lieu de PS dans le guide RGPD est prise en compte dans la comparaison, sans modifier le classeur source. Le champ territorial n’est pas réduit au lieu de résidence : les conditions des articles 2 et 3 et celles d’une règle nationale doivent rester distinctes.
 
-Les articles 24, 25 et 32 prennent en compte les risques pour les personnes hors de l’obligation d’AIPD. L’article 35 §7 précise le contenu de l’AIPD. L’application ne transforme pas cette articulation en obligation de deux matrices particulières. L’examen des risques humains reste actuellement accessible dans l’atelier AIPD ; son découplage ergonomique et sa réutilisation doivent être traités dans une tranche dédiée.
+Les articles 24, 25 et 32 prennent en compte les risques pour les personnes hors de l’obligation d’AIPD. L’article 35 §7 précise le contenu de l’AIPD. L’application ne transforme pas cette articulation en obligation de deux matrices particulières. Depuis le 24 septembre 2026, l’entrée Risques & mesures permet cet examen sans ouvrir une AIPD. Une ouverture ultérieure reprend les mêmes scénarios et mesures. L’AIPD conserve son analyse des risques, conformément à l’article 35 §7.
 
-Écarts restant à instruire : liens de finalité et de catégorie au niveau de chaque flux ; revue détaillée de chaque critère ; bilan bénéfices/atteintes ; reprise référencée des examens déjà conduits ; correspondance et restitution des modèles CNIL. Le rapport AIPD par liste blanche n’est pas un export importable dans le logiciel CNIL.
+Les groupes D1/D2 relient désormais sous-finalités, catégories, parcours, conservation, minimisation et garanties. Les tableaux descriptifs peuvent être repris explicitement dans la restitution AIPD. Écarts restant à instruire : revue détaillée de chaque critère ; bilan bénéfices/atteintes ; reprise référencée de tous les examens déjà conduits ; correspondance exhaustive des modèles CNIL. Le rapport AIPD par liste blanche n’est pas un export importable dans le logiciel CNIL.
 
 Les aides sont une adaptation partielle. La pertinence juridique et la transposition des raisonnements CEDH/Charte au contexte de chaque organisme restent à relire. Les titres et conclusions historiques ne sont pas silencieusement renommés.
 

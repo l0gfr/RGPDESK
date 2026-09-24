@@ -34,6 +34,7 @@ export function searchWorkspace(workspace: Workspace | null, query: string, kind
     const systems = workspace.systems.filter((s) => a.systemIds.includes(s.id)).map((s) => s.name);
     add("activity", a.id, a.title, a.role === "controller" ? "Activité responsable" : "Activité sous-traitante", [
       ...text(a.dataCategories, a.dataSubjects, a.recipients, a.transfers, a.securityMeasures, a.analysis.operations, a.analysis.access),
+      ...(a.dataGroups ?? []).flatMap(g => [`D${g.code}`, ...text(g.data,g.people,g.retention.period,g.retention.trigger,g.retention.deletion,g.guarantees,...Object.values(g.minimisation))]),
       a.internalNotes, ...parties, ...systems, ...notes(a.analysis.notes),
       ...resolvedFlows(a, workspace).flatMap((f) => text(f.source, f.destination, f.operation, f.data, f.channel, f.location, f.access)),
       ...(a.role === "controller" ? a.purposes.flatMap((p) => text(p.description, p.legalBasis, p.retention.period, p.retention.trigger)) : text(a.operations, a.instructions)),
@@ -45,7 +46,7 @@ export function searchWorkspace(workspace: Workspace | null, query: string, kind
     const a = workspace.activities.find((v) => v.id === p.activityId);
     if (!a) continue;
     const c = p.content;
-    add("pia", p.id, `AIPD · ${a.title}`, "Analyse d’impact", [
+    add("pia", p.id, `${p.scope === "risks" ? "Risques" : "AIPD"} · ${a.title}`, p.scope === "risks" ? "Risques et mesures" : "Analyse d’impact", [
       ...notes(c.principles), ...notes(c.necessity.notes),
       ...text(c.applicability, c.screeningReason, c.evaluationMethod, c.dpoAdvice, c.peopleConsultation, c.authorityConsultation, c.monitoring),
       ...c.alternatives.flatMap((v) => text(v.description, v.purpose, v.effectiveness, v.impacts, v.evidence, v.choice)),

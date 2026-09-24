@@ -1,6 +1,7 @@
 <script lang="ts">
+  import DataGroupsTable from "./DataGroupsTable.svelte";
   import type { RecoveryForm } from "../persistence/recovery";
-  import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, resolvedFlows, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
+  import { activityFacts, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, resolvedFlows, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
   import { PIA_NECESSITY_METHOD } from "../review-methods";
   import { PIA_STEPS, PIA_SOURCES, PIA_PRINCIPLE_QUESTIONS, SCREENING_LABELS, PIA_LEVELS, PIA_OUTCOMES, PIA_RISK_FIELDS, PIA_ALTERNATIVE_FIELDS, PIA_MEASURE_FIELDS } from "../pia-method";
@@ -14,13 +15,13 @@
   import FlowMap from "./FlowMap.svelte";
   import Icon from "./Icon.svelte";
   import Emblem from "./Emblem.svelte";
-  let { workspace, busy, demo = false, onSave, onEditing, onLeave, onRegister, onDocument, initialActivityId = "", initialStep = 0, initialView = "edit" }: { initialStep?: number; initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
+  let { workspace, busy, risksOnly = false, demo = false, onSave, onEditing, onLeave, onRegister, onDocument, initialActivityId = "", initialStep = 0, initialView = "edit" }: { risksOnly?: boolean; initialStep?: number; initialActivityId?: string; initialView?: "edit" | "read"; workspace: Workspace; busy: boolean; demo?: boolean; onSave: (next: Workspace) => Promise<boolean>; onEditing: (editing: boolean) => void; onLeave: (action: () => void) => void; onRegister: () => void; onDocument: (id: string) => void } = $props();
   let draft: ImpactAssessment | null = $state(null);
   let consumedSearch = $state("");
   $effect(() => {
     if (initialActivityId && consumedSearch !== initialActivityId && !draft) {
       consumedSearch = initialActivityId;
-      if (workspace.activities.some((a) => a.id === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); step = initialView === "read" ? 6 : Math.max(0, Math.min(6, initialStep)); }
+      if (workspace.activities.some((a) => a.id === initialActivityId)) { activityId = initialActivityId; open(initialActivityId); step = risksOnly ? 3 : initialView === "read" ? 6 : Math.max(0, Math.min(6, initialStep)); }
     }
   });
   let activityId = $state("");
@@ -36,7 +37,7 @@
   let stepHeading: HTMLHeadingElement | undefined = $state();
   let selected = $derived(workspace.activities.find((a) => a.id === activityId) ?? workspace.activities[0]);
   let saved = $derived.by(() => draft ? workspace.impactAssessments.find((p) => p.id === draft!.id) : undefined);
-  let dirty = $derived.by(() => draft ? !saved || canonicalJson(draft.content) !== canonicalJson(saved.content) : false);
+  let dirty = $derived.by(() => draft ? !saved || (draft.scope ?? "aipd") !== (saved.scope ?? "aipd") || canonicalJson(draft.content) !== canonicalJson(saved.content) : false);
   export function getCheckpoint(){return draft?{kind:"pia" as const,id:draft.id,step}:undefined;}
   export function hasUnsavedChanges() { return !!draft && (dirty || !!author || !!reason || acknowledged || outcome !== "rework"); }
   let points = $derived.by(() => draft ? piaOpenPoints(draft.content, workspace.documents.filter((d) => d.activityIds.includes(draft!.activityId))) : []);
@@ -47,7 +48,9 @@
     if (!target) return;
     const existing = workspace.impactAssessments.find((p) => p.activityId === target.id);
     draft = existing ? structuredClone($state.snapshot(existing)) : createImpactAssessment(workspace.id, $state.snapshot(target), crypto.randomUUID());
-    step = 0; beforeRemoval = null; localError = ""; reviewIndex = null; author = ""; reason = ""; acknowledged = false; outcome = "rework"; onEditing(true);
+    if (!existing) draft.scope = risksOnly ? "risks" : "aipd";
+    else if (!risksOnly && draft.scope === "risks") draft.scope = "aipd";
+    step = risksOnly ? 3 : 0; beforeRemoval = null; localError = ""; reviewIndex = null; author = ""; reason = ""; acknowledged = false; outcome = "rework"; onEditing(true);
     const id = draft.id;
     void tick().then(() => { if (draft?.id === id && draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } });
   }
@@ -86,23 +89,26 @@
   }
   function close() { draft = null; beforeRemoval = null; reviewIndex = null; author = ""; reason = ""; acknowledged = false; localError = ""; onEditing(false); }
   export function getRecovery():RecoveryForm|null{return draft&&hasUnsavedChanges()?{kind:'pia',draft:$state.snapshot(draft),step,author,reason,outcome}:null;}
-  export function restoreRecovery(f:RecoveryForm){if(f.kind!=='pia')return;draft=structuredClone(f.draft);activityId=draft.activityId;step=f.step;author=f.author;reason=f.reason;outcome=f.outcome;acknowledged=false;reviewIndex=null;onEditing(true);}
+  export function restoreRecovery(f:RecoveryForm){if(f.kind!=='pia')return;draft=structuredClone(f.draft);activityId=draft.activityId;step=risksOnly ? (f.step === 4 ? 4 : 3) : f.step;author=f.author;reason=f.reason;outcome=f.outcome;acknowledged=false;reviewIndex=null;onEditing(true);}
 </script>
-<section class="panel pia-workbench" aria-label="Atelier AIPD">
+<section class="panel pia-workbench" aria-label={risksOnly ? "Analyse des risques" : "Atelier AIPD"}>
   {#if !draft}
+    {#if risksOnly}<div class="pia-cover"><div><p class="eyebrow">Article 32 · Protéger les personnes</p><h2>Les risques se travaillent dès le registre.</h2><p>Décrivez les scénarios, les conséquences pour les personnes et les mesures. Ce travail reste disponible même sans AIPD ; il sera repris dans celle-ci si vous l’engagez.</p></div><Emblem name="security"/></div>{:else}
     <div class="pia-cover"><div><p class="eyebrow">L’atelier d’impact</p><h2>Une décision que l’on peut expliquer.</h2><p>Du traitement envisagé aux effets sur les personnes : confrontez vos hypothèses, comparez les options et gardez la trace des arbitrages.</p></div><span class="pia-cover-mark" aria-hidden="true"><Emblem name="impact" /></span></div>
     <ol class="pia-route">{#each [["Décrire", "Le traitement et ses usages"], ["Questionner", "Son utilité et les alternatives"], ["Protéger", "Les personnes et leurs droits"], ["Décider", "Avec des preuves et des réserves"]] as [title, text], index}<li><span>0{index + 1}</span><strong>{title}</strong><small>{text}</small></li>{/each}</ol>
-    {#if selected}<label class="field">Traitement à étudier<select aria-label="Traitement à étudier" value={selected.id} onchange={(e) => activityId = e.currentTarget.value}>{#each workspace.activities as activity}<option value={activity.id}>{activity.title}</option>{/each}</select></label><button disabled={busy || (!workspace.impactAssessments.some((p) => p.activityId === selected!.id) && workspace.impactAssessments.length >= 40)} onclick={() => open()}>{workspace.impactAssessments.some((p) => p.activityId === selected!.id) ? "Reprendre l’AIPD" : "Ouvrir une étude d’impact"}<Icon name="arrow" /></button>{:else}<p>Commencez par décrire une activité dans votre registre. Son contexte et ses flux serviront de point de départ.</p><button onclick={onRegister}>Ouvrir le registre</button>{/if}
-    <p class="help">Une étude peut être commencée volontairement. Son ouverture ne signifie pas qu’elle est obligatoire. Le contexte provient du registre. Les appréciations de cette étude restent distinctes de l’examen RGPD.</p>
-    {#each workspace.impactAssessments as pia}<div class="pia-ledger"><div><strong>{workspace.activities.find((a) => a.id === pia.activityId)?.title}</strong><p>{pia.reviews.length} revue(s) conservée(s) · {piaReviewState(workspace, pia) === "changed" ? "Contexte ou étude modifié depuis la dernière revue : réexamen à instruire" : pia.reviews.length ? "Pas de changement détecté depuis la dernière revue" : "Aucune décision enregistrée"}</p></div><button class="secondary" disabled={busy} onclick={() => { activityId = pia.activityId; open(pia.activityId); step = 6; }}>Lire le dossier</button></div>{/each}
-    <p class="help">Trame RGPDESK du 22 septembre 2026, appuyée sur l’article 35, les guides CNIL et les critères du G29. Aucune conclusion juridique n’est produite par l’outil.</p>
+    {/if}
+    {#if selected}<label class="field">Traitement à étudier<select aria-label="Traitement à étudier" value={selected.id} onchange={(e) => activityId = e.currentTarget.value}>{#each workspace.activities as activity}<option value={activity.id}>{activity.title}</option>{/each}</select></label><button disabled={busy || (!workspace.impactAssessments.some((p) => p.activityId === selected!.id) && workspace.impactAssessments.length >= 40)} onclick={() => open()}>{risksOnly ? "Examiner les risques et les mesures" : workspace.impactAssessments.some((p) => p.activityId === selected!.id && p.scope !== "risks") ? "Reprendre l’AIPD" : "Ouvrir une étude d’impact"}<Icon name="arrow" /></button>{:else}<p>Commencez par décrire une activité dans votre registre. Son contexte et ses flux serviront de point de départ.</p><button onclick={onRegister}>Ouvrir le registre</button>{/if}
+    {#if !risksOnly}<p class="help">Une étude peut être commencée volontairement. Son ouverture ne signifie pas qu’elle est obligatoire. Le contexte provient du registre. Les appréciations de cette étude restent distinctes de l’examen RGPD.</p>
+    {#each workspace.impactAssessments.filter(p => p.scope !== "risks") as pia}<div class="pia-ledger"><div><strong>{workspace.activities.find((a) => a.id === pia.activityId)?.title}</strong><p>{pia.reviews.length} revue(s) conservée(s) · {piaReviewState(workspace, pia) === "changed" ? "Contexte ou étude modifié depuis la dernière revue : réexamen à instruire" : pia.reviews.length ? "Pas de changement détecté depuis la dernière revue" : "Aucune décision enregistrée"}</p></div><button class="secondary" disabled={busy} onclick={() => { activityId = pia.activityId; open(pia.activityId); step = 6; }}>Lire le dossier</button></div>{/each}
+    <p class="help">Trame RGPDESK du 22 septembre 2026, appuyée sur l’article 35, les guides CNIL et les critères du G29. Aucune conclusion juridique n’est produite par l’outil.</p>{:else}<p class="help">Le RGPD impose une sécurité adaptée aux risques, même lorsqu’aucune AIPD n’est engagée. La décision de réaliser une AIPD reste distincte. <a href={PIA_SOURCES.law} target="_blank" rel="noopener noreferrer">Articles 24, 25, 32 et 35 §7</a>.</p>{/if}
   {:else if context}
-    <div class="section-heading"><div><p class="eyebrow">Atelier AIPD · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2 bind:this={draftHeading} data-draft-heading tabindex="-1">{context.activity.title}</h2></div></div>
+    <div class="section-heading"><div><p class="eyebrow">{risksOnly ? "Risques et mesures" : "Atelier AIPD"} · {context.activity.role === "processor" ? "Contribution au dossier du responsable" : "Dossier du responsable"}</p><h2 bind:this={draftHeading} data-draft-heading tabindex="-1">{context.activity.title}</h2></div></div>
     <div class="draft-toolbar"><span>{dirty ? "Modifications à enregistrer" : demo ? "Étude conservée pour cette visite" : "Étude enregistrée dans le coffre"}{#if !dirty && hasUnsavedChanges()} · Revue à consigner{/if}</span><div class="actions"><button disabled={busy} onclick={() => void save()}>{busy ? "Enregistrement…" : "Enregistrer l’étude"}</button><button class="secondary" disabled={busy} onclick={() => onLeave(close)}>Fermer l’étude</button></div></div>
-    <p class="help">Enregistrez vos modifications ici. Une décision se consigne séparément dans « Avis & décision ». {context.activity.role === "processor" ? "L’assistance du sous-traitant ne remplace pas la décision du responsable (article 28 §3 f)." : ""}</p>
+    {#if !risksOnly}<p class="help">Enregistrez vos modifications ici. Une décision se consigne séparément dans « Avis & décision ». {context.activity.role === "processor" ? "L’assistance du sous-traitant ne remplace pas la décision du responsable (article 28 §3 f)." : ""}</p>
+    {:else}<p class="help">Ces scénarios et mesures sont communs à ce traitement et à son éventuelle AIPD. Les modifier appellera un réexamen des revues déjà conservées, sans modifier leur contenu.</p><DataGroupsTable activity={context.activity} inventory={context}/>{/if}
     <ReviewChanges changes={piaChanges(workspace, draft)} review={draft.reviews.at(-1)} {dirty} />
     <ReviewEvidence documents={context.documents} disabled={busy || dirty} onOpen={(id) => onLeave(() => { close(); onDocument(id); })} />
-    <nav class="pia-steps" aria-label="Parcours AIPD">{#each PIA_STEPS as title, index}<button class="secondary" disabled={busy} aria-current={index === step ? "step" : undefined} onclick={() => void go(index)}><span>0{index + 1}</span>{title}</button>{/each}</nav>
+    <nav class="pia-steps" aria-label={risksOnly ? "Parcours risques et mesures" : "Parcours AIPD"}>{#each PIA_STEPS as title, index}{#if !risksOnly || index === 3 || index === 4}<button class="secondary" disabled={busy} aria-current={index === step ? "step" : undefined} onclick={() => void go(index)}><span>0{risksOnly ? index - 2 : index + 1}</span>{title}</button>{/if}{/each}</nav>
     <h3 bind:this={stepHeading} tabindex="-1">{PIA_STEPS[step]}</h3>
     {#if localError}<p role="alert">{localError}</p>{/if}
     <fieldset disabled={busy}>
@@ -115,8 +121,9 @@
       <label class="field">Position sur la réalisation de l’AIPD<select bind:value={draft.content.screeningDecision}><option value="unknown">Décision à instruire</option><option value="required">AIPD jugée requise</option><option value="voluntary">AIPD engagée volontairement</option><option value="not-required">AIPD jugée non requise, motif à conserver</option></select></label>
       <KnowledgeField label="Motivation de cette position" bind:value={draft.content.screeningReason} hint="Noms ou fonctions des personnes consultées, date, arguments, incertitudes et cas à réexaminer. Un critère seul peut déjà révéler un risque élevé." />
     {:else if step === 1}
+      <DataGroupsTable activity={context.activity} inventory={context}/>
       <p>Le registre et les flux ci-dessous forment le contexte actuel. Lors d’une revue, une copie de ce contexte est conservée avec la décision.</p>
-      <dl class="analysis-summary"><div><dt>Personnes</dt><dd>{knowledgeText(context.activity.dataSubjects) || "À documenter dans le registre"}</dd></div><div><dt>Données</dt><dd>{knowledgeText(context.activity.dataCategories) || "À documenter dans le registre"}</dd></div></dl>
+      <dl class="analysis-summary"><div><dt>Personnes</dt><dd>{knowledgeText(activityFacts(context.activity, context).dataSubjects) || "À documenter dans le registre"}</dd></div><div><dt>Données</dt><dd>{knowledgeText(activityFacts(context.activity, context).dataCategories) || "À documenter dans le registre"}</dd></div></dl>
       {#if context.activity.flows.length}<FlowMap flows={resolvedFlows(context.activity, context)} />{:else}<p class="help">Aucun flux décrit. Retrouvez la cartographie dans la fiche de traitement.</p>{/if}
       <ReviewNotebook documents={context.documents} bind:notes={draft.content.principles} questions={PIA_PRINCIPLE_QUESTIONS} prefix="AIPD principes" />
     {:else if step === 2}
@@ -166,7 +173,7 @@
       {#if reviewIndex !== null && draft.reviews[reviewIndex]}{@const review = draft.reviews[reviewIndex]!}<aside class="pia-history"><strong>{PIA_OUTCOMES[review.outcome]}</strong><p>{review.author} · {review.at} · révision {review.revision}</p><p>{review.reason}</p><small>Version conservée. Les modifications ultérieures du registre n’en changent pas le contenu.</small></aside><ReviewEvidence documents={review.context.documents} historical /><PiaDossier content={review.content} context={review.context} />{:else}<PiaDossier content={draft.content} {context} />{/if}
       <p class="help">Ces notes restent dans le dossier de travail et dans sa sauvegarde chiffrée, si vous en téléchargez une. Les exports de registre n’incluent pas les notes AIPD. Il n’existe pas encore d’échange de fichiers avec le logiciel PIA de la CNIL.</p>
     {/if}
-    <div class="actions pia-toolbar">{#if step < PIA_STEPS.length - 1}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}</div>
+    <div class="actions pia-toolbar">{#if step < (risksOnly ? 4 : PIA_STEPS.length - 1)}<button class="secondary" onclick={() => void go(step + 1)}>Étape suivante<Icon name="arrow" /></button>{/if}</div>
     </fieldset>
   {/if}
 </section>

@@ -226,3 +226,9 @@ Les classeurs transmis ne sont pas liés à une URL publique présumée. La ment
 - CNIL, [Sécurité : Sauvegarder](https://www.cnil.fr/fr/securite-sauvegarder) : protection des copies, séparation, restauration.
 - CNIL, [Sécurité : Gérer les habilitations](https://www.cnil.fr/fr/securite-gerer-les-habilitations) : accès limités au besoin, attribution et revue des habilitations.
 - Les six dossiers et les codes DOC sont une proposition de classement de RGPDESK, pas une obligation légale ni une méthode attribuée à ces sources. Le SHA-256 compare des octets ; il ne vaut pas signature ni horodatage certifié.
+
+## 24 septembre 2026 : groupes de données et risques réutilisables
+
+- RGPD, articles 5, 6, 25, 30, 32 et 35 §7 : [publication EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr). Texte du chapitre IV également consulté dans sa [reproduction CNIL](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre4). L’article 32 prend en compte les risques pour les droits et libertés sans condition d’ouverture d’une AIPD ; l’article 35 §7 inclut leur évaluation et les mesures dans l’AIPD. L’ordre ergonomique de saisie n’autorise aucun traitement sans fondement établi.
+- [CNIL, PIA, modèles, février 2018, pages 5–6](https://cnil.fr/sites/cnil/files/atoms/files/cnil-pia-2-fr-modeles.pdf) : catégories, destinataires, durées, justification et minimisation. Les cartes D1/D2 et leurs tableaux sont une adaptation de présentation propre à RGPDESK, sans calcul d’acceptabilité ni promesse d’interopérabilité avec le logiciel CNIL.
+- Le retour d’expertise motive l’organisation du parcours. Il n’est pas présenté comme une validation juridique de l’implémentation. Aucun exemple issu des classeurs privés n’est publié.

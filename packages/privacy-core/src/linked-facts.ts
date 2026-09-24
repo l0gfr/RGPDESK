@@ -1,4 +1,5 @@
 import { knowledge, type Activity, type DataFlow, type EvidenceReference, type ReviewNote, type Workspace } from "./model";
+import { activityFacts, flowSubjects, assertDataGroups } from "./data-groups";
 import type { PiaContext } from "./pia-model";
 import { PrivacyError } from "./validation";
 
@@ -7,13 +8,13 @@ type Inventory = Pick<Workspace, "parties" | "systems">;
 export function resolveFlow(flow: DataFlow, activity: Activity, inventory: Inventory): DataFlow {
   const resolve = (ref: DataFlow["sourceRef"], fallback: DataFlow["source"]) => {
     if (!ref) return fallback;
-    if (ref === "subjects") return activity.dataSubjects;
+    if (ref === "subjects") return flowSubjects(activity, flow);
     const [kind, id] = ref.split(":");
     const entity = (kind === "party" ? inventory.parties : inventory.systems).find((item) => item.id === id);
     return knowledge(entity?.name ?? "");
   };
   return { id: flow.id, source: resolve(flow.sourceRef, flow.source), destination: resolve(flow.destinationRef, flow.destination),
-    operation: flow.operation, data: flow.dataFromActivity ? activity.dataCategories : flow.data,
+    operation: flow.operation, data: flow.dataGroupIds?.length ? knowledge((activity.dataGroups ?? []).filter(g => flow.dataGroupIds!.includes(g.id)).map(g => `D${g.code} : ${g.data.state === "documented" ? g.data.value : "À documenter"}`).join(" ; ")) : flow.dataFromActivity ? activityFacts(activity, inventory).dataCategories : flow.data,
     channel: flow.channel, location: flow.location, access: flow.access };
 }
 export const resolvedFlows = (activity: Activity, inventory: Inventory): DataFlow[] => activity.flows.map((flow) => resolveFlow(flow, activity, inventory));
@@ -36,6 +37,9 @@ export function assertLinkedFacts(master: Workspace): void {
     }
   };
   const activity = (a: Activity, inventory: Inventory, docs: EvidenceReference[]) => {
+    assertDataGroups(a);
+    const inventoryIds = new Set([...inventory.parties, ...inventory.systems, ...docs].map(e => e.id));
+    if ((a.dataGroups ?? []).some(g => inventoryIds.has(g.id))) throw new PrivacyError("INVALID");
     notes(a.analysis.notes, docs);
     for (const f of a.flows) {
       for (const field of ["source", "destination"] as const) {

@@ -1,3 +1,4 @@
+import { activityFacts, dataGroupIssues, purposeRetention } from "./data-groups";
 import { CATALOG_VERSION } from "./catalog";
 import { reviseWorkspace } from "./commands";
 import { assertWorkspace, PrivacyError } from "./validation";
@@ -11,14 +12,16 @@ export function evaluateWorkspace(master: Workspace, today: string): Finding[] {
   if (master.organization.contact.state === "unknown" || master.organization.representatives.state === "unknown" || master.organization.dpo.state === "unknown") add("R-001", null, "organisation", "Coordonnées, représentant ou situation du DPO à documenter, y compris une non-applicabilité motivée.");
   if (!master.decisions.some((d) => d.ruleId === "R-009" && d.revision === master.revision && d.catalogVersion === CATALOG_VERSION)) add("R-009", null, "organisation", "Périmètre, exemptions éventuelles et DPO : analyse à documenter ou à réexaminer.");
   for (const a of master.activities) {
+    const facts = activityFacts(a, master);
+    for (const g of a.dataGroups ?? []) for (const { key, message } of dataGroupIssues(a, g)) add("R-001", a.id, `${g.id}:${key}`, `D${g.code} : ${message}`);
     const docs = master.documents.filter((d) => d.activityIds.includes(a.id));
-    const fields = a.role === "controller" ? [a.dataCategories, a.dataSubjects, a.recipients, a.securityMeasures] : [a.operations, a.securityMeasures];
+    const fields = a.role === "controller" ? [facts.dataCategories, facts.dataSubjects, facts.recipients, a.securityMeasures] : [a.operations, a.securityMeasures];
     if (fields.some((k) => k.state === "unknown") || (a.role === "controller" && !a.purposes.length) || (a.role === "processor" && (!a.controllerIds.length || a.controllerIds.some((id) => master.parties.find((p) => p.id === id)?.contact.state === "unknown")))) add("R-001", a.id, "rubriques", "Rubriques du registre non renseignées.");
     if (a.role === "controller") {
       for (const p of a.purposes) {
         if (p.description.state === "unknown") add("R-001", a.id, p.id, "Finalité à décrire.");
         if (p.legalBasis.state === "unknown") add("R-002", a.id, p.id, "Base légale et justification à examiner pour cette finalité.");
-        if (p.retention.period.state === "unknown" || p.retention.trigger.state === "unknown") add("R-004", a.id, p.id, "Durée ou critère et événement de départ à documenter pour cette finalité.");
+        if (purposeRetention(a, p).period.state === "unknown" || purposeRetention(a, p).trigger.state === "unknown") add("R-004", a.id, p.id, "Durée ou critère et événement de départ à documenter pour cette finalité.");
       }
       if (a.review.article9.state === "unknown" || a.review.article10.state === "unknown") add("R-003", a.id, "qualification", "Conditions éventuelles des articles 9 et 10 à examiner séparément de l’article 6.");
       if (a.review.collection === "unknown" || !a.purposes.length || a.purposes.some((p) => !docs.some((d) => d.category === "notice" && d.purposeIds.includes(p.id) && d.audience && d.channel && d.version && d.availability.state === "documented"))) add("R-007", a.id, "information", "Mode de collecte ou notice par finalité à documenter : public, canal, version, disponibilité.");

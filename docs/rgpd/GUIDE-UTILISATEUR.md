@@ -98,9 +98,26 @@ Le RGPD distingue celui qui détermine les finalités et les moyens du traitemen
 
 ### Fiche responsable
 
-Dans **Finalités et conservation**, ajoutez une finalité et décrivez son objectif. La base légale documentée, la durée ou le critère et l’événement de départ restent vos déclarations. Aucun modèle ne les choisit pour vous. Plusieurs finalités peuvent être ajoutées.
+La fiche suit six étapes : **L’ensemble**, **Les objectifs**, **Les données**, **La protection**, **Le fondement**, **La relecture**. Le nom de l’ensemble exprime sa finalité principale. Dans les objectifs, décrivez ses sous-finalités ; le fondement juridique sera examiné après les faits, sans choix automatique. Cet ordre de documentation ne permet pas de commencer un traitement sans avoir établi sa licéité. [Articles 5 et 6](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
-Renseignez ensuite les catégories de personnes, de données et de destinataires, les transferts et les mesures techniques et organisationnelles. Décrivez les mesures réellement examinées ; distinguez ce qui existe de ce qui est prévu. Les examens des articles 9 et 10 restent distincts de la base de l’article 6. [Principes et licéité, articles 5, 6, 9 et 10](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+Dans **Les données**, créez vos groupes **D1, D2…**. Ces repères appartiennent à cet ensemble de traitement. Pour chacun :
+
+1. Décrivez les catégories de données et de personnes, puis cochez les sous-finalités concernées.
+2. Décrivez son parcours : origine, destination, opération, canal et support, lieux, accès et destinataires. Les données du groupe sont reprises dans ses flux, sans les recopier.
+3. Ouvrez **Conservation et effacement** : durée ou critère, événement de départ, effacement et contrôle. Si des catégories suivent des règles différentes, séparez les groupes.
+4. Ouvrez **Minimisation et garanties** : examinez les données, supports, canaux, destinataires et durées, puis les garanties concrètes et leur vérification. Distinguez prévu et effectif.
+
+Les champs vides restent des points à examiner ; les compteurs indiquent seulement la présence de déclarations. Vos descriptions générales antérieures restent accessibles dans **Descriptions générales et flux déjà saisis**. Elles ne sont pas réparties automatiquement entre les groupes. [Articles 5, 25 et 30](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+Examinez ensuite la protection, puis le fondement juridique par sous-finalité à partir de ces faits. Le dossier **Intérêt légitime** permet de motiver un examen ; aucune sélection de fondement n’en résulte automatiquement. Les conditions des articles 9 et 10 restent distinctes du fondement de l’article 6. [Articles 6, 9 et 10](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+
+Les tableaux de groupes sont repris dans la relecture, le dossier d’intérêt légitime lié et le contexte AIPD. Dans **Restitution AIPD**, cochez explicitement **Groupes de données, flux et minimisation** pour les inclure dans le rapport partagé. Ils décrivent les faits et les examens saisis ; ils ne constituent pas une attestation de conformité. Leur organisation s’inspire des tableaux de données et de conservation des [modèles CNIL de février 2018, pages 5–6](https://cnil.fr/sites/cnil/files/atoms/files/cnil-pia-2-fr-modeles.pdf). Ce rapport n’est pas un fichier importable dans le logiciel PIA de la CNIL.
+
+### Examiner les risques avant une AIPD
+
+Dans **Risques & mesures**, choisissez un ensemble de traitement. Décrivez les scénarios, leurs conséquences pour les personnes, vos appréciations motivées et les mesures. Cette entrée est utilisable sans déclarer une AIPD. Elle concerne les risques pour les personnes ; le dossier **Sécurité** reste disponible pour les éléments relatifs au système d’information.
+
+Si vous ouvrez ensuite une AIPD pour ce même ensemble, ses scénarios et mesures sont repris dans la même étude. Vous complétez le déclenchement, les principes RGPD, la nécessité/proportionnalité et les avis. Rien ne décide à votre place de l’obligation ou du résultat de l’AIPD. Les risques restent présents dans sa restitution. [Articles 32 et 35 §7](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
 ### Fiche sous-traitante
 

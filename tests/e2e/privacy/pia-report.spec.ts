@@ -12,16 +12,16 @@ test("AIPD folio stays readable, navigable and complete without JavaScript, on s
   try {
     await page.goto("/app/privacy/demo/aipd/");
     const report = page.locator(".pia-report");
-    await expect(report.locator(".ar-chapter")).toHaveCount(8);
+    await expect(report.locator(".ar-chapter")).toHaveCount(9);
     await expect(report.locator(".ar-risk")).toHaveCount(3);
     await expect(report.locator(".ar-measures .ar-card")).toHaveCount(3);
     await expect(report.locator(".ar-alternatives .ar-card")).toHaveCount(2);
-    await expect(report.locator(".ar-toc a")).toHaveCount(8);
+    await expect(report.locator(".ar-toc a")).toHaveCount(9);
     await report
       .getByRole("navigation", { name: "Sommaire de l’AIPD" })
       .getByRole("link", { name: /Scénarios et niveaux déclarés/ })
       .click();
-    await expect(page).toHaveURL(/#pia-section-4$/);
+    await expect(page).toHaveURL(/#pia-section-5$/);
     await report
       .locator(".ar-risk")
       .first()

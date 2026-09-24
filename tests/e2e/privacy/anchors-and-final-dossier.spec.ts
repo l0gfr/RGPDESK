@@ -80,7 +80,7 @@ test("the final demonstration dossier is immediately readable without JavaScript
         expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${slug} ${width}`).toBe(true);
       }
     }
-    await expect(page.getByRole("heading",{level:2})).toHaveCount(9);
+    await expect(page.getByRole("heading",{level:2})).toHaveCount(10);
     await expect(page.locator("body")).toContainText("Aucune mise en œuvre autorisée");
     expect(requests.every(url=>new URL(url).origin===new URL(baseURL!).origin)).toBe(true);
     await expect(page.getByRole("link",{name:"← Le dossier complet",exact:true})).toHaveAttribute("href","/app/privacy/demo/");

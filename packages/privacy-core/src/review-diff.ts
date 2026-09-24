@@ -56,6 +56,16 @@ function contextFacts(contexts: PiaContext[], organization: PiaContext["organiza
     f.add(`${base}/jurisdiction`, subject, "Juridiction examinée", "context", c.jurisdiction);
     f.choice(`${base}/role`, subject, "Rôle", "context", a.role);
     f.choice(`${base}/status`, subject, "État de la fiche", "context", a.status);
+    for (const g of a.dataGroups ?? []) {
+      const key = `${base}/groups/${g.id}`, title = `${subject} · D${g.code}`;
+      f.add(key, title, "Repère de groupe", "people", g.code);
+      f.add(`${key}/data`, title, "Données", "people", g.data); f.add(`${key}/people`, title, "Personnes", "people", g.people);
+      f.add(`${key}/purposes`, title, "Sous-finalités liées", "purpose", [...g.purposeIds].sort());
+      for (const field of ["period", "trigger", "deletion"] as const) f.add(`${key}/retention/${field}`, title, `Conservation · ${{period: "Durée", trigger: "Départ", deletion: "Effacement"}[field]}`, "purpose", g.retention[field]);
+      for (const field of ["data", "supports", "channels", "recipients", "retention"] as const) f.add(`${key}/minimisation/${field}`, title, `Minimisation · ${{data: "Données", supports: "Supports", channels: "Canaux", recipients: "Destinataires", retention: "Durée"}[field]}`, "security", g.minimisation[field]);
+      f.add(`${key}/guarantees`, title, "Garanties du groupe", "security", g.guarantees);
+    }
+    for (const flow of a.flows) if (flow.dataGroupIds?.length) f.add(`${base}/flows/${flow.id}/groups`, subject, "Groupes liés au flux", "flow", [...flow.dataGroupIds].sort());
     f.add(`${base}/dataSubjects`, subject, "Personnes concernées", "people", a.dataSubjects);
     f.add(`${base}/dataCategories`, subject, "Catégories de données", "people", a.dataCategories);
     f.add(`${base}/recipients`, subject, "Destinataires", "flow", a.recipients);

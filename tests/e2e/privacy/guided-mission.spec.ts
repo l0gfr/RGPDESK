@@ -28,12 +28,12 @@ test("guided interview becomes an activity-specific follow-up, without legal def
   await page.getByRole("button", { name: "Continuer", exact: true }).click();
   await expect(page.locator(".step-heading h3")).toBeFocused();
   await page.getByRole("button", { name: "Ajouter une finalité", exact: true }).click();
-  await page.getByLabel("Finalité 1", { exact: true }).fill("Examiner des candidatures fictives");
-  await expect(page.getByLabel("Fondement juridique documenté 1 (complément)", { exact: true })).toHaveValue("");
-  await expect(page.getByLabel("Durée ou critère de conservation 1", { exact: true })).toHaveValue("");
+  await page.getByLabel("Sous-finalité 1", { exact: true }).fill("Examiner des candidatures fictives");
+  await expect(page.getByLabel("Fondement juridique documenté 1 (complément)", { exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Continuer", exact: true }).click();
-  await page.getByLabel("Catégories de personnes", { exact: true }).fill("Candidats fictifs");
-  await page.getByLabel("Catégories de données", { exact: true }).fill("Parcours professionnel fictif");
+  await page.getByRole("button", {name:"Ajouter un groupe de données",exact:true}).click();
+  await page.getByLabel("D1 · Personnes concernées", { exact: true }).fill("Candidats fictifs");
+  await page.getByLabel("D1 · Catégories de données", { exact: true }).fill("Parcours professionnel fictif");
   await page.getByRole("button", { name: "Continuer", exact: true }).click();
   await expect(page.getByLabel("Transferts documentés", { exact: true })).toHaveValue("");
   await page.getByRole("button", { name: "Continuer", exact: true }).click();

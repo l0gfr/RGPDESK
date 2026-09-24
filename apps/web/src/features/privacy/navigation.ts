@@ -1,7 +1,7 @@
 // Generic sections only. Never encode client names, object IDs, searches or form values.
 export const PRIVACY_ROUTES = {
   overview: ["bureau", "Ma mission"], register: ["registre", "Registre"], flows: ["cartographie", "Cartographie"],
-  analysis: ["analyse", "Analyse RGPD"], pia: ["aipd", "AIPD / PIA"], dpo: ["dossiers-dpo", "Dossiers DPO"],
+  risks: ["risques", "Risques & mesures"], analysis: ["analyse", "Analyse RGPD"], pia: ["aipd", "AIPD / PIA"], dpo: ["dossiers-dpo", "Dossiers DPO"],
   organization: ["organisation", "Organisation"], parties: ["intervenants", "Intervenants"], systems: ["systemes", "Systèmes"],
   documents: ["documents", "Documents"], actions: ["actions", "Actions & décisions"], delivery: ["partager", "Partager un dossier"],
   "pia-sharing": ["restitution-aipd", "Restitution AIPD"], backup: ["sauvegarde", "Sauvegarde"], import: ["importer-csv", "Importer un CSV"],

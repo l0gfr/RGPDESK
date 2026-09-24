@@ -88,9 +88,9 @@ test("offline controller and processor workflow, reopen, encrypted backup and fr
   await page.getByRole("button", { name: "Registre", exact: true }).click();
   await activity(page, "responsable", "Gestion des bénévoles fictifs");
   await page.getByRole("button", { name: "Ajouter une finalité", exact: true }).click();
-  await page.getByLabel("Finalité 1", { exact: true }).fill("Coordonner les activités associatives fictives");
+  await page.getByLabel("Sous-finalité 1", { exact: true }).fill("Coordonner les activités associatives fictives");
   await expect(page.getByLabel("Fondement juridique documenté 1 (complément)", { exact: true })).toHaveValue("");
-  await expect(page.getByLabel("Durée ou critère de conservation 1", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Durée ou critère de conservation 1 (description générale)", { exact: true })).toHaveValue("");
   await page.getByLabel("Outil de gestion fictif", { exact: true }).check();
   await page.getByLabel("Notes internes", { exact: true }).fill("NEVER_LEAK_INTERNAL_NOTE_7D31");
   await saveActivity(page, "Gestion des bénévoles fictifs");

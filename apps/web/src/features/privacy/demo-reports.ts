@@ -41,7 +41,7 @@ export async function buildDemoReports() {
   return [
     { slug: "registre", title: "Le registre responsable", icon: "register", caption: "3 activités · 5 flux", description: "La lecture direction, les fiches visuelles, les flux choisis, les suites et l’annexe détaillée.", html: register("controller") },
     { slug: "sous-traitance", title: "Le registre sous-traitant", icon: "parties", caption: "1 activité · 2 flux", description: "Les opérations pour un client, les acteurs, les deux flux et les points encore à éclaircir.", html: register("processor") },
-    { slug: "aipd", title: "L’analyse d’impact", icon: "impact", caption: "8 rubriques · 1 revue", description: "Les principes RGPD, la nécessité, les alternatives, les risques, les mesures, les avis et la revue humaine.", html: await renderPiaPublication(publication) },
+    { slug: "aipd", title: "L’analyse d’impact", icon: "impact", caption: "9 rubriques · 1 revue", description: "Les principes RGPD, la nécessité, les alternatives, les risques, les mesures, les avis et la revue humaine.", html: await renderPiaPublication(publication) },
   ];
 }
 

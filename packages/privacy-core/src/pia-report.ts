@@ -38,6 +38,7 @@ const n = (
 ): PiaReportNode => ({ tag, attrs, children });
 const p = (text: string, cls = "") => n("p", { class: cls }, text);
 const paths = {
+  inventory: "M4 3h16v18H4ZM4 9h16M4 15h16M10 3v18",
   context: "M3 3h6v6H3ZM15 15h6v6h-6ZM6 9v9h9M15 3h6v6h-6ZM9 6h6M18 9v6",
   principles: "M5 3h14v18H5ZM9 7h6M9 11h6M9 15h4M3 6h4M3 10h4M3 14h4M3 18h4",
   necessity: "M12 3v18M7 21h10M4 7h16M5 7l-3 7h6ZM19 7l-3 7h6Z",
@@ -354,6 +355,16 @@ export function createPiaReportBody(
           ),
         ),
       );
+    } else if (s.key === "inventory") {
+      const byGroup = new Map<string, Row[]>(), rest: Row[] = [];
+      for (const r of s.rows) {
+        const match = /^(D[1-9][0-9]*) · (.+)$/.exec(r.label);
+        if (!match) { rest.push(r); continue; }
+        const group = match[1]!;
+        if (!byGroup.has(group)) byGroup.set(group, []);
+        byGroup.get(group)!.push({ ...r, label: match[2]! });
+      }
+      content = n("div", {}, ...[...byGroup].map(([group, rows]) => card(group, rows)), facts(rest));
     } else if (s.key === "principles" || s.key === "necessity") {
       const cards: PiaReportNode[] = [];
       for (let j = 0; j < s.rows.length; j++) {

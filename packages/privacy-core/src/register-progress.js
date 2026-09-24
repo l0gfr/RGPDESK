@@ -11,12 +11,13 @@ function checkpoint(label, icon, fields, step) {
 }
 const has = value => value?.state === "documented" && value.value.trim().length > 0;
 export function activityProgress(activity) {
+  const groups = activity.dataGroups ?? [];
   return [
     checkpoint(activity.role === "controller" ? "Finalités" : "Opérations", "target", activity.role === "controller" ? activity.purposes.map(p => has(p.description)) : [has(activity.operations)], 1),
-    checkpoint("Personnes", "parties", [has(activity.dataSubjects)], 2),
-    checkpoint("Données", "documents", [has(activity.dataCategories)], 2),
-    checkpoint("Destinataires", "transfer", [has(activity.recipients)], 2),
-    checkpoint(activity.role === "controller" ? "Conservation" : "Clients responsables", "clock", activity.role === "controller" ? activity.purposes.flatMap(p => [has(p.retention.period), has(p.retention.trigger)]) : [activity.controllerIds.length > 0], 1),
+    checkpoint("Personnes", "parties", groups.length ? groups.map(g => has(g.people)) : [has(activity.dataSubjects)], 2),
+    checkpoint("Données", "documents", groups.length ? groups.map(g => has(g.data)) : [has(activity.dataCategories)], 2),
+    checkpoint("Destinataires", "transfer", groups.length ? groups.map(g => activity.flows.some(f => f.dataGroupIds?.includes(g.id) && has(f.access))) : [has(activity.recipients)], 2),
+    checkpoint(activity.role === "controller" ? "Conservation" : "Clients responsables", "clock", activity.role === "controller" ? groups.length ? groups.flatMap(g => [has(g.retention.period), has(g.retention.trigger)]) : activity.purposes.flatMap(p => [has(p.retention.period), has(p.retention.trigger)]) : [activity.controllerIds.length > 0], activity.role === "controller" ? 2 : 1),
     checkpoint("Protections", "shield", [has(activity.securityMeasures), has(activity.transfers)], 3),
   ];
 }

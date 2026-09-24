@@ -60,7 +60,7 @@ export function putImpactAssessment(master: Workspace, pia: ImpactAssessment, ex
 export function recordPiaReview(master: Workspace, piaId: string, decision: Pick<PiaReview, "id" | "author" | "outcome" | "reason">, expectedRevision: number, now: string): Workspace {
   assertWorkspace(master);
   const pia = master.impactAssessments.find((p) => p.id === piaId);
-  if (!pia || !decision.author.trim() || !decision.reason.trim()) throw new PrivacyError("INVALID");
+  if (!pia || pia.scope === "risks" || !decision.author.trim() || !decision.reason.trim()) throw new PrivacyError("INVALID");
   if (decision.outcome === "proceed" && (piaOpenPoints(pia.content, piaContext(master, pia.activityId).documents).length || master.activities.find((a) => a.id === pia.activityId)?.role !== "controller")) throw new PrivacyError("INVALID");
   const review: PiaReview = { ...decision, author: decision.author.trim(), reason: decision.reason.trim(), at: now, revision: master.revision + 1, context: structuredClone(piaContext(master, pia.activityId)), content: structuredClone(pia.content) };
   return reviseWorkspace(master, expectedRevision, now, { impactAssessments: master.impactAssessments.map((p) => p.id === piaId ? { ...p, reviews: [...p.reviews, review] } : p) });
@@ -79,6 +79,7 @@ export function assertPiaWorkspace(master: Workspace, registerId: (id: string) =
     for (const m of value.measures) if (m.riskIds.some((id) => !riskIds.has(id))) throw new PrivacyError("INVALID");
   };
   for (const pia of master.impactAssessments) {
+    if (pia.scope === "risks" && pia.reviews.length) throw new PrivacyError("INVALID");
     registerId(pia.id);
     const activity = master.activities.find((a) => a.id === pia.activityId);
     if (pia.workspaceId !== master.id || !activity || activityIds.has(pia.activityId)) throw new PrivacyError("INVALID");
@@ -102,6 +103,7 @@ export function assertPiaHistory(previous: Workspace, incoming: ImpactAssessment
   for (const item of incoming) if (!previous.impactAssessments.some((p) => p.id === item.id) && item.reviews.length) throw new PrivacyError("INVALID");
   for (const old of previous.impactAssessments) {
     const next = incoming.find((p) => p.id === old.id);
+    if (old.scope !== "risks" && next?.scope === "risks") throw new PrivacyError("INVALID");
     if (next && next.reviews.length > old.reviews.length) {
       const added = next.reviews.slice(old.reviews.length);
       if (added.length !== 1 || canonicalJson(next.content) !== canonicalJson(old.content)) throw new PrivacyError("INVALID");

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DataGroupsEditor from "./DataGroupsEditor.svelte";
   import Emblem from "./Emblem.svelte";
   import {tick} from "svelte";
   import { createPurpose, type Activity, type Workspace } from "@rgpdesk/privacy-core";
@@ -15,9 +16,7 @@
   <label class="field">Comment appelez-vous cette activité ?<input required maxlength="160" bind:value={draft.title} /></label>
   {#if draft.role==='controller'}{#each draft.purposes as purpose,i}<KnowledgeField label={`À quoi servent ces données ? Objectif ${i+1}`} bind:value={purpose.description} />{/each}<button type="button" class="secondary" disabled={draft.purposes.length>=20} onclick={()=>{if(draft.role==='controller')draft.purposes=[...draft.purposes,createPurpose(crypto.randomUUID())];}}>Ajouter un objectif</button>{:else}<KnowledgeField label="Que faites-vous pour le compte du client ?" bind:value={draft.operations} />{/if}
 {:else if step===1}
-  <KnowledgeField label="De quelles personnes parle-t-on ?" bind:value={draft.dataSubjects} hint="Des catégories de personnes, sans noms individuels." />
-  <KnowledgeField label="Quelles informations utilisez-vous ?" bind:value={draft.dataCategories} hint="Des catégories de données, jamais les dossiers réels des personnes." />
-  <KnowledgeField label="Qui reçoit ou consulte ces informations ?" bind:value={draft.recipients} />
+  <DataGroupsEditor bind:activity={draft} {workspace} />
 {:else if step===2}
   <p>Retrouvez les outils et organismes déjà recensés. Leur rôle juridique se documente dans la fiche complète.</p>
   <fieldset class="choices"><legend>Outils utilisés</legend>{#each workspace.systems as item}<label><input type="checkbox" checked={draft.systemIds.includes(item.id)} onchange={e=>draft.systemIds=e.currentTarget.checked?[...draft.systemIds,item.id]:draft.systemIds.filter(id=>id!==item.id)} />{item.name}</label>{/each}{#if !workspace.systems.length}<p>Aucun outil recensé. Notez la question à l’étape 6, puis ajoutez l’outil dans Systèmes après enregistrement.</p>{/if}</fieldset>

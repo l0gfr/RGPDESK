@@ -14,3 +14,18 @@ describe('separate encrypted recovery copies',()=>{
  it('refuses a draft from another workspace and overlong or unknown form values',()=>{const d=fixture();if(d.form.kind!=='activity')throw new Error();d.form.draft.workspaceId=crypto.randomUUID();expect(()=>parseRecovery(d)).toThrow();expect(()=>parseRecovery({...fixture(),form:{kind:'password',value:phrase}})).toThrow();});
  it('preserves pending DPO and AIPD text, never confirmation state',()=>{const d=fixture(),w=master(),a=createActivity(w.id,crypto.randomUUID(),'controller');d.workspaceId=w.id;d.form={kind:'dpo',draft:createDpoCase(w.id,crypto.randomUUID(),'breach'),step:'review',reviewAuthor:'Auteur fictif',reviewReason:'À relire',eventAt:'date en cours',eventAuthor:'',eventText:'',eventEvidence:'',outcome:'rework'};expect(parseRecovery(d)).toEqual(d);d.form={kind:'pia',draft:createImpactAssessment(w.id,a,crypto.randomUUID()),step:5,author:'Auteur fictif',reason:'À relire',outcome:'rework'};expect(parseRecovery(d)).toEqual(d);expect(()=>parseRecovery({...d,form:{...d.form,acknowledged:true}})).toThrow();});
 });
+
+it('v2 recovery accepts data groups without weakening v1 and protects them with real WebCrypto',async()=>{
+ const d=fixture();d.format='rgpd-draft-v2';
+ if(d.form.kind!=='activity')throw Error('fixture');
+ const {createDataGroup}=await import('@rgpdesk/privacy-core');
+ d.form.draft.dataGroups=[createDataGroup(crypto.randomUUID(),1)];
+ d.form.draft.dataGroups[0]!.data={state:'documented',value:'PRIVATE_GROUP_DRAFT_CANARY'};
+ const {parseRecovery}=await import('./recovery');
+ expect(parseRecovery(d)).toEqual(d);expect(()=>parseRecovery({...d,format:'rgpd-draft-v1'})).toThrow('INVALID');
+ const {sealRecovery,openRecovery}=await import('./crypto');
+ const phrase='Fictitious group recovery passphrase 2026!';
+ const sealed=await sealRecovery(d,phrase);
+ expect(JSON.stringify(sealed)).not.toContain('PRIVATE_GROUP');
+ expect(await openRecovery(sealed,phrase,d.workspaceId,d.revision,d.id,d.sequence)).toEqual(d);
+});

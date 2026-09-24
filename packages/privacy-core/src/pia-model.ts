@@ -42,6 +42,8 @@ export interface PiaReview {
   reason: string; context: PiaContext; content: PiaContent;
 }
 export interface ImpactAssessment {
+  // One shared study, first usable for risks alone; no duplicate risk inventory.
+  scope?: "risks" | "aipd";
   id: string; workspaceId: string; activityId: string; methodVersion: typeof PIA_METHOD;
   content: PiaContent; reviews: PiaReview[];
 }

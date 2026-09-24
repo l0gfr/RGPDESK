@@ -1237,3 +1237,9 @@
 .privacy-app .section-tabs button { color:#324c61; background:transparent; border-color:transparent; box-shadow:none; }
 .privacy-app .section-tabs button.active { color:#f7fbff; background:#344e63; border-color:#344e63; }
 .privacy-app .section-tabs button:hover,.privacy-app .section-tabs button:focus-visible { color:#f7fbff; background:#283e51; }
+
+/* Keep complete labels on narrow guided-editing screens. */
+@media (max-width:600px) {
+ .rgpdesk .activity-views { display:grid; grid-template-columns:1fr; }
+ .rgpdesk .activity-views button { justify-content:flex-start; min-width:0; min-height:44px; white-space:normal; word-break:normal; overflow-wrap:normal; }
+}

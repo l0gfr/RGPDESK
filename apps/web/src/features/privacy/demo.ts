@@ -1,4 +1,4 @@
-import { createDpoCase, putDpoCase, appendDpoEvent, recordDpoReview, createWorkspace, createActivity, createPurpose, createDataFlow, createContractReview, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, createAction, evaluateWorkspace, putImpactAssessment, recordPiaReview, reviseWorkspace, assertWorkspace, knowledge as k, type Activity, type EvidenceReference, type ReviewNote, type Workspace } from "@rgpdesk/privacy-core";
+import { createDataGroup, unknown, createDpoCase, putDpoCase, appendDpoEvent, recordDpoReview, createWorkspace, createActivity, createPurpose, createDataFlow, createContractReview, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, createAction, evaluateWorkspace, putImpactAssessment, recordPiaReview, reviseWorkspace, assertWorkspace, knowledge as k, type Activity, type EvidenceReference, type ReviewNote, type Workspace } from "@rgpdesk/privacy-core";
 
 // Editorial fiction only. No real people, client data, legal defaults or credential.
 // Every opening gets independent opaque IDs; nothing in this module writes to storage.
@@ -78,6 +78,28 @@ export function createDemoWorkspace(id: () => string, at: string): Workspace {
   flow(workshops, "Portail ateliers", "Client fictif", "Restituer la présence", "Présence à la session", "Interlocuteur autorisé du client");
   flow(badges, "Lecteur de badge", "Gestion des badges", "Vérifier une habilitation", "Identifiant et zone demandée", "Gestionnaire des accès");
   flow(badges, "Gestion des badges", "Équipe sécurité", "Examiner un incident", "Événements d’accès du périmètre de l’incident", "Accès ponctuel à justifier et tracer");
+  // Authored fiction: two distinct groups and their declared links, not an automatic migration.
+  if (badges.role === "controller") {
+    badges.purposes[0]!.description = k("Vérifier l’habilitation à entrer dans une zone.");
+    const incidentPurpose = {...createPurpose(id()),description:k("Examiner un incident d’accès précisément identifié.")};
+    badges.purposes.push(incidentPurpose);
+    badges.dataGroups = [createDataGroup(id(),1),createDataGroup(id(),2)];
+    for (const [i,g] of badges.dataGroups.entries()) {
+      g.data = k(i === 0 ? "Identifiant du badge et zone autorisée" : "Date, heure, zone et identifiant des événements d’accès");
+      g.people = k("Personnel et intervenants habilités du scénario fictif.");
+      g.purposeIds = [badges.purposes[i]!.id];
+      g.retention.trigger = k(i === 0 ? "Fin de l’habilitation, modalités à confirmer" : "Enregistrement de l’événement, règle à définir");
+      g.retention.deletion = k("Hypothèse de l’exercice : suppression dans la console et ses copies, avec compte rendu de contrôle à demander.");
+      g.minimisation.data = k(i === 0 ? "Limiter la vérification à l’habilitation, sans enregistrer les déplacements." : "Écarter une journalisation systématique si un dispositif moins intrusif répond au besoin.");
+      g.minimisation.supports = k("Examiner la nécessité d’une copie hors de la console de badges.");
+      g.minimisation.channels = k("Éviter les envois de journaux par messagerie ; documenter le circuit retenu.");
+      g.minimisation.recipients = k("Séparer la gestion des habilitations et l’examen des incidents ; exclure l’accès RH aux horaires dans ce scénario.");
+      g.minimisation.retention = k("Durée non choisie : rechercher une règle justifiée et tester un effacement plus précoce.");
+      g.guarantees = k("Mesures proposées, non vérifiées : habilitations distinctes, journal des consultations et contrôle de l’effacement. Responsable et preuve à obtenir.");
+      badges.flows[i]!.dataGroupIds = [g.id]; badges.flows[i]!.data = unknown();
+    }
+    badges.dataCategories = unknown(); badges.dataSubjects = unknown(); badges.recipients = unknown();
+  }
   const doc = (title: string, category: EvidenceReference["category"], a: Activity, parties: string[] = []): EvidenceReference => ({
     id: id(), workspaceId: wid, title, category, activityIds: [a.id], purposeIds: a.role === "controller" ? a.purposes.map((p) => p.id) : [], partyIds: parties,
     scope: "Scénario fictif Maison Sillage", version: "Exercice v1", declaredAuthor: "Équipe fictive de démonstration", internalRef: "EXERCICE / référence inventée, aucun fichier joint",
@@ -105,7 +127,7 @@ export function createDemoWorkspace(id: () => string, at: string): Workspace {
     { ...createPiaAlternative(id()), description: k("Badge avec vérification d’habilitation, sans journal nominatif systématique"), purpose: badges.role === "controller" ? badges.purposes[0]!.description : k(""), effectiveness: k("Permet d’ouvrir les portes autorisées ; capacité d’enquête après incident à examiner."), impacts: k("Moins d’historique individuel de présence ; gestion des habilitations toujours nécessaire."), evidence: k("Test et comparaison à produire dans l’exercice."), choice: k("Variante à approfondir, aucun choix arrêté.") },
     { ...createPiaAlternative(id()), description: k("Accueil humain et accès accompagné aux zones sensibles"), purpose: k("Limiter les entrées non autorisées."), effectiveness: k("Dépend des horaires d’ouverture et de la disponibilité d’un accueil."), impacts: k("Évite un journal automatisé systématique ; examiner les éventuels registres manuels."), evidence: k("Observation des flux et étude des contraintes à demander."), choice: k("Comparer la faisabilité avant toute décision.") },
   ];
-  const risk = (title: string, event: string, impacts: string) => ({ ...createPiaRisk(id()), title, event: k(event), people: badges.dataSubjects,
+  const risk = (title: string, event: string, impacts: string) => ({ ...createPiaRisk(id()), title, event: k(event), people: k("Personnel et intervenants habilités dans le scénario fictif."),
     rights: k("Vie privée et protection des données ; effets dans la relation de travail à examiner."), impacts: k(impacts), threats: k("Usage détourné, accès excessifs ou erreur d’habilitation selon le scénario."), supports: k("Journaux de badges et console d’administration."), existingMeasures: k("Mesures proposées dans cet exercice ; efficacité non vérifiée."), initialReason: k("Gravité et vraisemblance à motiver à partir du contexte réel."), residualReason: k("Appréciation laissée ouverte tant que les garanties ne sont pas vérifiées.") });
   pia.content.risks = [risk("Utilisation des horaires à une autre fin", "Les journaux d’accès servent à évaluer la présence au travail.", "Surveillance des habitudes, pression sur les personnes et décisions défavorables."), risk("Accès indu aux habitudes de présence", "Un compte support consulte un historique au-delà d’un incident autorisé.", "Divulgation des horaires et des déplacements au sein des locaux."), risk("Refus d’accès injustifié", "Une erreur ou un badge non révoqué produit une attribution incorrecte.", "Empêchement d’accéder au lieu de travail ou imputation erronée d’un passage.")];
   pia.content.measures = pia.content.risks.map((r, i) => ({ ...createPiaMeasure(id()), riskIds: [r.id], description: k(["Limiter les usages et séparer techniquement les accès RH et sécurité.", "Restreindre le support et examiner les traces de consultation.", "Prévoir un accès de secours et une procédure de correction des habilitations."][i]!), owner: k("Fonction à désigner dans le scénario"), evidence: k("Test à réaliser, aucune vérification réelle déclarée."), effectiveness: k("À apprécier après le test et à relier au risque concerné."), failure: k("Documenter la conduite à tenir si la mesure ne fonctionne pas.") }));

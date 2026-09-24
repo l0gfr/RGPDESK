@@ -7,7 +7,7 @@ import { assertWorkspace, PrivacyError } from "./validation";
 
 export function createWorkspace(id: string, name: string, now: string): Workspace {
   const master: Workspace = {
-    format: "rgpd-master-v8", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
+    format: "rgpd-master-v9", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
     language: "fr", jurisdiction: unknown(), scope: unknown(),
     organization: { name: name.trim(), contact: unknown(), dpo: unknown(), representatives: unknown() },
     parties: [], systems: [], activities: [], documents: [], decisions: [], actions: [], imports: [], deliveries: [],
@@ -50,6 +50,13 @@ export function reviseWorkspace(master: Workspace, expectedRevision: number, now
   })) throw new PrivacyError("INVALID");
   if ("collections" in changes) assertCollectionHistory(master.collections ?? [], changes.collections ?? []);
   if (changes.documents) assertDocumentHistory(master.documents, changes.documents);
+  for (const a of changes.activities ?? []) {
+    const old = master.activities.find(item => item.id === a.id);
+    for (const g of a.dataGroups ?? []) {
+      const previous = old?.dataGroups?.find(item => item.id === g.id);
+      if (previous && previous.code !== g.code) throw new PrivacyError("INVALID");
+    }
+  }
   if (changes.impactAssessments) assertPiaHistory(master, changes.impactAssessments, now);
   if (changes.dpoCases) assertDpoHistory(master, changes.dpoCases, now);
   const next = { ...master, ...changes, revision: master.revision + 1, updatedAt: now };

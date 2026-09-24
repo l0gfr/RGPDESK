@@ -6,6 +6,7 @@
   import { RGPD_OFFICIAL } from "../review-methods";
   import ReviewChanges from "./ReviewChanges.svelte";
   import ReviewEvidence from "./ReviewEvidence.svelte";
+  import DataGroupsTable from "./DataGroupsTable.svelte";
   import InventoryContext from "./InventoryContext.svelte";
   import ReviewNotebook from "./ReviewNotebook.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
@@ -111,6 +112,7 @@
       <div class="actions"><button onclick={() => step = "analysis"}>Poursuivre l’analyse <Icon name="arrow" /></button></div>
     {:else if step === "analysis"}
       <InventoryContext activities={workspace.activities.filter((a) => draft!.activityIds.includes(a.id))} />
+      {#each workspace.activities.filter(a => draft!.activityIds.includes(a.id)) as a}<DataGroupsTable activity={a} inventory={workspace}/>{/each}
       <ReviewNotebook documents={workspace.documents.filter((d) => d.activityIds.some((id) => draft!.activityIds.includes(id)))} bind:notes={draft.content.notes} questions={DPO_METHODS[draft.kind]} prefix={DPO_TITLES[draft.kind]} edition="Questions RGPDESK · 23 septembre 2026" />
       <div class="actions"><button class="secondary" onclick={() => step = "review"}>Préparer la revue</button></div>
     {:else if step === "events"}

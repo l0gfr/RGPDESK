@@ -68,7 +68,7 @@ test('AIPD PDF retains every selected row, print layout and immutable publicatio
  const rows=await page.getByLabel('Aperçu du rapport AIPD à remettre',{exact:true}).locator('[data-pia-row]').allTextContents();
  await button(page,'Conserver et exporter en PDF').click();await expect(button(page,'Enregistrer au format PDF')).toBeEnabled();
  expect(await surface(page).locator('[data-pia-row]').allTextContents()).toEqual(rows);
- await expect(surface(page).locator('.ar-chapter')).toHaveCount(8);
+ await expect(surface(page).locator('.ar-chapter')).toHaveCount(9);
  await expect(surface(page)).not.toContainText('NOTE INTERNE');
  const links=surface(page).locator('a');await links.last().focus();await page.keyboard.press('Tab');await expect(button(page,'Enregistrer au format PDF')).toBeFocused();
  await page.keyboard.press('Shift+Tab');await expect(links.last()).toBeFocused();

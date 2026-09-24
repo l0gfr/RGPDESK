@@ -29,7 +29,14 @@ export interface ActivityAnalysis {
   operations: Knowledge; access: Knowledge; notes: ReviewNote[];
 }
 export type FlowReference = `party:${string}` | `system:${string}` | "subjects";
+export interface DataGroup {
+  id: string; code: number; data: Knowledge; people: Knowledge; purposeIds: string[];
+  retention: { period: Knowledge; trigger: Knowledge; deletion: Knowledge };
+  minimisation: { data: Knowledge; supports: Knowledge; channels: Knowledge; recipients: Knowledge; retention: Knowledge };
+  guarantees: Knowledge;
+}
 export interface DataFlow {
+  dataGroupIds?: string[];
   sourceRef?: FlowReference; destinationRef?: FlowReference; dataFromActivity?: boolean;
   id: string;
   source: Knowledge; destination: Knowledge; operation: Knowledge;
@@ -37,6 +44,7 @@ export interface DataFlow {
 }
 export interface ContractReview { methodVersion: "article28-2026-09-22.1"; notes: ReviewNote[] }
 interface ActivityBase {
+  dataGroups?: DataGroup[];
   interviewQuestions?: string[];
   analysis: ActivityAnalysis;
   flows: DataFlow[];
@@ -78,7 +86,7 @@ export interface Workspace {
   workCheckpoint?: WorkCheckpoint;
   citationReviews?: CitationReview[];
   collections?: CollectionRequest[];
-  format: "rgpd-master-v8";
+  format: "rgpd-master-v9";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];
