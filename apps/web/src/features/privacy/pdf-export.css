@@ -1,0 +1,22 @@
+body[data-rgpdesk-pdf-open]{overflow:hidden}
+[data-rgpdesk-pdf]{position:fixed;inset:0;z-index:10000;overflow:auto;background:#e8eef2;color:#243b4d;font:16px/1.6 system-ui,sans-serif}
+[data-rgpdesk-pdf] .pdf-toolbar{max-width:1120px;box-sizing:border-box;margin:auto;padding:24px 32px;background:linear-gradient(120deg,#e1eaf0,#f6f9fa);border-bottom:1px solid #a9becc}
+[data-rgpdesk-pdf] .pdf-toolbar h1{font:400 30px/1.2 Georgia,serif;margin:0 0 12px}
+[data-rgpdesk-pdf] .pdf-toolbar p{font-size:15px;margin:12px 0;max-width:85ch}
+[data-rgpdesk-pdf] .pdf-actions{display:flex;gap:12px;flex-wrap:wrap}
+[data-rgpdesk-pdf] button{display:inline-flex;align-items:center;padding:12px 18px;border:1px solid #536f82;border-radius:4px 14px 4px 4px;background:#2b4557;color:#fff;font:600 16px/1.5 system-ui,sans-serif;cursor:pointer}
+[data-rgpdesk-pdf] button:hover{background:#193449;color:#fff}
+[data-rgpdesk-pdf] button.pdf-close{background:#f4f7f9;color:#28475e}
+[data-rgpdesk-pdf] button.pdf-close:hover{background:#dce8f0;color:#172d3e}
+[data-rgpdesk-pdf] button:focus-visible{outline:3px solid #496c86;outline-offset:3px}
+[data-rgpdesk-pdf] button:disabled{opacity:.65;cursor:wait}
+[data-rgpdesk-pdf] .pdf-report{display:block;max-width:1120px;margin:auto}
+@media(max-width:500px){[data-rgpdesk-pdf] .pdf-toolbar{padding:22px}[data-rgpdesk-pdf] .pdf-actions{display:grid}}
+@page{size:A4;margin:12mm}
+@media print{
+  html:has(body[data-rgpdesk-pdf-open]),body[data-rgpdesk-pdf-open]{overflow:visible!important;background:white!important;height:auto!important;max-height:none!important;margin:0!important;padding:0!important}
+  body[data-rgpdesk-pdf-open]>:not([data-rgpdesk-pdf]){display:none!important}
+  body>[data-rgpdesk-pdf]{display:block!important;position:static!important;overflow:visible!important;height:auto!important;max-height:none!important;background:white!important}
+  [data-rgpdesk-pdf] .pdf-toolbar{display:none!important}
+  [data-rgpdesk-pdf] .pdf-report{display:block!important;margin:0!important;max-width:none!important}
+}

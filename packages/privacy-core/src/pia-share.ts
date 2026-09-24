@@ -1,3 +1,6 @@
+import { createPiaReportBody, serializePiaReport } from "./pia-report";
+import { PIA_REPORT_CSS } from "./pia-report-style";
+export type { PiaReportNode } from "./pia-report";
 import { type Knowledge, type Workspace } from "./model";
 import type { PiaPublication } from "./dpo-model";
 import { piaContext } from "./pia";
@@ -66,11 +69,13 @@ export function recordPiaPublication(master: Workspace, p: PiaPublication, expec
   if (p.workspaceId !== master.id || p.revision !== expectedRevision || p.createdAt > now) throw new PrivacyError("CONFLICT");
   return reviseWorkspace(master, expectedRevision, now, { piaPublications: [...master.piaPublications, p] });
 }
-const escape = (s: string): string => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-const css = 'body{font:16px/1.6 system-ui,sans-serif;color:#213146;background:#f6f7f9;margin:0}main{max-width:960px;margin:auto;padding:48px 28px}header{border-top:5px solid #243d64;border-bottom:1px solid #aab5c7;padding:24px 0;margin-bottom:32px}h1{font:42px/1.15 Georgia,serif}h2{font:28px Georgia,serif;margin-top:40px}p,dd{white-space:pre-wrap;overflow-wrap:anywhere}dt{font-weight:600;margin-top:20px}dd{margin:4px 0 20px}.stamp{letter-spacing:.18em;font-size:12px}.reserve{padding:20px;background:#e5ebf3;border-left:3px solid #435c85}@media print{body{background:white}main{padding:0}h2,dt{break-after:avoid}dd{break-inside:avoid}}';
-export async function renderPiaPublication(p: PiaPublication): Promise<string> {
-  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(css)));
+// Frozen publications retain their selected values. The presentation is rebuilt
+// when downloaded; no workspace lookup or additional field enters this renderer.
+export function piaReportBody(publication: PiaPublication) {
+  return createPiaReportBody(publication, PIA_SHARE_SECTIONS);
+}
+export async function renderPiaPublication(publication: PiaPublication): Promise<string> {
+  const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(PIA_REPORT_CSS)));
   const hash = btoa(String.fromCharCode(...digest));
-  const sections = [...new Set(p.rows.map((r) => r.section))];
-  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-${hash}'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><title>Dossier AIPD · RGPDESK</title><style>${css}</style></head><body><main><header><p class="stamp">RGPDESK / DOSSIER AIPD / EXTRAIT EXAMINÉ</p><h1>Analyse d’impact</h1><p>Destinataire : ${escape(p.recipient)}<br>Préparé le ${escape(p.createdAt)}<br>${escape(p.sourceLabel)}</p></header><h2>Périmètre de cette restitution</h2><p>${escape(p.scope)}</p><div class="reserve"><strong>Réserves communiquées</strong><p>${escape(p.reservations || "Aucune réserve ajoutée par le rédacteur. Cela ne vaut pas validation.")}</p></div><p>Extrait des rubriques choisies, non exhaustif. Déclarations et appréciations à examiner. Aucun auteur, avis juridique ou envoi n’est authentifié. Les preuves internes et les autres dossiers sont exclus. Ce document ne constitue pas une autorisation de traitement.</p>${sections.map((s) => `<section><h2>${escape(s)}</h2><dl>${p.rows.filter((r) => r.section === s).map((r) => `<dt>${escape(r.label)}</dt><dd>${escape(r.value)}</dd>`).join("")}</dl></section>`).join("")}<footer><p>Références de cadrage : RGPD, articles 35 et 36, et méthode CNIL. Export local HTML imprimable ; ce fichier n’est pas un paquet du vérificateur de registre.</p></footer></main></body></html>`;
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-${hash}'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><meta name="rgpdesk-renderer" content="rgpdesk-pia-folio-1"><title>Dossier AIPD · RGPDESK</title><style>${PIA_REPORT_CSS}</style></head>${serializePiaReport(piaReportBody(publication))}</html>`;
 }

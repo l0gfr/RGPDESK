@@ -17,6 +17,8 @@
   import ProcessingAtlas from "./ProcessingAtlas.svelte";
   import DpoCases from "./DpoCases.svelte";
   import PiaSharing from "./PiaSharing.svelte";
+  import PdfExport from "./PdfExport.svelte";
+  import type { PdfReport } from "../pdf-export";
   import PiaPanel from "./PiaPanel.svelte";
   import AnalysisOverview from "./AnalysisOverview.svelte";
   import Pictogram from "./Pictogram.svelte";
@@ -43,6 +45,7 @@
   import WorkspaceSearch from "./WorkspaceSearch.svelte";
   import type { SearchResult } from "../search";
 
+  let pdfReport = $state<PdfReport | null>(null);
   let demo = $state(false);
   let referenceCase = $state("");
   let hydrated = $state(false);
@@ -233,6 +236,7 @@
   async function discardRecovery(d:RecoveryDraft){await run(async current=>{await vault!.discardDraft(d.workspaceId,d,current);checkSession(current);recoveries=recoveries.filter(x=>x.id!==d.id);});}
 
   function lock(text: string = fr.locked) {
+    pdfReport = null;
     cancelRecoveryTimers();recoveryWriter?.dispose();recoveryWriter=undefined;recoveries=[];recoveryStatus=recoveryError="";
     controller.abort();
     controller = new AbortController();
@@ -455,7 +459,7 @@
     try { anchor.href = url; anchor.download = name; document.body.append(anchor); anchor.click(); }
     finally { anchor.remove(); URL.revokeObjectURL(url); }
   }
-  async function deliver(prepared: PreparedDelivery) {
+  async function deliver(prepared: PreparedDelivery, format: "zip" | "pdf" = "zip") {
     await run(async (current) => {
       if (!master || prepared.workspaceId !== master.id || prepared.revision !== master.revision) throw new PrivacyError("CONFLICT");
       const bytes = await zipFiles(prepared.files);
@@ -463,15 +467,18 @@
       if (demoSession) {
         const next = await demoSession.deliver(master.id, prepared.revision, prepared.register, prepared.files);
         checkSession(current); master = next;
-        download(bytes, "rgpdesk-demonstration-dossier.zip");
+        if (format === "pdf") pdfReport = { kind: "register", register: prepared.register, workspaceId: next.id, revision: next.revision };
+        else download(bytes, "rgpdesk-demonstration-dossier.zip");
         message = "Dossier fictif préparé. Son historique reste dans cette visite uniquement.";
         return;
       }
       const next = await vault!.deliver($state.snapshot(master), prepared.register, prepared.files, prepared.revision, phrase, current);
       checkSession(current); master = next;
       await vault!.assertCurrent(next.id, next.revision, current);
-      checkSession(current); download(bytes, "rgpdesk-dossier.zip");
-      message = "Dossier préparé et instantané chiffré conservé. Vérifiez le fichier téléchargé avant de le transmettre.";
+      checkSession(current);
+      if (format === "pdf") pdfReport = { kind: "register", register: prepared.register, workspaceId: next.id, revision: next.revision };
+      else download(bytes, "rgpdesk-dossier.zip");
+      message = format === "pdf" ? "Instantané chiffré conservé. Enregistrez le PDF depuis la vue du rapport." : "Dossier préparé et instantané chiffré conservé. Vérifiez le fichier téléchargé avant de le transmettre.";
     });
   }
   function downloadHtml(html: string) {
@@ -480,7 +487,7 @@
     try { anchor.href = url; anchor.download = "rgpdesk-aipd.html"; document.body.append(anchor); anchor.click(); }
     finally { anchor.remove(); URL.revokeObjectURL(url); }
   }
-  async function deliverPia(p: PiaPublication) {
+  async function deliverPia(p: PiaPublication, format: "html" | "pdf" = "html") {
     let completed = false;
     await run(async (current) => {
       if (!master || master.id !== p.workspaceId || master.revision !== p.revision) throw new PrivacyError("CONFLICT");
@@ -490,20 +497,24 @@
       const next = recordPiaPublication($state.snapshot(master), p, p.revision, now());
       await persist(next, current);
       if (!demoSession) await vault!.assertCurrent(next.id, next.revision, current);
-      checkSession(current); downloadHtml(html);
+      checkSession(current);
+      if (format === "pdf") pdfReport = { kind: "pia", publication: p, workspaceId: next.id, revision: next.revision };
+      else downloadHtml(html);
       completed = true;
-      message = "Contenu de la restitution conservé. Vérifiez le rapport HTML téléchargé avant de le transmettre.";
+      message = format === "pdf" ? "Contenu de la restitution conservé. Enregistrez le PDF depuis la vue du rapport." : "Contenu de la restitution conservé. Vérifiez le rapport HTML téléchargé avant de le transmettre.";
     });
     return completed;
   }
-  async function downloadPia(id: string) {
+  async function downloadPia(id: string, format: "html" | "pdf" = "html") {
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
       const frozen = $state.snapshot(master), p = frozen.piaPublications.find((p) => p.id === id);
       if (!p) throw new PrivacyError("INVALID");
       const html = await renderPiaPublication(p);
       if (!demoSession) await vault!.assertCurrent(frozen.id, frozen.revision, current);
-      checkSession(current); downloadHtml(html);
+      checkSession(current);
+      if (format === "pdf") pdfReport = { kind: "pia", publication: p, workspaceId: frozen.id, revision: frozen.revision };
+      else downloadHtml(html);
     });
   }
   async function readDelivery(id:string) {
@@ -516,10 +527,15 @@
     if(master?.id!==frozen.id||master.revision!==frozen.revision)throw new PrivacyError('CONFLICT');
     return verified.register;
   }
-  async function downloadDelivery(id: string) {
+  async function downloadDelivery(id: string, format: "zip" | "pdf" = "zip") {
     await run(async (current) => {
       if (!master) throw new PrivacyError("LOCKED");
       const frozen = $state.snapshot(master);
+      if (format === "pdf") {
+        const register = await readDelivery(id); checkSession(current);
+        pdfReport = { kind: "register", register, workspaceId: frozen.id, revision: frozen.revision };
+        return;
+      }
       const practice = demoSession;
       const files = practice ? practice.files(id) : await vault!.deliveryFiles(frozen, id, phrase, current);
       const bytes = await zipFiles(files);
@@ -527,6 +543,20 @@
       checkSession(current); download(bytes, practice ? "rgpdesk-demonstration-dossier.zip" : "rgpdesk-dossier.zip");
       message = "Instantané historique préparé, sans recalcul avec les données actuelles.";
     });
+  }
+
+  async function beforePdfPrint() {
+    let allowed = false;
+    await run(async current => {
+      const selected = pdfReport;
+      if (!master || !selected) throw new PrivacyError("LOCKED");
+      if (selected.workspaceId !== master.id || selected.revision !== master.revision) throw new PrivacyError("CONFLICT");
+      if (!demoSession) await vault!.assertCurrent(master.id, master.revision, current);
+      checkSession(current);
+      if (pdfReport !== selected) throw new PrivacyError("CONFLICT");
+      allowed = true;
+    });
+    return allowed;
   }
 
   async function navigateDemo(next: DemoPanel | "overview") {
@@ -661,6 +691,7 @@
     return () => { for(const event of ['input','change','click'])document.removeEventListener(event,onRecoveryInput); disposed = true; window.removeEventListener("hashchange", onAnchor); inventorySubscription.unsubscribe(); inventory?.dispose(); window.removeEventListener("focus", refreshLocked); window.removeEventListener("pageshow", refreshLocked); document.removeEventListener("visibilitychange", refreshLocked); lock(); unsubscribe(); channel?.close(); window.removeEventListener("pagehide", onPageHide); vault?.close(); };
   });
 </script>
+{#if master && pdfReport}<PdfExport report={pdfReport} beforePrint={beforePdfPrint} onClose={() => pdfReport = null} />{/if}
 
 <div data-rgpdesk-ready={ready ? "true" : "false"} class="privacy-app">
   <div class="notice-strip"><span class="status-dot" aria-hidden="true"></span> {demo ? "Démonstration interactive" : "Espace local & confidentiel"} <span><Icon name={demo ? "eye" : "lock"} size={14} /> {demo ? "Exercice fictif en mémoire uniquement" : "Chiffrement sur cet appareil"}</span></div>

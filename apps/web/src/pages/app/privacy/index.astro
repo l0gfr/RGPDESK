@@ -1,6 +1,9 @@
 ---
 import SiteHeader from "../../../features/privacy/components/SiteHeader.astro";
 import favicon from "../../../features/privacy/assets/rgpdesk-symbol.svg?url";
+import registerReportStyle from "../../../features/privacy/assets/demo-report-register.css?url";
+import reportReadingStyle from "../../../features/privacy/assets/demo-report-readable.css?url";
+import piaReportStyle from "../../../features/privacy/assets/demo-report-pia.css?url";
 import PrivacyApp from "../../../features/privacy/components/PrivacyApp.svelte";
 import "../../../features/privacy/privacy.css";
 import "../../../features/privacy/atelier.css";
@@ -10,6 +13,7 @@ import "../../../features/privacy/iconography.css";
 <html lang="fr">
   <head>
     <meta charset="utf-8" /><link rel="icon" type="image/svg+xml" href={favicon} />
+    <link rel="preload" as="style" href={reportReadingStyle} /><link rel="preload" as="style" href={piaReportStyle} /><link rel="preload" as="style" href={registerReportStyle} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="referrer" content="no-referrer" />

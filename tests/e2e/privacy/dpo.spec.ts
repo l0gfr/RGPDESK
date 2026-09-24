@@ -47,11 +47,26 @@ test("AIPD restitution is explicitly selected, reviewed and downloaded without i
   await page.getByLabel("Scénarios et niveaux déclarés", { exact: true }).check();
   await page.getByLabel("Mesures et suivi", { exact: true }).check();
   await page.getByRole("button", { name: "Prévisualiser la restitution AIPD", exact: true }).click();
+  const preview = page.getByRole("region", { name: "Aperçu du rapport AIPD à remettre", exact: true });
+  await expect(preview.getByRole("heading", { name: "Analyse d’impact", exact: true })).toBeVisible();
+  await expect(preview.locator(".pia-report")).toHaveCSS("background-color", "rgb(248, 250, 251)");
+  await expect(preview.locator(".ar-risk")).toHaveCount(3);
+  for (const width of [1440,768,390,320]) {
+    await page.setViewportSize({ width, height: 1100 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `AIPD preview ${width}`).toBe(true);
+  }
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  const previewBody = await preview.locator("body").evaluate(node => node.outerHTML);
+  const originalUrl = page.url();
+  await preview.getByRole("navigation", { name: "Sommaire de l’AIPD" }).getByRole("link", { name: /Scénarios et niveaux déclarés/ }).click();
+  expect(page.url()).toBe(originalUrl);
+  await page.getByText("Lire toutes les valeurs sélectionnées", { exact: true }).click();
   await expect(page.getByRole("table")).toContainText("Utilisation des horaires à une autre fin");
   await page.getByRole("checkbox", { name: "J’ai relu les valeurs" }).check();
   const pending = page.waitForEvent("download");
   await page.getByRole("button", { name: "Conserver et télécharger l’AIPD", exact: true }).click();
   const dl = await pending; const html = await readFile((await dl.path())!, "utf8");
+  expect(html).toContain(previewBody);
   expect(html).toContain("Comité fictif de recette"); expect(html).toContain("default-src 'none'");
   for (const marker of ["NOTE INTERNE", "EXERCICE /", "<script", "Auteur déclaré"]) expect(html).not.toContain(marker);
   await expect(page.getByRole("button", { name: "Télécharger cette AIPD", exact: true })).toHaveCount(1);

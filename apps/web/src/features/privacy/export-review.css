@@ -1,0 +1,15 @@
+.rgpdesk .export-confirmation{scroll-margin-top:160px;padding:24px;margin-top:28px;border:1px solid #a7bdcb;border-left:4px solid #56758c;border-radius:4px 18px 4px 4px;background:linear-gradient(120deg,#e3edf3,#f5f8fa);color:#223b50}
+.rgpdesk .export-confirmation h3{margin:0 0 10px;font:400 26px/1.2 Georgia,serif;color:#223b50}
+.rgpdesk .export-confirmation:focus-visible{outline:3px solid #4c6d85;outline-offset:4px}
+.rgpdesk .export-confirmation .check{padding:14px 0}
+.rgpdesk .export-confirmation .actions{gap:12px}
+.rgpdesk .export-review-toolbar + .help + .report-preview,.rgpdesk .report-preview{scroll-margin-top:150px}
+@media(max-width:600px){.rgpdesk .export-confirmation{padding:18px 14px}.rgpdesk .export-confirmation .actions{display:grid}.rgpdesk .export-confirmation .actions button{width:100%;justify-content:center}}
+
+
+  .rgpdesk .export-review-toolbar{isolation:isolate}
+  .rgpdesk .export-review-toolbar>div{display:grid;gap:3px;min-width:0}
+  .rgpdesk .export-review-toolbar strong{display:block;font-size:16px;color:#223b50}
+  .rgpdesk .export-review-toolbar span{display:block;font-size:14px;color:#465e70}
+  @media(max-width:600px){.rgpdesk .export-review-toolbar{display:grid;gap:8px;padding:12px;top:0}.rgpdesk .export-review-toolbar strong{display:none}.rgpdesk .export-review-toolbar span{line-height:1.4}.rgpdesk .export-review-toolbar button{width:100%;justify-content:center}}
+  @media print{.rgpdesk .export-review-toolbar{display:none}}

@@ -1,7 +1,11 @@
 <script lang="ts">
   import { PIA_SHARE_SECTIONS, projectPiaPublication, type PiaPublication, type PiaShareOptions, type Workspace } from "@rgpdesk/privacy-core";
   import Icon from "./Icon.svelte";
-  let { workspace, busy, onDeliver, onDownload }: { workspace: Workspace; busy: boolean; onDeliver: (p: PiaPublication) => Promise<boolean>; onDownload: (id: string) => Promise<void> } = $props();
+  import ExportReviewToolbar from "./ExportReviewToolbar.svelte";
+  import "../export-review.css";
+  let exportConfirmation:HTMLElement | undefined = $state();
+  import PiaReportPreview from "./PiaReportPreview.svelte";
+  let { workspace, busy, onDeliver, onDownload }: { workspace: Workspace; busy: boolean; onDeliver: (p: PiaPublication, format?: "html" | "pdf") => Promise<boolean>; onDownload: (id: string, format?: "html" | "pdf") => Promise<void> } = $props();
   let options = $state<PiaShareOptions>({ piaId: "", reviewId: null, sections: [], recipient: "", scope: "", reservations: "" });
   let prepared = $state<PiaPublication | null>(null), confirmed = $state(false), error = $state("");
   let pia = $derived(workspace.impactAssessments.find((p) => p.id === options.piaId));
@@ -12,7 +16,7 @@
 </script>
 <section class="panel" aria-label="Restitution AIPD">
   <div class="section-heading"><div><p class="eyebrow">Du dossier de travail au destinataire</p><h2>Une AIPD que l’on peut remettre.</h2></div><span class="icon-tile"><Icon name="delivery" size={28} /></span></div>
-  <p>Choisissez une étude ou une revue conservée, sélectionnez les rubriques puis relisez chaque valeur. Vous obtenez un rapport HTML autonome, imprimable avec votre navigateur.</p>
+  <p>Choisissez une étude ou une revue conservée, sélectionnez les rubriques puis relisez chaque valeur. Vous obtenez un rapport HTML autonome ou un PDF via la boîte d’impression de votre navigateur.</p>
   {#if error}<p class="notice error" role="alert">{error}</p>{/if}
   {#if !prepared}<form onsubmit={(e) => { e.preventDefault(); prepare(); }}><fieldset disabled={busy}>
     <label class="field">Étude à restituer<select bind:value={options.piaId} onchange={() => { options.reviewId = null; options.sections = []; }}><option value="">Choisir une étude</option>{#each workspace.impactAssessments as p}<option value={p.id}>{workspace.activities.find((a) => a.id === p.activityId)?.title}</option>{/each}</select></label>
@@ -24,10 +28,16 @@
     <button type="submit" disabled={!options.piaId || !options.sections.length || workspace.piaPublications.length >= 8}>Prévisualiser la restitution AIPD <Icon name="arrow" /></button>
   </fieldset></form>{:else}
     <div class="review-banner"><Icon name="eye" /><div><strong>{prepared.sourceLabel}</strong><p>Destinataire : {prepared.recipient}</p><p>{prepared.scope}</p><p>Réserves : {prepared.reservations || "Aucune réserve ajoutée"}</p></div></div>
+    <ExportReviewToolbar target={exportConfirmation} formats="PDF · rapport HTML" />
+    <PiaReportPreview publication={prepared} />
+    <details><summary>Lire toutes les valeurs sélectionnées</summary>
     <div class="table-scroll"><table><caption>Contenu exact des rubriques sélectionnées</caption><thead><tr><th>Rubrique</th><th>Déclaration</th></tr></thead><tbody>{#each prepared.rows as row}<tr><th scope="row">{row.section} / {row.label}</th><td>{row.value}</td></tr>{/each}</tbody></table></div>
+    </details>
     <p class="help">L’extrait indique ses limites et n’atteste ni l’identité de l’auteur ni une validation juridique. Le rapport est en clair ; protégez son fichier. Il ne s’agit pas d’un paquet du vérificateur de registre.</p>
+    <section class="export-confirmation" aria-label="Confirmation de l’export" tabindex="-1" bind:this={exportConfirmation}><h3>Choisissez votre format.</h3><p>Confirmez le contenu relu, puis préparez le fichier à remettre.</p>
     <label class="check"><input type="checkbox" disabled={busy} bind:checked={confirmed} />J’ai relu les valeurs, le périmètre, les réserves et le destinataire de cette restitution AIPD.</label>
-    <div class="actions"><button disabled={busy || !confirmed} onclick={async () => { if (prepared && await onDeliver($state.snapshot(prepared))) { prepared = null; confirmed = false; } }}>Conserver et télécharger l’AIPD</button><button class="secondary" disabled={busy} onclick={() => { prepared = null; confirmed = false; }}>Modifier la sélection</button></div>
+    <div class="actions"><button disabled={busy || !confirmed} onclick={async () => { if (prepared && await onDeliver($state.snapshot(prepared))) { prepared = null; confirmed = false; } }}>Conserver et télécharger l’AIPD</button><button class="secondary" disabled={busy || !confirmed} onclick={async () => { if (prepared && await onDeliver($state.snapshot(prepared), "pdf")) { prepared = null; confirmed = false; } }}><Icon name="print" />Conserver et exporter en PDF</button><button class="secondary" disabled={busy} onclick={() => { prepared = null; confirmed = false; }}>Modifier la sélection</button></div>
+    </section>
   {/if}
 </section>
-<section class="panel"><p class="eyebrow">Restitutions conservées dans le coffre</p><h2>Retrouver ce qui a été préparé.</h2><p>Le contenu conservé ne suit pas les modifications ultérieures de l’étude. Préparer un fichier ne prouve ni son envoi ni sa réception. Huit restitutions maximum ; elles comptent dans la limite globale du coffre.</p><ul class="records">{#each workspace.piaPublications as p}<li><div class="grow"><strong>{p.recipient}</strong><p>{p.createdAt} · {p.sourceLabel}</p></div><button class="secondary" disabled={busy} onclick={() => onDownload(p.id)}>Télécharger cette AIPD</button></li>{/each}</ul></section>
+<section class="panel"><p class="eyebrow">Restitutions conservées dans le coffre</p><h2>Retrouver ce qui a été préparé.</h2><p>Le contenu conservé ne suit pas les modifications ultérieures de l’étude. Préparer un fichier ne prouve ni son envoi ni sa réception. Huit restitutions maximum ; elles comptent dans la limite globale du coffre.</p><ul class="records">{#each workspace.piaPublications as p}<li><div class="grow"><strong>{p.recipient}</strong><p>{p.createdAt} · {p.sourceLabel}</p></div><button class="secondary" disabled={busy} onclick={() => onDownload(p.id)}>Télécharger cette AIPD</button><button class="secondary" disabled={busy} onclick={() => onDownload(p.id, "pdf")}><Icon name="print" />Exporter en PDF</button></li>{/each}</ul></section>

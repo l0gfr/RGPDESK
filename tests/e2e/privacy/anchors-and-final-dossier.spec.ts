@@ -68,11 +68,13 @@ test("the final demonstration dossier is immediately readable without JavaScript
     for (const slug of routes) {
       await page.goto(`/app/privacy/demo/${slug}/`);
       await expect(page.locator("body")).not.toContainText("NOTE INTERNE");
-      await expect(page.locator("body")).toHaveCSS("background-color", slug === "aipd" ? "rgb(246, 247, 249)" : "rgb(232, 238, 242)");
-      await expect(page.locator("script,iframe,form,input,textarea")).toHaveCount(0);
+      await expect(page.locator("body")).toHaveCSS("background-color", "rgb(232, 238, 242)");
+      await expect(page.locator("iframe,form,input,textarea")).toHaveCount(0);
+      await expect(page.locator("[data-report-pdf]")).toBeHidden();
       const csp = await page.locator('meta[http-equiv="Content-Security-Policy"]').getAttribute("content");
       expect(csp).toContain("connect-src 'none'"); expect(csp).not.toContain("unsafe-");
       for(const style of await page.locator("style").allTextContents())expect(csp).toContain(`sha256-${createHash("sha256").update(style).digest("base64")}`);
+      for(const script of await page.locator("script:not([src])").allTextContents())expect(csp).toContain(`sha256-${createHash("sha256").update(script).digest("base64")}`);
       for(const width of [1440,768,390,320]){
         await page.setViewportSize({width,height:1000});
         expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${slug} ${width}`).toBe(true);

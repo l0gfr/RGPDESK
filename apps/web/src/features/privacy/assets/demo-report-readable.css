@@ -4,3 +4,29 @@ body { font-size:1rem; }
 .coverage, .reservations ol, .quiet, .index small, .activity-heading small,
 figcaption, .node h3, .node p, .facts dt, .unknown, th, td, body > footer, .stamp { font-size:.875rem; }
 @media print { body { font-size:12pt; } .cover-meta, th, td { font-size:10.5pt; } }
+
+/* Compact register cover and progress keep the opening usable on A4.
+   These reading/print rules do not change the archived report.html bytes. */
+@media print {
+  body:not(.pia-report) .cover{padding:5mm!important;border-radius:0}
+  body:not(.pia-report) .cover h1{font-size:26pt;max-width:35ch;margin:4mm 0}
+  body:not(.pia-report) .cover .subtitle{font-size:14pt;margin:2mm 0}
+  body:not(.pia-report) .brand svg{width:24px;height:28px}
+  body:not(.pia-report) .cover-meta{padding-top:3mm;gap:3mm 9mm}
+  body:not(.pia-report) .summary{break-before:page;margin:0 0 5mm}
+  body:not(.pia-report) .document-progress{padding:4mm;margin:4mm 0}
+  body:not(.pia-report) .document-progress h2{font-size:20pt;margin:2mm 0}
+  body:not(.pia-report) .document-progress .dp-totals{margin:3mm 0;gap:2mm}
+  body:not(.pia-report) .document-progress .dp-total{padding:2mm 3mm}
+  body:not(.pia-report) .document-progress .dp-total>strong{font-size:24pt}
+  body:not(.pia-report) .document-progress .dp-total>span:last-child{margin-top:1mm}
+  body:not(.pia-report) .document-progress .dp-rows{gap:2mm}
+  body:not(.pia-report) .document-progress .dp-row{padding-top:2mm}
+  body:not(.pia-report) .document-progress .dp-row-title{margin-bottom:2mm;font-size:10.5pt}
+  body:not(.pia-report) .document-progress .dp-points{gap:2mm}
+  body:not(.pia-report) .document-progress .dp-point{padding:2mm}
+  body:not(.pia-report) .document-progress .dp-note{padding-top:2mm;margin-top:2mm}
+  body:not(.pia-report) .document-progress .dp-symbol{width:20px;height:20px;font-size:14px}
+  body:not(.pia-report) .appendix th,body:not(.pia-report) .appendix td{font-size:10.5pt;line-height:1.45;padding:2mm}
+  body:not(.pia-report) .appendix{margin-top:0;padding-top:5mm}
+}
