@@ -35,3 +35,20 @@ Le volet de réutilisation projette les champs explicitement autorisés du coffr
 Les valeurs identiques sont dédupliquées par texte (NFC, sans fusion de valeurs de casse différente) ; la provenance et le nombre d’occurrences sont affichés. Douze résultats au maximum sont rendus, les autres restent recherchables. La recherche est littérale et bornée ; le rendu est du texte Svelte échappé. Aucune décision juridique, note privée ou revue historique n’alimente les suggestions. Les noms d’entités déjà liées ne deviennent pas des copies libres.
 
 Une sélection remplit uniquement le champ choisi. Un contenu existant demande confirmation avant remplacement. Les durées ne sont jamais préremplies, leur déclencheur reste distinct. Les régressions vérifient réutilisation en cours de saisie et entre fiches, maintien des identifiants et liens, isolation des clients, verrouillage et absence de contenu métier clair dans IndexedDB, les stockages Web et les URL.
+
+
+## Parcours ordonnés, version 10
+
+`rgpd-master-v10` ajoute un catalogue optionnel `flowSupports` à chaque ensemble et une branche optionnelle `journey` aux flux. Une branche contient un repère (1a, 1b…), des références de sous-finalités et des étapes ordonnées : opération, supports référencés, origine/destination liées (y compris aux supports) ou libres, canal, accès, condition et lieux. Les groupes restent la source des catégories et conservations. La synthèse des sous-finalités du groupe réunit ses liens antérieurs et ceux de ses parcours, sans enregistrer de copie.
+
+La migration v9 valide la source puis change seulement le discriminant en mémoire. Aucun parcours n’est inféré à partir d’un texte. Les champs du flux parent restent inconnus lorsqu’il possède des étapes : deux versions concurrentes des mêmes faits sont refusées. Les identifiants de supports/étapes, références, doublons et bornes sont contrôlés dans les états courants et figés. Un support ou un parcours déjà enregistré conserve son repère. Une suppression ne réserve pas le repère indéfiniment ; l’identité est portée par l’UUID.
+
+Les schémas historiques restent inchangés. Les nouvelles saisies récupérables utilisent `rgpd-draft-v3` ; les brouillons v1/v2 restent lus avec leurs validateurs propres. Aucun changement cryptographique, de base de données ou de politique réseau. Limites : 20 supports/ensemble, 20 flux ou parcours/ensemble, 8 étapes/parcours. Les liens restent dans le même ensemble ; aucun rapprochement automatique entre clients.
+
+Les parcours alimentent la carte de l’application, les faits du registre, les dossiers liés et le contexte figé des revues. Les formats de partage existants sont conservés : projection textuelle ordonnée sur liste blanche, pas d’identifiants de supports/étapes ni de notes privées. Les plafonds d’export restent bloquants ; aucune troncature silencieuse. La frise détaillée est une vue de l’application, pas un nouveau format de publication.
+
+## Description, analyse et état cible
+
+La cartographie est une représentation calculée des éléments et liens déclarés. Elle ne découvre pas les flux. La description peut précéder l’analyse ou être enrichie pendant celle-ci. Une description corrigée n’atteste pas la mise en œuvre d’une garantie.
+
+Deux suites produit sont identifiées : pour l’existant, relier les correctifs aux éléments concernés et préparer un plan d’action priorisé ; pour un projet, construire une description cible en conservant l’état de référence. Cette livraison ajoute les parcours structurés. Elle ne crée pas encore de comparaison initial/cible, de nouvel examen par étape ni de génération automatique du plan d’action. La minimisation reste au niveau du groupe, les actions dans leur module existant. Les revues figées existantes restent intactes.

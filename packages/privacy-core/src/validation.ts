@@ -3,7 +3,7 @@ import { assertWorkbench } from "./workbench";
 import { assertLinkedFacts } from "./linked-facts";
 import { assertDpoWorkspace } from "./dpo";
 import { assertPiaWorkspace } from "./pia";
-import validate from "./generated/master-v9-validator.js";
+import validate from "./generated/master-v10-validator.js";
 import { ANALYSIS_QUESTIONS, CONTRACT_QUESTIONS, type ReviewNote, type Workspace } from "./model";
 
 export const MAX_MASTER_BYTES = 2 * 1024 * 1024;
@@ -70,7 +70,8 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
   for (const activity of master.activities) {
     checkNotes(activity.analysis.notes, ANALYSIS_QUESTIONS);
     for (const group of activity.dataGroups ?? []) registerId(group.id);
-    for (const flow of activity.flows) registerId(flow.id);
+    for (const support of activity.flowSupports ?? []) registerId(support.id);
+    for (const flow of activity.flows) { registerId(flow.id); for (const step of flow.journey?.steps ?? []) registerId(step.id); }
     links(activity.review.subcontractorIds, partyIds);
     links(activity.systemIds, systemIds);
     links(activity.participantIds, partyIds);

@@ -2,6 +2,7 @@ export * from "./model";
 export * from "./register-progress.js";
 export * from "./linked-facts";
 export * from "./data-groups";
+export * from "./flow-journeys";
 export * from "./workbench";
 export * from "./commands";
 export * from "./validation";
@@ -25,7 +26,8 @@ export * from "./deadlines";
 export * from "./pia-share";
 
 export { default as validateRecoveryDraftV1 } from "./generated/draft-validator.js";
-export { default as validateRecoveryDraft } from "./generated/draft-v2-validator.js";
+export { default as validateRecoveryDraftV2 } from "./generated/draft-v2-validator.js";
+export { default as validateRecoveryDraft } from "./generated/draft-v3-validator.js";
 
 export * from "./collections";
 export * from "./evidence-reuse";

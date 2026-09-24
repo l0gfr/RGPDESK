@@ -1,3 +1,4 @@
+import { flowReferences } from "./flow-journeys";
 import {CATALOG,CATALOG_VERSION} from "./catalog";
 import { knowledge, type DocumentaryAction, type Activity, type ReviewNote, type Workspace, type WorkCheckpoint, type CitationReview } from "./model";
 import { reviseWorkspace } from "./commands";
@@ -44,10 +45,10 @@ export function assertWorkbench(w: Workspace): void {
 }
 export function entityDossier(w: Workspace, kind: "party" | "system", id: string) {
   const ref=`${kind}:${id}`, linked=(a: Activity)=>kind==="system" ? a.systemIds.includes(id) : a.participantIds.includes(id)||a.review.subcontractorIds.includes(id)||(a.role==="processor"&&a.controllerIds.includes(id));
-  const activities=w.activities.filter(a=>linked(a)||a.flows.some(f=>f.sourceRef===ref||f.destinationRef===ref));
+  const activities=w.activities.filter(a=>linked(a)||a.flows.some(f=>flowReferences(f).some(value=>value===ref)));
   const ids=new Set(activities.map(a=>a.id));
   const documents=w.documents.filter(d=>(kind==="party"&&d.partyIds.includes(id))||d.activityIds.some(a=>ids.has(a)));
-  return {activities, flows:activities.flatMap(a=>a.flows.filter(f=>f.sourceRef===ref||f.destinationRef===ref).map(flow=>({activity:a,flow}))),documents,questions:reviewTargets(w).filter(t=>t.activityIds.some(a=>ids.has(a)) && t.note.citations?.some(c=>documents.some(d=>d.id===c.documentId))),actions:w.actions.filter(a=>a.activityId!==null&&ids.has(a.activityId)&&!a.closure)};
+  return {activities, flows:activities.flatMap(a=>a.flows.filter(f=>flowReferences(f).some(value=>value===ref)).map(flow=>({activity:a,flow}))),documents,questions:reviewTargets(w).filter(t=>t.activityIds.some(a=>ids.has(a)) && t.note.citations?.some(c=>documents.some(d=>d.id===c.documentId))),actions:w.actions.filter(a=>a.activityId!==null&&ids.has(a.activityId)&&!a.closure)};
 }
 
 /** Display the question the DPO chose to track, without inventing an instruction. */

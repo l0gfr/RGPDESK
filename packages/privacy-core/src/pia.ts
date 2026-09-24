@@ -1,3 +1,4 @@
+import { flowReferences } from "./flow-journeys";
 import { citationChanges } from "./linked-facts";
 import { ANALYSIS_QUESTIONS, type Knowledge, type ReviewNote, type Workspace } from "./model";
 import { PIA_CRITERIA, PIA_PRINCIPLES, type ImpactAssessment, type PiaContent, type PiaContext, type PiaReview } from "./pia-model";
@@ -13,7 +14,7 @@ export function piaContext(master: Workspace, activityId: string): PiaContext {
   const documents = master.documents.filter((d) => d.activityIds.includes(activityId));
   for (const d of documents) for (const id of d.partyIds) parties.add(id);
   const systems = new Set(activity.systemIds);
-  for (const flow of activity.flows) for (const ref of [flow.sourceRef, flow.destinationRef]) {
+  for (const flow of activity.flows) for (const ref of flowReferences(flow)) {
     if (ref?.startsWith("party:")) parties.add(ref.slice(6));
     if (ref?.startsWith("system:")) systems.add(ref.slice(7));
   }

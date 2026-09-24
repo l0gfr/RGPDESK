@@ -124,7 +124,7 @@
       <DataGroupsTable activity={context.activity} inventory={context}/>
       <p>Le registre et les flux ci-dessous forment le contexte actuel. Lors d’une revue, une copie de ce contexte est conservée avec la décision.</p>
       <dl class="analysis-summary"><div><dt>Personnes</dt><dd>{knowledgeText(activityFacts(context.activity, context).dataSubjects) || "À documenter dans le registre"}</dd></div><div><dt>Données</dt><dd>{knowledgeText(activityFacts(context.activity, context).dataCategories) || "À documenter dans le registre"}</dd></div></dl>
-      {#if context.activity.flows.length}<FlowMap flows={resolvedFlows(context.activity, context)} />{:else}<p class="help">Aucun flux décrit. Retrouvez la cartographie dans la fiche de traitement.</p>{/if}
+      {#if context.activity.flows.length}<FlowMap activity={context.activity} inventory={context} flows={resolvedFlows(context.activity, context)} />{:else}<p class="help">Aucun flux décrit. Retrouvez la cartographie dans la fiche de traitement.</p>{/if}
       <ReviewNotebook documents={context.documents} bind:notes={draft.content.principles} questions={PIA_PRINCIPLE_QUESTIONS} prefix="AIPD principes" />
     {:else if step === 2}
       <p>Raisonnez par finalité et par opération. Examinez aussi les conséquences de ne pas traiter, la solidité des résultats attendus, les objections et les effets sur l’exercice des libertés.</p>

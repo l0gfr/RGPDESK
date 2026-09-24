@@ -102,6 +102,20 @@ export default defineConfig({
   vite: {
     build: {
       assetsInlineLimit: 0,
+      // Keep standalone RGPD schema validators in separate static modules.
+      // Historical readers remain available without an oversized shared UI chunk.
+      rolldownOptions: {
+        output: {
+          codeSplitting: {
+            groups: [{
+              name: (id) => {
+                const match = id.match(/\/packages\/privacy-core\/src\/generated\/([a-z0-9-]+)-validator\.js$/);
+                return match ? `privacy-${match[1]}` : null;
+              },
+            }],
+          },
+        },
+      },
     },
     server: {
       fs: {

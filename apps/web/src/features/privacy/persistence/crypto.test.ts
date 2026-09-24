@@ -80,7 +80,7 @@ describe("AIPD schema evolution with real WebCrypto", () => {
     const legacyBytes = JSON.stringify(legacy);
     const [envelope] = await encryptLocalPayloadBatch([{ aad: contextFor(id, 1, "master"), value: legacy }], phrase);
     let next = await openMaster(envelope, phrase, id, 1);
-    expect(next.format).toBe("rgpd-master-v9"); expect(next.activities).toEqual(original.activities);
+    expect(next.format).toBe("rgpd-master-v10"); expect(next.activities).toEqual(original.activities);
     const pia = createImpactAssessment(id, next.activities[0]!, "00000000-0000-4000-8000-000000000003");
     const risk = createPiaRisk("00000000-0000-4000-8000-000000000004"); risk.rights = knowledge("PRIVATE_PIA_RIGHTS"); pia.content.risks.push(risk);
     next = putImpactAssessment(next, pia, next.revision, next.updatedAt);

@@ -1,4 +1,5 @@
 import { knowledge, type Activity, type DataFlow, type EvidenceReference, type ReviewNote, type Workspace } from "./model";
+import { resolveJourney, flowSteps, assertJourneys } from "./flow-journeys";
 import { activityFacts, flowSubjects, assertDataGroups } from "./data-groups";
 import type { PiaContext } from "./pia-model";
 import { PrivacyError } from "./validation";
@@ -6,6 +7,7 @@ import { PrivacyError } from "./validation";
 type Inventory = Pick<Workspace, "parties" | "systems">;
 /** Resolve only declared links, against the current inventory or a frozen review context. */
 export function resolveFlow(flow: DataFlow, activity: Activity, inventory: Inventory): DataFlow {
+  if (flow.journey) return resolveJourney(activity, flow, inventory);
   const resolve = (ref: DataFlow["sourceRef"], fallback: DataFlow["source"]) => {
     if (!ref) return fallback;
     if (ref === "subjects") return flowSubjects(activity, flow);
@@ -37,21 +39,21 @@ export function assertLinkedFacts(master: Workspace): void {
     }
   };
   const activity = (a: Activity, inventory: Inventory, docs: EvidenceReference[]) => {
-    assertDataGroups(a);
+    assertDataGroups(a); assertJourneys(a);
     const inventoryIds = new Set([...inventory.parties, ...inventory.systems, ...docs].map(e => e.id));
-    if ((a.dataGroups ?? []).some(g => inventoryIds.has(g.id))) throw new PrivacyError("INVALID");
+    if ([...(a.dataGroups ?? []), ...(a.flowSupports ?? []), ...a.flows.flatMap(f=>f.journey?.steps ?? [])].some(g => inventoryIds.has(g.id))) throw new PrivacyError("INVALID");
     notes(a.analysis.notes, docs);
-    for (const f of a.flows) {
+    for (const f of a.flows.flatMap(flowSteps)) {
       for (const field of ["source", "destination"] as const) {
         const ref = f[`${field}Ref`];
         if (!ref) continue;
         if (f[field].state !== "unknown") throw new PrivacyError("INVALID");
-        if (ref !== "subjects") {
+        if (ref !== "subjects" && !ref.startsWith("support:")) {
           const [kind, id] = ref.split(":");
           if (!(kind === "party" ? inventory.parties : inventory.systems).some((e) => e.id === id)) throw new PrivacyError("INVALID");
         }
       }
-      if (f.dataFromActivity && f.data.state !== "unknown") throw new PrivacyError("INVALID");
+      if ("dataFromActivity" in f && f.dataFromActivity && "data" in f && f.data.state !== "unknown") throw new PrivacyError("INVALID");
     }
   };
   const context = (c: PiaContext) => {

@@ -35,7 +35,17 @@ export interface DataGroup {
   minimisation: { data: Knowledge; supports: Knowledge; channels: Knowledge; recipients: Knowledge; retention: Knowledge };
   guarantees: Knowledge;
 }
+export interface FlowSupport { id: string; code: number; name: string }
+export type StepReference = FlowReference | `support:${string}`;
+export interface FlowStep {
+  id: string; sourceRef?: StepReference; destinationRef?: StepReference;
+  source: Knowledge; destination: Knowledge; operation: Knowledge;
+  channel: Knowledge; location: Knowledge; access: Knowledge; when: Knowledge;
+  supportIds: string[];
+}
+export interface FlowJourney { reference: string; purposeIds: string[]; steps: FlowStep[] }
 export interface DataFlow {
+  journey?: FlowJourney;
   dataGroupIds?: string[];
   sourceRef?: FlowReference; destinationRef?: FlowReference; dataFromActivity?: boolean;
   id: string;
@@ -44,6 +54,7 @@ export interface DataFlow {
 }
 export interface ContractReview { methodVersion: "article28-2026-09-22.1"; notes: ReviewNote[] }
 interface ActivityBase {
+  flowSupports?: FlowSupport[];
   dataGroups?: DataGroup[];
   interviewQuestions?: string[];
   analysis: ActivityAnalysis;
@@ -86,7 +97,7 @@ export interface Workspace {
   workCheckpoint?: WorkCheckpoint;
   citationReviews?: CitationReview[];
   collections?: CollectionRequest[];
-  format: "rgpd-master-v9";
+  format: "rgpd-master-v10";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];

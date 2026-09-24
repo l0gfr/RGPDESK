@@ -73,5 +73,5 @@ test("real IndexedDB opens v8 without writing, stores v9 groups and round-trips 
   const raw=JSON.stringify(await vault.table("records").toArray()),reopened=await vault.unlock(w.id,phrase,session),backup=await vault.backup(reopened,phrase,session),decoded=await a.decodeBackup(backup,phrase);
   vault.close();return{unchanged,format:opened.format,same:JSON.stringify(decoded)===JSON.stringify(next),raw,backup};
  });
- expect(result.unchanged).toBe(true);expect(result.format).toBe("rgpd-master-v9");expect(result.same).toBe(true);expect(result.raw+result.backup).not.toContain("CANARY");
+ expect(result.unchanged).toBe(true);expect(result.format).toBe("rgpd-master-v10");expect(result.same).toBe(true);expect(result.raw+result.backup).not.toContain("CANARY");
 });

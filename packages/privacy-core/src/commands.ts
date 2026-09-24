@@ -7,7 +7,7 @@ import { assertWorkspace, PrivacyError } from "./validation";
 
 export function createWorkspace(id: string, name: string, now: string): Workspace {
   const master: Workspace = {
-    format: "rgpd-master-v9", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
+    format: "rgpd-master-v10", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
     language: "fr", jurisdiction: unknown(), scope: unknown(),
     organization: { name: name.trim(), contact: unknown(), dpo: unknown(), representatives: unknown() },
     parties: [], systems: [], activities: [], documents: [], decisions: [], actions: [], imports: [], deliveries: [],
@@ -52,6 +52,14 @@ export function reviseWorkspace(master: Workspace, expectedRevision: number, now
   if (changes.documents) assertDocumentHistory(master.documents, changes.documents);
   for (const a of changes.activities ?? []) {
     const old = master.activities.find(item => item.id === a.id);
+    for (const support of a.flowSupports ?? []) {
+      const previous=old?.flowSupports?.find(s=>s.id===support.id);
+      if(previous && previous.code!==support.code)throw new PrivacyError("INVALID");
+    }
+    for (const flow of a.flows) {
+      const previous=old?.flows.find(f=>f.id===flow.id)?.journey;
+      if(previous && (!flow.journey || previous.reference!==flow.journey.reference))throw new PrivacyError("INVALID");
+    }
     for (const g of a.dataGroups ?? []) {
       const previous = old?.dataGroups?.find(item => item.id === g.id);
       if (previous && previous.code !== g.code) throw new PrivacyError("INVALID");

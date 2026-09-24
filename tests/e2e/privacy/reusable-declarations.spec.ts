@@ -44,11 +44,11 @@ test('reuse works across groups, objectives and flows without automatic retentio
  await root.getByRole('button',{name:/Reprendre ce texte/}).click();
  await expect(page.getByLabel('D3 · Durée ou critère de conservation',{exact:true})).toHaveValue('Durée FICTIVE à réexaminer');
  await expect(page.getByLabel('D3 · Événement de départ',{exact:true})).toHaveValue('');
- await third.getByRole('button',{name:'Ajouter un flux',exact:true}).click();
- await third.locator('.flow-detail > summary').click();
- root=await picker(page,'Flux 3 · Canal ou support','CANAL_FICTIF');
+ await third.getByRole('button',{name:'Ajouter un parcours',exact:true}).click();
+ await third.locator('.journey-context > summary').click();
+ root=await picker(page,'Parcours 3a · Étape 1 · Canal','CANAL_FICTIF');
  await root.getByRole('button',{name:/Reprendre ce texte/}).click();
- await expect(third.getByLabel('Flux 3 · Canal ou support',{exact:true})).toHaveValue('CANAL_FICTIF_REUTILISABLE');
+ await expect(third.getByLabel('Parcours 3a · Étape 1 · Canal',{exact:true})).toHaveValue('CANAL_FICTIF_REUTILISABLE');
  await expect(third.getByRole('group',{name:'D3 · Sous-finalités concernées'}).getByRole('checkbox').filter({visible:true}).first()).not.toBeChecked();
  await page.getByLabel('D3 · Catégories de données',{exact:true}).fill('Mon texte fictif à garder');
  root=await picker(page,'D3 · Catégories de données','reutilisables');

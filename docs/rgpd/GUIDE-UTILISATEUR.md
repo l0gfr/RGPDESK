@@ -102,8 +102,8 @@ La fiche suit six étapes : **L’ensemble**, **Les objectifs**, **Les données*
 
 Dans **Les données**, créez vos groupes **D1, D2…**. Ces repères appartiennent à cet ensemble de traitement. Pour chacun :
 
-1. Décrivez les catégories de données et de personnes, puis cochez les sous-finalités concernées.
-2. Décrivez son parcours : origine, destination, opération, canal et support, lieux, accès et destinataires. Les données du groupe sont reprises dans ses flux, sans les recopier.
+1. Décrivez les catégories de données et de personnes.
+2. Cliquez sur **Ajouter un parcours** : 1a, 1b… pour D1, 2a, 2b… pour D2. Choisissez ses sous-finalités, puis ses opérations dans l’ordre. Elles reprennent les données du groupe sans les recopier. Les sous-finalités du groupe rassemblent les choix de ses parcours.
 3. Ouvrez **Conservation et effacement** : durée ou critère, événement de départ, effacement et contrôle. Si des catégories suivent des règles différentes, séparez les groupes.
 4. Ouvrez **Minimisation et garanties** : examinez les données, supports, canaux, destinataires et durées, puis les garanties concrètes et leur vérification. Distinguez prévu et effectif.
 
@@ -165,9 +165,13 @@ Les **destinataires** de la fiche et les **habilitations** de l’analyse répon
 ### Construire la carte des flux
 
 1. Dans la fiche du registre, ouvrez l’étape **Les données**. Les flux et la carte se renseignent directement pendant la saisie. Vous pouvez aussi les retrouver dans **Cartographie**, puis **Compléter la cartographie** : il s’agit des mêmes flux, sans copie ni nouvelle saisie.
-2. Cliquez sur **Ajouter un flux**. Décrivez l’origine, la destination et l’opération, puis les données, le canal, les lieux et les habilitations connus.
-3. Examinez la carte sous les champs. Les rubriques inconnues restent **À examiner**. Décrivez les accès distants pertinents : le nom d’un pays ou d’un outil ne suffit pas à établir le régime d’un transfert. [RGPD, chapitre V](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
-4. Enregistrez la fiche. Vous pouvez ajouter jusqu’à 20 flux par activité, les modifier et supprimer un flux après confirmation.
+2. Dans D1 ou D2, cliquez sur **Ajouter un parcours**. Cochez les sous-finalités de cet usage. Deux usages du même groupe peuvent avoir des destinataires et sous-finalités différents.
+3. Ouvrez **Les supports de cet ensemble**. Déclarez chaque fichier, boîte mail ou autre support une seule fois. Choisissez ensuite ces supports dans les étapes de vos parcours. Un renommage se répercute dans les liens de la fiche après enregistrement.
+4. Décrivez une opération par étape : recueillir, vérifier, enregistrer, consulter… Précisez le rôle autorisé et, si elle existe, la condition de cette opération. **Ajouter une étape** poursuit le même parcours ; **Ajouter un parcours** commence un autre usage du groupe. Les boutons Monter et Descendre changent l’ordre.
+5. Précisez **Origine, destination, canal et lieux**. Les sélecteurs reprennent les supports de cet ensemble, les intervenants et systèmes déjà recensés. Un support choisi comme origine ou destination figure automatiquement parmi les supports utilisés ; il ne demande pas une deuxième sélection. Décrivez les accès distants pertinents : le nom d’un pays ou d’un outil ne suffit pas à établir le régime d’un transfert. [RGPD, chapitre V](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+6. Ouvrez **Relire le parcours** pour voir sa frise, puis enregistrez la fiche. La carte reprend ces déclarations. Limites par ensemble : 20 flux ou parcours au total, 20 supports et 8 étapes par parcours.
+
+Les anciens flux restent modifiables avec leurs champs habituels. Leur texte n’est pas découpé automatiquement. Un parcours nouveau reste distinct : si vous remplacez un ancien flux, relisez le nouveau avant de retirer l’ancien pour éviter un doublon. Le partage choisi reprend l’ordre des opérations et les supports sous forme textuelle dans le rendu de flux existant.
 
 La carte représente uniquement vos déclarations, activité par activité. Elle ne découvre pas le réseau, n’infère aucun lien entre systèmes et ne garantit pas l’exhaustivité des échanges. Elle reste privée dans le coffre et dans la sauvegarde chiffrée.
 
@@ -478,7 +482,9 @@ Une écriture refusée ne vaut pas enregistrement. Conservez le profil et les fi
 | Élément | Limite actuelle |
 | --- | --- |
 | Activités par coffre | 200 |
-| Flux déclarés par activité | 20 |
+| Flux ou parcours déclarés par ensemble | 20 |
+| Étapes par parcours | 8 |
+| Supports réutilisables par ensemble | 20 |
 | Questions d’analyse / revue contractuelle | 8 / 11, cinq champs de notes par question |
 | Contenu de l’espace, hors instantanés | 2 Mio |
 | Références documentaires | 200 |

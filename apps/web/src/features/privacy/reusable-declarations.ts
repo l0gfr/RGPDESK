@@ -1,4 +1,4 @@
-import { knowledgeText, type Activity, type Knowledge, type Workspace } from "@rgpdesk/privacy-core";
+import { flowSteps, knowledgeText, type Activity, type Knowledge, type Workspace } from "@rgpdesk/privacy-core";
 
 export type DeclarationKind = "data" | "people" | "purpose" | "recipients" | "period" | "trigger" | "deletion" | "endpoint" | "operation" | "channel" | "location" | "access";
 export interface ReusableDeclaration { text: string; sources: string[]; occurrences: number }
@@ -46,13 +46,13 @@ export function reusableDeclarations(workspace: Workspace | null, draft: Activit
       if (kind === "period") add(p.retention.period, `${ref} · Départ : ${knowledgeText(p.retention.trigger) || "à préciser"}`);
       if (kind === "trigger") add(p.retention.trigger, ref);
     }
-    for (const [i, f] of a.flows.entries()) {
+    for (const [i, f] of a.flows.flatMap(flowSteps).entries()) {
       const ref = `${source} · Flux ${i + 1}`;
       if (kind === "endpoint") {
         if (!f.sourceRef) add(f.source, ref + " · origine");
         if (!f.destinationRef) add(f.destination, ref + " · destination");
       }
-      if (kind === "data" && !f.dataFromActivity && !f.dataGroupIds?.length) add(f.data, ref);
+      if (kind === "data" && "data" in f && !f.dataFromActivity && !f.dataGroupIds?.length) add(f.data, ref);
       if (kind === "operation") add(f.operation, ref);
       if (kind === "channel") add(f.channel, ref);
       if (kind === "location") add(f.location, ref);

@@ -28,7 +28,7 @@ export class RecoveryWriter {
       if(this.receipt&&key!==this.key){await this.store.discardDraft(this.workspaceId,this.receipt,this.session);this.check();this.reset();}
       if(this.receipt&&content===this.content)return;
       const id=this.receipt?.id??crypto.randomUUID(),sequence=(this.receipt?.sequence??0)+1;
-      const value:RecoveryDraft={format:'rgpd-draft-v2',workspaceId:this.workspaceId,revision,id,sequence,updatedAt:new Date().toISOString(),form:frozen};
+      const value:RecoveryDraft={format:'rgpd-draft-v3',workspaceId:this.workspaceId,revision,id,sequence,updatedAt:new Date().toISOString(),form:frozen};
       await this.store.saveDraft(value,this.phrase,this.receipt?.sequence??null,this.session);this.check();
       this.receipt={id,sequence};this.key=key;this.content=content;
     });
