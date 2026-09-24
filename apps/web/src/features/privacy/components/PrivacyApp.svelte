@@ -161,7 +161,7 @@
     actionsTab="actions";readingActivityId="";
     editorStep=0; dpoSection="scope"; entityId="";
     editor = null; piaEditing = false; piaStep = 0; lensPia = false; securityActivityId = "";
-    actionActivityId = dpoCaseId = documentId = documentActivityId = piaActivityId = "";
+    deliveryActivityId = actionActivityId = dpoCaseId = documentId = documentActivityId = piaActivityId = "";
     searchNavigation += 1;
   }
   function navigateTo(next: typeof panel) {
@@ -180,6 +180,7 @@
   let lastActivityId = $state("");
   let actionsTab=$state<"actions"|"requests">("actions");
   let actionActivityId = $state("");
+  let deliveryActivityId = $state("");
   let backupRevision: number | null = $state(null);
   let vault: PrivacyVault | undefined;
   let epoch = "";
@@ -227,7 +228,7 @@
       const f=d.form;
       if(f.kind==='activity'){editor=$state.snapshot(master!.activities.find(a=>a.id===f.draft.id)??createActivity(master!.id,f.draft.id,f.draft.role));editorSection=f.section;editorStep=f.step;panel='register';}
       else if(f.kind==='pia' && f.draft.scope==='risks')panel='risks';
-      else panel=({'request-prepare':'actions','request-reply':'actions','evidence-links':'documents',dpo:'dpo',pia:'pia',document:'documents',organization:'organization',party:'parties',system:'systems',actions:'actions',reexamination:'overview'} as const)[f.kind];
+      else panel=({corrective:'actions','request-prepare':'actions','request-reply':'actions','evidence-links':'documents',dpo:'dpo',pia:'pia',document:'documents',organization:'organization',party:'parties',system:'systems',actions:'actions',reexamination:'overview'} as const)[f.kind];
       await tick();checkSession(current);const guard=currentGuard();if(!guard)throw new PrivacyError('INVALID');
       await guard.restoreRecovery(f);checkSession(current);recoveries=recoveries.filter(x=>x.id!==d.id);
       recoveryStatus='Brouillon récupéré. Relisez et enregistrez ; les confirmations sont à refaire.';
@@ -728,7 +729,7 @@
     {#if editor}
       {#key `${editor.id}:${searchNavigation}`}<ActivityEditor bind:this={activityGuard} initialStep={editorStep} initialSection={editorSection} initial={$state.snapshot(editor)} workspace={master} example={editorExample} {busy} onSave={saveActivity} onCancel={() => editor = null} />{/key}
     {:else if readingActivity && panel === "register"}
-      <ActivityReader activity={readingActivity} workspace={master} {busy} onClose={()=>readingActivityId=""}
+      <ActivityReader onCorrective={()=>requestNavigation(()=>{const id=readingActivity!.id;resetEditor();actionActivityId=id;panel="actions";})} activity={readingActivity} workspace={master} {busy} onClose={()=>readingActivityId=""}
         onEdit={(section,step=0)=>{editor=structuredClone($state.snapshot(readingActivity!));editorSection=section;editorStep=step;readingActivityId="";}}
         onDocument={id=>{resetEditor();documentId=id;panel="documents";}}
         onQuestions={()=>{const id=readingActivityId;resetEditor();actionActivityId=id;actionsTab="requests";panel="actions";}}/>
@@ -769,9 +770,9 @@
     {:else if panel === "documents"}
       <DocumentsPanel bind:this={documentGuard} onLeave={requestNavigation} workspace={$state.snapshot(master)} {busy} initialDocumentId={documentId} initialActivityId={documentActivityId} onSave={async (next) => { await saveNext(next); const saved = master?.revision === next.revision; if (saved) documentId = documentActivityId = ""; return saved; }} />
     {:else if panel === "actions"}
-      {#key master.revision}<ActionsPanel bind:tab={actionsTab} onLeave={requestNavigation} bind:this={actionsGuard} workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} />{/key}
+      {#key master.revision}<ActionsPanel bind:tab={actionsTab} onLeave={requestNavigation} bind:this={actionsGuard} workspace={$state.snapshot(master)} initialActivityId={actionActivityId} {busy} onSave={saveNext} onRegister={id=>requestNavigation(()=>{resetEditor();readingActivityId=id;panel="register";})} onShare={id=>requestNavigation(()=>{resetEditor();deliveryActivityId=id;panel="delivery";})} onDocument={id=>requestNavigation(()=>{resetEditor();documentActivityId=id;panel="documents";})} />{/key}
     {:else if panel === "delivery"}
-      {#key master.revision}<DeliveryPanel workspace={$state.snapshot(master)} {busy} {demo} onDeliver={deliver} onRead={readDelivery} onDownload={downloadDelivery} />{/key}
+      {#key master.revision}<DeliveryPanel initialActivityId={deliveryActivityId} workspace={$state.snapshot(master)} {busy} {demo} onDeliver={deliver} onRead={readDelivery} onDownload={downloadDelivery} />{/key}
     {:else}
       {#if demo}<section class="panel demo-backup"><div class="section-heading"><div><p class="eyebrow">L’exercice vous appartient aussi</p><h2>Essayez une vraie sauvegarde chiffrée.</h2></div><span class="icon-tile"><Icon name="backup" size={30} /></span></div><p>Choisissez une phrase propre à cette copie fictive. Le fichier contient tout le dossier de démonstration et les versions partagées pendant la visite. Aucun coffre n’est créé sur cet appareil.</p><form onsubmit={(e) => { e.preventDefault(); void downloadBackup(); }}><fieldset disabled={busy}><div class="grid-two"><label class="field">Phrase pour la sauvegarde de démonstration<input type="password" required minlength="12" maxlength="1024" autocomplete="new-password" bind:value={demoPhrase} /></label><label class="field">Confirmer la phrase de démonstration<input type="password" required maxlength="1024" autocomplete="new-password" bind:value={demoConfirmation} /></label></div><p class="help">Préférez une phrase longue et unique. Elle sera nécessaire pour restaurer le fichier ; elle ne peut pas être récupérée.</p><button disabled={!demoPhrase || demoPhrase !== demoConfirmation} type="submit">Chiffrer et télécharger l’exercice</button></fieldset></form><p class="help">Pour essayer la restauration, quittez la démo puis utilisez « Restaurer une sauvegarde chiffrée ». Ce geste créera un coffre fictif distinct ; aucun coffre existant ne sera écrasé.</p></section>{:else}
       <section class="panel"><h2>Sauvegarde chiffrée</h2><p>Elle contient le dossier enregistré, y compris les notes internes, les références et leurs empreintes. Les brouillons en attente de reprise ne sont pas inclus : reprenez-les et enregistrez-les avant de préparer votre sauvegarde. Les pièces originales ne sont pas incluses : sauvegardez-les séparément. Elle sert à la restauration et n’est pas un dossier à partager avec un client.</p><p>La même phrase secrète sera nécessaire. Aucun service ne peut la récupérer pour vous.</p><button disabled={busy} onclick={downloadBackup}>Télécharger la sauvegarde chiffrée</button><p class="help">Vérifiez la lisibilité du fichier ci-dessous, sans créer de coffre. La restauration reste une opération distincte et refuse tout écrasement.</p></section>{/if}

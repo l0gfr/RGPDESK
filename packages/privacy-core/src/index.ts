@@ -27,8 +27,12 @@ export * from "./pia-share";
 
 export { default as validateRecoveryDraftV1 } from "./generated/draft-validator.js";
 export { default as validateRecoveryDraftV2 } from "./generated/draft-v2-validator.js";
-export { default as validateRecoveryDraft } from "./generated/draft-v3-validator.js";
+export { default as validateRecoveryDraftV3 } from "./generated/draft-v3-validator.js";
+export { default as validateRecoveryDraft } from "./generated/draft-v4-validator.js";
 
 export * from "./collections";
 export * from "./evidence-reuse";
 export * from "./delivery-comparison";
+
+export * from "./remediation-model";
+export * from "./corrective-actions";

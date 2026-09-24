@@ -48,5 +48,5 @@ test("v9 storage stays untouched on unlock and v10 journeys survive encrypted ba
   const draft={format:'rgpd-draft-v3' as const,workspaceId:w.id,revision:2,id:crypto.randomUUID(),sequence:1,updatedAt:at,form:{kind:'activity' as const,draft:a,documentIds:[],section:'record' as const,step:2}};
   const encrypted=await t.sealRecovery(draft,phrase),recovered=await t.openRecovery(encrypted,phrase,w.id,2,draft.id,1);vault.close();
   return{untouched,format:opened.format,same:JSON.stringify(next)===JSON.stringify(decoded),draftSame:JSON.stringify(recovered)===JSON.stringify(draft),leak:(raw+backup+JSON.stringify(encrypted)).includes('CANARY')};
- });expect(result).toEqual({untouched:true,format:'rgpd-master-v10',same:true,draftSame:true,leak:false});
+ });expect(result).toEqual({untouched:true,format:'rgpd-master-v11',same:true,draftSame:true,leak:false});
 });

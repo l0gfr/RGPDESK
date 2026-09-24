@@ -15,7 +15,7 @@ describe("one inventory, scoped groups and reused risks",()=>{
   const pia=createImpactAssessment(w.id,a,id());w.impactAssessments=[pia];
   const reviewed=recordPiaReview(w,pia.id,{id:id(),author:"Fictif",reason:"À examiner",outcome:"rework"},w.revision,now);
   const old={...reviewed,format:"rgpd-master-v8"};expect(validateV8(old)).toBe(true);const before=JSON.stringify(old);
-  const next=migrateWorkspace(old);expect(next).toEqual({...old,format:"rgpd-master-v10"});expect(JSON.stringify(old)).toBe(before);
+  const next=migrateWorkspace(old);expect(next).toEqual({...old,format:"rgpd-master-v11"});expect(JSON.stringify(old)).toBe(before);
   expect(()=>migrateWorkspace({...old,hidden:"no"})).toThrow("INVALID");expect(()=>migrateWorkspace({...old,activities:[fixture().a]})).toThrow("INVALID");
  });
  it("resolves groups from their declared links, keeps no second data copy and includes retention by purpose",()=>{

@@ -83,5 +83,5 @@ test('v7 request migration stays in memory until save and requests survive encry
   next=a.addCollectionReply(opened,requestId,itemId,{id:crypto.randomUUID(),author:'PRIVATE_AUTHOR',text:'PRIVATE_ANSWER',documentIds:[]},opened.revision,at);await v.save(next,phrase,opened.revision,session);
   const backup=await v.backup(next,phrase,session),raw=JSON.stringify(await v.table('records').toArray());await v.wipe(session.epoch);session={epoch:await v.initialize(),signal:new AbortController().signal};const restored=await v.restore(backup,phrase,session);
   return{unchanged,format:restored.format,same:a.canonicalJson(next)===a.canonicalJson(restored),leak:(backup+raw).includes('PRIVATE_'),reply:restored.collections![0]!.items[0]!.replies[0]!.text};
- });expect(result).toEqual({unchanged:true,format:'rgpd-master-v10',same:true,leak:false,reply:'PRIVATE_ANSWER'});
+ });expect(result).toEqual({unchanged:true,format:'rgpd-master-v11',same:true,leak:false,reply:'PRIVATE_ANSWER'});
 });

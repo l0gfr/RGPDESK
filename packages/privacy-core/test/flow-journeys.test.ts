@@ -25,7 +25,7 @@ describe("linked journeys inside data groups",()=>{
  it("migrates v9 without changing data, revisions or old frozen contexts",()=>{
   const {w,a}=fixture();a.flows=[];delete a.flowSupports;w.impactAssessments=[createImpactAssessment(w.id,a,id())];
   const reviewed=recordPiaReview(w,w.impactAssessments[0]!.id,{id:id(),author:"Fictif",reason:"Lecture fictive",outcome:"rework"},w.revision,now),old={...reviewed,format:"rgpd-master-v9"};
-  expect(validateV9(old)).toBe(true);const before=JSON.stringify(old);expect(migrateWorkspace(old)).toEqual({...old,format:"rgpd-master-v10"});expect(JSON.stringify(old)).toBe(before);
+  expect(validateV9(old)).toBe(true);const before=JSON.stringify(old);expect(migrateWorkspace(old)).toEqual({...old,format:"rgpd-master-v11"});expect(JSON.stringify(old)).toBe(before);
   expect(()=>migrateWorkspace({...fixture().w,format:"rgpd-master-v9"})).toThrow("INVALID");
  });
  it.each(["foreign-support","foreign-support-endpoint","foreign-purpose","duplicate-step","duplicate-support-code","duplicate-reference","copied-root","unknown-property","too-many-steps","oversized"])("rejects %s",kind=>{

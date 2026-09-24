@@ -1312,3 +1312,42 @@
   .rgpdesk .journey-direction span{min-width:0;}
   .rgpdesk .journey-direction>svg{transform:rotate(90deg);}
 }
+
+/* Corrective work: a compact action ledger with explicit before/after, not a score. */
+.rgpdesk .corrective-plan {padding:clamp(20px,3vw,42px);background:linear-gradient(140deg,#e9f0f5,#f8fafc 58%,#e8eef5);border-radius:5px 28px 5px 5px;}
+.rgpdesk .corrective-cover {display:flex;align-items:center;gap:22px;flex-wrap:wrap;border-bottom:1px solid #bdcad5;padding-bottom:24px;}
+.rgpdesk .corrective-cover>div {flex:1;min-width:min(100%,260px);}
+.rgpdesk .corrective-cover h2 {font-family:Georgia,serif;font-weight:400;font-size:clamp(26px,2.4vw,38px);line-height:1.2;}
+.rgpdesk .corrective-cover p {max-width:68ch;}
+.rgpdesk .corrective-metrics {display:flex;gap:12px;flex-wrap:wrap;margin:24px 0;}
+.rgpdesk .corrective-metrics>span {display:flex;align-items:center;gap:12px;padding:12px 18px;background:#f9fbfd;border:1px solid #c8d3df;border-radius:4px 14px 4px 4px;font-size:1rem;}
+.rgpdesk .corrective-metrics strong {font-family:Georgia,serif;font-size:1.8rem;color:#37546a;}
+.rgpdesk .corrective-card,.rgpdesk .corrective-form {margin-block:22px;padding:clamp(18px,2.6vw,30px);border:1px solid #becbd7;border-left:4px solid #7892a6;border-radius:4px 20px 4px 4px;background:linear-gradient(115deg,#fff,#f1f5f9);box-shadow:0 6px 22px #243b5010;}
+.rgpdesk .corrective-card.applied {border-left-color:#324e62;}
+.rgpdesk .corrective-card>header,.rgpdesk .corrective-change>header {display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap;}
+.rgpdesk .corrective-card>header>div {flex:1;min-width:min(100%,220px);}
+.rgpdesk .corrective-card-icon,.rgpdesk .corrective-number {display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;background:linear-gradient(135deg,#263f53,#526e83);color:#f2f6fb;border-radius:3px 13px 3px 3px;}
+.rgpdesk .corrective-version {display:flex;align-items:center;gap:10px;padding:8px 14px;background:#e3edf4;color:#314d63;font-family:Georgia,serif;font-size:1.3rem;border:1px solid #bbcbd8;border-radius:4px;}
+.rgpdesk .corrective-picker {display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-block:24px;}
+.rgpdesk .corrective-picker>.field {flex:1;min-width:min(100%,260px);margin:0;}
+.rgpdesk .corrective-change {margin-block:18px;padding:20px;border:1px solid #bdccda;border-radius:4px 16px 4px 4px;background:#f8fafc;overflow-wrap:anywhere;}
+.rgpdesk .corrective-change h4 {flex:1;min-width:min(100%,180px);margin:8px 0 14px;}
+.rgpdesk .corrective-before-after {display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0 0;}
+.rgpdesk .corrective-before-after>div {min-width:0;padding:18px;background:#eaf0f5;border:1px solid #d0dae4;border-radius:3px;}
+.rgpdesk .corrective-before-after>div+div {background:#fdfefe;border-top:3px solid #526e83;}
+.rgpdesk .corrective-before-after p,.rgpdesk .corrective-before-after dd {white-space:pre-wrap;overflow-wrap:anywhere;}
+.rgpdesk .corrective-before-after dt {font-size:1rem;font-weight:650;color:#435a72;margin-bottom:10px;}
+.rgpdesk .corrective-before-after dd {margin:0;}
+.rgpdesk .corrective-form .field {margin-block:18px;}
+.rgpdesk .corrective-form label,.rgpdesk .corrective-form input,.rgpdesk .corrective-form textarea,.rgpdesk .corrective-form select {font-size:1rem;}
+.rgpdesk .corrective-form fieldset {min-width:0;}
+.rgpdesk .corrective-proof {padding:20px;margin-block:18px;background:#eef3f7;border-left:3px solid #647f94;overflow-wrap:anywhere;}
+.rgpdesk .corrective-proof h5,.rgpdesk .corrective-snapshot h5 {font-size:1.1rem;margin-block:10px;}
+.rgpdesk .corrective-review {display:flex;align-items:flex-start;gap:16px;padding:18px;background:#e5edf5;border:1px solid #b9cada;margin-block:22px;}
+.rgpdesk .corrective-review>svg {flex:none;}
+.rgpdesk .corrective-empty {padding:28px;max-width:70ch;}
+.rgpdesk .corrective-history {border-top:1px solid #c7d3df;padding-top:18px;margin-top:18px;}
+.rgpdesk .corrective-history summary {padding:12px 0;font-size:1rem;line-height:1.5;}
+.rgpdesk .corrective-snapshot {padding:20px;background:#f8fbfd;border:1px solid #c7d3df;overflow-wrap:anywhere;}
+.rgpdesk .corrective-card .actions {gap:12px;flex-wrap:wrap;}
+@media(max-width:760px){.rgpdesk .corrective-before-after{grid-template-columns:1fr;}.rgpdesk .corrective-change,.rgpdesk .corrective-snapshot{padding:14px;}.rgpdesk .corrective-metrics>span{flex:1 1 160px;}.rgpdesk .corrective-cover>.emblem{display:none;}.rgpdesk .corrective-picker>button{width:100%;}}

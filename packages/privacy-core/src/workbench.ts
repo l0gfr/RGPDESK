@@ -52,7 +52,8 @@ export function entityDossier(w: Workspace, kind: "party" | "system", id: string
 }
 
 /** Display the question the DPO chose to track, without inventing an instruction. */
-export function documentaryActionLabel(a: Pick<DocumentaryAction,"catalogVersion"|"ruleId"|"scope">): string {
+export function documentaryActionLabel(a: Pick<DocumentaryAction,"catalogVersion"|"ruleId"|"scope"|"corrective">): string {
+  if(a.corrective)return `${a.corrective.title} · ${a.scope}`;
   const title=a.catalogVersion===CATALOG_VERSION?CATALOG.find(r=>r.id===a.ruleId)?.title:undefined;
   return `${title??a.ruleId} · ${a.scope}`;
 }

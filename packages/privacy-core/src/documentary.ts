@@ -60,7 +60,7 @@ export function createAction(master: Workspace, finding: Finding, input: { id: s
 }
 export function closeAction(master: Workspace, id: string, author: string, justification: string, now: string): Workspace {
   const action = master.actions.find((a) => a.id === id);
-  if (!action || action.closure) throw new PrivacyError("INVALID");
+  if (!action || action.closure || action.corrective) throw new PrivacyError("INVALID");
   return reviseWorkspace(master, master.revision, now, { actions: master.actions.map((a) => a.id === id ? { ...a, closure: { at: now, author, justification } } : a) });
 }
 export function reviewNeeded(record: { catalogVersion: string; revision?: number; reviewedRevision?: number }, master: Workspace, version = CATALOG_VERSION): boolean {

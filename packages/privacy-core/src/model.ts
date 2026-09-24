@@ -1,3 +1,4 @@
+import type { CorrectivePlan } from "./remediation-model";
 import type { DpoCase, PiaPublication } from "./dpo-model";
 import type { ImpactAssessment } from "./pia-model";
 export type Knowledge = { state: "unknown" } | { state: "documented"; value: string };
@@ -97,7 +98,7 @@ export interface Workspace {
   workCheckpoint?: WorkCheckpoint;
   citationReviews?: CitationReview[];
   collections?: CollectionRequest[];
-  format: "rgpd-master-v10";
+  format: "rgpd-master-v11";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];
@@ -144,6 +145,7 @@ export interface Decision {
   revision: number; catalogVersion: string;
 }
 export interface DocumentaryAction {
+  corrective?: CorrectivePlan;
   id: string; workspaceId: string; findingKey: string; ruleId: string; activityId: string | null;
   scope: string; owner: string; due: string | null; createdAt: string;
   catalogVersion: string; reviewedRevision: number;

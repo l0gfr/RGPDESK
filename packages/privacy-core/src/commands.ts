@@ -1,3 +1,4 @@
+import { assertCorrectiveHistory } from "./corrective-actions";
 import { assertCollectionHistory } from "./collections";
 import { assertDocumentHistory } from "./document-filing";
 import { assertDpoHistory } from "./dpo";
@@ -7,7 +8,7 @@ import { assertWorkspace, PrivacyError } from "./validation";
 
 export function createWorkspace(id: string, name: string, now: string): Workspace {
   const master: Workspace = {
-    format: "rgpd-master-v10", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
+    format: "rgpd-master-v11", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
     language: "fr", jurisdiction: unknown(), scope: unknown(),
     organization: { name: name.trim(), contact: unknown(), dpo: unknown(), representatives: unknown() },
     parties: [], systems: [], activities: [], documents: [], decisions: [], actions: [], imports: [], deliveries: [],
@@ -68,6 +69,7 @@ export function reviseWorkspace(master: Workspace, expectedRevision: number, now
   if (changes.impactAssessments) assertPiaHistory(master, changes.impactAssessments, now);
   if (changes.dpoCases) assertDpoHistory(master, changes.dpoCases, now);
   const next = { ...master, ...changes, revision: master.revision + 1, updatedAt: now };
+  assertCorrectiveHistory(master, next, now);
   assertWorkspace(next);
   return next;
 }

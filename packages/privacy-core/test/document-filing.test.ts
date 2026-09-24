@@ -15,7 +15,7 @@ describe("document organization without binary storage", () => {
     const w=fixture(), old={...w,format:"rgpd-master-v6"}; const before=JSON.stringify(old);
     expect(validateV6(old)).toBe(true);
     const migrated=migrateWorkspace(old);
-    expect(migrated).toEqual({...old,format:"rgpd-master-v10"}); expect(JSON.stringify(old)).toBe(before);
+    expect(migrated).toEqual({...old,format:"rgpd-master-v11"}); expect(JSON.stringify(old)).toBe(before);
     expect(validateV6({...old,documents:[{...w.documents[0]!,documentCode:"DOC-0001"}]})).toBe(false);
   });
   it("allocates and retains mission-local references across edits and rejects reuse", () => {

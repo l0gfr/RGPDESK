@@ -302,6 +302,23 @@ Pour **Clôturer**, renseignez l’auteur déclaré et la justification. La clô
 
 Le panneau **Comprendre les questions et leurs sources** explique les informations recherchées et donne accès aux textes CNIL. Ces repères ne remplacent pas l’analyse de votre situation ou des règles propres à votre secteur. Si une réponse reste incertaine, conservez la question et identifiez l’interlocuteur qui pourra vous aider à la résoudre.
 
+### Faire évoluer le registre à partir d’un correctif réalisé
+
+**Préparer un correctif** relie votre plan d’action aux faits déjà saisis. Choisissez l’ensemble concerné, la priorité, le responsable et les éléments à modifier. L’écran présente leur état actuel et la valeur attendue après réalisation. Enregistrer ce correctif ne change pas encore le registre.
+
+Quand le travail est réalisé, choisissez **C’est fait, voilà la preuve** :
+
+1. Relisez l’avant/après et, si utile, ouvrez **Voir la description et les flux après ce correctif**. Les descriptions générales et celles des groupes restent distinctes : corrigez chacune si nécessaire.
+2. Sélectionnez une référence documentaire versionnée de cet ensemble. Indiquez le passage examiné et ce qu’il permet de constater. Si la référence manque, quittez cette saisie et utilisez **Référencer une preuve**.
+3. Renseignez l’auteur et le constat de réalisation, puis confirmez la relecture. **Confirmer la réalisation et mettre à jour le dossier** enregistre ensemble la clôture et les faits corrigés.
+4. Ouvrez **Voir le registre actualisé** ou **Préparer l’export du registre**. L’export demande toujours un destinataire et une relecture ; il n’est pas envoyé automatiquement.
+
+L’historique conserve la description immédiatement avant et après le correctif, ainsi que la version des justificatifs. Les repères v1, v2… suivent les correctifs appliqués ; les autres éditions manuelles restent dans le registre courant. Les revues et exports antérieurs ne sont pas réécrits. Le changement invite à réexaminer les analyses concernées, sans les valider automatiquement.
+
+Si les faits de départ, une preuve ou une dépendance ont changé, l’application est bloquée. **Reprendre le correctif** permet de relire puis d’adopter explicitement l’état actuel avant de le préparer à nouveau. **Abandonner sans appliquer** conserve le motif et laisse les faits inchangés. Une dépendance abandonnée n’est pas considérée comme réalisée.
+
+Cette confirmation consigne votre constat. RGPDESK ne vérifie pas les réglages de vos systèmes ni la véracité d’une pièce. Le coffre garde les références, pas les fichiers originaux ; les justificatifs internes ne sont pas ajoutés automatiquement au dossier partagé. Téléchargez ensuite une sauvegarde chiffrée.
+
 ## 7. Préparer un dossier à partager
 
 Un partage est un **ZIP en clair** construit à partir de rubriques autorisées. Il n’ouvre pas l’accès au coffre. Il n’est envoyé à personne par RGPDESK : vous téléchargez le fichier, puis choisissez vous-même un moyen de transmission adapté.
