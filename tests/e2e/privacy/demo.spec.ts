@@ -41,7 +41,7 @@ test("practice does not write browser storage or change an existing encrypted va
   expect(calls).toEqual([]);
   await nav(page, "Ouvrir le coffre 1"); await page.getByLabel("Phrase secrète du coffre", { exact: true }).fill(phrase); await nav(page, "Déverrouiller");
   await expect(page.getByRole("heading", { name: "Existing fictitious organization", exact: true })).toBeVisible();
-  await nav(page, "Registre"); await expect(page.locator(".activity-records li")).toHaveCount(0);
+  await nav(page, "Registre"); await expect(page.locator(".activity-records > li")).toHaveCount(0);
 });
 
 test("guided practice exposes populated register, flows, PIA history and every panel without overflow", async ({ page }, testInfo) => {
@@ -51,7 +51,7 @@ test("guided practice exposes populated register, flows, PIA history and every p
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `overview ${width}`).toBe(true);
     if (width === 1440 || width === 390) await page.screenshot({ path: testInfo.outputPath(`demo-overview-${width}.png`), fullPage: true });
   }
-  await nav(page, "Commencer par le registre"); await expect(page.locator(".activity-records li")).toHaveCount(4);
+  await nav(page, "Commencer par le registre"); await expect(page.locator(".activity-records > li")).toHaveCount(4);
   await page.getByRole("complementary", { name: "Repère de démonstration", exact: true }).getByRole("button", { name: "Continuer : Suivre les données", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Votre carte des flux.", exact: true })).toBeVisible();
   await nav(page, "AIPD / PIA"); await nav(page, "Lire l’AIPD d’exemple");
@@ -86,6 +86,8 @@ test("practice delivers a verified fictional ZIP then a real encrypted restorabl
   await ready(page); const before = await stored(page); await demo(page); await nav(page, "Partager un dossier");
   await nav(page, "Charger la sélection d’exemple"); await nav(page, "Prévisualiser le dossier");
   await expect(page.getByRole("table")).toContainText("DÉMONSTRATION FICTIVE");
+  const previewProgress = await page.locator(".report-preview .document-progress .dp-total, .report-preview .document-progress .dp-row-title, .report-preview .document-progress .dp-point").allTextContents();
+  expect(previewProgress.length).toBeGreaterThan(3);
   await expect(page.getByRole("table")).not.toContainText("NOTE INTERNE");
   await expect(page.getByRole("button", { name: "Confirmer et télécharger le dossier", exact: true })).toBeDisabled();
   await page.getByLabel("J’ai relu ce contenu en clair").check();
@@ -99,6 +101,7 @@ test("practice delivers a verified fictional ZIP then a real encrypted restorabl
   report.on("request", (request) => reportRequests.push(request.url()));
   try {
     await report.setContent(await zip.file("report.html")!.async("string"));
+    expect(await report.locator(".document-progress .dp-total, .document-progress .dp-row-title, .document-progress .dp-point").allTextContents()).toEqual(previewProgress);
     await expect(report.getByRole("heading", { level: 1 })).toContainText("Maison Sillage");
     await expect(report.locator(".activity")).toHaveCount(3);
     await expect(report.locator("script, iframe, img, link")).toHaveCount(0);
@@ -135,7 +138,7 @@ test("the volatile demonstration remains usable when IndexedDB is unavailable", 
   await page.goto("/app/privacy/");
   await expect(page.getByText("La liste des coffres n’a pas pu être lue.", { exact: false })).toBeVisible();
   await demo(page); await nav(page, "Registre");
-  await expect(page.locator(".activity-records li")).toHaveCount(4);
+  await expect(page.locator(".activity-records > li")).toHaveCount(4);
   await nav(page, "Quitter la démo");
   await expect(page.getByRole("button", { name: "Créer le coffre chiffré", exact: true })).toBeDisabled();
 });

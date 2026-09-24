@@ -1,4 +1,5 @@
 export * from "./model";
+export * from "./register-progress.js";
 export * from "./linked-facts";
 export * from "./workbench";
 export * from "./commands";

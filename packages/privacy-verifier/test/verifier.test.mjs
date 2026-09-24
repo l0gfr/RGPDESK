@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import JSZip from "jszip";
 import { packageFiles, zipFiles, verifyPackage, verifyFiles, sha256 } from "../src/index.js";
-import { canonicalJson, renderShareFiles, renderLegacyShareFiles } from "../../privacy-core/src/share-format.js";
+import { canonicalJson, renderShareFiles, renderFolioShareFiles, renderLegacyShareFiles } from "../../privacy-core/src/share-format.js";
 const uid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const u = () => ({ state: "unknown" });
 function fixture() {
@@ -103,7 +103,7 @@ test("visual report is passive, CSP-pinned, compact and preserves every reviewed
   register.activities[0].recipients = { state: "documented", value: '"/><img src="https://example.invalid/private">' };
   const { files } = await packageFiles(register);
   const html = files["report.html"];
-  assert.ok(html.includes('content="rgpdesk-register-folio-1"'));
+  assert.ok(html.includes('content="rgpdesk-register-folio-2"'));
   assert.ok(html.includes('class="relationship"'));
   assert.ok(html.includes('class="unknown">Non renseigné'));
   assert.ok(html.includes('&lt;svg onload='));
@@ -125,10 +125,10 @@ test("visual report is passive, CSP-pinned, compact and preserves every reviewed
 });
 
 test("historical report rendering remains verifiable but both renderings reject even rehashed edits", async () => {
-  for (const legacy of [true, false]) {
+  for (const renderer of [renderShareFiles,renderFolioShareFiles,renderLegacyShareFiles]) {
     const register = fixture();
     const { files } = await packageFiles(register);
-    if (legacy) files["report.html"] = renderLegacyShareFiles(register)["report.html"];
+    files["report.html"] = renderer(register)["report.html"];
     await rehash(files);
     assert.equal((await verifyPackage(await zipFiles(files))).valid, true);
     files["report.html"] = files["report.html"].replace("Infolettre fictive", "Different declared activity");
@@ -162,4 +162,19 @@ test("v2 presentation is canonical, passive, bounded and cannot use the legacy r
  const changed={...files,"report.html":renderLegacyShareFiles(dto)["report.html"]};
  const body=JSON.parse(changed["manifest.json"]); for(const entry of body.files){entry.bytes=Buffer.byteLength(changed[entry.name]);entry.sha256=await sha256(new TextEncoder().encode(changed[entry.name]));} delete body.sha256; changed["manifest.json"]=canonicalJson({...body,sha256:await sha256(new TextEncoder().encode(canonicalJson(body)))})+"\n";
  assert.equal((await verifyPackage(await zipFiles(changed))).valid,false);
+});
+
+test("historical v2 folios remain exact and rehashed changes to their progress or text fail",async()=>{
+ const dto={...fixture(),format:"rgpd-share-v2",flows:[],positions:[],nextSteps:[]};
+ for(const renderer of [renderShareFiles,renderFolioShareFiles]){
+  const {files}=await packageFiles(dto);files["report.html"]=renderer(dto)["report.html"];await rehash(files);assert.equal((await verifyPackage(await zipFiles(files))).valid,true);
+  files["report.html"]=files["report.html"].replace("Infolettre fictive","Fausse activité");await rehash(files);assert.equal((await verifyPackage(await zipFiles(files))).valid,false);
+ }
+});
+test("progress describes only selected factual fields, not withheld legal bases or nonselected material",async()=>{
+ const dto=fixture();dto.activities[0].dataSubjects={state:"documented",value:"Fictif"};
+ const {files}=await packageFiles(dto);const html=files["report.html"];
+ assert.match(html,/Avancement documentaire/);assert.match(html,/Renseigné · 1\/1/);assert.match(html,/Aucun score de conformité/);
+ assert.ok(!html.includes("Fondement juridique déclaré"));assert.ok(html.includes('href="#activity-1"'));
+ files["report.html"]=html.replace("Renseigné · 1/1","Renseigné · 0/1");await rehash(files);assert.equal((await verifyPackage(await zipFiles(files))).valid,false);
 });

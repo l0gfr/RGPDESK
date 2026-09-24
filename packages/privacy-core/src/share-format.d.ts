@@ -11,3 +11,5 @@ export function shareRows(value: SharedRegister): string[][];
 export function renderShareFiles(value: SharedRegister): Record<string, string>;
 
 export function renderLegacyShareFiles(value: SharedRegister): Record<string, string>;
+
+export function renderFolioShareFiles(value: SharedRegister): Record<string, string>;

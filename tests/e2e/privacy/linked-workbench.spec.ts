@@ -3,7 +3,7 @@ test("reference case, linked map, precise citation and four readings remain usab
  await page.goto("/app/privacy/"); await page.getByRole("button",{name:"Explorer la démo",exact:true}).click();
  await page.getByText("Dix situations métier à explorer",{exact:true}).click();
  await page.getByRole("combobox",{name:"Choisir un cas de référence",exact:true}).selectOption("paie"); await page.getByRole("button",{name:"Ouvrir ce cas fictif",exact:true}).click();
- await expect(page.locator(".activity-records li")).toHaveCount(1);
+ await expect(page.locator(".activity-records > li")).toHaveCount(1);
  await page.getByRole("button",{name:"Analyse",exact:true}).click();
  const lenses=page.getByRole("navigation",{name:"Quatre lectures du même inventaire"}); await expect(lenses.getByRole("button")).toHaveCount(4);
  for(const width of [1440,390,320]) {await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}

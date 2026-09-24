@@ -1,3 +1,4 @@
+import { progressReport, PROGRESS_STYLE } from "./share-progress.js";
 import { visualRegisterReport } from "./share-report.js";
 import { executivePage, presentationSections } from "./share-presentation.js";
 import validateV2 from "./generated/share-v2-validator.js";
@@ -77,7 +78,7 @@ export function renderLegacyShareFiles(register) {
     "README.txt": "RGPDESK / rgpd-share-v1\n" + SHARE_LIMITATION + "\nFichiers en clair. Conservez-les et transmettez-les selon le périmètre examiné. Les identifiants ne permettent pas de retrouver ceux du coffre. Le CSV neutralise les préfixes de formules ; ne retirez pas leur apostrophe de protection.\nCatalogue proposé sans revue juridique humaine. Ce dossier ne remplace pas une analyse juridique.\n" };
 }
 
-export function renderShareFiles(register) {
+export function renderFolioShareFiles(register) {
   const files = renderLegacyShareFiles(register);
   files["report.html"] = visualRegisterReport(register, shareRows(register), PROFILE_LABELS, COVERAGE_LABELS, SHARE_LIMITATION);
   if (register.format === "rgpd-share-v2") {
@@ -87,5 +88,16 @@ export function renderShareFiles(register) {
     files["report.html"] = files["report.html"].replace(marker, presentationSections(register) + marker);
     files["README.txt"] = files["README.txt"].replace("rgpd-share-v1", "rgpd-share-v2") + "Les flux, positions et suites présents ont été sélectionnés par le rédacteur. Aucune exhaustivité ni validation juridique n’est déduite. Les autres analyses restent dans le coffre.\n";
   }
+  return files;
+}
+
+// Folio 2 changes presentation only. The selected data/CSV and earlier canonical renderers stay intact.
+export function renderShareFiles(register) {
+  const files = renderFolioShareFiles(register);
+  files["report.html"] = files["report.html"]
+    .replace('content="rgpdesk-register-folio-1"', 'content="rgpdesk-register-folio-2"')
+    .replace("sha256-29o/YjQLDEkZy4/MorWlUHpMT5ET5ISSLk2zCx8xCtU=", "sha256-Q+RijQHsnWsmbOKIDSbYRLCq0zTYrIDhzvAzpkyQHL4=")
+    .replace('</style>', PROGRESS_STYLE + '</style>')
+    .replace('<section class="summary" aria-labelledby="summary-title">', () => progressReport(register) + '<section class="summary" aria-labelledby="summary-title">');
   return files;
 }

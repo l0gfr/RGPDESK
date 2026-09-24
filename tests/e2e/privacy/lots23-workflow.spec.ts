@@ -67,7 +67,7 @@ test("CSV encoding errors and cancellation do not add any records", async ({ pag
   await expect(page.getByRole("alert")).toContainText("CSV refusé"); await page.getByLabel("Encodage", { exact: true }).selectOption("windows-1252");
   await page.getByLabel("Fichier CSV", { exact: true }).setInputFiles({ name: "cp1252.csv", mimeType: "text/csv", buffer: Buffer.from("Nom;Rôle\nÉquipe;controller", "latin1") });
   await page.getByLabel("Associer Nom", { exact: true }).selectOption("title"); await page.getByLabel("Associer Rôle", { exact: true }).selectOption("role"); await expect(page.getByRole("table")).toContainText("Équipe");
-  await page.getByRole("button", { name: "Annuler l’import", exact: true }).click(); await navigate(page, "Registre"); await expect(page.locator(".activity-records li")).toHaveCount(0);
+  await page.getByRole("button", { name: "Annuler l’import", exact: true }).click(); await navigate(page, "Registre"); await expect(page.locator(".activity-records > li")).toHaveCount(0);
 });
 
 test("a change from another tab invalidates the already reviewed delivery", async ({ page, context }) => {

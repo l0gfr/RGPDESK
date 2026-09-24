@@ -13,11 +13,12 @@ try {
   const navStyle = await readFile("apps/web/src/features/privacy/assets/demo-report-navigation.css", "utf8");
   for (const report of await buildDemoReports()) {
     if (!["registre","sous-traitance","aipd"].includes(report.slug)) throw new Error("Unexpected demo route");
-    const { body } = demoReportParts(report.html);
+    const { body, style } = demoReportParts(report.html);
     // Astro expressions must never enter generated literal markup.
     if (/[{}]/.test(body) || /[<>&"{}]/.test(report.title)) throw new Error("Unexpected fictional markup");
     const folder = join("apps/web/src/pages/app/privacy/demo",report.slug);
     const type = report.slug === "aipd" ? "pia" : "register";
+    await writeFile(`apps/web/src/features/privacy/assets/demo-report-${type}.css`,style);
     const root = "../../../../../features/privacy/assets/";
     const nav = [["registre","Registre responsable"],["sous-traitance","Sous-traitance"],["aipd","AIPD"]].map(([slug,title]) => `<a${slug===report.slug?' aria-current="page"':""} href="/app/privacy/demo/${slug}/">${title}</a>`).join("");
     const page = `---

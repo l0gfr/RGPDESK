@@ -451,3 +451,11 @@
   .rgpdesk .business-questions > li { break-inside:avoid; }
   .rgpdesk .business-chapter { break-inside:auto; }
 }
+
+/* Register facts use the full card width; controls never squeeze the visual repères. */
+.rgpdesk .activity-records > .progress-record { display:grid; grid-template-columns:auto minmax(0,1fr); align-items:start; gap:14px; padding:24px; margin:16px 0; border:1px solid #b8c8d3; border-radius:3px 20px 3px 3px; background:linear-gradient(115deg,#f8fafb,#eaf0f4); }
+.rgpdesk .progress-record-actions { grid-column:1/-1; display:flex; flex-wrap:wrap; gap:10px; }
+.rgpdesk .progress-record-details { grid-column:1/-1; min-width:0; }
+.rgpdesk .activity-records .document-progress .dp-point { display:flex; align-items:start; gap:9px; margin:0; }
+.rgpdesk .activity-records .document-progress .dp-point strong { font:600 14px/1.5 system-ui,sans-serif; }
+@media(max-width:650px){.rgpdesk .activity-records > .progress-record{padding:16px}.rgpdesk .activity-records .document-progress .dp-point{flex-direction:column}.rgpdesk .progress-record-actions>button{white-space:normal;overflow-wrap:anywhere;max-width:100%}}

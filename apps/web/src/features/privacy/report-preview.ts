@@ -1,4 +1,4 @@
-import { assertShare, shareRows, PROFILE_LABELS, COVERAGE_LABELS, SHARE_LIMITATION, type SharedRegister, type Knowledge } from "@rgpdesk/privacy-core";
+import { registerProgress, PROGRESS_STATES, PROGRESS_NOTE, assertShare, shareRows, PROFILE_LABELS, COVERAGE_LABELS, SHARE_LIMITATION, type SharedRegister, type Knowledge } from "@rgpdesk/privacy-core";
 
 type Child = Node | string;
 // This renderer accepts only the public, validated projection. Variable values
@@ -36,12 +36,20 @@ export function reportBody(register: SharedRegister): HTMLBodyElement {
   const body = el('body') as HTMLBodyElement;
   body.append(el('header', {class:'cover'}, el('div',{class:'brand'},icon('brand'),el('span',{class:'eyebrow'},'RGPDESK / Registre documentaire')),el('h1',{},register.organization.name),p(PROFILE_LABELS[register.profile],'subtitle'),el('div',{class:'cover-meta'},el('span',{},el('strong',{},'À l’attention de'),register.recipient),el('span',{},el('strong',{},'Date de préparation déclarée'),register.createdAt.slice(0,10)))));
   const main = el('main'); body.append(main);
+  const progress = registerProgress(register.activities);
+  const advancement = el('section',{class:'document-progress','aria-label':'Avancement documentaire'}, p('Les faits du registre','dp-kicker'),el('h2',{},'Où en est la documentation ?'),p(`${progress.rows.length} activités sélectionnées · lecture limitée au contenu de ce rapport.`,'dp-subtitle'));
+  if(progress.rows.length){
+    advancement.append(el('div',{class:'dp-totals'},...Object.entries(PROGRESS_STATES).map(([state,info])=>el('div',{class:`dp-total dp-${state}`},el('span',{class:'dp-symbol','aria-hidden':'true'},info.symbol),el('strong',{},String(progress.counts[state as keyof typeof progress.counts])),el('span',{},info.plural)))));
+    advancement.append(el('div',{class:'dp-rows'},...progress.rows.map((row,i)=>el('div',{class:'dp-row'},el('a',{class:'dp-row-title',href:`#activity-${i+1}`},`${String(i+1).padStart(2,'0')} / ${row.title}`),el('ul',{class:'dp-points'},...row.checkpoints.map(point=>el('li',{class:`dp-point dp-${point.state}`},el('span',{class:'dp-symbol','aria-hidden':'true'},PROGRESS_STATES[point.state].symbol),el('div',{},el('strong',{},point.label),el('small',{},`${PROGRESS_STATES[point.state].label} · ${point.documented}/${point.total}`)))))))));
+  } else advancement.append(p('Aucune activité sélectionnée : aucun avancement à afficher.','dp-subtitle'));
+  advancement.append(p(PROGRESS_NOTE,'dp-note'));
   const activity = (id:string|null)=>id===null?'Ensemble du périmètre':register.activities.find(a=>a.id===id)!.title;
   if(register.executive){
     const steps=register.nextSteps??[];
     const brief=(s:string)=>Array.from(s).length>180?Array.from(s).slice(0,180).join('')+'…':s;
     main.append(el('section',{class:'summary','aria-label':'Synthèse direction'},p('L’essentiel pour la direction','eyebrow'),el('h2',{},'Comprendre. Arbitrer. Agir.'),p(`Synthèse rédigée et sélectionnée pour ${register.recipient}. Les réserves du dossier restent applicables.`,'quiet'),el('dl',{class:'facts'},pair('01 / Ce qui change',register.executive.changes),pair('02 / Arbitrages demandés',register.executive.arbitrations)),el('h3',{},'03 / Prochaines actions'),steps.length?el('ul',{class:'index'},...steps.slice(0,3).map(a=>el('li',{},el('div',{},el('h3',{},brief(a.task)),p(`${a.owner||'Responsable à affecter'} · ${a.due||'Échéance à fixer'}`))))):p('Aucune action sélectionnée pour cette restitution.'),...(steps.length>3?[p(`Les ${steps.length-3} autres actions choisies figurent dans les suites détaillées.`)]:[]),p('Les intitulés longs sont abrégés ici ; les suites détaillées en conservent le texte complet. Ce résumé ne constitue pas une validation juridique. Retrouvez ensuite le périmètre, les réserves, les flux choisis et les fiches.','quiet')));
   }
+  main.append(advancement);
   main.append(el('section',{class:'summary','aria-labelledby':'summary-title'},el('div',{class:'summary-head'},el('div',{},p('01 / Vue d’ensemble','eyebrow'),el('h2',{id:'summary-title'},'Le périmètre, en un regard.')),el('span',{class:'count'},String(register.activities.length),el('small',{},'activités sélectionnées'))),el('div',{class:'scope'},el('strong',{},'Périmètre communiqué'),p(register.scope,'pre')),p(COVERAGE_LABELS[register.coverage],'coverage'),el('ol',{class:'index'},...register.activities.map((a,i)=>el('li',{},el('span',{class:'number'},String(i+1).padStart(2,'0')),el('div',{},el('a',{href:`#activity-${i+1}`},a.title),el('small',{},role(a)))))),el('aside',{class:'reservations'},el('h3',{},'Réserves à prendre en compte'),register.reservations.length?el('ol',{},...register.reservations.map(r=>el('li',{class:'pre'},r))):p('Aucune réserve ajoutée par le rédacteur. Cela ne vaut pas validation des informations.','quiet')),p('Ce dossier présente les activités choisies, puis leurs déclarations détaillées. Il ne constitue ni un avis juridique ni une évaluation de la conformité. Les absences d’information restent signalées.','quiet')));
   if(register.format==='rgpd-share-v2'){
     const positions=register.positions??[],steps=register.nextSteps??[],flows=register.flows??[];
