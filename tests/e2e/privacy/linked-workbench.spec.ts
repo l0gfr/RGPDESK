@@ -34,7 +34,7 @@ test("graphical sharing is opt-in, reviewed and bounded to selected flows",async
  await page.getByRole("button",{name:"Charger la sélection d’exemple",exact:true}).click();
  await page.getByText("Ajouter une synthèse direction et des flux choisis",{exact:true}).click();
  const choices=page.getByRole("group",{name:"Flux à communiquer (60 maximum)",exact:true}); await expect(choices.getByRole("checkbox").first()).not.toBeChecked(); await choices.getByRole("checkbox").first().check();
- await page.getByRole("button",{name:"Prévisualiser le dossier",exact:true}).click(); await expect(page.getByRole("table",{name:"Contenu exact à partager"})).toContainText("Flux sélectionnés / 1");
+ await page.getByRole("button",{name:"Prévisualiser le dossier",exact:true}).click(); await page.getByText("Examiner tous les champs du dossier",{exact:true}).click(); await expect(page.getByRole("table",{name:"Contenu exact à partager"})).toContainText("Flux sélectionnés / 1");
  await expect(page.getByRole("table",{name:"Contenu exact à partager"})).not.toContainText("Flux sélectionnés / 2");
  await expect(page.getByRole("button",{name:"Confirmer et télécharger le dossier",exact:true})).toBeDisabled();
 });

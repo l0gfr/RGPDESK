@@ -47,7 +47,7 @@ jobs:
           PLAYWRIGHT_SKIP_WEBSERVER: "1"
           PLAYWRIGHT_RGPD_RELEASE: "1"
         run: |
-          python3 -m http.server 4321 --bind 127.0.0.1 --directory artifacts/rgpdesk/site > /tmp/rgpdesk-preview.log 2>&1 &
+          python3 -m http.server 4321 --bind 127.0.0.1 --protocol HTTP/1.1 --directory artifacts/rgpdesk/site > /tmp/rgpdesk-preview.log 2>&1 &
           preview_pid=$!
           trap 'kill "$preview_pid" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 30); do

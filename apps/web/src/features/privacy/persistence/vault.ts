@@ -1,3 +1,5 @@
+import { parseRecovery, type RecoveryDraft, type RecoveryReceipt } from "./recovery";
+import { sealRecovery, openRecovery } from "./crypto";
 import { verifyFiles } from "@rgpdesk/privacy-verifier";
 import Dexie, { liveQuery, type Table } from "dexie";
 import { assertWorkspace, parseWorkspace, reviseWorkspace, canonicalJson, PrivacyError, type PrivacyEnvelope, type Workspace, type SharedRegister, type DeliveryRecord } from "@rgpdesk/privacy-core";
@@ -7,6 +9,7 @@ export const PRIVACY_DB_NAME = "rgpdesk-vault-v1";
 export const PRIVACY_CHANNEL = "rgpdesk-vault-events-v1";
 interface StoredWorkspace { id: string; revision: number; format: "rgpd-envelope-v1"; envelope: PrivacyEnvelope }
 interface StoredSnapshot { workspaceId: string; id: string; revision: number; envelope: PrivacyEnvelope }
+interface StoredDraft {workspaceId:string;id:string;revision:number;sequence:number;envelope:PrivacyEnvelope}
 interface Metadata { key: string; value: string }
 export interface VaultSession { epoch: string; signal: AbortSignal }
 export interface VaultItem { id: string; revision: number }
@@ -16,6 +19,7 @@ export function checkSession(session: VaultSession): void {
 }
 
 export class PrivacyVault extends Dexie {
+  private drafts!:Table<StoredDraft,[string,string]>;
   private snapshots!: Table<StoredSnapshot, [string, string]>;
   private records!: Table<StoredWorkspace, string>;
   private metadata!: Table<Metadata, string>;
@@ -24,6 +28,7 @@ export class PrivacyVault extends Dexie {
     super(PRIVACY_DB_NAME);
     this.version(1).stores({ records: "id", metadata: "key" });
     this.version(2).stores({ records: "id", metadata: "key", snapshots: "[workspaceId+id], workspaceId" });
+    this.version(3).stores({ records: "id", metadata: "key", snapshots: "[workspaceId+id], workspaceId", drafts:"[workspaceId+id], workspaceId" });
   }
 
   async initialize(): Promise<string> {
@@ -78,7 +83,7 @@ export class PrivacyVault extends Dexie {
     return master;
   }
 
-  private async commit(master: Workspace, phrase: string, expectedRevision: number | null, session: VaultSession, snapshots: DeliverySnapshot[] = []): Promise<void> {
+  private async commit(master: Workspace, phrase: string, expectedRevision: number | null, session: VaultSession, snapshots: DeliverySnapshot[] = [], draftReceipt?:RecoveryReceipt): Promise<void> {
     checkSession(session);
     assertWorkspace(master);
     // Snapshot the caller's document before asynchronous crypto can yield.
@@ -99,7 +104,7 @@ export class PrivacyVault extends Dexie {
     checkSession(session);
     let detach = () => {};
     try {
-      await this.transaction("rw", this.records, this.metadata, this.snapshots, async () => {
+      await this.transaction("rw", this.records, this.metadata, this.snapshots, this.drafts, async () => {
         const transaction = Dexie.currentTransaction!;
         const cancel = () => transaction.abort();
         session.signal.addEventListener("abort", cancel, { once: true });
@@ -109,6 +114,7 @@ export class PrivacyVault extends Dexie {
         if (expectedRevision === null ? Boolean(current) : current?.revision !== expectedRevision) {
           throw new PrivacyError(expectedRevision === null ? "COLLISION" : "CONFLICT");
         }
+        if(draftReceipt){const d=await this.drafts.get([master.id,draftReceipt.id]);if(d?.sequence!==draftReceipt.sequence)throw new PrivacyError("CONFLICT");await this.drafts.delete([master.id,draftReceipt.id]);}
         const existing = await this.snapshots.where("workspaceId").equals(master.id).toArray();
         const all = [...existing, ...newSnapshots];
         if (new Set(all.map((s) => s.id)).size !== all.length || all.length !== master.deliveries.length
@@ -126,8 +132,8 @@ export class PrivacyVault extends Dexie {
     await this.commit(master, phrase, null, session);
   }
 
-  async save(master: Workspace, phrase: string, expectedRevision: number, session: VaultSession): Promise<void> {
-    await this.commit(master, phrase, expectedRevision, session);
+  async save(master: Workspace, phrase: string, expectedRevision: number, session: VaultSession, draftReceipt?:RecoveryReceipt): Promise<void> {
+    await this.commit(master, phrase, expectedRevision, session, [], draftReceipt);
   }
 
   async backup(master: Workspace, phrase: string, session: VaultSession): Promise<string> {
@@ -184,10 +190,68 @@ export class PrivacyVault extends Dexie {
     return snapshot.files;
   }
 
+  async saveDraft(value: RecoveryDraft, phrase: string, expectedSequence: number | null, session: VaultSession): Promise<void> {
+    checkSession(session);
+    const draft = parseRecovery(value);
+    if (draft.sequence !== (expectedSequence ?? 0) + 1) throw new PrivacyError("CONFLICT");
+    await this.assertCurrent(draft.workspaceId, draft.revision, session);
+    const envelope = await sealRecovery(draft, phrase);
+    await openRecovery(envelope, phrase, draft.workspaceId, draft.revision, draft.id, draft.sequence);
+    checkSession(session);
+    let detach = () => {};
+    try {
+      await this.transaction("rw", this.records, this.metadata, this.drafts, async () => {
+        const transaction = Dexie.currentTransaction!;
+        const cancel = () => transaction.abort();
+        session.signal.addEventListener("abort", cancel, { once: true });
+        detach = () => session.signal.removeEventListener("abort", cancel);
+        await this.assertEpoch(session);
+        if ((await this.records.get(draft.workspaceId))?.revision !== draft.revision) throw new PrivacyError("CONFLICT");
+        const previous = await this.drafts.get([draft.workspaceId, draft.id]);
+        if (expectedSequence === null ? !!previous : previous?.sequence !== expectedSequence) throw new PrivacyError("CONFLICT");
+        if (!previous && await this.drafts.where("workspaceId").equals(draft.workspaceId).count() >= 10) throw new PrivacyError("LIMIT");
+        checkSession(session);
+        await this.drafts.put({ workspaceId: draft.workspaceId, id: draft.id, revision: draft.revision, sequence: draft.sequence, envelope });
+        checkSession(session);
+      });
+    } finally { detach(); }
+  }
+
+  async readDrafts(master: Workspace, phrase: string, session: VaultSession): Promise<RecoveryDraft[]> {
+    await this.assertCurrent(master.id, master.revision, session);
+    const rows = await this.drafts.where("workspaceId").equals(master.id).limit(11).toArray();
+    if (rows.length > 10) throw new PrivacyError("LIMIT");
+    const result: RecoveryDraft[] = [];
+    for (const row of rows) {
+      checkSession(session);
+      result.push(await openRecovery(row.envelope, phrase, master.id, row.revision, row.id, row.sequence));
+    }
+    await this.assertCurrent(master.id, master.revision, session);
+    return result;
+  }
+
+  async discardDraft(workspaceId: string, receipt: RecoveryReceipt, session: VaultSession): Promise<void> {
+    let detach = () => {};
+    try {
+      await this.transaction("rw", this.metadata, this.drafts, async () => {
+        const transaction = Dexie.currentTransaction!;
+        const cancel = () => transaction.abort();
+        session.signal.addEventListener("abort", cancel, { once: true });
+        detach = () => session.signal.removeEventListener("abort", cancel);
+        await this.assertEpoch(session);
+        const draft = await this.drafts.get([workspaceId, receipt.id]);
+        if (draft?.sequence !== receipt.sequence) throw new PrivacyError("CONFLICT");
+        checkSession(session);
+        await this.drafts.delete([workspaceId, receipt.id]);
+        checkSession(session);
+      });
+    } finally { detach(); }
+  }
   async wipe(expectedEpoch: string): Promise<void> {
     const epoch = crypto.randomUUID();
-    await this.transaction("rw", this.records, this.metadata, this.snapshots, async () => {
+    await this.transaction("rw", this.records, this.metadata, this.snapshots, this.drafts, async () => {
       if ((await this.metadata.get("epoch"))?.value !== expectedEpoch) throw new PrivacyError("EPOCH");
+      await this.drafts.clear();
       await this.records.clear();
       await this.snapshots.clear();
       await this.metadata.put({ key: "epoch", value: epoch });

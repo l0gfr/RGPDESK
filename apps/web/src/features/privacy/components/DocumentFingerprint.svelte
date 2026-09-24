@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import type { EvidenceReference, DocumentFingerprint } from "@rgpdesk/privacy-core";
+  import { matchingReferences, type EvidenceReference, type DocumentFingerprint } from "@rgpdesk/privacy-core";
   import { fingerprintDocument, FingerprintError } from "../document-fingerprint";
   import Icon from "./Icon.svelte";
-  let { draft = $bindable(), recordedVersion }: { draft: EvidenceReference; recordedVersion: string | null } = $props();
+  let { draft = $bindable(), recordedVersion, documents, onReuse }: { draft: EvidenceReference; recordedVersion: string | null; documents: EvidenceReference[]; onReuse:(doc:EvidenceReference)=>void } = $props();
   let calculating = $state(false), message = $state(""), replacement = $state(false);
   let candidate = $state<DocumentFingerprint | null>(null);
   let controller: AbortController | undefined;
   const same = $derived(!!candidate && !!draft.fingerprint && candidate.sha256 === draft.fingerprint.sha256 && candidate.bytes === draft.fingerprint.bytes);
+  const matches=$derived(candidate?matchingReferences(documents,candidate,draft.id):[]);
   const canAdopt = $derived(!!candidate && candidate.version === draft.version && (recordedVersion === null || (candidate.version !== recordedVersion && replacement)));
   function cancel() { controller?.abort(); controller = undefined; calculating = false; candidate = null; replacement = false; }
   onDestroy(cancel);
@@ -43,6 +44,7 @@
   {#if !draft.version.trim()}<p class="help">Renseignez d’abord la version déclarée, plus haut dans la référence.</p>{/if}
   {#if calculating}<div class="actions"><p role="status">Calcul local en cours…</p><button type="button" class="secondary" onclick={cancel}>Annuler le calcul</button></div>{/if}
   {#if candidate}
+    {#if matches.length}<aside class="notice"><strong>Cette pièce est déjà référencée dans ce coffre.</strong><p>Mêmes octets, références à examiner avant réutilisation. Vous pourrez compléter leurs liens vers les activités et les arguments.</p>{#each matches as match}<div class="actions"><span>{match.documentCode} · {match.title} · version {match.fingerprint?.version}</span><button type="button" class="secondary" onclick={()=>onReuse(match)}>Réutiliser {match.title}</button></div>{/each}</aside>{/if}
     <div class="comparison" role="status"><Icon name={same ? "check" : "documents"} /><div><strong>{draft.fingerprint ? (same ? "Le fichier correspond à l’empreinte conservée." : "Le fichier est différent de la version conservée.") : "Empreinte calculée, à conserver si vous le souhaitez."}</strong><p>Version déclarée au calcul : {candidate.version} · {candidate.bytes.toLocaleString("fr-FR")} octets</p><code>{candidate.sha256}</code></div></div>
     {#if candidate.version !== draft.version}<p class="help">La version a changé pendant cette saisie. Sélectionnez à nouveau le fichier pour l’associer à cette version.</p>{:else if draft.fingerprint && candidate.version === recordedVersion}<p class="help">L’empreinte de référence reste inchangée. Pour référencer une nouvelle version, donnez-lui une version distincte puis sélectionnez son fichier.</p>{/if}
     {#if recordedVersion !== null && candidate.version !== recordedVersion && candidate.version === draft.version}<label class="check"><input type="checkbox" bind:checked={replacement} />Je remplace l’empreinte de référence pour cette nouvelle version déclarée. Je conserve séparément les originaux nécessaires.</label>{/if}

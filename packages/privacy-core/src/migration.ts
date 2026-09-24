@@ -1,3 +1,4 @@
+import validateV7 from "./generated/master-v7-validator.js";
 import validateV6 from "./generated/master-v6-validator.js";
 import validateV5 from "./generated/master-v5-validator.js";
 import validateV4 from "./generated/master-v4-validator.js";
@@ -39,6 +40,10 @@ export function migrateWorkspace(value: unknown): Workspace {
   if (value && typeof value === "object" && "format" in value && value.format === "rgpd-master-v6") {
     if (!validateV6(value)) throw new PrivacyError("INVALID");
     value = { ...value, format: "rgpd-master-v7" };
+  }
+  if (value && typeof value === "object" && "format" in value && value.format === "rgpd-master-v7") {
+    if (!validateV7(value)) throw new PrivacyError("INVALID");
+    value = { ...value, format: "rgpd-master-v8" };
   }
   assertWorkspace(value);
   return value;

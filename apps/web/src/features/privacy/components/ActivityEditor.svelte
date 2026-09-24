@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { RecoveryForm } from "../persistence/recovery";
   import { onMount, tick, untrack } from "svelte";
   import { canonicalJson, createPurpose, knowledgeText, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { fieldHints, type StartingPoint } from "../guidance";
@@ -54,6 +55,8 @@
       if (draft.role === "processor") draft.controllerIds = checked ? [...draft.controllerIds, id] : draft.controllerIds.filter((item) => item !== id);
     } else draft[field] = checked ? [...draft[field], id] : draft[field].filter((item) => item !== id);
   }
+  export function getRecovery():RecoveryForm|null{return hasUnsavedChanges()?{kind:'activity',draft:$state.snapshot(draft),documentIds:$state.snapshot(documentIds),section,step}:null;}
+  export function restoreRecovery(f:RecoveryForm){if(f.kind!=='activity')return;draft=structuredClone(f.draft);documentIds=[...f.documentIds];section=f.section;step=Math.min(5,f.step);}
 </script>
 
 <section class="panel guided-editor" aria-labelledby="activity-editor-title">

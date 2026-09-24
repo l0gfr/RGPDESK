@@ -1,8 +1,9 @@
+import { assertCollections } from "./collections";
 import { assertWorkbench } from "./workbench";
 import { assertLinkedFacts } from "./linked-facts";
 import { assertDpoWorkspace } from "./dpo";
 import { assertPiaWorkspace } from "./pia";
-import validate from "./generated/master-v7-validator.js";
+import validate from "./generated/master-v8-validator.js";
 import { ANALYSIS_QUESTIONS, CONTRACT_QUESTIONS, type ReviewNote, type Workspace } from "./model";
 
 export const MAX_MASTER_BYTES = 2 * 1024 * 1024;
@@ -118,6 +119,7 @@ export function assertWorkspace(value: unknown): asserts value is Workspace {
       || new Set(record.mapping.map((m) => m.field)).size !== record.mapping.length) throw new PrivacyError("INVALID");
   }
   for (const record of master.deliveries) if (record.createdAt > master.updatedAt || record.revision >= master.revision) throw new PrivacyError("INVALID");
+  assertCollections(master, registerId);
   assertLinkedFacts(master);
   assertWorkbench(master);
   assertPiaWorkspace(master, registerId);

@@ -23,7 +23,8 @@ test("search stays offline and volatile, opens the exact activity and clears whe
   await search(page, "recrutement");
   await page.getByRole("combobox", { name: "Dans", exact: true }).selectOption("activity");
   await nav(page, "Ouvrir Recrutement · exemple fictif");
-  await expect(page.getByLabel("Nom de l’activité", { exact: true })).toHaveValue("Recrutement · exemple fictif");
+  await expect(page.getByRole("article", { name: "Lecture de l’activité" }).getByRole("heading", {name:"Recrutement · exemple fictif",exact:true})).toBeVisible();
+  await expect(page.getByRole("article", { name: "Lecture de l’activité" }).locator("input,textarea")).toHaveCount(0);
   await search(page, "fictif");
   for (const button of await page.locator(".search-results button").all()) await expect(button).toBeEnabled();
   await nav(page, "Fermer la recherche");

@@ -60,96 +60,94 @@ test("CSP blocks fetch, XHR, beacon and form submissions before transport", asyn
   expect(transmitted).toBe(0);
 });
 
-test("v11 to v12 removes only access state and preserves encrypted dossier and snapshot bytes", async ({ page: editorPage }) => {
+test("v11 to v12 removes only access state and preserves encrypted dossier and snapshot bytes", async ({ page: editorPage, browser, baseURL }) => {
   await editorPage.goto("/app");
   await expect(editorPage.locator('[data-blackproof-hydrated="true"]')).toBeVisible();
   await editorPage.getByLabel("Phrase secrète du dossier", { exact: true }).fill(passphrase);
   await editorPage.getByLabel("Confirmer la phrase secrète", { exact: true }).fill(passphrase);
   await editorPage.getByRole("button", { name: "Analyser et ouvrir l’éditeur", exact: true }).click();
   await expect(editorPage.getByRole("heading", { name: "Compléter et préparer le dossier." })).toBeVisible();
-  // Fixture setup replaces the database with a historical schema. A navigation
-  // may keep the editor's connection alive in the back-forward cache; close its
-  // page explicitly before replacement, without weakening any migration check.
-  const page = await editorPage.context().newPage();
-  await editorPage.close();
-  // The public home also opens IndexedDB for its resume link. Use an inert page
-  // on the same origin to replace the synthetic schema without a competing app.
-  await page.route("**/__migration-fixture", (route) => route.fulfill({
-    contentType: "text/html", body: "<!doctype html><title>Migration fixture</title>",
-  }));
-  await page.goto("/__migration-fixture");
-  const snapshotPayload = await encryptLocalPayload({ deliveryJson: "synthetic historical snapshot" }, passphrase);
-  const originals = await page.evaluate(async (payload) => {
+  // Export the real encrypted record, then seed the historical schema in a
+  // fresh browser context. Closing a page does not synchronously release every
+  // IndexedDB connection; deleting its database introduced a teardown race.
+  const record = await editorPage.evaluate(async () => {
     const database = await new Promise<IDBDatabase>((resolve, reject) => {
       const request = indexedDB.open("blackproof-local-first");
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
-    const record = await new Promise<Record<string, unknown>>((resolve, reject) => {
-      const request = database.transaction("cases").objectStore("cases").getAll();
-      request.onsuccess = () => resolve(request.result[0]);
-      request.onerror = () => reject(request.error);
-    });
-    database.close();
-    const snapshot = { caseId: record.id, deliveryId: "delivery_" + "b".repeat(32), createdAt: record.createdAt, encrypted: true, payload };
-    await new Promise<void>((resolve, reject) => {
-      const request = indexedDB.deleteDatabase("blackproof-local-first");
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
-      request.onblocked = () => reject(new Error("Old database remained open"));
-    });
-    await new Promise<void>((resolve, reject) => {
-      const request = indexedDB.open("blackproof-local-first", 110);
-      request.onupgradeneeded = () => {
-        const db = request.result;
-        const cases = db.createObjectStore("cases", { keyPath: "id" });
-        for (const key of ["encrypted", "updatedAt", "createdAt"]) cases.createIndex(key, key);
-        const snapshots = db.createObjectStore("deliverySnapshots", { keyPath: ["caseId", "deliveryId"] });
-        for (const key of ["deliveryId", "caseId", "createdAt", "encrypted"]) snapshots.createIndex(key, key);
-        db.createObjectStore("metadata", { keyPath: "key" });
-        db.createObjectStore("entitlements", { keyPath: "key" });
-      };
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        const db = request.result;
-        const tx = db.transaction(["cases", "deliverySnapshots", "metadata", "entitlements"], "readwrite");
-        tx.objectStore("cases").put(record);
-        tx.objectStore("deliverySnapshots").put(snapshot);
-        for (const [key, value] of [["storageEpoch", 17], ["checkoutAttemptV1", "synthetic"], ["accountLogoutPending", "synthetic"]]) {
-          tx.objectStore("metadata").put({ key, value });
-        }
-        tx.objectStore("entitlements").put({ key: "current", token: "synthetic-retired-access" });
-        tx.oncomplete = () => { db.close(); resolve(); };
+    try {
+      return await new Promise<Record<string, unknown>>((resolve, reject) => {
+        const tx = database.transaction("cases"), request = tx.objectStore("cases").getAll();
+        tx.oncomplete = () => resolve(request.result[0]);
         tx.onerror = () => reject(tx.error);
-      };
-    });
-    return { record, snapshot };
-  }, snapshotPayload);
-  await page.goto("/app/cases");
-  await expect(page.locator('[data-blackproof-ready="true"]')).toBeVisible();
-  const migrated = await page.evaluate(async () => {
-    const db = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open("blackproof-local-first");
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-    const read = (store: string) => new Promise<Record<string, unknown>[]>((resolve, reject) => {
-      const request = db.transaction(store).objectStore(store).getAll();
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-    const output = { version: db.version, stores: [...db.objectStoreNames], cases: await read("cases"), snapshots: await read("deliverySnapshots"), metadata: await read("metadata") };
-    db.close();
-    return output;
+      });
+    } finally { database.close(); }
   });
-  expect(migrated.version).toBe(120);
-  expect(migrated.stores).not.toContain("entitlements");
-  expect(migrated.metadata).toEqual([{ key: "storageEpoch", value: 17 }]);
-  expect(migrated.cases).toEqual([originals.record]);
-  expect(migrated.snapshots).toEqual([originals.snapshot]);
-  expect(await decryptLocalPayload(migrated.snapshots[0].payload as EncryptedLocalPayload, passphrase)).toEqual({ deliveryJson: "synthetic historical snapshot" });
-  await page.goto("/app/case#id=" + originals.record.id);
-  await page.getByLabel("Phrase secrète du dossier", { exact: true }).fill(passphrase);
-  await page.getByRole("button", { name: "Déverrouiller le dossier", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Compléter et préparer le dossier." })).toBeVisible();
+  await editorPage.close();
+  const legacyContext = await browser.newContext({ baseURL });
+  try {
+    const page = await legacyContext.newPage();
+    await page.route("**/__migration-fixture", (route) => route.fulfill({
+      contentType: "text/html", body: "<!doctype html><title>Migration fixture</title>",
+    }));
+    await page.goto("/__migration-fixture");
+    const snapshotPayload = await encryptLocalPayload({ deliveryJson: "synthetic historical snapshot" }, passphrase);
+    const originals = await page.evaluate(async ({ record, payload }) => {
+      const snapshot = { caseId: record.id, deliveryId: "delivery_" + "b".repeat(32), createdAt: record.createdAt, encrypted: true, payload };
+      await new Promise<void>((resolve, reject) => {
+        const request = indexedDB.open("blackproof-local-first", 110);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          const cases = db.createObjectStore("cases", { keyPath: "id" });
+          for (const key of ["encrypted", "updatedAt", "createdAt"]) cases.createIndex(key, key);
+          const snapshots = db.createObjectStore("deliverySnapshots", { keyPath: ["caseId", "deliveryId"] });
+          for (const key of ["deliveryId", "caseId", "createdAt", "encrypted"]) snapshots.createIndex(key, key);
+          db.createObjectStore("metadata", { keyPath: "key" });
+          db.createObjectStore("entitlements", { keyPath: "key" });
+        };
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => {
+          const db = request.result;
+          const tx = db.transaction(["cases", "deliverySnapshots", "metadata", "entitlements"], "readwrite");
+          tx.objectStore("cases").put(record);
+          tx.objectStore("deliverySnapshots").put(snapshot);
+          for (const [key, value] of [["storageEpoch", 17], ["checkoutAttemptV1", "synthetic"], ["accountLogoutPending", "synthetic"]]) {
+            tx.objectStore("metadata").put({ key, value });
+          }
+          tx.objectStore("entitlements").put({ key: "current", token: "synthetic-retired-access" });
+          tx.oncomplete = () => { db.close(); resolve(); };
+          tx.onerror = () => reject(tx.error);
+        };
+      });
+      return { record, snapshot };
+    }, { record, payload: snapshotPayload });
+    await page.goto("/app/cases");
+    await expect(page.locator('[data-blackproof-ready="true"]')).toBeVisible();
+    const migrated = await page.evaluate(async () => {
+      const db = await new Promise<IDBDatabase>((resolve, reject) => {
+        const request = indexedDB.open("blackproof-local-first");
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const read = (store: string) => new Promise<Record<string, unknown>[]>((resolve, reject) => {
+        const request = db.transaction(store).objectStore(store).getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+      const output = { version: db.version, stores: [...db.objectStoreNames], cases: await read("cases"), snapshots: await read("deliverySnapshots"), metadata: await read("metadata") };
+      db.close();
+      return output;
+    });
+    expect(migrated.version).toBe(120);
+    expect(migrated.stores).not.toContain("entitlements");
+    expect(migrated.metadata).toEqual([{ key: "storageEpoch", value: 17 }]);
+    expect(migrated.cases).toEqual([originals.record]);
+    expect(migrated.snapshots).toEqual([originals.snapshot]);
+    expect(await decryptLocalPayload(migrated.snapshots[0].payload as EncryptedLocalPayload, passphrase)).toEqual({ deliveryJson: "synthetic historical snapshot" });
+    await page.goto("/app/case#id=" + originals.record.id);
+    await page.getByLabel("Phrase secrète du dossier", { exact: true }).fill(passphrase);
+    await page.getByRole("button", { name: "Déverrouiller le dossier", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Compléter et préparer le dossier." })).toBeVisible();
+  } finally { await legacyContext.close(); }
 });

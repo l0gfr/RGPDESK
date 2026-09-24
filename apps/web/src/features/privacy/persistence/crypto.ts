@@ -1,11 +1,12 @@
 import { assertBackup, assertWorkspace, migrateWorkspace, parseBoundedJson, canonicalJson, PrivacyError, MAX_BACKUP_BYTES, MAX_MASTER_BYTES, utf8Size, type PrivacyBackup, type PrivacyEnvelope, type Workspace, type DeliveryRecord } from "@rgpdesk/privacy-core";
 import { validateBackupV2 } from "@rgpdesk/privacy-core";
 import { verifyFiles } from "@rgpdesk/privacy-verifier";
+import { MAX_DRAFT_BYTES, parseRecovery, type RecoveryDraft } from "./recovery";
 import { decryptLocalPayloadBatch, encryptLocalPayloadBatch } from "../../../lib/local-encryption";
 
 export interface DeliverySnapshot { format: "rgpd-snapshot-v1"; id: string; workspaceId: string; revision: number; files: Record<string, string> }
 export const MAX_SNAPSHOT_BYTES = 512 * 1024;
-type EntryKind = "master" | "backup" | `snapshot:${string}`;
+type EntryKind = "master" | "backup" | `snapshot:${string}` | `draft:${string}:${number}`;
 export const contextFor = (id: string, revision: number, kind: EntryKind): string => `rgpdesk:envelope-v1:${id}:${kind}:${revision}`;
 function checkEnvelope(envelope: unknown, id: string, revision: number, kind: EntryKind): asserts envelope is PrivacyEnvelope {
   const container = { format: "rgpd-backup-v2", workspaceId: id, revision, envelope };
@@ -25,7 +26,7 @@ async function unseal(envelope: unknown, phrase: string, id: string, revision: n
   checkEnvelope(envelope, id, revision, kind);
   try {
     const [value] = await decryptLocalPayloadBatch<unknown>([envelope], phrase);
-    return parseBoundedJson(JSON.stringify(value), kind === "backup" ? 8 * 1024 * 1024 : kind === "master" ? MAX_MASTER_BYTES : MAX_SNAPSHOT_BYTES);
+    return parseBoundedJson(JSON.stringify(value), kind === "backup" ? 8 * 1024 * 1024 : kind === "master" ? MAX_MASTER_BYTES : kind.startsWith("draft:") ? MAX_DRAFT_BYTES : MAX_SNAPSHOT_BYTES);
   } catch { throw new PrivacyError("CRYPTO"); }
 }
 export async function sealMaster(master: Workspace, phrase: string): Promise<PrivacyEnvelope> {
@@ -81,3 +82,11 @@ export async function decodeArchive(text: string, phrase: string): Promise<{ mas
   return { master, snapshots: checked };
 }
 export async function decodeBackup(text: string, phrase: string): Promise<Workspace> { return (await decodeArchive(text, phrase)).master; }
+
+export async function sealRecovery(value:RecoveryDraft,phrase:string):Promise<PrivacyEnvelope>{
+  const d=parseRecovery(value);return seal(d,phrase,d.workspaceId,d.revision,`draft:${d.id}:${d.sequence}`);
+}
+export async function openRecovery(envelope:unknown,phrase:string,workspaceId:string,revision:number,id:string,sequence:number):Promise<RecoveryDraft>{
+  const d=parseRecovery(await unseal(envelope,phrase,workspaceId,revision,`draft:${id}:${sequence}`));
+  if(d.workspaceId!==workspaceId||d.revision!==revision||d.id!==id||d.sequence!==sequence)throw new PrivacyError('CRYPTO');return d;
+}

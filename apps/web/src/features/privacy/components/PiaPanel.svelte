@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { RecoveryForm } from "../persistence/recovery";
   import { createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, resolvedFlows, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
   import { PIA_NECESSITY_METHOD } from "../review-methods";
@@ -84,6 +85,8 @@
     beforeRemoval = null;
   }
   function close() { draft = null; beforeRemoval = null; reviewIndex = null; author = ""; reason = ""; acknowledged = false; localError = ""; onEditing(false); }
+  export function getRecovery():RecoveryForm|null{return draft&&hasUnsavedChanges()?{kind:'pia',draft:$state.snapshot(draft),step,author,reason,outcome}:null;}
+  export function restoreRecovery(f:RecoveryForm){if(f.kind!=='pia')return;draft=structuredClone(f.draft);activityId=draft.activityId;step=f.step;author=f.author;reason=f.reason;outcome=f.outcome;acknowledged=false;reviewIndex=null;onEditing(true);}
 </script>
 <section class="panel pia-workbench" aria-label="Atelier AIPD">
   {#if !draft}

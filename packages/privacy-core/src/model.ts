@@ -77,7 +77,8 @@ export interface CitationReview {
 export interface Workspace {
   workCheckpoint?: WorkCheckpoint;
   citationReviews?: CitationReview[];
-  format: "rgpd-master-v7";
+  collections?: CollectionRequest[];
+  format: "rgpd-master-v8";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];
@@ -156,3 +157,15 @@ export const createContractReview = (): ContractReview => ({ methodVersion: "art
 export const createDataFlow = (id: string): DataFlow => ({
   id, source: unknown(), destination: unknown(), operation: unknown(), data: unknown(), channel: unknown(), location: unknown(), access: unknown(),
 });
+
+export const RESPONSE_FIELDS = ["dataSubjects", "dataCategories", "recipients", "securityMeasures", "transfers"] as const;
+export type ResponseField = typeof RESPONSE_FIELDS[number];
+export interface CollectionReply {
+  id: string; author: string; text: string; documentIds: string[]; receivedAt: string;
+  application: null | {field: ResponseField; reviewer: string; at: string; revision: number; before: Knowledge; after: Knowledge};
+}
+export interface CollectionItem {id: string; activityId: string | null; activity: string; question: string; evidenceHint: string; replies: CollectionReply[]}
+export interface CollectionRequest {
+  id: string; workspaceId: string; recipient: string; due: string | null; createdAt: string; createdRevision: number;
+  closed: null | {at: string; author: string; reason: string}; items: CollectionItem[];
+}

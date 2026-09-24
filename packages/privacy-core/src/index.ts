@@ -21,3 +21,9 @@ export * from "./dpo-model";
 export * from "./dpo";
 export * from "./deadlines";
 export * from "./pia-share";
+
+export { default as validateRecoveryDraft } from "./generated/draft-validator.js";
+
+export * from "./collections";
+export * from "./evidence-reuse";
+export * from "./delivery-comparison";

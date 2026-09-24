@@ -238,20 +238,231 @@ var require_formats = __commonJS({
 });
 
 // master-validator.generated.js
-var validate = validate20;
-var master_validator_generated_default = validate20;
-var schema31 = { "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "urn:rgpdesk:rgpd-master-v1", "type": "object", "additionalProperties": false, "required": ["format", "id", "revision", "createdAt", "updatedAt", "language", "jurisdiction", "scope", "organization", "parties", "systems", "activities"], "properties": { "format": { "const": "rgpd-master-v1" }, "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "revision": { "type": "integer", "minimum": 1, "maximum": 9007199254740990 }, "createdAt": { "type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, "updatedAt": { "type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, "language": { "const": "fr" }, "jurisdiction": { "$ref": "#/$defs/knowledge" }, "scope": { "$ref": "#/$defs/knowledge" }, "organization": { "type": "object", "additionalProperties": false, "required": ["name", "contact", "dpo"], "properties": { "name": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "contact": { "$ref": "#/$defs/knowledge" }, "dpo": { "$ref": "#/$defs/knowledge" } } }, "parties": { "type": "array", "maxItems": 200, "items": { "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "name", "contact"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "name": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "contact": { "$ref": "#/$defs/knowledge" } } } }, "systems": { "type": "array", "maxItems": 200, "items": { "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "name", "description"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "name": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "description": { "$ref": "#/$defs/knowledge" } } } }, "activities": { "type": "array", "maxItems": 200, "items": { "oneOf": [{ "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "title", "status", "systemIds", "participantIds", "dataCategories", "dataSubjects", "recipients", "transfers", "securityMeasures", "internalNotes", "role", "purposes"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "title": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "status": { "enum": ["draft", "active", "archived"] }, "systemIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "participantIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "dataCategories": { "$ref": "#/$defs/knowledge" }, "dataSubjects": { "$ref": "#/$defs/knowledge" }, "recipients": { "$ref": "#/$defs/knowledge" }, "transfers": { "$ref": "#/$defs/knowledge" }, "securityMeasures": { "$ref": "#/$defs/knowledge" }, "internalNotes": { "type": "string", "maxLength": 4e3, "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, "role": { "const": "controller" }, "purposes": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/purpose" } } } }, { "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "title", "status", "systemIds", "participantIds", "dataCategories", "dataSubjects", "recipients", "transfers", "securityMeasures", "internalNotes", "role", "controllerIds", "operations", "instructions"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "title": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "status": { "enum": ["draft", "active", "archived"] }, "systemIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "participantIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "dataCategories": { "$ref": "#/$defs/knowledge" }, "dataSubjects": { "$ref": "#/$defs/knowledge" }, "recipients": { "$ref": "#/$defs/knowledge" }, "transfers": { "$ref": "#/$defs/knowledge" }, "securityMeasures": { "$ref": "#/$defs/knowledge" }, "internalNotes": { "type": "string", "maxLength": 4e3, "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, "role": { "const": "processor" }, "controllerIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "operations": { "$ref": "#/$defs/knowledge" }, "instructions": { "$ref": "#/$defs/knowledge" } } }] } } }, "$defs": { "knowledge": { "oneOf": [{ "type": "object", "additionalProperties": false, "required": ["state"], "properties": { "state": { "const": "unknown" } } }, { "type": "object", "additionalProperties": false, "required": ["state", "value"], "properties": { "state": { "const": "documented" }, "value": { "type": "string", "maxLength": 4e3, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 } } }] }, "purpose": { "type": "object", "additionalProperties": false, "required": ["id", "description", "legalBasis", "retention"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "description": { "$ref": "#/$defs/knowledge" }, "legalBasis": { "$ref": "#/$defs/knowledge" }, "retention": { "type": "object", "additionalProperties": false, "required": ["period", "trigger"], "properties": { "period": { "$ref": "#/$defs/knowledge" }, "trigger": { "$ref": "#/$defs/knowledge" } } } } } } };
+var validate = validate52;
+var master_validator_generated_default = validate52;
+var schema19 = { "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "urn:rgpdesk:rgpd-master-v1", "type": "object", "additionalProperties": false, "required": ["format", "id", "revision", "createdAt", "updatedAt", "language", "jurisdiction", "scope", "organization", "parties", "systems", "activities"], "properties": { "format": { "const": "rgpd-master-v1" }, "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "revision": { "type": "integer", "minimum": 1, "maximum": 9007199254740990 }, "createdAt": { "type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, "updatedAt": { "type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, "language": { "const": "fr" }, "jurisdiction": { "$ref": "#/$defs/knowledge" }, "scope": { "$ref": "#/$defs/knowledge" }, "organization": { "type": "object", "additionalProperties": false, "required": ["name", "contact", "dpo"], "properties": { "name": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "contact": { "$ref": "#/$defs/knowledge" }, "dpo": { "$ref": "#/$defs/knowledge" } } }, "parties": { "type": "array", "maxItems": 200, "items": { "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "name", "contact"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "name": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "contact": { "$ref": "#/$defs/knowledge" } } } }, "systems": { "type": "array", "maxItems": 200, "items": { "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "name", "description"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "name": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "description": { "$ref": "#/$defs/knowledge" } } } }, "activities": { "type": "array", "maxItems": 200, "items": { "oneOf": [{ "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "title", "status", "systemIds", "participantIds", "dataCategories", "dataSubjects", "recipients", "transfers", "securityMeasures", "internalNotes", "role", "purposes"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "title": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "status": { "enum": ["draft", "active", "archived"] }, "systemIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "participantIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "dataCategories": { "$ref": "#/$defs/knowledge" }, "dataSubjects": { "$ref": "#/$defs/knowledge" }, "recipients": { "$ref": "#/$defs/knowledge" }, "transfers": { "$ref": "#/$defs/knowledge" }, "securityMeasures": { "$ref": "#/$defs/knowledge" }, "internalNotes": { "type": "string", "maxLength": 4e3, "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, "role": { "const": "controller" }, "purposes": { "type": "array", "maxItems": 20, "items": { "$ref": "#/$defs/purpose" } } } }, { "type": "object", "additionalProperties": false, "required": ["id", "workspaceId", "title", "status", "systemIds", "participantIds", "dataCategories", "dataSubjects", "recipients", "transfers", "securityMeasures", "internalNotes", "role", "controllerIds", "operations", "instructions"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "workspaceId": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "title": { "type": "string", "maxLength": 160, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 }, "status": { "enum": ["draft", "active", "archived"] }, "systemIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "participantIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "dataCategories": { "$ref": "#/$defs/knowledge" }, "dataSubjects": { "$ref": "#/$defs/knowledge" }, "recipients": { "$ref": "#/$defs/knowledge" }, "transfers": { "$ref": "#/$defs/knowledge" }, "securityMeasures": { "$ref": "#/$defs/knowledge" }, "internalNotes": { "type": "string", "maxLength": 4e3, "pattern": "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, "role": { "const": "processor" }, "controllerIds": { "type": "array", "maxItems": 200, "items": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "uniqueItems": true }, "operations": { "$ref": "#/$defs/knowledge" }, "instructions": { "$ref": "#/$defs/knowledge" } } }] } } }, "$defs": { "knowledge": { "oneOf": [{ "type": "object", "additionalProperties": false, "required": ["state"], "properties": { "state": { "const": "unknown" } } }, { "type": "object", "additionalProperties": false, "required": ["state", "value"], "properties": { "state": { "const": "documented" }, "value": { "type": "string", "maxLength": 4e3, "pattern": "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "minLength": 1 } } }] }, "purpose": { "type": "object", "additionalProperties": false, "required": ["id", "description", "legalBasis", "retention"], "properties": { "id": { "type": "string", "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, "description": { "$ref": "#/$defs/knowledge" }, "legalBasis": { "$ref": "#/$defs/knowledge" }, "retention": { "type": "object", "additionalProperties": false, "required": ["period", "trigger"], "properties": { "period": { "$ref": "#/$defs/knowledge" }, "trigger": { "$ref": "#/$defs/knowledge" } } } } } } };
 var func1 = Object.prototype.hasOwnProperty;
 var func2 = require_ucs2length().default;
-var pattern4 = new RegExp("^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$", "u");
-var pattern5 = new RegExp("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$", "u");
-var pattern7 = new RegExp("^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "u");
-var pattern30 = new RegExp("^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "u");
+var pattern3 = new RegExp("^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$", "u");
+var pattern4 = new RegExp("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$", "u");
+var pattern6 = new RegExp("^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "u");
+var pattern19 = new RegExp("^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$", "u");
 var formats0 = require_formats().fullFormats["date-time"];
-function validate21(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
+function validate53(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   let vErrors = null;
   let errors = 0;
-  const evaluated0 = validate21.evaluated;
+  const evaluated0 = validate53.evaluated;
+  if (evaluated0.dynamicProps) {
+    evaluated0.props = void 0;
+  }
+  if (evaluated0.dynamicItems) {
+    evaluated0.items = void 0;
+  }
+  const _errs0 = errors;
+  let valid0 = false;
+  let passing0 = null;
+  const _errs1 = errors;
+  if (errors === _errs1) {
+    if (data && typeof data == "object" && !Array.isArray(data)) {
+      let missing0;
+      if (data.state === void 0 && (missing0 = "state")) {
+        const err0 = { instancePath, schemaPath: "#/oneOf/0/required", keyword: "required", params: { missingProperty: missing0 }, message: "must have required property '" + missing0 + "'" };
+        if (vErrors === null) {
+          vErrors = [err0];
+        } else {
+          vErrors.push(err0);
+        }
+        errors++;
+      } else {
+        const _errs3 = errors;
+        for (const key0 in data) {
+          if (!(key0 === "state")) {
+            const err1 = { instancePath, schemaPath: "#/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
+            if (vErrors === null) {
+              vErrors = [err1];
+            } else {
+              vErrors.push(err1);
+            }
+            errors++;
+            break;
+          }
+        }
+        if (_errs3 === errors) {
+          if (data.state !== void 0) {
+            if ("unknown" !== data.state) {
+              const err2 = { instancePath: instancePath + "/state", schemaPath: "#/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
+              if (vErrors === null) {
+                vErrors = [err2];
+              } else {
+                vErrors.push(err2);
+              }
+              errors++;
+            }
+          }
+        }
+      }
+    } else {
+      const err3 = { instancePath, schemaPath: "#/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+      if (vErrors === null) {
+        vErrors = [err3];
+      } else {
+        vErrors.push(err3);
+      }
+      errors++;
+    }
+  }
+  var _valid0 = _errs1 === errors;
+  if (_valid0) {
+    valid0 = true;
+    passing0 = 0;
+    var props0 = true;
+  }
+  const _errs5 = errors;
+  if (errors === _errs5) {
+    if (data && typeof data == "object" && !Array.isArray(data)) {
+      let missing1;
+      if (data.state === void 0 && (missing1 = "state") || data.value === void 0 && (missing1 = "value")) {
+        const err4 = { instancePath, schemaPath: "#/oneOf/1/required", keyword: "required", params: { missingProperty: missing1 }, message: "must have required property '" + missing1 + "'" };
+        if (vErrors === null) {
+          vErrors = [err4];
+        } else {
+          vErrors.push(err4);
+        }
+        errors++;
+      } else {
+        const _errs7 = errors;
+        for (const key1 in data) {
+          if (!(key1 === "state" || key1 === "value")) {
+            const err5 = { instancePath, schemaPath: "#/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
+            if (vErrors === null) {
+              vErrors = [err5];
+            } else {
+              vErrors.push(err5);
+            }
+            errors++;
+            break;
+          }
+        }
+        if (_errs7 === errors) {
+          if (data.state !== void 0) {
+            const _errs8 = errors;
+            if ("documented" !== data.state) {
+              const err6 = { instancePath: instancePath + "/state", schemaPath: "#/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
+              if (vErrors === null) {
+                vErrors = [err6];
+              } else {
+                vErrors.push(err6);
+              }
+              errors++;
+            }
+            var valid2 = _errs8 === errors;
+          } else {
+            var valid2 = true;
+          }
+          if (valid2) {
+            if (data.value !== void 0) {
+              let data2 = data.value;
+              const _errs9 = errors;
+              if (errors === _errs9) {
+                if (typeof data2 === "string") {
+                  if (func2(data2) > 4e3) {
+                    const err7 = { instancePath: instancePath + "/value", schemaPath: "#/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
+                    if (vErrors === null) {
+                      vErrors = [err7];
+                    } else {
+                      vErrors.push(err7);
+                    }
+                    errors++;
+                  } else {
+                    if (func2(data2) < 1) {
+                      const err8 = { instancePath: instancePath + "/value", schemaPath: "#/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                      if (vErrors === null) {
+                        vErrors = [err8];
+                      } else {
+                        vErrors.push(err8);
+                      }
+                      errors++;
+                    } else {
+                      if (!pattern6.test(data2)) {
+                        const err9 = { instancePath: instancePath + "/value", schemaPath: "#/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
+                        if (vErrors === null) {
+                          vErrors = [err9];
+                        } else {
+                          vErrors.push(err9);
+                        }
+                        errors++;
+                      }
+                    }
+                  }
+                } else {
+                  const err10 = { instancePath: instancePath + "/value", schemaPath: "#/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                  if (vErrors === null) {
+                    vErrors = [err10];
+                  } else {
+                    vErrors.push(err10);
+                  }
+                  errors++;
+                }
+              }
+              var valid2 = _errs9 === errors;
+            } else {
+              var valid2 = true;
+            }
+          }
+        }
+      }
+    } else {
+      const err11 = { instancePath, schemaPath: "#/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+      if (vErrors === null) {
+        vErrors = [err11];
+      } else {
+        vErrors.push(err11);
+      }
+      errors++;
+    }
+  }
+  var _valid0 = _errs5 === errors;
+  if (_valid0 && valid0) {
+    valid0 = false;
+    passing0 = [passing0, 1];
+  } else {
+    if (_valid0) {
+      valid0 = true;
+      passing0 = 1;
+      if (props0 !== true) {
+        props0 = true;
+      }
+    }
+  }
+  if (!valid0) {
+    const err12 = { instancePath, schemaPath: "#/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
+    if (vErrors === null) {
+      vErrors = [err12];
+    } else {
+      vErrors.push(err12);
+    }
+    errors++;
+    validate53.errors = vErrors;
+    return false;
+  } else {
+    errors = _errs0;
+    if (vErrors !== null) {
+      if (_errs0) {
+        vErrors.length = _errs0;
+      } else {
+        vErrors = null;
+      }
+    }
+  }
+  validate53.errors = vErrors;
+  evaluated0.props = props0;
+  return errors === 0;
+}
+validate53.evaluated = { "dynamicProps": true, "dynamicItems": false };
+function validate65(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
+  let vErrors = null;
+  let errors = 0;
+  const evaluated0 = validate65.evaluated;
   if (evaluated0.dynamicProps) {
     evaluated0.props = void 0;
   }
@@ -262,13 +473,13 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
     if (data && typeof data == "object" && !Array.isArray(data)) {
       let missing0;
       if (data.id === void 0 && (missing0 = "id") || data.description === void 0 && (missing0 = "description") || data.legalBasis === void 0 && (missing0 = "legalBasis") || data.retention === void 0 && (missing0 = "retention")) {
-        validate21.errors = [{ instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: missing0 }, message: "must have required property '" + missing0 + "'" }];
+        validate65.errors = [{ instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: missing0 }, message: "must have required property '" + missing0 + "'" }];
         return false;
       } else {
         const _errs1 = errors;
         for (const key0 in data) {
           if (!(key0 === "id" || key0 === "description" || key0 === "legalBasis" || key0 === "retention")) {
-            validate21.errors = [{ instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" }];
+            validate65.errors = [{ instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" }];
             return false;
             break;
           }
@@ -279,12 +490,12 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
             const _errs2 = errors;
             if (errors === _errs2) {
               if (typeof data0 === "string") {
-                if (!pattern4.test(data0)) {
-                  validate21.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
+                if (!pattern3.test(data0)) {
+                  validate65.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
                   return false;
                 }
               } else {
-                validate21.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                validate65.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                 return false;
               }
             }
@@ -294,203 +505,10 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
           }
           if (valid0) {
             if (data.description !== void 0) {
-              let data1 = data.description;
               const _errs4 = errors;
-              const _errs6 = errors;
-              let valid2 = false;
-              let passing0 = null;
-              const _errs7 = errors;
-              if (errors === _errs7) {
-                if (data1 && typeof data1 == "object" && !Array.isArray(data1)) {
-                  let missing1;
-                  if (data1.state === void 0 && (missing1 = "state")) {
-                    const err0 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing1 }, message: "must have required property '" + missing1 + "'" };
-                    if (vErrors === null) {
-                      vErrors = [err0];
-                    } else {
-                      vErrors.push(err0);
-                    }
-                    errors++;
-                  } else {
-                    const _errs9 = errors;
-                    for (const key1 in data1) {
-                      if (!(key1 === "state")) {
-                        const err1 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
-                        if (vErrors === null) {
-                          vErrors = [err1];
-                        } else {
-                          vErrors.push(err1);
-                        }
-                        errors++;
-                        break;
-                      }
-                    }
-                    if (_errs9 === errors) {
-                      if (data1.state !== void 0) {
-                        if ("unknown" !== data1.state) {
-                          const err2 = { instancePath: instancePath + "/description/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                          if (vErrors === null) {
-                            vErrors = [err2];
-                          } else {
-                            vErrors.push(err2);
-                          }
-                          errors++;
-                        }
-                      }
-                    }
-                  }
-                } else {
-                  const err3 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                  if (vErrors === null) {
-                    vErrors = [err3];
-                  } else {
-                    vErrors.push(err3);
-                  }
-                  errors++;
-                }
-              }
-              var _valid0 = _errs7 === errors;
-              if (_valid0) {
-                valid2 = true;
-                passing0 = 0;
-                var props0 = true;
-              }
-              const _errs11 = errors;
-              if (errors === _errs11) {
-                if (data1 && typeof data1 == "object" && !Array.isArray(data1)) {
-                  let missing2;
-                  if (data1.state === void 0 && (missing2 = "state") || data1.value === void 0 && (missing2 = "value")) {
-                    const err4 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing2 }, message: "must have required property '" + missing2 + "'" };
-                    if (vErrors === null) {
-                      vErrors = [err4];
-                    } else {
-                      vErrors.push(err4);
-                    }
-                    errors++;
-                  } else {
-                    const _errs13 = errors;
-                    for (const key2 in data1) {
-                      if (!(key2 === "state" || key2 === "value")) {
-                        const err5 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
-                        if (vErrors === null) {
-                          vErrors = [err5];
-                        } else {
-                          vErrors.push(err5);
-                        }
-                        errors++;
-                        break;
-                      }
-                    }
-                    if (_errs13 === errors) {
-                      if (data1.state !== void 0) {
-                        const _errs14 = errors;
-                        if ("documented" !== data1.state) {
-                          const err6 = { instancePath: instancePath + "/description/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                          if (vErrors === null) {
-                            vErrors = [err6];
-                          } else {
-                            vErrors.push(err6);
-                          }
-                          errors++;
-                        }
-                        var valid4 = _errs14 === errors;
-                      } else {
-                        var valid4 = true;
-                      }
-                      if (valid4) {
-                        if (data1.value !== void 0) {
-                          let data4 = data1.value;
-                          const _errs15 = errors;
-                          if (errors === _errs15) {
-                            if (typeof data4 === "string") {
-                              if (func2(data4) > 4e3) {
-                                const err7 = { instancePath: instancePath + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                if (vErrors === null) {
-                                  vErrors = [err7];
-                                } else {
-                                  vErrors.push(err7);
-                                }
-                                errors++;
-                              } else {
-                                if (func2(data4) < 1) {
-                                  const err8 = { instancePath: instancePath + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                  if (vErrors === null) {
-                                    vErrors = [err8];
-                                  } else {
-                                    vErrors.push(err8);
-                                  }
-                                  errors++;
-                                } else {
-                                  if (!pattern7.test(data4)) {
-                                    const err9 = { instancePath: instancePath + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                    if (vErrors === null) {
-                                      vErrors = [err9];
-                                    } else {
-                                      vErrors.push(err9);
-                                    }
-                                    errors++;
-                                  }
-                                }
-                              }
-                            } else {
-                              const err10 = { instancePath: instancePath + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                              if (vErrors === null) {
-                                vErrors = [err10];
-                              } else {
-                                vErrors.push(err10);
-                              }
-                              errors++;
-                            }
-                          }
-                          var valid4 = _errs15 === errors;
-                        } else {
-                          var valid4 = true;
-                        }
-                      }
-                    }
-                  }
-                } else {
-                  const err11 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                  if (vErrors === null) {
-                    vErrors = [err11];
-                  } else {
-                    vErrors.push(err11);
-                  }
-                  errors++;
-                }
-              }
-              var _valid0 = _errs11 === errors;
-              if (_valid0 && valid2) {
-                valid2 = false;
-                passing0 = [passing0, 1];
-              } else {
-                if (_valid0) {
-                  valid2 = true;
-                  passing0 = 1;
-                  if (props0 !== true) {
-                    props0 = true;
-                  }
-                }
-              }
-              if (!valid2) {
-                const err12 = { instancePath: instancePath + "/description", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-                if (vErrors === null) {
-                  vErrors = [err12];
-                } else {
-                  vErrors.push(err12);
-                }
-                errors++;
-                validate21.errors = vErrors;
-                return false;
-              } else {
-                errors = _errs6;
-                if (vErrors !== null) {
-                  if (_errs6) {
-                    vErrors.length = _errs6;
-                  } else {
-                    vErrors = null;
-                  }
-                }
+              if (!validate53(data.description, { instancePath: instancePath + "/description", parentData: data, parentDataProperty: "description", rootData, dynamicAnchors })) {
+                vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                errors = vErrors.length;
               }
               var valid0 = _errs4 === errors;
             } else {
@@ -498,644 +516,65 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
             }
             if (valid0) {
               if (data.legalBasis !== void 0) {
-                let data5 = data.legalBasis;
-                const _errs17 = errors;
-                const _errs19 = errors;
-                let valid6 = false;
-                let passing1 = null;
-                const _errs20 = errors;
-                if (errors === _errs20) {
-                  if (data5 && typeof data5 == "object" && !Array.isArray(data5)) {
-                    let missing3;
-                    if (data5.state === void 0 && (missing3 = "state")) {
-                      const err13 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing3 }, message: "must have required property '" + missing3 + "'" };
-                      if (vErrors === null) {
-                        vErrors = [err13];
-                      } else {
-                        vErrors.push(err13);
-                      }
-                      errors++;
-                    } else {
-                      const _errs22 = errors;
-                      for (const key3 in data5) {
-                        if (!(key3 === "state")) {
-                          const err14 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" };
-                          if (vErrors === null) {
-                            vErrors = [err14];
-                          } else {
-                            vErrors.push(err14);
-                          }
-                          errors++;
-                          break;
-                        }
-                      }
-                      if (_errs22 === errors) {
-                        if (data5.state !== void 0) {
-                          if ("unknown" !== data5.state) {
-                            const err15 = { instancePath: instancePath + "/legalBasis/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                            if (vErrors === null) {
-                              vErrors = [err15];
-                            } else {
-                              vErrors.push(err15);
-                            }
-                            errors++;
-                          }
-                        }
-                      }
-                    }
-                  } else {
-                    const err16 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                    if (vErrors === null) {
-                      vErrors = [err16];
-                    } else {
-                      vErrors.push(err16);
-                    }
-                    errors++;
-                  }
+                const _errs5 = errors;
+                if (!validate53(data.legalBasis, { instancePath: instancePath + "/legalBasis", parentData: data, parentDataProperty: "legalBasis", rootData, dynamicAnchors })) {
+                  vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                  errors = vErrors.length;
                 }
-                var _valid1 = _errs20 === errors;
-                if (_valid1) {
-                  valid6 = true;
-                  passing1 = 0;
-                  var props1 = true;
-                }
-                const _errs24 = errors;
-                if (errors === _errs24) {
-                  if (data5 && typeof data5 == "object" && !Array.isArray(data5)) {
-                    let missing4;
-                    if (data5.state === void 0 && (missing4 = "state") || data5.value === void 0 && (missing4 = "value")) {
-                      const err17 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing4 }, message: "must have required property '" + missing4 + "'" };
-                      if (vErrors === null) {
-                        vErrors = [err17];
-                      } else {
-                        vErrors.push(err17);
-                      }
-                      errors++;
-                    } else {
-                      const _errs26 = errors;
-                      for (const key4 in data5) {
-                        if (!(key4 === "state" || key4 === "value")) {
-                          const err18 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key4 }, message: "must NOT have additional properties" };
-                          if (vErrors === null) {
-                            vErrors = [err18];
-                          } else {
-                            vErrors.push(err18);
-                          }
-                          errors++;
-                          break;
-                        }
-                      }
-                      if (_errs26 === errors) {
-                        if (data5.state !== void 0) {
-                          const _errs27 = errors;
-                          if ("documented" !== data5.state) {
-                            const err19 = { instancePath: instancePath + "/legalBasis/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                            if (vErrors === null) {
-                              vErrors = [err19];
-                            } else {
-                              vErrors.push(err19);
-                            }
-                            errors++;
-                          }
-                          var valid8 = _errs27 === errors;
-                        } else {
-                          var valid8 = true;
-                        }
-                        if (valid8) {
-                          if (data5.value !== void 0) {
-                            let data8 = data5.value;
-                            const _errs28 = errors;
-                            if (errors === _errs28) {
-                              if (typeof data8 === "string") {
-                                if (func2(data8) > 4e3) {
-                                  const err20 = { instancePath: instancePath + "/legalBasis/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                  if (vErrors === null) {
-                                    vErrors = [err20];
-                                  } else {
-                                    vErrors.push(err20);
-                                  }
-                                  errors++;
-                                } else {
-                                  if (func2(data8) < 1) {
-                                    const err21 = { instancePath: instancePath + "/legalBasis/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                    if (vErrors === null) {
-                                      vErrors = [err21];
-                                    } else {
-                                      vErrors.push(err21);
-                                    }
-                                    errors++;
-                                  } else {
-                                    if (!pattern7.test(data8)) {
-                                      const err22 = { instancePath: instancePath + "/legalBasis/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                      if (vErrors === null) {
-                                        vErrors = [err22];
-                                      } else {
-                                        vErrors.push(err22);
-                                      }
-                                      errors++;
-                                    }
-                                  }
-                                }
-                              } else {
-                                const err23 = { instancePath: instancePath + "/legalBasis/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                if (vErrors === null) {
-                                  vErrors = [err23];
-                                } else {
-                                  vErrors.push(err23);
-                                }
-                                errors++;
-                              }
-                            }
-                            var valid8 = _errs28 === errors;
-                          } else {
-                            var valid8 = true;
-                          }
-                        }
-                      }
-                    }
-                  } else {
-                    const err24 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                    if (vErrors === null) {
-                      vErrors = [err24];
-                    } else {
-                      vErrors.push(err24);
-                    }
-                    errors++;
-                  }
-                }
-                var _valid1 = _errs24 === errors;
-                if (_valid1 && valid6) {
-                  valid6 = false;
-                  passing1 = [passing1, 1];
-                } else {
-                  if (_valid1) {
-                    valid6 = true;
-                    passing1 = 1;
-                    if (props1 !== true) {
-                      props1 = true;
-                    }
-                  }
-                }
-                if (!valid6) {
-                  const err25 = { instancePath: instancePath + "/legalBasis", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing1 }, message: "must match exactly one schema in oneOf" };
-                  if (vErrors === null) {
-                    vErrors = [err25];
-                  } else {
-                    vErrors.push(err25);
-                  }
-                  errors++;
-                  validate21.errors = vErrors;
-                  return false;
-                } else {
-                  errors = _errs19;
-                  if (vErrors !== null) {
-                    if (_errs19) {
-                      vErrors.length = _errs19;
-                    } else {
-                      vErrors = null;
-                    }
-                  }
-                }
-                var valid0 = _errs17 === errors;
+                var valid0 = _errs5 === errors;
               } else {
                 var valid0 = true;
               }
               if (valid0) {
                 if (data.retention !== void 0) {
-                  let data9 = data.retention;
-                  const _errs30 = errors;
-                  if (errors === _errs30) {
-                    if (data9 && typeof data9 == "object" && !Array.isArray(data9)) {
-                      let missing5;
-                      if (data9.period === void 0 && (missing5 = "period") || data9.trigger === void 0 && (missing5 = "trigger")) {
-                        validate21.errors = [{ instancePath: instancePath + "/retention", schemaPath: "#/properties/retention/required", keyword: "required", params: { missingProperty: missing5 }, message: "must have required property '" + missing5 + "'" }];
+                  let data3 = data.retention;
+                  const _errs6 = errors;
+                  if (errors === _errs6) {
+                    if (data3 && typeof data3 == "object" && !Array.isArray(data3)) {
+                      let missing1;
+                      if (data3.period === void 0 && (missing1 = "period") || data3.trigger === void 0 && (missing1 = "trigger")) {
+                        validate65.errors = [{ instancePath: instancePath + "/retention", schemaPath: "#/properties/retention/required", keyword: "required", params: { missingProperty: missing1 }, message: "must have required property '" + missing1 + "'" }];
                         return false;
                       } else {
-                        const _errs32 = errors;
-                        for (const key5 in data9) {
-                          if (!(key5 === "period" || key5 === "trigger")) {
-                            validate21.errors = [{ instancePath: instancePath + "/retention", schemaPath: "#/properties/retention/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" }];
+                        const _errs8 = errors;
+                        for (const key1 in data3) {
+                          if (!(key1 === "period" || key1 === "trigger")) {
+                            validate65.errors = [{ instancePath: instancePath + "/retention", schemaPath: "#/properties/retention/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" }];
                             return false;
                             break;
                           }
                         }
-                        if (_errs32 === errors) {
-                          if (data9.period !== void 0) {
-                            let data10 = data9.period;
-                            const _errs33 = errors;
-                            const _errs35 = errors;
-                            let valid11 = false;
-                            let passing2 = null;
-                            const _errs36 = errors;
-                            if (errors === _errs36) {
-                              if (data10 && typeof data10 == "object" && !Array.isArray(data10)) {
-                                let missing6;
-                                if (data10.state === void 0 && (missing6 = "state")) {
-                                  const err26 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing6 }, message: "must have required property '" + missing6 + "'" };
-                                  if (vErrors === null) {
-                                    vErrors = [err26];
-                                  } else {
-                                    vErrors.push(err26);
-                                  }
-                                  errors++;
-                                } else {
-                                  const _errs38 = errors;
-                                  for (const key6 in data10) {
-                                    if (!(key6 === "state")) {
-                                      const err27 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key6 }, message: "must NOT have additional properties" };
-                                      if (vErrors === null) {
-                                        vErrors = [err27];
-                                      } else {
-                                        vErrors.push(err27);
-                                      }
-                                      errors++;
-                                      break;
-                                    }
-                                  }
-                                  if (_errs38 === errors) {
-                                    if (data10.state !== void 0) {
-                                      if ("unknown" !== data10.state) {
-                                        const err28 = { instancePath: instancePath + "/retention/period/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                        if (vErrors === null) {
-                                          vErrors = [err28];
-                                        } else {
-                                          vErrors.push(err28);
-                                        }
-                                        errors++;
-                                      }
-                                    }
-                                  }
-                                }
-                              } else {
-                                const err29 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                if (vErrors === null) {
-                                  vErrors = [err29];
-                                } else {
-                                  vErrors.push(err29);
-                                }
-                                errors++;
-                              }
+                        if (_errs8 === errors) {
+                          if (data3.period !== void 0) {
+                            const _errs9 = errors;
+                            if (!validate53(data3.period, { instancePath: instancePath + "/retention/period", parentData: data3, parentDataProperty: "period", rootData, dynamicAnchors })) {
+                              vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                              errors = vErrors.length;
                             }
-                            var _valid2 = _errs36 === errors;
-                            if (_valid2) {
-                              valid11 = true;
-                              passing2 = 0;
-                              var props2 = true;
-                            }
-                            const _errs40 = errors;
-                            if (errors === _errs40) {
-                              if (data10 && typeof data10 == "object" && !Array.isArray(data10)) {
-                                let missing7;
-                                if (data10.state === void 0 && (missing7 = "state") || data10.value === void 0 && (missing7 = "value")) {
-                                  const err30 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing7 }, message: "must have required property '" + missing7 + "'" };
-                                  if (vErrors === null) {
-                                    vErrors = [err30];
-                                  } else {
-                                    vErrors.push(err30);
-                                  }
-                                  errors++;
-                                } else {
-                                  const _errs42 = errors;
-                                  for (const key7 in data10) {
-                                    if (!(key7 === "state" || key7 === "value")) {
-                                      const err31 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key7 }, message: "must NOT have additional properties" };
-                                      if (vErrors === null) {
-                                        vErrors = [err31];
-                                      } else {
-                                        vErrors.push(err31);
-                                      }
-                                      errors++;
-                                      break;
-                                    }
-                                  }
-                                  if (_errs42 === errors) {
-                                    if (data10.state !== void 0) {
-                                      const _errs43 = errors;
-                                      if ("documented" !== data10.state) {
-                                        const err32 = { instancePath: instancePath + "/retention/period/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                        if (vErrors === null) {
-                                          vErrors = [err32];
-                                        } else {
-                                          vErrors.push(err32);
-                                        }
-                                        errors++;
-                                      }
-                                      var valid13 = _errs43 === errors;
-                                    } else {
-                                      var valid13 = true;
-                                    }
-                                    if (valid13) {
-                                      if (data10.value !== void 0) {
-                                        let data13 = data10.value;
-                                        const _errs44 = errors;
-                                        if (errors === _errs44) {
-                                          if (typeof data13 === "string") {
-                                            if (func2(data13) > 4e3) {
-                                              const err33 = { instancePath: instancePath + "/retention/period/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                              if (vErrors === null) {
-                                                vErrors = [err33];
-                                              } else {
-                                                vErrors.push(err33);
-                                              }
-                                              errors++;
-                                            } else {
-                                              if (func2(data13) < 1) {
-                                                const err34 = { instancePath: instancePath + "/retention/period/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                if (vErrors === null) {
-                                                  vErrors = [err34];
-                                                } else {
-                                                  vErrors.push(err34);
-                                                }
-                                                errors++;
-                                              } else {
-                                                if (!pattern7.test(data13)) {
-                                                  const err35 = { instancePath: instancePath + "/retention/period/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                  if (vErrors === null) {
-                                                    vErrors = [err35];
-                                                  } else {
-                                                    vErrors.push(err35);
-                                                  }
-                                                  errors++;
-                                                }
-                                              }
-                                            }
-                                          } else {
-                                            const err36 = { instancePath: instancePath + "/retention/period/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                            if (vErrors === null) {
-                                              vErrors = [err36];
-                                            } else {
-                                              vErrors.push(err36);
-                                            }
-                                            errors++;
-                                          }
-                                        }
-                                        var valid13 = _errs44 === errors;
-                                      } else {
-                                        var valid13 = true;
-                                      }
-                                    }
-                                  }
-                                }
-                              } else {
-                                const err37 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                if (vErrors === null) {
-                                  vErrors = [err37];
-                                } else {
-                                  vErrors.push(err37);
-                                }
-                                errors++;
-                              }
-                            }
-                            var _valid2 = _errs40 === errors;
-                            if (_valid2 && valid11) {
-                              valid11 = false;
-                              passing2 = [passing2, 1];
-                            } else {
-                              if (_valid2) {
-                                valid11 = true;
-                                passing2 = 1;
-                                if (props2 !== true) {
-                                  props2 = true;
-                                }
-                              }
-                            }
-                            if (!valid11) {
-                              const err38 = { instancePath: instancePath + "/retention/period", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing2 }, message: "must match exactly one schema in oneOf" };
-                              if (vErrors === null) {
-                                vErrors = [err38];
-                              } else {
-                                vErrors.push(err38);
-                              }
-                              errors++;
-                              validate21.errors = vErrors;
-                              return false;
-                            } else {
-                              errors = _errs35;
-                              if (vErrors !== null) {
-                                if (_errs35) {
-                                  vErrors.length = _errs35;
-                                } else {
-                                  vErrors = null;
-                                }
-                              }
-                            }
-                            var valid9 = _errs33 === errors;
+                            var valid1 = _errs9 === errors;
                           } else {
-                            var valid9 = true;
+                            var valid1 = true;
                           }
-                          if (valid9) {
-                            if (data9.trigger !== void 0) {
-                              let data14 = data9.trigger;
-                              const _errs46 = errors;
-                              const _errs48 = errors;
-                              let valid15 = false;
-                              let passing3 = null;
-                              const _errs49 = errors;
-                              if (errors === _errs49) {
-                                if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-                                  let missing8;
-                                  if (data14.state === void 0 && (missing8 = "state")) {
-                                    const err39 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing8 }, message: "must have required property '" + missing8 + "'" };
-                                    if (vErrors === null) {
-                                      vErrors = [err39];
-                                    } else {
-                                      vErrors.push(err39);
-                                    }
-                                    errors++;
-                                  } else {
-                                    const _errs51 = errors;
-                                    for (const key8 in data14) {
-                                      if (!(key8 === "state")) {
-                                        const err40 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key8 }, message: "must NOT have additional properties" };
-                                        if (vErrors === null) {
-                                          vErrors = [err40];
-                                        } else {
-                                          vErrors.push(err40);
-                                        }
-                                        errors++;
-                                        break;
-                                      }
-                                    }
-                                    if (_errs51 === errors) {
-                                      if (data14.state !== void 0) {
-                                        if ("unknown" !== data14.state) {
-                                          const err41 = { instancePath: instancePath + "/retention/trigger/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                          if (vErrors === null) {
-                                            vErrors = [err41];
-                                          } else {
-                                            vErrors.push(err41);
-                                          }
-                                          errors++;
-                                        }
-                                      }
-                                    }
-                                  }
-                                } else {
-                                  const err42 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                  if (vErrors === null) {
-                                    vErrors = [err42];
-                                  } else {
-                                    vErrors.push(err42);
-                                  }
-                                  errors++;
-                                }
+                          if (valid1) {
+                            if (data3.trigger !== void 0) {
+                              const _errs10 = errors;
+                              if (!validate53(data3.trigger, { instancePath: instancePath + "/retention/trigger", parentData: data3, parentDataProperty: "trigger", rootData, dynamicAnchors })) {
+                                vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                errors = vErrors.length;
                               }
-                              var _valid3 = _errs49 === errors;
-                              if (_valid3) {
-                                valid15 = true;
-                                passing3 = 0;
-                                var props3 = true;
-                              }
-                              const _errs53 = errors;
-                              if (errors === _errs53) {
-                                if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-                                  let missing9;
-                                  if (data14.state === void 0 && (missing9 = "state") || data14.value === void 0 && (missing9 = "value")) {
-                                    const err43 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing9 }, message: "must have required property '" + missing9 + "'" };
-                                    if (vErrors === null) {
-                                      vErrors = [err43];
-                                    } else {
-                                      vErrors.push(err43);
-                                    }
-                                    errors++;
-                                  } else {
-                                    const _errs55 = errors;
-                                    for (const key9 in data14) {
-                                      if (!(key9 === "state" || key9 === "value")) {
-                                        const err44 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key9 }, message: "must NOT have additional properties" };
-                                        if (vErrors === null) {
-                                          vErrors = [err44];
-                                        } else {
-                                          vErrors.push(err44);
-                                        }
-                                        errors++;
-                                        break;
-                                      }
-                                    }
-                                    if (_errs55 === errors) {
-                                      if (data14.state !== void 0) {
-                                        const _errs56 = errors;
-                                        if ("documented" !== data14.state) {
-                                          const err45 = { instancePath: instancePath + "/retention/trigger/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                          if (vErrors === null) {
-                                            vErrors = [err45];
-                                          } else {
-                                            vErrors.push(err45);
-                                          }
-                                          errors++;
-                                        }
-                                        var valid17 = _errs56 === errors;
-                                      } else {
-                                        var valid17 = true;
-                                      }
-                                      if (valid17) {
-                                        if (data14.value !== void 0) {
-                                          let data17 = data14.value;
-                                          const _errs57 = errors;
-                                          if (errors === _errs57) {
-                                            if (typeof data17 === "string") {
-                                              if (func2(data17) > 4e3) {
-                                                const err46 = { instancePath: instancePath + "/retention/trigger/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                if (vErrors === null) {
-                                                  vErrors = [err46];
-                                                } else {
-                                                  vErrors.push(err46);
-                                                }
-                                                errors++;
-                                              } else {
-                                                if (func2(data17) < 1) {
-                                                  const err47 = { instancePath: instancePath + "/retention/trigger/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                  if (vErrors === null) {
-                                                    vErrors = [err47];
-                                                  } else {
-                                                    vErrors.push(err47);
-                                                  }
-                                                  errors++;
-                                                } else {
-                                                  if (!pattern7.test(data17)) {
-                                                    const err48 = { instancePath: instancePath + "/retention/trigger/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                    if (vErrors === null) {
-                                                      vErrors = [err48];
-                                                    } else {
-                                                      vErrors.push(err48);
-                                                    }
-                                                    errors++;
-                                                  }
-                                                }
-                                              }
-                                            } else {
-                                              const err49 = { instancePath: instancePath + "/retention/trigger/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                              if (vErrors === null) {
-                                                vErrors = [err49];
-                                              } else {
-                                                vErrors.push(err49);
-                                              }
-                                              errors++;
-                                            }
-                                          }
-                                          var valid17 = _errs57 === errors;
-                                        } else {
-                                          var valid17 = true;
-                                        }
-                                      }
-                                    }
-                                  }
-                                } else {
-                                  const err50 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                  if (vErrors === null) {
-                                    vErrors = [err50];
-                                  } else {
-                                    vErrors.push(err50);
-                                  }
-                                  errors++;
-                                }
-                              }
-                              var _valid3 = _errs53 === errors;
-                              if (_valid3 && valid15) {
-                                valid15 = false;
-                                passing3 = [passing3, 1];
-                              } else {
-                                if (_valid3) {
-                                  valid15 = true;
-                                  passing3 = 1;
-                                  if (props3 !== true) {
-                                    props3 = true;
-                                  }
-                                }
-                              }
-                              if (!valid15) {
-                                const err51 = { instancePath: instancePath + "/retention/trigger", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing3 }, message: "must match exactly one schema in oneOf" };
-                                if (vErrors === null) {
-                                  vErrors = [err51];
-                                } else {
-                                  vErrors.push(err51);
-                                }
-                                errors++;
-                                validate21.errors = vErrors;
-                                return false;
-                              } else {
-                                errors = _errs48;
-                                if (vErrors !== null) {
-                                  if (_errs48) {
-                                    vErrors.length = _errs48;
-                                  } else {
-                                    vErrors = null;
-                                  }
-                                }
-                              }
-                              var valid9 = _errs46 === errors;
+                              var valid1 = _errs10 === errors;
                             } else {
-                              var valid9 = true;
+                              var valid1 = true;
                             }
                           }
                         }
                       }
                     } else {
-                      validate21.errors = [{ instancePath: instancePath + "/retention", schemaPath: "#/properties/retention/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
+                      validate65.errors = [{ instancePath: instancePath + "/retention", schemaPath: "#/properties/retention/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
                       return false;
                     }
                   }
-                  var valid0 = _errs30 === errors;
+                  var valid0 = _errs6 === errors;
                 } else {
                   var valid0 = true;
                 }
@@ -1145,19 +584,19 @@ function validate21(data, { instancePath = "", parentData, parentDataProperty, r
         }
       }
     } else {
-      validate21.errors = [{ instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
+      validate65.errors = [{ instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
       return false;
     }
   }
-  validate21.errors = vErrors;
+  validate65.errors = vErrors;
   return errors === 0;
 }
-validate21.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-function validate20(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
+validate65.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
+function validate52(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
   ;
   let vErrors = null;
   let errors = 0;
-  const evaluated0 = validate20.evaluated;
+  const evaluated0 = validate52.evaluated;
   if (evaluated0.dynamicProps) {
     evaluated0.props = void 0;
   }
@@ -1168,13 +607,13 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
     if (data && typeof data == "object" && !Array.isArray(data)) {
       let missing0;
       if (data.format === void 0 && (missing0 = "format") || data.id === void 0 && (missing0 = "id") || data.revision === void 0 && (missing0 = "revision") || data.createdAt === void 0 && (missing0 = "createdAt") || data.updatedAt === void 0 && (missing0 = "updatedAt") || data.language === void 0 && (missing0 = "language") || data.jurisdiction === void 0 && (missing0 = "jurisdiction") || data.scope === void 0 && (missing0 = "scope") || data.organization === void 0 && (missing0 = "organization") || data.parties === void 0 && (missing0 = "parties") || data.systems === void 0 && (missing0 = "systems") || data.activities === void 0 && (missing0 = "activities")) {
-        validate20.errors = [{ instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: missing0 }, message: "must have required property '" + missing0 + "'" }];
+        validate52.errors = [{ instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: missing0 }, message: "must have required property '" + missing0 + "'" }];
         return false;
       } else {
         const _errs1 = errors;
         for (const key0 in data) {
-          if (!func1.call(schema31.properties, key0)) {
-            validate20.errors = [{ instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" }];
+          if (!func1.call(schema19.properties, key0)) {
+            validate52.errors = [{ instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" }];
             return false;
             break;
           }
@@ -1183,7 +622,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
           if (data.format !== void 0) {
             const _errs2 = errors;
             if ("rgpd-master-v1" !== data.format) {
-              validate20.errors = [{ instancePath: instancePath + "/format", schemaPath: "#/properties/format/const", keyword: "const", params: { allowedValue: "rgpd-master-v1" }, message: "must be equal to constant" }];
+              validate52.errors = [{ instancePath: instancePath + "/format", schemaPath: "#/properties/format/const", keyword: "const", params: { allowedValue: "rgpd-master-v1" }, message: "must be equal to constant" }];
               return false;
             }
             var valid0 = _errs2 === errors;
@@ -1196,12 +635,12 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
               const _errs3 = errors;
               if (errors === _errs3) {
                 if (typeof data1 === "string") {
-                  if (!pattern4.test(data1)) {
-                    validate20.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
+                  if (!pattern3.test(data1)) {
+                    validate52.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
                     return false;
                   }
                 } else {
-                  validate20.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                  validate52.errors = [{ instancePath: instancePath + "/id", schemaPath: "#/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                   return false;
                 }
               }
@@ -1214,17 +653,17 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                 let data2 = data.revision;
                 const _errs5 = errors;
                 if (!(typeof data2 == "number" && (!(data2 % 1) && !isNaN(data2)) && isFinite(data2))) {
-                  validate20.errors = [{ instancePath: instancePath + "/revision", schemaPath: "#/properties/revision/type", keyword: "type", params: { type: "integer" }, message: "must be integer" }];
+                  validate52.errors = [{ instancePath: instancePath + "/revision", schemaPath: "#/properties/revision/type", keyword: "type", params: { type: "integer" }, message: "must be integer" }];
                   return false;
                 }
                 if (errors === _errs5) {
                   if (typeof data2 == "number" && isFinite(data2)) {
                     if (data2 > 9007199254740990 || isNaN(data2)) {
-                      validate20.errors = [{ instancePath: instancePath + "/revision", schemaPath: "#/properties/revision/maximum", keyword: "maximum", params: { comparison: "<=", limit: 9007199254740990 }, message: "must be <= 9007199254740990" }];
+                      validate52.errors = [{ instancePath: instancePath + "/revision", schemaPath: "#/properties/revision/maximum", keyword: "maximum", params: { comparison: "<=", limit: 9007199254740990 }, message: "must be <= 9007199254740990" }];
                       return false;
                     } else {
                       if (data2 < 1 || isNaN(data2)) {
-                        validate20.errors = [{ instancePath: instancePath + "/revision", schemaPath: "#/properties/revision/minimum", keyword: "minimum", params: { comparison: ">=", limit: 1 }, message: "must be >= 1" }];
+                        validate52.errors = [{ instancePath: instancePath + "/revision", schemaPath: "#/properties/revision/minimum", keyword: "minimum", params: { comparison: ">=", limit: 1 }, message: "must be >= 1" }];
                         return false;
                       }
                     }
@@ -1241,17 +680,17 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                   if (errors === _errs7) {
                     if (errors === _errs7) {
                       if (typeof data3 === "string") {
-                        if (!pattern5.test(data3)) {
-                          validate20.errors = [{ instancePath: instancePath + "/createdAt", schemaPath: "#/properties/createdAt/pattern", keyword: "pattern", params: { pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, message: 'must match pattern "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"' }];
+                        if (!pattern4.test(data3)) {
+                          validate52.errors = [{ instancePath: instancePath + "/createdAt", schemaPath: "#/properties/createdAt/pattern", keyword: "pattern", params: { pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, message: 'must match pattern "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"' }];
                           return false;
                         } else {
                           if (!formats0.validate(data3)) {
-                            validate20.errors = [{ instancePath: instancePath + "/createdAt", schemaPath: "#/properties/createdAt/format", keyword: "format", params: { format: "date-time" }, message: 'must match format "date-time"' }];
+                            validate52.errors = [{ instancePath: instancePath + "/createdAt", schemaPath: "#/properties/createdAt/format", keyword: "format", params: { format: "date-time" }, message: 'must match format "date-time"' }];
                             return false;
                           }
                         }
                       } else {
-                        validate20.errors = [{ instancePath: instancePath + "/createdAt", schemaPath: "#/properties/createdAt/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                        validate52.errors = [{ instancePath: instancePath + "/createdAt", schemaPath: "#/properties/createdAt/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                         return false;
                       }
                     }
@@ -1267,17 +706,17 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     if (errors === _errs9) {
                       if (errors === _errs9) {
                         if (typeof data4 === "string") {
-                          if (!pattern5.test(data4)) {
-                            validate20.errors = [{ instancePath: instancePath + "/updatedAt", schemaPath: "#/properties/updatedAt/pattern", keyword: "pattern", params: { pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, message: 'must match pattern "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"' }];
+                          if (!pattern4.test(data4)) {
+                            validate52.errors = [{ instancePath: instancePath + "/updatedAt", schemaPath: "#/properties/updatedAt/pattern", keyword: "pattern", params: { pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$" }, message: 'must match pattern "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$"' }];
                             return false;
                           } else {
                             if (!formats0.validate(data4)) {
-                              validate20.errors = [{ instancePath: instancePath + "/updatedAt", schemaPath: "#/properties/updatedAt/format", keyword: "format", params: { format: "date-time" }, message: 'must match format "date-time"' }];
+                              validate52.errors = [{ instancePath: instancePath + "/updatedAt", schemaPath: "#/properties/updatedAt/format", keyword: "format", params: { format: "date-time" }, message: 'must match format "date-time"' }];
                               return false;
                             }
                           }
                         } else {
-                          validate20.errors = [{ instancePath: instancePath + "/updatedAt", schemaPath: "#/properties/updatedAt/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                          validate52.errors = [{ instancePath: instancePath + "/updatedAt", schemaPath: "#/properties/updatedAt/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                           return false;
                         }
                       }
@@ -1290,7 +729,7 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     if (data.language !== void 0) {
                       const _errs11 = errors;
                       if ("fr" !== data.language) {
-                        validate20.errors = [{ instancePath: instancePath + "/language", schemaPath: "#/properties/language/const", keyword: "const", params: { allowedValue: "fr" }, message: "must be equal to constant" }];
+                        validate52.errors = [{ instancePath: instancePath + "/language", schemaPath: "#/properties/language/const", keyword: "const", params: { allowedValue: "fr" }, message: "must be equal to constant" }];
                         return false;
                       }
                       var valid0 = _errs11 === errors;
@@ -1299,203 +738,10 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                     }
                     if (valid0) {
                       if (data.jurisdiction !== void 0) {
-                        let data6 = data.jurisdiction;
                         const _errs12 = errors;
-                        const _errs14 = errors;
-                        let valid2 = false;
-                        let passing0 = null;
-                        const _errs15 = errors;
-                        if (errors === _errs15) {
-                          if (data6 && typeof data6 == "object" && !Array.isArray(data6)) {
-                            let missing1;
-                            if (data6.state === void 0 && (missing1 = "state")) {
-                              const err0 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing1 }, message: "must have required property '" + missing1 + "'" };
-                              if (vErrors === null) {
-                                vErrors = [err0];
-                              } else {
-                                vErrors.push(err0);
-                              }
-                              errors++;
-                            } else {
-                              const _errs17 = errors;
-                              for (const key1 in data6) {
-                                if (!(key1 === "state")) {
-                                  const err1 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
-                                  if (vErrors === null) {
-                                    vErrors = [err1];
-                                  } else {
-                                    vErrors.push(err1);
-                                  }
-                                  errors++;
-                                  break;
-                                }
-                              }
-                              if (_errs17 === errors) {
-                                if (data6.state !== void 0) {
-                                  if ("unknown" !== data6.state) {
-                                    const err2 = { instancePath: instancePath + "/jurisdiction/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                    if (vErrors === null) {
-                                      vErrors = [err2];
-                                    } else {
-                                      vErrors.push(err2);
-                                    }
-                                    errors++;
-                                  }
-                                }
-                              }
-                            }
-                          } else {
-                            const err3 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                            if (vErrors === null) {
-                              vErrors = [err3];
-                            } else {
-                              vErrors.push(err3);
-                            }
-                            errors++;
-                          }
-                        }
-                        var _valid0 = _errs15 === errors;
-                        if (_valid0) {
-                          valid2 = true;
-                          passing0 = 0;
-                          var props0 = true;
-                        }
-                        const _errs19 = errors;
-                        if (errors === _errs19) {
-                          if (data6 && typeof data6 == "object" && !Array.isArray(data6)) {
-                            let missing2;
-                            if (data6.state === void 0 && (missing2 = "state") || data6.value === void 0 && (missing2 = "value")) {
-                              const err4 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing2 }, message: "must have required property '" + missing2 + "'" };
-                              if (vErrors === null) {
-                                vErrors = [err4];
-                              } else {
-                                vErrors.push(err4);
-                              }
-                              errors++;
-                            } else {
-                              const _errs21 = errors;
-                              for (const key2 in data6) {
-                                if (!(key2 === "state" || key2 === "value")) {
-                                  const err5 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
-                                  if (vErrors === null) {
-                                    vErrors = [err5];
-                                  } else {
-                                    vErrors.push(err5);
-                                  }
-                                  errors++;
-                                  break;
-                                }
-                              }
-                              if (_errs21 === errors) {
-                                if (data6.state !== void 0) {
-                                  const _errs22 = errors;
-                                  if ("documented" !== data6.state) {
-                                    const err6 = { instancePath: instancePath + "/jurisdiction/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                    if (vErrors === null) {
-                                      vErrors = [err6];
-                                    } else {
-                                      vErrors.push(err6);
-                                    }
-                                    errors++;
-                                  }
-                                  var valid4 = _errs22 === errors;
-                                } else {
-                                  var valid4 = true;
-                                }
-                                if (valid4) {
-                                  if (data6.value !== void 0) {
-                                    let data9 = data6.value;
-                                    const _errs23 = errors;
-                                    if (errors === _errs23) {
-                                      if (typeof data9 === "string") {
-                                        if (func2(data9) > 4e3) {
-                                          const err7 = { instancePath: instancePath + "/jurisdiction/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                          if (vErrors === null) {
-                                            vErrors = [err7];
-                                          } else {
-                                            vErrors.push(err7);
-                                          }
-                                          errors++;
-                                        } else {
-                                          if (func2(data9) < 1) {
-                                            const err8 = { instancePath: instancePath + "/jurisdiction/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                            if (vErrors === null) {
-                                              vErrors = [err8];
-                                            } else {
-                                              vErrors.push(err8);
-                                            }
-                                            errors++;
-                                          } else {
-                                            if (!pattern7.test(data9)) {
-                                              const err9 = { instancePath: instancePath + "/jurisdiction/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                              if (vErrors === null) {
-                                                vErrors = [err9];
-                                              } else {
-                                                vErrors.push(err9);
-                                              }
-                                              errors++;
-                                            }
-                                          }
-                                        }
-                                      } else {
-                                        const err10 = { instancePath: instancePath + "/jurisdiction/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                        if (vErrors === null) {
-                                          vErrors = [err10];
-                                        } else {
-                                          vErrors.push(err10);
-                                        }
-                                        errors++;
-                                      }
-                                    }
-                                    var valid4 = _errs23 === errors;
-                                  } else {
-                                    var valid4 = true;
-                                  }
-                                }
-                              }
-                            }
-                          } else {
-                            const err11 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                            if (vErrors === null) {
-                              vErrors = [err11];
-                            } else {
-                              vErrors.push(err11);
-                            }
-                            errors++;
-                          }
-                        }
-                        var _valid0 = _errs19 === errors;
-                        if (_valid0 && valid2) {
-                          valid2 = false;
-                          passing0 = [passing0, 1];
-                        } else {
-                          if (_valid0) {
-                            valid2 = true;
-                            passing0 = 1;
-                            if (props0 !== true) {
-                              props0 = true;
-                            }
-                          }
-                        }
-                        if (!valid2) {
-                          const err12 = { instancePath: instancePath + "/jurisdiction", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-                          if (vErrors === null) {
-                            vErrors = [err12];
-                          } else {
-                            vErrors.push(err12);
-                          }
-                          errors++;
-                          validate20.errors = vErrors;
-                          return false;
-                        } else {
-                          errors = _errs14;
-                          if (vErrors !== null) {
-                            if (_errs14) {
-                              vErrors.length = _errs14;
-                            } else {
-                              vErrors = null;
-                            }
-                          }
+                        if (!validate53(data.jurisdiction, { instancePath: instancePath + "/jurisdiction", parentData: data, parentDataProperty: "jurisdiction", rootData, dynamicAnchors })) {
+                          vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                          errors = vErrors.length;
                         }
                         var valid0 = _errs12 === errors;
                       } else {
@@ -1503,977 +749,205 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                       }
                       if (valid0) {
                         if (data.scope !== void 0) {
-                          let data10 = data.scope;
-                          const _errs25 = errors;
-                          const _errs27 = errors;
-                          let valid6 = false;
-                          let passing1 = null;
-                          const _errs28 = errors;
-                          if (errors === _errs28) {
-                            if (data10 && typeof data10 == "object" && !Array.isArray(data10)) {
-                              let missing3;
-                              if (data10.state === void 0 && (missing3 = "state")) {
-                                const err13 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing3 }, message: "must have required property '" + missing3 + "'" };
-                                if (vErrors === null) {
-                                  vErrors = [err13];
-                                } else {
-                                  vErrors.push(err13);
-                                }
-                                errors++;
-                              } else {
-                                const _errs30 = errors;
-                                for (const key3 in data10) {
-                                  if (!(key3 === "state")) {
-                                    const err14 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" };
-                                    if (vErrors === null) {
-                                      vErrors = [err14];
-                                    } else {
-                                      vErrors.push(err14);
-                                    }
-                                    errors++;
-                                    break;
-                                  }
-                                }
-                                if (_errs30 === errors) {
-                                  if (data10.state !== void 0) {
-                                    if ("unknown" !== data10.state) {
-                                      const err15 = { instancePath: instancePath + "/scope/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                      if (vErrors === null) {
-                                        vErrors = [err15];
-                                      } else {
-                                        vErrors.push(err15);
-                                      }
-                                      errors++;
-                                    }
-                                  }
-                                }
-                              }
-                            } else {
-                              const err16 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                              if (vErrors === null) {
-                                vErrors = [err16];
-                              } else {
-                                vErrors.push(err16);
-                              }
-                              errors++;
-                            }
+                          const _errs13 = errors;
+                          if (!validate53(data.scope, { instancePath: instancePath + "/scope", parentData: data, parentDataProperty: "scope", rootData, dynamicAnchors })) {
+                            vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                            errors = vErrors.length;
                           }
-                          var _valid1 = _errs28 === errors;
-                          if (_valid1) {
-                            valid6 = true;
-                            passing1 = 0;
-                            var props1 = true;
-                          }
-                          const _errs32 = errors;
-                          if (errors === _errs32) {
-                            if (data10 && typeof data10 == "object" && !Array.isArray(data10)) {
-                              let missing4;
-                              if (data10.state === void 0 && (missing4 = "state") || data10.value === void 0 && (missing4 = "value")) {
-                                const err17 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing4 }, message: "must have required property '" + missing4 + "'" };
-                                if (vErrors === null) {
-                                  vErrors = [err17];
-                                } else {
-                                  vErrors.push(err17);
-                                }
-                                errors++;
-                              } else {
-                                const _errs34 = errors;
-                                for (const key4 in data10) {
-                                  if (!(key4 === "state" || key4 === "value")) {
-                                    const err18 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key4 }, message: "must NOT have additional properties" };
-                                    if (vErrors === null) {
-                                      vErrors = [err18];
-                                    } else {
-                                      vErrors.push(err18);
-                                    }
-                                    errors++;
-                                    break;
-                                  }
-                                }
-                                if (_errs34 === errors) {
-                                  if (data10.state !== void 0) {
-                                    const _errs35 = errors;
-                                    if ("documented" !== data10.state) {
-                                      const err19 = { instancePath: instancePath + "/scope/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                      if (vErrors === null) {
-                                        vErrors = [err19];
-                                      } else {
-                                        vErrors.push(err19);
-                                      }
-                                      errors++;
-                                    }
-                                    var valid8 = _errs35 === errors;
-                                  } else {
-                                    var valid8 = true;
-                                  }
-                                  if (valid8) {
-                                    if (data10.value !== void 0) {
-                                      let data13 = data10.value;
-                                      const _errs36 = errors;
-                                      if (errors === _errs36) {
-                                        if (typeof data13 === "string") {
-                                          if (func2(data13) > 4e3) {
-                                            const err20 = { instancePath: instancePath + "/scope/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                            if (vErrors === null) {
-                                              vErrors = [err20];
-                                            } else {
-                                              vErrors.push(err20);
-                                            }
-                                            errors++;
-                                          } else {
-                                            if (func2(data13) < 1) {
-                                              const err21 = { instancePath: instancePath + "/scope/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                              if (vErrors === null) {
-                                                vErrors = [err21];
-                                              } else {
-                                                vErrors.push(err21);
-                                              }
-                                              errors++;
-                                            } else {
-                                              if (!pattern7.test(data13)) {
-                                                const err22 = { instancePath: instancePath + "/scope/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                if (vErrors === null) {
-                                                  vErrors = [err22];
-                                                } else {
-                                                  vErrors.push(err22);
-                                                }
-                                                errors++;
-                                              }
-                                            }
-                                          }
-                                        } else {
-                                          const err23 = { instancePath: instancePath + "/scope/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                          if (vErrors === null) {
-                                            vErrors = [err23];
-                                          } else {
-                                            vErrors.push(err23);
-                                          }
-                                          errors++;
-                                        }
-                                      }
-                                      var valid8 = _errs36 === errors;
-                                    } else {
-                                      var valid8 = true;
-                                    }
-                                  }
-                                }
-                              }
-                            } else {
-                              const err24 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                              if (vErrors === null) {
-                                vErrors = [err24];
-                              } else {
-                                vErrors.push(err24);
-                              }
-                              errors++;
-                            }
-                          }
-                          var _valid1 = _errs32 === errors;
-                          if (_valid1 && valid6) {
-                            valid6 = false;
-                            passing1 = [passing1, 1];
-                          } else {
-                            if (_valid1) {
-                              valid6 = true;
-                              passing1 = 1;
-                              if (props1 !== true) {
-                                props1 = true;
-                              }
-                            }
-                          }
-                          if (!valid6) {
-                            const err25 = { instancePath: instancePath + "/scope", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing1 }, message: "must match exactly one schema in oneOf" };
-                            if (vErrors === null) {
-                              vErrors = [err25];
-                            } else {
-                              vErrors.push(err25);
-                            }
-                            errors++;
-                            validate20.errors = vErrors;
-                            return false;
-                          } else {
-                            errors = _errs27;
-                            if (vErrors !== null) {
-                              if (_errs27) {
-                                vErrors.length = _errs27;
-                              } else {
-                                vErrors = null;
-                              }
-                            }
-                          }
-                          var valid0 = _errs25 === errors;
+                          var valid0 = _errs13 === errors;
                         } else {
                           var valid0 = true;
                         }
                         if (valid0) {
                           if (data.organization !== void 0) {
-                            let data14 = data.organization;
-                            const _errs38 = errors;
-                            if (errors === _errs38) {
-                              if (data14 && typeof data14 == "object" && !Array.isArray(data14)) {
-                                let missing5;
-                                if (data14.name === void 0 && (missing5 = "name") || data14.contact === void 0 && (missing5 = "contact") || data14.dpo === void 0 && (missing5 = "dpo")) {
-                                  validate20.errors = [{ instancePath: instancePath + "/organization", schemaPath: "#/properties/organization/required", keyword: "required", params: { missingProperty: missing5 }, message: "must have required property '" + missing5 + "'" }];
+                            let data8 = data.organization;
+                            const _errs14 = errors;
+                            if (errors === _errs14) {
+                              if (data8 && typeof data8 == "object" && !Array.isArray(data8)) {
+                                let missing1;
+                                if (data8.name === void 0 && (missing1 = "name") || data8.contact === void 0 && (missing1 = "contact") || data8.dpo === void 0 && (missing1 = "dpo")) {
+                                  validate52.errors = [{ instancePath: instancePath + "/organization", schemaPath: "#/properties/organization/required", keyword: "required", params: { missingProperty: missing1 }, message: "must have required property '" + missing1 + "'" }];
                                   return false;
                                 } else {
-                                  const _errs40 = errors;
-                                  for (const key5 in data14) {
-                                    if (!(key5 === "name" || key5 === "contact" || key5 === "dpo")) {
-                                      validate20.errors = [{ instancePath: instancePath + "/organization", schemaPath: "#/properties/organization/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" }];
+                                  const _errs16 = errors;
+                                  for (const key1 in data8) {
+                                    if (!(key1 === "name" || key1 === "contact" || key1 === "dpo")) {
+                                      validate52.errors = [{ instancePath: instancePath + "/organization", schemaPath: "#/properties/organization/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" }];
                                       return false;
                                       break;
                                     }
                                   }
-                                  if (_errs40 === errors) {
-                                    if (data14.name !== void 0) {
-                                      let data15 = data14.name;
-                                      const _errs41 = errors;
-                                      if (errors === _errs41) {
-                                        if (typeof data15 === "string") {
-                                          if (func2(data15) > 160) {
-                                            validate20.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" }];
+                                  if (_errs16 === errors) {
+                                    if (data8.name !== void 0) {
+                                      let data9 = data8.name;
+                                      const _errs17 = errors;
+                                      if (errors === _errs17) {
+                                        if (typeof data9 === "string") {
+                                          if (func2(data9) > 160) {
+                                            validate52.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" }];
                                             return false;
                                           } else {
-                                            if (func2(data15) < 1) {
-                                              validate20.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" }];
+                                            if (func2(data9) < 1) {
+                                              validate52.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" }];
                                               return false;
                                             } else {
-                                              if (!pattern7.test(data15)) {
-                                                validate20.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' }];
+                                              if (!pattern6.test(data9)) {
+                                                validate52.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' }];
                                                 return false;
                                               }
                                             }
                                           }
                                         } else {
-                                          validate20.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                          validate52.errors = [{ instancePath: instancePath + "/organization/name", schemaPath: "#/properties/organization/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                           return false;
                                         }
                                       }
-                                      var valid9 = _errs41 === errors;
+                                      var valid1 = _errs17 === errors;
                                     } else {
-                                      var valid9 = true;
+                                      var valid1 = true;
                                     }
-                                    if (valid9) {
-                                      if (data14.contact !== void 0) {
-                                        let data16 = data14.contact;
-                                        const _errs43 = errors;
-                                        const _errs45 = errors;
-                                        let valid11 = false;
-                                        let passing2 = null;
-                                        const _errs46 = errors;
-                                        if (errors === _errs46) {
-                                          if (data16 && typeof data16 == "object" && !Array.isArray(data16)) {
-                                            let missing6;
-                                            if (data16.state === void 0 && (missing6 = "state")) {
-                                              const err26 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing6 }, message: "must have required property '" + missing6 + "'" };
-                                              if (vErrors === null) {
-                                                vErrors = [err26];
-                                              } else {
-                                                vErrors.push(err26);
-                                              }
-                                              errors++;
-                                            } else {
-                                              const _errs48 = errors;
-                                              for (const key6 in data16) {
-                                                if (!(key6 === "state")) {
-                                                  const err27 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key6 }, message: "must NOT have additional properties" };
-                                                  if (vErrors === null) {
-                                                    vErrors = [err27];
-                                                  } else {
-                                                    vErrors.push(err27);
-                                                  }
-                                                  errors++;
-                                                  break;
-                                                }
-                                              }
-                                              if (_errs48 === errors) {
-                                                if (data16.state !== void 0) {
-                                                  if ("unknown" !== data16.state) {
-                                                    const err28 = { instancePath: instancePath + "/organization/contact/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                    if (vErrors === null) {
-                                                      vErrors = [err28];
-                                                    } else {
-                                                      vErrors.push(err28);
-                                                    }
-                                                    errors++;
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          } else {
-                                            const err29 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                            if (vErrors === null) {
-                                              vErrors = [err29];
-                                            } else {
-                                              vErrors.push(err29);
-                                            }
-                                            errors++;
-                                          }
+                                    if (valid1) {
+                                      if (data8.contact !== void 0) {
+                                        const _errs19 = errors;
+                                        if (!validate53(data8.contact, { instancePath: instancePath + "/organization/contact", parentData: data8, parentDataProperty: "contact", rootData, dynamicAnchors })) {
+                                          vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                          errors = vErrors.length;
                                         }
-                                        var _valid2 = _errs46 === errors;
-                                        if (_valid2) {
-                                          valid11 = true;
-                                          passing2 = 0;
-                                          var props2 = true;
-                                        }
-                                        const _errs50 = errors;
-                                        if (errors === _errs50) {
-                                          if (data16 && typeof data16 == "object" && !Array.isArray(data16)) {
-                                            let missing7;
-                                            if (data16.state === void 0 && (missing7 = "state") || data16.value === void 0 && (missing7 = "value")) {
-                                              const err30 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing7 }, message: "must have required property '" + missing7 + "'" };
-                                              if (vErrors === null) {
-                                                vErrors = [err30];
-                                              } else {
-                                                vErrors.push(err30);
-                                              }
-                                              errors++;
-                                            } else {
-                                              const _errs52 = errors;
-                                              for (const key7 in data16) {
-                                                if (!(key7 === "state" || key7 === "value")) {
-                                                  const err31 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key7 }, message: "must NOT have additional properties" };
-                                                  if (vErrors === null) {
-                                                    vErrors = [err31];
-                                                  } else {
-                                                    vErrors.push(err31);
-                                                  }
-                                                  errors++;
-                                                  break;
-                                                }
-                                              }
-                                              if (_errs52 === errors) {
-                                                if (data16.state !== void 0) {
-                                                  const _errs53 = errors;
-                                                  if ("documented" !== data16.state) {
-                                                    const err32 = { instancePath: instancePath + "/organization/contact/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                    if (vErrors === null) {
-                                                      vErrors = [err32];
-                                                    } else {
-                                                      vErrors.push(err32);
-                                                    }
-                                                    errors++;
-                                                  }
-                                                  var valid13 = _errs53 === errors;
-                                                } else {
-                                                  var valid13 = true;
-                                                }
-                                                if (valid13) {
-                                                  if (data16.value !== void 0) {
-                                                    let data19 = data16.value;
-                                                    const _errs54 = errors;
-                                                    if (errors === _errs54) {
-                                                      if (typeof data19 === "string") {
-                                                        if (func2(data19) > 4e3) {
-                                                          const err33 = { instancePath: instancePath + "/organization/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                          if (vErrors === null) {
-                                                            vErrors = [err33];
-                                                          } else {
-                                                            vErrors.push(err33);
-                                                          }
-                                                          errors++;
-                                                        } else {
-                                                          if (func2(data19) < 1) {
-                                                            const err34 = { instancePath: instancePath + "/organization/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                            if (vErrors === null) {
-                                                              vErrors = [err34];
-                                                            } else {
-                                                              vErrors.push(err34);
-                                                            }
-                                                            errors++;
-                                                          } else {
-                                                            if (!pattern7.test(data19)) {
-                                                              const err35 = { instancePath: instancePath + "/organization/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                              if (vErrors === null) {
-                                                                vErrors = [err35];
-                                                              } else {
-                                                                vErrors.push(err35);
-                                                              }
-                                                              errors++;
-                                                            }
-                                                          }
-                                                        }
-                                                      } else {
-                                                        const err36 = { instancePath: instancePath + "/organization/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                        if (vErrors === null) {
-                                                          vErrors = [err36];
-                                                        } else {
-                                                          vErrors.push(err36);
-                                                        }
-                                                        errors++;
-                                                      }
-                                                    }
-                                                    var valid13 = _errs54 === errors;
-                                                  } else {
-                                                    var valid13 = true;
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          } else {
-                                            const err37 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                            if (vErrors === null) {
-                                              vErrors = [err37];
-                                            } else {
-                                              vErrors.push(err37);
-                                            }
-                                            errors++;
-                                          }
-                                        }
-                                        var _valid2 = _errs50 === errors;
-                                        if (_valid2 && valid11) {
-                                          valid11 = false;
-                                          passing2 = [passing2, 1];
-                                        } else {
-                                          if (_valid2) {
-                                            valid11 = true;
-                                            passing2 = 1;
-                                            if (props2 !== true) {
-                                              props2 = true;
-                                            }
-                                          }
-                                        }
-                                        if (!valid11) {
-                                          const err38 = { instancePath: instancePath + "/organization/contact", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing2 }, message: "must match exactly one schema in oneOf" };
-                                          if (vErrors === null) {
-                                            vErrors = [err38];
-                                          } else {
-                                            vErrors.push(err38);
-                                          }
-                                          errors++;
-                                          validate20.errors = vErrors;
-                                          return false;
-                                        } else {
-                                          errors = _errs45;
-                                          if (vErrors !== null) {
-                                            if (_errs45) {
-                                              vErrors.length = _errs45;
-                                            } else {
-                                              vErrors = null;
-                                            }
-                                          }
-                                        }
-                                        var valid9 = _errs43 === errors;
+                                        var valid1 = _errs19 === errors;
                                       } else {
-                                        var valid9 = true;
+                                        var valid1 = true;
                                       }
-                                      if (valid9) {
-                                        if (data14.dpo !== void 0) {
-                                          let data20 = data14.dpo;
-                                          const _errs56 = errors;
-                                          const _errs58 = errors;
-                                          let valid15 = false;
-                                          let passing3 = null;
-                                          const _errs59 = errors;
-                                          if (errors === _errs59) {
-                                            if (data20 && typeof data20 == "object" && !Array.isArray(data20)) {
-                                              let missing8;
-                                              if (data20.state === void 0 && (missing8 = "state")) {
-                                                const err39 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing8 }, message: "must have required property '" + missing8 + "'" };
-                                                if (vErrors === null) {
-                                                  vErrors = [err39];
-                                                } else {
-                                                  vErrors.push(err39);
-                                                }
-                                                errors++;
-                                              } else {
-                                                const _errs61 = errors;
-                                                for (const key8 in data20) {
-                                                  if (!(key8 === "state")) {
-                                                    const err40 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key8 }, message: "must NOT have additional properties" };
-                                                    if (vErrors === null) {
-                                                      vErrors = [err40];
-                                                    } else {
-                                                      vErrors.push(err40);
-                                                    }
-                                                    errors++;
-                                                    break;
-                                                  }
-                                                }
-                                                if (_errs61 === errors) {
-                                                  if (data20.state !== void 0) {
-                                                    if ("unknown" !== data20.state) {
-                                                      const err41 = { instancePath: instancePath + "/organization/dpo/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                      if (vErrors === null) {
-                                                        vErrors = [err41];
-                                                      } else {
-                                                        vErrors.push(err41);
-                                                      }
-                                                      errors++;
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            } else {
-                                              const err42 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                              if (vErrors === null) {
-                                                vErrors = [err42];
-                                              } else {
-                                                vErrors.push(err42);
-                                              }
-                                              errors++;
-                                            }
+                                      if (valid1) {
+                                        if (data8.dpo !== void 0) {
+                                          const _errs20 = errors;
+                                          if (!validate53(data8.dpo, { instancePath: instancePath + "/organization/dpo", parentData: data8, parentDataProperty: "dpo", rootData, dynamicAnchors })) {
+                                            vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                            errors = vErrors.length;
                                           }
-                                          var _valid3 = _errs59 === errors;
-                                          if (_valid3) {
-                                            valid15 = true;
-                                            passing3 = 0;
-                                            var props3 = true;
-                                          }
-                                          const _errs63 = errors;
-                                          if (errors === _errs63) {
-                                            if (data20 && typeof data20 == "object" && !Array.isArray(data20)) {
-                                              let missing9;
-                                              if (data20.state === void 0 && (missing9 = "state") || data20.value === void 0 && (missing9 = "value")) {
-                                                const err43 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing9 }, message: "must have required property '" + missing9 + "'" };
-                                                if (vErrors === null) {
-                                                  vErrors = [err43];
-                                                } else {
-                                                  vErrors.push(err43);
-                                                }
-                                                errors++;
-                                              } else {
-                                                const _errs65 = errors;
-                                                for (const key9 in data20) {
-                                                  if (!(key9 === "state" || key9 === "value")) {
-                                                    const err44 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key9 }, message: "must NOT have additional properties" };
-                                                    if (vErrors === null) {
-                                                      vErrors = [err44];
-                                                    } else {
-                                                      vErrors.push(err44);
-                                                    }
-                                                    errors++;
-                                                    break;
-                                                  }
-                                                }
-                                                if (_errs65 === errors) {
-                                                  if (data20.state !== void 0) {
-                                                    const _errs66 = errors;
-                                                    if ("documented" !== data20.state) {
-                                                      const err45 = { instancePath: instancePath + "/organization/dpo/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                      if (vErrors === null) {
-                                                        vErrors = [err45];
-                                                      } else {
-                                                        vErrors.push(err45);
-                                                      }
-                                                      errors++;
-                                                    }
-                                                    var valid17 = _errs66 === errors;
-                                                  } else {
-                                                    var valid17 = true;
-                                                  }
-                                                  if (valid17) {
-                                                    if (data20.value !== void 0) {
-                                                      let data23 = data20.value;
-                                                      const _errs67 = errors;
-                                                      if (errors === _errs67) {
-                                                        if (typeof data23 === "string") {
-                                                          if (func2(data23) > 4e3) {
-                                                            const err46 = { instancePath: instancePath + "/organization/dpo/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                            if (vErrors === null) {
-                                                              vErrors = [err46];
-                                                            } else {
-                                                              vErrors.push(err46);
-                                                            }
-                                                            errors++;
-                                                          } else {
-                                                            if (func2(data23) < 1) {
-                                                              const err47 = { instancePath: instancePath + "/organization/dpo/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                              if (vErrors === null) {
-                                                                vErrors = [err47];
-                                                              } else {
-                                                                vErrors.push(err47);
-                                                              }
-                                                              errors++;
-                                                            } else {
-                                                              if (!pattern7.test(data23)) {
-                                                                const err48 = { instancePath: instancePath + "/organization/dpo/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                if (vErrors === null) {
-                                                                  vErrors = [err48];
-                                                                } else {
-                                                                  vErrors.push(err48);
-                                                                }
-                                                                errors++;
-                                                              }
-                                                            }
-                                                          }
-                                                        } else {
-                                                          const err49 = { instancePath: instancePath + "/organization/dpo/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                          if (vErrors === null) {
-                                                            vErrors = [err49];
-                                                          } else {
-                                                            vErrors.push(err49);
-                                                          }
-                                                          errors++;
-                                                        }
-                                                      }
-                                                      var valid17 = _errs67 === errors;
-                                                    } else {
-                                                      var valid17 = true;
-                                                    }
-                                                  }
-                                                }
-                                              }
-                                            } else {
-                                              const err50 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                              if (vErrors === null) {
-                                                vErrors = [err50];
-                                              } else {
-                                                vErrors.push(err50);
-                                              }
-                                              errors++;
-                                            }
-                                          }
-                                          var _valid3 = _errs63 === errors;
-                                          if (_valid3 && valid15) {
-                                            valid15 = false;
-                                            passing3 = [passing3, 1];
-                                          } else {
-                                            if (_valid3) {
-                                              valid15 = true;
-                                              passing3 = 1;
-                                              if (props3 !== true) {
-                                                props3 = true;
-                                              }
-                                            }
-                                          }
-                                          if (!valid15) {
-                                            const err51 = { instancePath: instancePath + "/organization/dpo", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing3 }, message: "must match exactly one schema in oneOf" };
-                                            if (vErrors === null) {
-                                              vErrors = [err51];
-                                            } else {
-                                              vErrors.push(err51);
-                                            }
-                                            errors++;
-                                            validate20.errors = vErrors;
-                                            return false;
-                                          } else {
-                                            errors = _errs58;
-                                            if (vErrors !== null) {
-                                              if (_errs58) {
-                                                vErrors.length = _errs58;
-                                              } else {
-                                                vErrors = null;
-                                              }
-                                            }
-                                          }
-                                          var valid9 = _errs56 === errors;
+                                          var valid1 = _errs20 === errors;
                                         } else {
-                                          var valid9 = true;
+                                          var valid1 = true;
                                         }
                                       }
                                     }
                                   }
                                 }
                               } else {
-                                validate20.errors = [{ instancePath: instancePath + "/organization", schemaPath: "#/properties/organization/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
+                                validate52.errors = [{ instancePath: instancePath + "/organization", schemaPath: "#/properties/organization/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
                                 return false;
                               }
                             }
-                            var valid0 = _errs38 === errors;
+                            var valid0 = _errs14 === errors;
                           } else {
                             var valid0 = true;
                           }
                           if (valid0) {
                             if (data.parties !== void 0) {
-                              let data24 = data.parties;
-                              const _errs69 = errors;
-                              if (errors === _errs69) {
-                                if (Array.isArray(data24)) {
-                                  if (data24.length > 200) {
-                                    validate20.errors = [{ instancePath: instancePath + "/parties", schemaPath: "#/properties/parties/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" }];
+                              let data12 = data.parties;
+                              const _errs21 = errors;
+                              if (errors === _errs21) {
+                                if (Array.isArray(data12)) {
+                                  if (data12.length > 200) {
+                                    validate52.errors = [{ instancePath: instancePath + "/parties", schemaPath: "#/properties/parties/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" }];
                                     return false;
                                   } else {
-                                    var valid18 = true;
-                                    const len0 = data24.length;
+                                    var valid2 = true;
+                                    const len0 = data12.length;
                                     for (let i0 = 0; i0 < len0; i0++) {
-                                      let data25 = data24[i0];
-                                      const _errs71 = errors;
-                                      if (errors === _errs71) {
-                                        if (data25 && typeof data25 == "object" && !Array.isArray(data25)) {
-                                          let missing10;
-                                          if (data25.id === void 0 && (missing10 = "id") || data25.workspaceId === void 0 && (missing10 = "workspaceId") || data25.name === void 0 && (missing10 = "name") || data25.contact === void 0 && (missing10 = "contact")) {
-                                            validate20.errors = [{ instancePath: instancePath + "/parties/" + i0, schemaPath: "#/properties/parties/items/required", keyword: "required", params: { missingProperty: missing10 }, message: "must have required property '" + missing10 + "'" }];
+                                      let data13 = data12[i0];
+                                      const _errs23 = errors;
+                                      if (errors === _errs23) {
+                                        if (data13 && typeof data13 == "object" && !Array.isArray(data13)) {
+                                          let missing2;
+                                          if (data13.id === void 0 && (missing2 = "id") || data13.workspaceId === void 0 && (missing2 = "workspaceId") || data13.name === void 0 && (missing2 = "name") || data13.contact === void 0 && (missing2 = "contact")) {
+                                            validate52.errors = [{ instancePath: instancePath + "/parties/" + i0, schemaPath: "#/properties/parties/items/required", keyword: "required", params: { missingProperty: missing2 }, message: "must have required property '" + missing2 + "'" }];
                                             return false;
                                           } else {
-                                            const _errs73 = errors;
-                                            for (const key10 in data25) {
-                                              if (!(key10 === "id" || key10 === "workspaceId" || key10 === "name" || key10 === "contact")) {
-                                                validate20.errors = [{ instancePath: instancePath + "/parties/" + i0, schemaPath: "#/properties/parties/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key10 }, message: "must NOT have additional properties" }];
+                                            const _errs25 = errors;
+                                            for (const key2 in data13) {
+                                              if (!(key2 === "id" || key2 === "workspaceId" || key2 === "name" || key2 === "contact")) {
+                                                validate52.errors = [{ instancePath: instancePath + "/parties/" + i0, schemaPath: "#/properties/parties/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" }];
                                                 return false;
                                                 break;
                                               }
                                             }
-                                            if (_errs73 === errors) {
-                                              if (data25.id !== void 0) {
-                                                let data26 = data25.id;
-                                                const _errs74 = errors;
-                                                if (errors === _errs74) {
-                                                  if (typeof data26 === "string") {
-                                                    if (!pattern4.test(data26)) {
-                                                      validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/id", schemaPath: "#/properties/parties/items/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
+                                            if (_errs25 === errors) {
+                                              if (data13.id !== void 0) {
+                                                let data14 = data13.id;
+                                                const _errs26 = errors;
+                                                if (errors === _errs26) {
+                                                  if (typeof data14 === "string") {
+                                                    if (!pattern3.test(data14)) {
+                                                      validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/id", schemaPath: "#/properties/parties/items/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
                                                       return false;
                                                     }
                                                   } else {
-                                                    validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/id", schemaPath: "#/properties/parties/items/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                                    validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/id", schemaPath: "#/properties/parties/items/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                                     return false;
                                                   }
                                                 }
-                                                var valid19 = _errs74 === errors;
+                                                var valid3 = _errs26 === errors;
                                               } else {
-                                                var valid19 = true;
+                                                var valid3 = true;
                                               }
-                                              if (valid19) {
-                                                if (data25.workspaceId !== void 0) {
-                                                  let data27 = data25.workspaceId;
-                                                  const _errs76 = errors;
-                                                  if (errors === _errs76) {
-                                                    if (typeof data27 === "string") {
-                                                      if (!pattern4.test(data27)) {
-                                                        validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/workspaceId", schemaPath: "#/properties/parties/items/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
+                                              if (valid3) {
+                                                if (data13.workspaceId !== void 0) {
+                                                  let data15 = data13.workspaceId;
+                                                  const _errs28 = errors;
+                                                  if (errors === _errs28) {
+                                                    if (typeof data15 === "string") {
+                                                      if (!pattern3.test(data15)) {
+                                                        validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/workspaceId", schemaPath: "#/properties/parties/items/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
                                                         return false;
                                                       }
                                                     } else {
-                                                      validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/workspaceId", schemaPath: "#/properties/parties/items/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                                      validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/workspaceId", schemaPath: "#/properties/parties/items/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                                       return false;
                                                     }
                                                   }
-                                                  var valid19 = _errs76 === errors;
+                                                  var valid3 = _errs28 === errors;
                                                 } else {
-                                                  var valid19 = true;
+                                                  var valid3 = true;
                                                 }
-                                                if (valid19) {
-                                                  if (data25.name !== void 0) {
-                                                    let data28 = data25.name;
-                                                    const _errs78 = errors;
-                                                    if (errors === _errs78) {
-                                                      if (typeof data28 === "string") {
-                                                        if (func2(data28) > 160) {
-                                                          validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" }];
+                                                if (valid3) {
+                                                  if (data13.name !== void 0) {
+                                                    let data16 = data13.name;
+                                                    const _errs30 = errors;
+                                                    if (errors === _errs30) {
+                                                      if (typeof data16 === "string") {
+                                                        if (func2(data16) > 160) {
+                                                          validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" }];
                                                           return false;
                                                         } else {
-                                                          if (func2(data28) < 1) {
-                                                            validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" }];
+                                                          if (func2(data16) < 1) {
+                                                            validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" }];
                                                             return false;
                                                           } else {
-                                                            if (!pattern7.test(data28)) {
-                                                              validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' }];
+                                                            if (!pattern6.test(data16)) {
+                                                              validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' }];
                                                               return false;
                                                             }
                                                           }
                                                         }
                                                       } else {
-                                                        validate20.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                                        validate52.errors = [{ instancePath: instancePath + "/parties/" + i0 + "/name", schemaPath: "#/properties/parties/items/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                                         return false;
                                                       }
                                                     }
-                                                    var valid19 = _errs78 === errors;
+                                                    var valid3 = _errs30 === errors;
                                                   } else {
-                                                    var valid19 = true;
+                                                    var valid3 = true;
                                                   }
-                                                  if (valid19) {
-                                                    if (data25.contact !== void 0) {
-                                                      let data29 = data25.contact;
-                                                      const _errs80 = errors;
-                                                      const _errs82 = errors;
-                                                      let valid21 = false;
-                                                      let passing4 = null;
-                                                      const _errs83 = errors;
-                                                      if (errors === _errs83) {
-                                                        if (data29 && typeof data29 == "object" && !Array.isArray(data29)) {
-                                                          let missing11;
-                                                          if (data29.state === void 0 && (missing11 = "state")) {
-                                                            const err52 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing11 }, message: "must have required property '" + missing11 + "'" };
-                                                            if (vErrors === null) {
-                                                              vErrors = [err52];
-                                                            } else {
-                                                              vErrors.push(err52);
-                                                            }
-                                                            errors++;
-                                                          } else {
-                                                            const _errs85 = errors;
-                                                            for (const key11 in data29) {
-                                                              if (!(key11 === "state")) {
-                                                                const err53 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key11 }, message: "must NOT have additional properties" };
-                                                                if (vErrors === null) {
-                                                                  vErrors = [err53];
-                                                                } else {
-                                                                  vErrors.push(err53);
-                                                                }
-                                                                errors++;
-                                                                break;
-                                                              }
-                                                            }
-                                                            if (_errs85 === errors) {
-                                                              if (data29.state !== void 0) {
-                                                                if ("unknown" !== data29.state) {
-                                                                  const err54 = { instancePath: instancePath + "/parties/" + i0 + "/contact/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                  if (vErrors === null) {
-                                                                    vErrors = [err54];
-                                                                  } else {
-                                                                    vErrors.push(err54);
-                                                                  }
-                                                                  errors++;
-                                                                }
-                                                              }
-                                                            }
-                                                          }
-                                                        } else {
-                                                          const err55 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                          if (vErrors === null) {
-                                                            vErrors = [err55];
-                                                          } else {
-                                                            vErrors.push(err55);
-                                                          }
-                                                          errors++;
-                                                        }
+                                                  if (valid3) {
+                                                    if (data13.contact !== void 0) {
+                                                      const _errs32 = errors;
+                                                      if (!validate53(data13.contact, { instancePath: instancePath + "/parties/" + i0 + "/contact", parentData: data13, parentDataProperty: "contact", rootData, dynamicAnchors })) {
+                                                        vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                        errors = vErrors.length;
                                                       }
-                                                      var _valid4 = _errs83 === errors;
-                                                      if (_valid4) {
-                                                        valid21 = true;
-                                                        passing4 = 0;
-                                                        var props4 = true;
-                                                      }
-                                                      const _errs87 = errors;
-                                                      if (errors === _errs87) {
-                                                        if (data29 && typeof data29 == "object" && !Array.isArray(data29)) {
-                                                          let missing12;
-                                                          if (data29.state === void 0 && (missing12 = "state") || data29.value === void 0 && (missing12 = "value")) {
-                                                            const err56 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing12 }, message: "must have required property '" + missing12 + "'" };
-                                                            if (vErrors === null) {
-                                                              vErrors = [err56];
-                                                            } else {
-                                                              vErrors.push(err56);
-                                                            }
-                                                            errors++;
-                                                          } else {
-                                                            const _errs89 = errors;
-                                                            for (const key12 in data29) {
-                                                              if (!(key12 === "state" || key12 === "value")) {
-                                                                const err57 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key12 }, message: "must NOT have additional properties" };
-                                                                if (vErrors === null) {
-                                                                  vErrors = [err57];
-                                                                } else {
-                                                                  vErrors.push(err57);
-                                                                }
-                                                                errors++;
-                                                                break;
-                                                              }
-                                                            }
-                                                            if (_errs89 === errors) {
-                                                              if (data29.state !== void 0) {
-                                                                const _errs90 = errors;
-                                                                if ("documented" !== data29.state) {
-                                                                  const err58 = { instancePath: instancePath + "/parties/" + i0 + "/contact/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                  if (vErrors === null) {
-                                                                    vErrors = [err58];
-                                                                  } else {
-                                                                    vErrors.push(err58);
-                                                                  }
-                                                                  errors++;
-                                                                }
-                                                                var valid23 = _errs90 === errors;
-                                                              } else {
-                                                                var valid23 = true;
-                                                              }
-                                                              if (valid23) {
-                                                                if (data29.value !== void 0) {
-                                                                  let data32 = data29.value;
-                                                                  const _errs91 = errors;
-                                                                  if (errors === _errs91) {
-                                                                    if (typeof data32 === "string") {
-                                                                      if (func2(data32) > 4e3) {
-                                                                        const err59 = { instancePath: instancePath + "/parties/" + i0 + "/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err59];
-                                                                        } else {
-                                                                          vErrors.push(err59);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        if (func2(data32) < 1) {
-                                                                          const err60 = { instancePath: instancePath + "/parties/" + i0 + "/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err60];
-                                                                          } else {
-                                                                            vErrors.push(err60);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          if (!pattern7.test(data32)) {
-                                                                            const err61 = { instancePath: instancePath + "/parties/" + i0 + "/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err61];
-                                                                            } else {
-                                                                              vErrors.push(err61);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    } else {
-                                                                      const err62 = { instancePath: instancePath + "/parties/" + i0 + "/contact/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err62];
-                                                                      } else {
-                                                                        vErrors.push(err62);
-                                                                      }
-                                                                      errors++;
-                                                                    }
-                                                                  }
-                                                                  var valid23 = _errs91 === errors;
-                                                                } else {
-                                                                  var valid23 = true;
-                                                                }
-                                                              }
-                                                            }
-                                                          }
-                                                        } else {
-                                                          const err63 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                          if (vErrors === null) {
-                                                            vErrors = [err63];
-                                                          } else {
-                                                            vErrors.push(err63);
-                                                          }
-                                                          errors++;
-                                                        }
-                                                      }
-                                                      var _valid4 = _errs87 === errors;
-                                                      if (_valid4 && valid21) {
-                                                        valid21 = false;
-                                                        passing4 = [passing4, 1];
-                                                      } else {
-                                                        if (_valid4) {
-                                                          valid21 = true;
-                                                          passing4 = 1;
-                                                          if (props4 !== true) {
-                                                            props4 = true;
-                                                          }
-                                                        }
-                                                      }
-                                                      if (!valid21) {
-                                                        const err64 = { instancePath: instancePath + "/parties/" + i0 + "/contact", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing4 }, message: "must match exactly one schema in oneOf" };
-                                                        if (vErrors === null) {
-                                                          vErrors = [err64];
-                                                        } else {
-                                                          vErrors.push(err64);
-                                                        }
-                                                        errors++;
-                                                        validate20.errors = vErrors;
-                                                        return false;
-                                                      } else {
-                                                        errors = _errs82;
-                                                        if (vErrors !== null) {
-                                                          if (_errs82) {
-                                                            vErrors.length = _errs82;
-                                                          } else {
-                                                            vErrors = null;
-                                                          }
-                                                        }
-                                                      }
-                                                      var valid19 = _errs80 === errors;
+                                                      var valid3 = _errs32 === errors;
                                                     } else {
-                                                      var valid19 = true;
+                                                      var valid3 = true;
                                                     }
                                                   }
                                                 }
@@ -2481,325 +955,132 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                             }
                                           }
                                         } else {
-                                          validate20.errors = [{ instancePath: instancePath + "/parties/" + i0, schemaPath: "#/properties/parties/items/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
+                                          validate52.errors = [{ instancePath: instancePath + "/parties/" + i0, schemaPath: "#/properties/parties/items/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
                                           return false;
                                         }
                                       }
-                                      var valid18 = _errs71 === errors;
-                                      if (!valid18) {
+                                      var valid2 = _errs23 === errors;
+                                      if (!valid2) {
                                         break;
                                       }
                                     }
                                   }
                                 } else {
-                                  validate20.errors = [{ instancePath: instancePath + "/parties", schemaPath: "#/properties/parties/type", keyword: "type", params: { type: "array" }, message: "must be array" }];
+                                  validate52.errors = [{ instancePath: instancePath + "/parties", schemaPath: "#/properties/parties/type", keyword: "type", params: { type: "array" }, message: "must be array" }];
                                   return false;
                                 }
                               }
-                              var valid0 = _errs69 === errors;
+                              var valid0 = _errs21 === errors;
                             } else {
                               var valid0 = true;
                             }
                             if (valid0) {
                               if (data.systems !== void 0) {
-                                let data33 = data.systems;
-                                const _errs93 = errors;
-                                if (errors === _errs93) {
-                                  if (Array.isArray(data33)) {
-                                    if (data33.length > 200) {
-                                      validate20.errors = [{ instancePath: instancePath + "/systems", schemaPath: "#/properties/systems/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" }];
+                                let data18 = data.systems;
+                                const _errs33 = errors;
+                                if (errors === _errs33) {
+                                  if (Array.isArray(data18)) {
+                                    if (data18.length > 200) {
+                                      validate52.errors = [{ instancePath: instancePath + "/systems", schemaPath: "#/properties/systems/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" }];
                                       return false;
                                     } else {
-                                      var valid24 = true;
-                                      const len1 = data33.length;
+                                      var valid4 = true;
+                                      const len1 = data18.length;
                                       for (let i1 = 0; i1 < len1; i1++) {
-                                        let data34 = data33[i1];
-                                        const _errs95 = errors;
-                                        if (errors === _errs95) {
-                                          if (data34 && typeof data34 == "object" && !Array.isArray(data34)) {
-                                            let missing13;
-                                            if (data34.id === void 0 && (missing13 = "id") || data34.workspaceId === void 0 && (missing13 = "workspaceId") || data34.name === void 0 && (missing13 = "name") || data34.description === void 0 && (missing13 = "description")) {
-                                              validate20.errors = [{ instancePath: instancePath + "/systems/" + i1, schemaPath: "#/properties/systems/items/required", keyword: "required", params: { missingProperty: missing13 }, message: "must have required property '" + missing13 + "'" }];
+                                        let data19 = data18[i1];
+                                        const _errs35 = errors;
+                                        if (errors === _errs35) {
+                                          if (data19 && typeof data19 == "object" && !Array.isArray(data19)) {
+                                            let missing3;
+                                            if (data19.id === void 0 && (missing3 = "id") || data19.workspaceId === void 0 && (missing3 = "workspaceId") || data19.name === void 0 && (missing3 = "name") || data19.description === void 0 && (missing3 = "description")) {
+                                              validate52.errors = [{ instancePath: instancePath + "/systems/" + i1, schemaPath: "#/properties/systems/items/required", keyword: "required", params: { missingProperty: missing3 }, message: "must have required property '" + missing3 + "'" }];
                                               return false;
                                             } else {
-                                              const _errs97 = errors;
-                                              for (const key13 in data34) {
-                                                if (!(key13 === "id" || key13 === "workspaceId" || key13 === "name" || key13 === "description")) {
-                                                  validate20.errors = [{ instancePath: instancePath + "/systems/" + i1, schemaPath: "#/properties/systems/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key13 }, message: "must NOT have additional properties" }];
+                                              const _errs37 = errors;
+                                              for (const key3 in data19) {
+                                                if (!(key3 === "id" || key3 === "workspaceId" || key3 === "name" || key3 === "description")) {
+                                                  validate52.errors = [{ instancePath: instancePath + "/systems/" + i1, schemaPath: "#/properties/systems/items/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" }];
                                                   return false;
                                                   break;
                                                 }
                                               }
-                                              if (_errs97 === errors) {
-                                                if (data34.id !== void 0) {
-                                                  let data35 = data34.id;
-                                                  const _errs98 = errors;
-                                                  if (errors === _errs98) {
-                                                    if (typeof data35 === "string") {
-                                                      if (!pattern4.test(data35)) {
-                                                        validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/id", schemaPath: "#/properties/systems/items/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
+                                              if (_errs37 === errors) {
+                                                if (data19.id !== void 0) {
+                                                  let data20 = data19.id;
+                                                  const _errs38 = errors;
+                                                  if (errors === _errs38) {
+                                                    if (typeof data20 === "string") {
+                                                      if (!pattern3.test(data20)) {
+                                                        validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/id", schemaPath: "#/properties/systems/items/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
                                                         return false;
                                                       }
                                                     } else {
-                                                      validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/id", schemaPath: "#/properties/systems/items/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                                      validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/id", schemaPath: "#/properties/systems/items/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                                       return false;
                                                     }
                                                   }
-                                                  var valid25 = _errs98 === errors;
+                                                  var valid5 = _errs38 === errors;
                                                 } else {
-                                                  var valid25 = true;
+                                                  var valid5 = true;
                                                 }
-                                                if (valid25) {
-                                                  if (data34.workspaceId !== void 0) {
-                                                    let data36 = data34.workspaceId;
-                                                    const _errs100 = errors;
-                                                    if (errors === _errs100) {
-                                                      if (typeof data36 === "string") {
-                                                        if (!pattern4.test(data36)) {
-                                                          validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/workspaceId", schemaPath: "#/properties/systems/items/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
+                                                if (valid5) {
+                                                  if (data19.workspaceId !== void 0) {
+                                                    let data21 = data19.workspaceId;
+                                                    const _errs40 = errors;
+                                                    if (errors === _errs40) {
+                                                      if (typeof data21 === "string") {
+                                                        if (!pattern3.test(data21)) {
+                                                          validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/workspaceId", schemaPath: "#/properties/systems/items/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' }];
                                                           return false;
                                                         }
                                                       } else {
-                                                        validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/workspaceId", schemaPath: "#/properties/systems/items/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                                        validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/workspaceId", schemaPath: "#/properties/systems/items/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                                         return false;
                                                       }
                                                     }
-                                                    var valid25 = _errs100 === errors;
+                                                    var valid5 = _errs40 === errors;
                                                   } else {
-                                                    var valid25 = true;
+                                                    var valid5 = true;
                                                   }
-                                                  if (valid25) {
-                                                    if (data34.name !== void 0) {
-                                                      let data37 = data34.name;
-                                                      const _errs102 = errors;
-                                                      if (errors === _errs102) {
-                                                        if (typeof data37 === "string") {
-                                                          if (func2(data37) > 160) {
-                                                            validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" }];
+                                                  if (valid5) {
+                                                    if (data19.name !== void 0) {
+                                                      let data22 = data19.name;
+                                                      const _errs42 = errors;
+                                                      if (errors === _errs42) {
+                                                        if (typeof data22 === "string") {
+                                                          if (func2(data22) > 160) {
+                                                            validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" }];
                                                             return false;
                                                           } else {
-                                                            if (func2(data37) < 1) {
-                                                              validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" }];
+                                                            if (func2(data22) < 1) {
+                                                              validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" }];
                                                               return false;
                                                             } else {
-                                                              if (!pattern7.test(data37)) {
-                                                                validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' }];
+                                                              if (!pattern6.test(data22)) {
+                                                                validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' }];
                                                                 return false;
                                                               }
                                                             }
                                                           }
                                                         } else {
-                                                          validate20.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
+                                                          validate52.errors = [{ instancePath: instancePath + "/systems/" + i1 + "/name", schemaPath: "#/properties/systems/items/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" }];
                                                           return false;
                                                         }
                                                       }
-                                                      var valid25 = _errs102 === errors;
+                                                      var valid5 = _errs42 === errors;
                                                     } else {
-                                                      var valid25 = true;
+                                                      var valid5 = true;
                                                     }
-                                                    if (valid25) {
-                                                      if (data34.description !== void 0) {
-                                                        let data38 = data34.description;
-                                                        const _errs104 = errors;
-                                                        const _errs106 = errors;
-                                                        let valid27 = false;
-                                                        let passing5 = null;
-                                                        const _errs107 = errors;
-                                                        if (errors === _errs107) {
-                                                          if (data38 && typeof data38 == "object" && !Array.isArray(data38)) {
-                                                            let missing14;
-                                                            if (data38.state === void 0 && (missing14 = "state")) {
-                                                              const err65 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing14 }, message: "must have required property '" + missing14 + "'" };
-                                                              if (vErrors === null) {
-                                                                vErrors = [err65];
-                                                              } else {
-                                                                vErrors.push(err65);
-                                                              }
-                                                              errors++;
-                                                            } else {
-                                                              const _errs109 = errors;
-                                                              for (const key14 in data38) {
-                                                                if (!(key14 === "state")) {
-                                                                  const err66 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key14 }, message: "must NOT have additional properties" };
-                                                                  if (vErrors === null) {
-                                                                    vErrors = [err66];
-                                                                  } else {
-                                                                    vErrors.push(err66);
-                                                                  }
-                                                                  errors++;
-                                                                  break;
-                                                                }
-                                                              }
-                                                              if (_errs109 === errors) {
-                                                                if (data38.state !== void 0) {
-                                                                  if ("unknown" !== data38.state) {
-                                                                    const err67 = { instancePath: instancePath + "/systems/" + i1 + "/description/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err67];
-                                                                    } else {
-                                                                      vErrors.push(err67);
-                                                                    }
-                                                                    errors++;
-                                                                  }
-                                                                }
-                                                              }
-                                                            }
-                                                          } else {
-                                                            const err68 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                            if (vErrors === null) {
-                                                              vErrors = [err68];
-                                                            } else {
-                                                              vErrors.push(err68);
-                                                            }
-                                                            errors++;
-                                                          }
+                                                    if (valid5) {
+                                                      if (data19.description !== void 0) {
+                                                        const _errs44 = errors;
+                                                        if (!validate53(data19.description, { instancePath: instancePath + "/systems/" + i1 + "/description", parentData: data19, parentDataProperty: "description", rootData, dynamicAnchors })) {
+                                                          vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                          errors = vErrors.length;
                                                         }
-                                                        var _valid5 = _errs107 === errors;
-                                                        if (_valid5) {
-                                                          valid27 = true;
-                                                          passing5 = 0;
-                                                          var props5 = true;
-                                                        }
-                                                        const _errs111 = errors;
-                                                        if (errors === _errs111) {
-                                                          if (data38 && typeof data38 == "object" && !Array.isArray(data38)) {
-                                                            let missing15;
-                                                            if (data38.state === void 0 && (missing15 = "state") || data38.value === void 0 && (missing15 = "value")) {
-                                                              const err69 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing15 }, message: "must have required property '" + missing15 + "'" };
-                                                              if (vErrors === null) {
-                                                                vErrors = [err69];
-                                                              } else {
-                                                                vErrors.push(err69);
-                                                              }
-                                                              errors++;
-                                                            } else {
-                                                              const _errs113 = errors;
-                                                              for (const key15 in data38) {
-                                                                if (!(key15 === "state" || key15 === "value")) {
-                                                                  const err70 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key15 }, message: "must NOT have additional properties" };
-                                                                  if (vErrors === null) {
-                                                                    vErrors = [err70];
-                                                                  } else {
-                                                                    vErrors.push(err70);
-                                                                  }
-                                                                  errors++;
-                                                                  break;
-                                                                }
-                                                              }
-                                                              if (_errs113 === errors) {
-                                                                if (data38.state !== void 0) {
-                                                                  const _errs114 = errors;
-                                                                  if ("documented" !== data38.state) {
-                                                                    const err71 = { instancePath: instancePath + "/systems/" + i1 + "/description/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err71];
-                                                                    } else {
-                                                                      vErrors.push(err71);
-                                                                    }
-                                                                    errors++;
-                                                                  }
-                                                                  var valid29 = _errs114 === errors;
-                                                                } else {
-                                                                  var valid29 = true;
-                                                                }
-                                                                if (valid29) {
-                                                                  if (data38.value !== void 0) {
-                                                                    let data41 = data38.value;
-                                                                    const _errs115 = errors;
-                                                                    if (errors === _errs115) {
-                                                                      if (typeof data41 === "string") {
-                                                                        if (func2(data41) > 4e3) {
-                                                                          const err72 = { instancePath: instancePath + "/systems/" + i1 + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err72];
-                                                                          } else {
-                                                                            vErrors.push(err72);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          if (func2(data41) < 1) {
-                                                                            const err73 = { instancePath: instancePath + "/systems/" + i1 + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err73];
-                                                                            } else {
-                                                                              vErrors.push(err73);
-                                                                            }
-                                                                            errors++;
-                                                                          } else {
-                                                                            if (!pattern7.test(data41)) {
-                                                                              const err74 = { instancePath: instancePath + "/systems/" + i1 + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err74];
-                                                                              } else {
-                                                                                vErrors.push(err74);
-                                                                              }
-                                                                              errors++;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      } else {
-                                                                        const err75 = { instancePath: instancePath + "/systems/" + i1 + "/description/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err75];
-                                                                        } else {
-                                                                          vErrors.push(err75);
-                                                                        }
-                                                                        errors++;
-                                                                      }
-                                                                    }
-                                                                    var valid29 = _errs115 === errors;
-                                                                  } else {
-                                                                    var valid29 = true;
-                                                                  }
-                                                                }
-                                                              }
-                                                            }
-                                                          } else {
-                                                            const err76 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                            if (vErrors === null) {
-                                                              vErrors = [err76];
-                                                            } else {
-                                                              vErrors.push(err76);
-                                                            }
-                                                            errors++;
-                                                          }
-                                                        }
-                                                        var _valid5 = _errs111 === errors;
-                                                        if (_valid5 && valid27) {
-                                                          valid27 = false;
-                                                          passing5 = [passing5, 1];
-                                                        } else {
-                                                          if (_valid5) {
-                                                            valid27 = true;
-                                                            passing5 = 1;
-                                                            if (props5 !== true) {
-                                                              props5 = true;
-                                                            }
-                                                          }
-                                                        }
-                                                        if (!valid27) {
-                                                          const err77 = { instancePath: instancePath + "/systems/" + i1 + "/description", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing5 }, message: "must match exactly one schema in oneOf" };
-                                                          if (vErrors === null) {
-                                                            vErrors = [err77];
-                                                          } else {
-                                                            vErrors.push(err77);
-                                                          }
-                                                          errors++;
-                                                          validate20.errors = vErrors;
-                                                          return false;
-                                                        } else {
-                                                          errors = _errs106;
-                                                          if (vErrors !== null) {
-                                                            if (_errs106) {
-                                                              vErrors.length = _errs106;
-                                                            } else {
-                                                              vErrors = null;
-                                                            }
-                                                          }
-                                                        }
-                                                        var valid25 = _errs104 === errors;
+                                                        var valid5 = _errs44 === errors;
                                                       } else {
-                                                        var valid25 = true;
+                                                        var valid5 = true;
                                                       }
                                                     }
                                                   }
@@ -2807,256 +1088,256 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                               }
                                             }
                                           } else {
-                                            validate20.errors = [{ instancePath: instancePath + "/systems/" + i1, schemaPath: "#/properties/systems/items/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
+                                            validate52.errors = [{ instancePath: instancePath + "/systems/" + i1, schemaPath: "#/properties/systems/items/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
                                             return false;
                                           }
                                         }
-                                        var valid24 = _errs95 === errors;
-                                        if (!valid24) {
+                                        var valid4 = _errs35 === errors;
+                                        if (!valid4) {
                                           break;
                                         }
                                       }
                                     }
                                   } else {
-                                    validate20.errors = [{ instancePath: instancePath + "/systems", schemaPath: "#/properties/systems/type", keyword: "type", params: { type: "array" }, message: "must be array" }];
+                                    validate52.errors = [{ instancePath: instancePath + "/systems", schemaPath: "#/properties/systems/type", keyword: "type", params: { type: "array" }, message: "must be array" }];
                                     return false;
                                   }
                                 }
-                                var valid0 = _errs93 === errors;
+                                var valid0 = _errs33 === errors;
                               } else {
                                 var valid0 = true;
                               }
                               if (valid0) {
                                 if (data.activities !== void 0) {
-                                  let data42 = data.activities;
-                                  const _errs117 = errors;
-                                  if (errors === _errs117) {
-                                    if (Array.isArray(data42)) {
-                                      if (data42.length > 200) {
-                                        validate20.errors = [{ instancePath: instancePath + "/activities", schemaPath: "#/properties/activities/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" }];
+                                  let data24 = data.activities;
+                                  const _errs45 = errors;
+                                  if (errors === _errs45) {
+                                    if (Array.isArray(data24)) {
+                                      if (data24.length > 200) {
+                                        validate52.errors = [{ instancePath: instancePath + "/activities", schemaPath: "#/properties/activities/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" }];
                                         return false;
                                       } else {
-                                        var valid30 = true;
-                                        const len2 = data42.length;
+                                        var valid6 = true;
+                                        const len2 = data24.length;
                                         for (let i2 = 0; i2 < len2; i2++) {
-                                          let data43 = data42[i2];
-                                          const _errs119 = errors;
-                                          const _errs120 = errors;
-                                          let valid31 = false;
-                                          let passing6 = null;
-                                          const _errs121 = errors;
-                                          if (errors === _errs121) {
-                                            if (data43 && typeof data43 == "object" && !Array.isArray(data43)) {
-                                              let missing16;
-                                              if (data43.id === void 0 && (missing16 = "id") || data43.workspaceId === void 0 && (missing16 = "workspaceId") || data43.title === void 0 && (missing16 = "title") || data43.status === void 0 && (missing16 = "status") || data43.systemIds === void 0 && (missing16 = "systemIds") || data43.participantIds === void 0 && (missing16 = "participantIds") || data43.dataCategories === void 0 && (missing16 = "dataCategories") || data43.dataSubjects === void 0 && (missing16 = "dataSubjects") || data43.recipients === void 0 && (missing16 = "recipients") || data43.transfers === void 0 && (missing16 = "transfers") || data43.securityMeasures === void 0 && (missing16 = "securityMeasures") || data43.internalNotes === void 0 && (missing16 = "internalNotes") || data43.role === void 0 && (missing16 = "role") || data43.purposes === void 0 && (missing16 = "purposes")) {
-                                                const err78 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/0/required", keyword: "required", params: { missingProperty: missing16 }, message: "must have required property '" + missing16 + "'" };
+                                          let data25 = data24[i2];
+                                          const _errs47 = errors;
+                                          const _errs48 = errors;
+                                          let valid7 = false;
+                                          let passing0 = null;
+                                          const _errs49 = errors;
+                                          if (errors === _errs49) {
+                                            if (data25 && typeof data25 == "object" && !Array.isArray(data25)) {
+                                              let missing4;
+                                              if (data25.id === void 0 && (missing4 = "id") || data25.workspaceId === void 0 && (missing4 = "workspaceId") || data25.title === void 0 && (missing4 = "title") || data25.status === void 0 && (missing4 = "status") || data25.systemIds === void 0 && (missing4 = "systemIds") || data25.participantIds === void 0 && (missing4 = "participantIds") || data25.dataCategories === void 0 && (missing4 = "dataCategories") || data25.dataSubjects === void 0 && (missing4 = "dataSubjects") || data25.recipients === void 0 && (missing4 = "recipients") || data25.transfers === void 0 && (missing4 = "transfers") || data25.securityMeasures === void 0 && (missing4 = "securityMeasures") || data25.internalNotes === void 0 && (missing4 = "internalNotes") || data25.role === void 0 && (missing4 = "role") || data25.purposes === void 0 && (missing4 = "purposes")) {
+                                                const err0 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/0/required", keyword: "required", params: { missingProperty: missing4 }, message: "must have required property '" + missing4 + "'" };
                                                 if (vErrors === null) {
-                                                  vErrors = [err78];
+                                                  vErrors = [err0];
                                                 } else {
-                                                  vErrors.push(err78);
+                                                  vErrors.push(err0);
                                                 }
                                                 errors++;
                                               } else {
-                                                const _errs123 = errors;
-                                                for (const key16 in data43) {
-                                                  if (!func1.call(schema31.properties.activities.items.oneOf[0].properties, key16)) {
-                                                    const err79 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key16 }, message: "must NOT have additional properties" };
+                                                const _errs51 = errors;
+                                                for (const key4 in data25) {
+                                                  if (!func1.call(schema19.properties.activities.items.oneOf[0].properties, key4)) {
+                                                    const err1 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key4 }, message: "must NOT have additional properties" };
                                                     if (vErrors === null) {
-                                                      vErrors = [err79];
+                                                      vErrors = [err1];
                                                     } else {
-                                                      vErrors.push(err79);
+                                                      vErrors.push(err1);
                                                     }
                                                     errors++;
                                                     break;
                                                   }
                                                 }
-                                                if (_errs123 === errors) {
-                                                  if (data43.id !== void 0) {
-                                                    let data44 = data43.id;
-                                                    const _errs124 = errors;
-                                                    if (errors === _errs124) {
-                                                      if (typeof data44 === "string") {
-                                                        if (!pattern4.test(data44)) {
-                                                          const err80 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/0/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                if (_errs51 === errors) {
+                                                  if (data25.id !== void 0) {
+                                                    let data26 = data25.id;
+                                                    const _errs52 = errors;
+                                                    if (errors === _errs52) {
+                                                      if (typeof data26 === "string") {
+                                                        if (!pattern3.test(data26)) {
+                                                          const err2 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/0/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                           if (vErrors === null) {
-                                                            vErrors = [err80];
+                                                            vErrors = [err2];
                                                           } else {
-                                                            vErrors.push(err80);
+                                                            vErrors.push(err2);
                                                           }
                                                           errors++;
                                                         }
                                                       } else {
-                                                        const err81 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/0/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                        const err3 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/0/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                         if (vErrors === null) {
-                                                          vErrors = [err81];
+                                                          vErrors = [err3];
                                                         } else {
-                                                          vErrors.push(err81);
+                                                          vErrors.push(err3);
                                                         }
                                                         errors++;
                                                       }
                                                     }
-                                                    var valid32 = _errs124 === errors;
+                                                    var valid8 = _errs52 === errors;
                                                   } else {
-                                                    var valid32 = true;
+                                                    var valid8 = true;
                                                   }
-                                                  if (valid32) {
-                                                    if (data43.workspaceId !== void 0) {
-                                                      let data45 = data43.workspaceId;
-                                                      const _errs126 = errors;
-                                                      if (errors === _errs126) {
-                                                        if (typeof data45 === "string") {
-                                                          if (!pattern4.test(data45)) {
-                                                            const err82 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/0/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                  if (valid8) {
+                                                    if (data25.workspaceId !== void 0) {
+                                                      let data27 = data25.workspaceId;
+                                                      const _errs54 = errors;
+                                                      if (errors === _errs54) {
+                                                        if (typeof data27 === "string") {
+                                                          if (!pattern3.test(data27)) {
+                                                            const err4 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/0/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                             if (vErrors === null) {
-                                                              vErrors = [err82];
+                                                              vErrors = [err4];
                                                             } else {
-                                                              vErrors.push(err82);
+                                                              vErrors.push(err4);
                                                             }
                                                             errors++;
                                                           }
                                                         } else {
-                                                          const err83 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/0/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                          const err5 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/0/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                           if (vErrors === null) {
-                                                            vErrors = [err83];
+                                                            vErrors = [err5];
                                                           } else {
-                                                            vErrors.push(err83);
+                                                            vErrors.push(err5);
                                                           }
                                                           errors++;
                                                         }
                                                       }
-                                                      var valid32 = _errs126 === errors;
+                                                      var valid8 = _errs54 === errors;
                                                     } else {
-                                                      var valid32 = true;
+                                                      var valid8 = true;
                                                     }
-                                                    if (valid32) {
-                                                      if (data43.title !== void 0) {
-                                                        let data46 = data43.title;
-                                                        const _errs128 = errors;
-                                                        if (errors === _errs128) {
-                                                          if (typeof data46 === "string") {
-                                                            if (func2(data46) > 160) {
-                                                              const err84 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" };
+                                                    if (valid8) {
+                                                      if (data25.title !== void 0) {
+                                                        let data28 = data25.title;
+                                                        const _errs56 = errors;
+                                                        if (errors === _errs56) {
+                                                          if (typeof data28 === "string") {
+                                                            if (func2(data28) > 160) {
+                                                              const err6 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" };
                                                               if (vErrors === null) {
-                                                                vErrors = [err84];
+                                                                vErrors = [err6];
                                                               } else {
-                                                                vErrors.push(err84);
+                                                                vErrors.push(err6);
                                                               }
                                                               errors++;
                                                             } else {
-                                                              if (func2(data46) < 1) {
-                                                                const err85 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                                                              if (func2(data28) < 1) {
+                                                                const err7 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                                                                 if (vErrors === null) {
-                                                                  vErrors = [err85];
+                                                                  vErrors = [err7];
                                                                 } else {
-                                                                  vErrors.push(err85);
+                                                                  vErrors.push(err7);
                                                                 }
                                                                 errors++;
                                                               } else {
-                                                                if (!pattern7.test(data46)) {
-                                                                  const err86 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
+                                                                if (!pattern6.test(data28)) {
+                                                                  const err8 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
                                                                   if (vErrors === null) {
-                                                                    vErrors = [err86];
+                                                                    vErrors = [err8];
                                                                   } else {
-                                                                    vErrors.push(err86);
+                                                                    vErrors.push(err8);
                                                                   }
                                                                   errors++;
                                                                 }
                                                               }
                                                             }
                                                           } else {
-                                                            const err87 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                            const err9 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/0/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                             if (vErrors === null) {
-                                                              vErrors = [err87];
+                                                              vErrors = [err9];
                                                             } else {
-                                                              vErrors.push(err87);
+                                                              vErrors.push(err9);
                                                             }
                                                             errors++;
                                                           }
                                                         }
-                                                        var valid32 = _errs128 === errors;
+                                                        var valid8 = _errs56 === errors;
                                                       } else {
-                                                        var valid32 = true;
+                                                        var valid8 = true;
                                                       }
-                                                      if (valid32) {
-                                                        if (data43.status !== void 0) {
-                                                          let data47 = data43.status;
-                                                          const _errs130 = errors;
-                                                          if (!(data47 === "draft" || data47 === "active" || data47 === "archived")) {
-                                                            const err88 = { instancePath: instancePath + "/activities/" + i2 + "/status", schemaPath: "#/properties/activities/items/oneOf/0/properties/status/enum", keyword: "enum", params: { allowedValues: schema31.properties.activities.items.oneOf[0].properties.status.enum }, message: "must be equal to one of the allowed values" };
+                                                      if (valid8) {
+                                                        if (data25.status !== void 0) {
+                                                          let data29 = data25.status;
+                                                          const _errs58 = errors;
+                                                          if (!(data29 === "draft" || data29 === "active" || data29 === "archived")) {
+                                                            const err10 = { instancePath: instancePath + "/activities/" + i2 + "/status", schemaPath: "#/properties/activities/items/oneOf/0/properties/status/enum", keyword: "enum", params: { allowedValues: schema19.properties.activities.items.oneOf[0].properties.status.enum }, message: "must be equal to one of the allowed values" };
                                                             if (vErrors === null) {
-                                                              vErrors = [err88];
+                                                              vErrors = [err10];
                                                             } else {
-                                                              vErrors.push(err88);
+                                                              vErrors.push(err10);
                                                             }
                                                             errors++;
                                                           }
-                                                          var valid32 = _errs130 === errors;
+                                                          var valid8 = _errs58 === errors;
                                                         } else {
-                                                          var valid32 = true;
+                                                          var valid8 = true;
                                                         }
-                                                        if (valid32) {
-                                                          if (data43.systemIds !== void 0) {
-                                                            let data48 = data43.systemIds;
-                                                            const _errs131 = errors;
-                                                            if (errors === _errs131) {
-                                                              if (Array.isArray(data48)) {
-                                                                if (data48.length > 200) {
-                                                                  const err89 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
+                                                        if (valid8) {
+                                                          if (data25.systemIds !== void 0) {
+                                                            let data30 = data25.systemIds;
+                                                            const _errs59 = errors;
+                                                            if (errors === _errs59) {
+                                                              if (Array.isArray(data30)) {
+                                                                if (data30.length > 200) {
+                                                                  const err11 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
                                                                   if (vErrors === null) {
-                                                                    vErrors = [err89];
+                                                                    vErrors = [err11];
                                                                   } else {
-                                                                    vErrors.push(err89);
+                                                                    vErrors.push(err11);
                                                                   }
                                                                   errors++;
                                                                 } else {
-                                                                  var valid33 = true;
-                                                                  const len3 = data48.length;
+                                                                  var valid9 = true;
+                                                                  const len3 = data30.length;
                                                                   for (let i3 = 0; i3 < len3; i3++) {
-                                                                    let data49 = data48[i3];
-                                                                    const _errs133 = errors;
-                                                                    if (errors === _errs133) {
-                                                                      if (typeof data49 === "string") {
-                                                                        if (!pattern4.test(data49)) {
-                                                                          const err90 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i3, schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                                    let data31 = data30[i3];
+                                                                    const _errs61 = errors;
+                                                                    if (errors === _errs61) {
+                                                                      if (typeof data31 === "string") {
+                                                                        if (!pattern3.test(data31)) {
+                                                                          const err12 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i3, schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                                           if (vErrors === null) {
-                                                                            vErrors = [err90];
+                                                                            vErrors = [err12];
                                                                           } else {
-                                                                            vErrors.push(err90);
+                                                                            vErrors.push(err12);
                                                                           }
                                                                           errors++;
                                                                         }
                                                                       } else {
-                                                                        const err91 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i3, schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                        const err13 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i3, schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                         if (vErrors === null) {
-                                                                          vErrors = [err91];
+                                                                          vErrors = [err13];
                                                                         } else {
-                                                                          vErrors.push(err91);
+                                                                          vErrors.push(err13);
                                                                         }
                                                                         errors++;
                                                                       }
                                                                     }
-                                                                    var valid33 = _errs133 === errors;
-                                                                    if (!valid33) {
+                                                                    var valid9 = _errs61 === errors;
+                                                                    if (!valid9) {
                                                                       break;
                                                                     }
                                                                   }
-                                                                  if (valid33) {
-                                                                    let i4 = data48.length;
+                                                                  if (valid9) {
+                                                                    let i4 = data30.length;
                                                                     let j0;
                                                                     if (i4 > 1) {
                                                                       const indices0 = {};
                                                                       for (; i4--; ) {
-                                                                        let item0 = data48[i4];
+                                                                        let item0 = data30[i4];
                                                                         if (typeof item0 !== "string") {
                                                                           continue;
                                                                         }
                                                                         if (typeof indices0[item0] == "number") {
                                                                           j0 = indices0[item0];
-                                                                          const err92 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/uniqueItems", keyword: "uniqueItems", params: { i: i4, j: j0 }, message: "must NOT have duplicate items (items ## " + j0 + " and " + i4 + " are identical)" };
+                                                                          const err14 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/uniqueItems", keyword: "uniqueItems", params: { i: i4, j: j0 }, message: "must NOT have duplicate items (items ## " + j0 + " and " + i4 + " are identical)" };
                                                                           if (vErrors === null) {
-                                                                            vErrors = [err92];
+                                                                            vErrors = [err14];
                                                                           } else {
-                                                                            vErrors.push(err92);
+                                                                            vErrors.push(err14);
                                                                           }
                                                                           errors++;
                                                                           break;
@@ -3067,82 +1348,82 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                                   }
                                                                 }
                                                               } else {
-                                                                const err93 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                                                                const err15 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/systemIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
                                                                 if (vErrors === null) {
-                                                                  vErrors = [err93];
+                                                                  vErrors = [err15];
                                                                 } else {
-                                                                  vErrors.push(err93);
+                                                                  vErrors.push(err15);
                                                                 }
                                                                 errors++;
                                                               }
                                                             }
-                                                            var valid32 = _errs131 === errors;
+                                                            var valid8 = _errs59 === errors;
                                                           } else {
-                                                            var valid32 = true;
+                                                            var valid8 = true;
                                                           }
-                                                          if (valid32) {
-                                                            if (data43.participantIds !== void 0) {
-                                                              let data50 = data43.participantIds;
-                                                              const _errs135 = errors;
-                                                              if (errors === _errs135) {
-                                                                if (Array.isArray(data50)) {
-                                                                  if (data50.length > 200) {
-                                                                    const err94 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
+                                                          if (valid8) {
+                                                            if (data25.participantIds !== void 0) {
+                                                              let data32 = data25.participantIds;
+                                                              const _errs63 = errors;
+                                                              if (errors === _errs63) {
+                                                                if (Array.isArray(data32)) {
+                                                                  if (data32.length > 200) {
+                                                                    const err16 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
                                                                     if (vErrors === null) {
-                                                                      vErrors = [err94];
+                                                                      vErrors = [err16];
                                                                     } else {
-                                                                      vErrors.push(err94);
+                                                                      vErrors.push(err16);
                                                                     }
                                                                     errors++;
                                                                   } else {
-                                                                    var valid35 = true;
-                                                                    const len4 = data50.length;
+                                                                    var valid11 = true;
+                                                                    const len4 = data32.length;
                                                                     for (let i5 = 0; i5 < len4; i5++) {
-                                                                      let data51 = data50[i5];
-                                                                      const _errs137 = errors;
-                                                                      if (errors === _errs137) {
-                                                                        if (typeof data51 === "string") {
-                                                                          if (!pattern4.test(data51)) {
-                                                                            const err95 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i5, schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                                      let data33 = data32[i5];
+                                                                      const _errs65 = errors;
+                                                                      if (errors === _errs65) {
+                                                                        if (typeof data33 === "string") {
+                                                                          if (!pattern3.test(data33)) {
+                                                                            const err17 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i5, schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                                             if (vErrors === null) {
-                                                                              vErrors = [err95];
+                                                                              vErrors = [err17];
                                                                             } else {
-                                                                              vErrors.push(err95);
+                                                                              vErrors.push(err17);
                                                                             }
                                                                             errors++;
                                                                           }
                                                                         } else {
-                                                                          const err96 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i5, schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                          const err18 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i5, schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                           if (vErrors === null) {
-                                                                            vErrors = [err96];
+                                                                            vErrors = [err18];
                                                                           } else {
-                                                                            vErrors.push(err96);
+                                                                            vErrors.push(err18);
                                                                           }
                                                                           errors++;
                                                                         }
                                                                       }
-                                                                      var valid35 = _errs137 === errors;
-                                                                      if (!valid35) {
+                                                                      var valid11 = _errs65 === errors;
+                                                                      if (!valid11) {
                                                                         break;
                                                                       }
                                                                     }
-                                                                    if (valid35) {
-                                                                      let i6 = data50.length;
+                                                                    if (valid11) {
+                                                                      let i6 = data32.length;
                                                                       let j1;
                                                                       if (i6 > 1) {
                                                                         const indices1 = {};
                                                                         for (; i6--; ) {
-                                                                          let item1 = data50[i6];
+                                                                          let item1 = data32[i6];
                                                                           if (typeof item1 !== "string") {
                                                                             continue;
                                                                           }
                                                                           if (typeof indices1[item1] == "number") {
                                                                             j1 = indices1[item1];
-                                                                            const err97 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/uniqueItems", keyword: "uniqueItems", params: { i: i6, j: j1 }, message: "must NOT have duplicate items (items ## " + j1 + " and " + i6 + " are identical)" };
+                                                                            const err19 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/uniqueItems", keyword: "uniqueItems", params: { i: i6, j: j1 }, message: "must NOT have duplicate items (items ## " + j1 + " and " + i6 + " are identical)" };
                                                                             if (vErrors === null) {
-                                                                              vErrors = [err97];
+                                                                              vErrors = [err19];
                                                                             } else {
-                                                                              vErrors.push(err97);
+                                                                              vErrors.push(err19);
                                                                             }
                                                                             errors++;
                                                                             break;
@@ -3153,1126 +1434,171 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                                     }
                                                                   }
                                                                 } else {
-                                                                  const err98 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                                                                  const err20 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/0/properties/participantIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
                                                                   if (vErrors === null) {
-                                                                    vErrors = [err98];
+                                                                    vErrors = [err20];
                                                                   } else {
-                                                                    vErrors.push(err98);
+                                                                    vErrors.push(err20);
                                                                   }
                                                                   errors++;
                                                                 }
                                                               }
-                                                              var valid32 = _errs135 === errors;
+                                                              var valid8 = _errs63 === errors;
                                                             } else {
-                                                              var valid32 = true;
+                                                              var valid8 = true;
                                                             }
-                                                            if (valid32) {
-                                                              if (data43.dataCategories !== void 0) {
-                                                                let data52 = data43.dataCategories;
-                                                                const _errs139 = errors;
-                                                                const _errs141 = errors;
-                                                                let valid38 = false;
-                                                                let passing7 = null;
-                                                                const _errs142 = errors;
-                                                                if (errors === _errs142) {
-                                                                  if (data52 && typeof data52 == "object" && !Array.isArray(data52)) {
-                                                                    let missing17;
-                                                                    if (data52.state === void 0 && (missing17 = "state")) {
-                                                                      const err99 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing17 }, message: "must have required property '" + missing17 + "'" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err99];
-                                                                      } else {
-                                                                        vErrors.push(err99);
-                                                                      }
-                                                                      errors++;
-                                                                    } else {
-                                                                      const _errs144 = errors;
-                                                                      for (const key17 in data52) {
-                                                                        if (!(key17 === "state")) {
-                                                                          const err100 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key17 }, message: "must NOT have additional properties" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err100];
-                                                                          } else {
-                                                                            vErrors.push(err100);
-                                                                          }
-                                                                          errors++;
-                                                                          break;
-                                                                        }
-                                                                      }
-                                                                      if (_errs144 === errors) {
-                                                                        if (data52.state !== void 0) {
-                                                                          if ("unknown" !== data52.state) {
-                                                                            const err101 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err101];
-                                                                            } else {
-                                                                              vErrors.push(err101);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                  } else {
-                                                                    const err102 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err102];
-                                                                    } else {
-                                                                      vErrors.push(err102);
-                                                                    }
-                                                                    errors++;
-                                                                  }
+                                                            if (valid8) {
+                                                              if (data25.dataCategories !== void 0) {
+                                                                const _errs67 = errors;
+                                                                if (!validate53(data25.dataCategories, { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", parentData: data25, parentDataProperty: "dataCategories", rootData, dynamicAnchors })) {
+                                                                  vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                  errors = vErrors.length;
                                                                 }
-                                                                var _valid7 = _errs142 === errors;
-                                                                if (_valid7) {
-                                                                  valid38 = true;
-                                                                  passing7 = 0;
-                                                                  var props6 = true;
-                                                                }
-                                                                const _errs146 = errors;
-                                                                if (errors === _errs146) {
-                                                                  if (data52 && typeof data52 == "object" && !Array.isArray(data52)) {
-                                                                    let missing18;
-                                                                    if (data52.state === void 0 && (missing18 = "state") || data52.value === void 0 && (missing18 = "value")) {
-                                                                      const err103 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing18 }, message: "must have required property '" + missing18 + "'" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err103];
-                                                                      } else {
-                                                                        vErrors.push(err103);
-                                                                      }
-                                                                      errors++;
-                                                                    } else {
-                                                                      const _errs148 = errors;
-                                                                      for (const key18 in data52) {
-                                                                        if (!(key18 === "state" || key18 === "value")) {
-                                                                          const err104 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key18 }, message: "must NOT have additional properties" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err104];
-                                                                          } else {
-                                                                            vErrors.push(err104);
-                                                                          }
-                                                                          errors++;
-                                                                          break;
-                                                                        }
-                                                                      }
-                                                                      if (_errs148 === errors) {
-                                                                        if (data52.state !== void 0) {
-                                                                          const _errs149 = errors;
-                                                                          if ("documented" !== data52.state) {
-                                                                            const err105 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err105];
-                                                                            } else {
-                                                                              vErrors.push(err105);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                          var valid40 = _errs149 === errors;
-                                                                        } else {
-                                                                          var valid40 = true;
-                                                                        }
-                                                                        if (valid40) {
-                                                                          if (data52.value !== void 0) {
-                                                                            let data55 = data52.value;
-                                                                            const _errs150 = errors;
-                                                                            if (errors === _errs150) {
-                                                                              if (typeof data55 === "string") {
-                                                                                if (func2(data55) > 4e3) {
-                                                                                  const err106 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err106];
-                                                                                  } else {
-                                                                                    vErrors.push(err106);
-                                                                                  }
-                                                                                  errors++;
-                                                                                } else {
-                                                                                  if (func2(data55) < 1) {
-                                                                                    const err107 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err107];
-                                                                                    } else {
-                                                                                      vErrors.push(err107);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  } else {
-                                                                                    if (!pattern7.test(data55)) {
-                                                                                      const err108 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err108];
-                                                                                      } else {
-                                                                                        vErrors.push(err108);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    }
-                                                                                  }
-                                                                                }
-                                                                              } else {
-                                                                                const err109 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err109];
-                                                                                } else {
-                                                                                  vErrors.push(err109);
-                                                                                }
-                                                                                errors++;
-                                                                              }
-                                                                            }
-                                                                            var valid40 = _errs150 === errors;
-                                                                          } else {
-                                                                            var valid40 = true;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                  } else {
-                                                                    const err110 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err110];
-                                                                    } else {
-                                                                      vErrors.push(err110);
-                                                                    }
-                                                                    errors++;
-                                                                  }
-                                                                }
-                                                                var _valid7 = _errs146 === errors;
-                                                                if (_valid7 && valid38) {
-                                                                  valid38 = false;
-                                                                  passing7 = [passing7, 1];
-                                                                } else {
-                                                                  if (_valid7) {
-                                                                    valid38 = true;
-                                                                    passing7 = 1;
-                                                                    if (props6 !== true) {
-                                                                      props6 = true;
-                                                                    }
-                                                                  }
-                                                                }
-                                                                if (!valid38) {
-                                                                  const err111 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing7 }, message: "must match exactly one schema in oneOf" };
-                                                                  if (vErrors === null) {
-                                                                    vErrors = [err111];
-                                                                  } else {
-                                                                    vErrors.push(err111);
-                                                                  }
-                                                                  errors++;
-                                                                } else {
-                                                                  errors = _errs141;
-                                                                  if (vErrors !== null) {
-                                                                    if (_errs141) {
-                                                                      vErrors.length = _errs141;
-                                                                    } else {
-                                                                      vErrors = null;
-                                                                    }
-                                                                  }
-                                                                }
-                                                                var valid32 = _errs139 === errors;
+                                                                var valid8 = _errs67 === errors;
                                                               } else {
-                                                                var valid32 = true;
+                                                                var valid8 = true;
                                                               }
-                                                              if (valid32) {
-                                                                if (data43.dataSubjects !== void 0) {
-                                                                  let data56 = data43.dataSubjects;
-                                                                  const _errs152 = errors;
-                                                                  const _errs154 = errors;
-                                                                  let valid42 = false;
-                                                                  let passing8 = null;
-                                                                  const _errs155 = errors;
-                                                                  if (errors === _errs155) {
-                                                                    if (data56 && typeof data56 == "object" && !Array.isArray(data56)) {
-                                                                      let missing19;
-                                                                      if (data56.state === void 0 && (missing19 = "state")) {
-                                                                        const err112 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing19 }, message: "must have required property '" + missing19 + "'" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err112];
-                                                                        } else {
-                                                                          vErrors.push(err112);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        const _errs157 = errors;
-                                                                        for (const key19 in data56) {
-                                                                          if (!(key19 === "state")) {
-                                                                            const err113 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key19 }, message: "must NOT have additional properties" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err113];
-                                                                            } else {
-                                                                              vErrors.push(err113);
-                                                                            }
-                                                                            errors++;
-                                                                            break;
-                                                                          }
-                                                                        }
-                                                                        if (_errs157 === errors) {
-                                                                          if (data56.state !== void 0) {
-                                                                            if ("unknown" !== data56.state) {
-                                                                              const err114 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err114];
-                                                                              } else {
-                                                                                vErrors.push(err114);
-                                                                              }
-                                                                              errors++;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    } else {
-                                                                      const err115 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err115];
-                                                                      } else {
-                                                                        vErrors.push(err115);
-                                                                      }
-                                                                      errors++;
-                                                                    }
+                                                              if (valid8) {
+                                                                if (data25.dataSubjects !== void 0) {
+                                                                  const _errs68 = errors;
+                                                                  if (!validate53(data25.dataSubjects, { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", parentData: data25, parentDataProperty: "dataSubjects", rootData, dynamicAnchors })) {
+                                                                    vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                    errors = vErrors.length;
                                                                   }
-                                                                  var _valid8 = _errs155 === errors;
-                                                                  if (_valid8) {
-                                                                    valid42 = true;
-                                                                    passing8 = 0;
-                                                                    var props7 = true;
-                                                                  }
-                                                                  const _errs159 = errors;
-                                                                  if (errors === _errs159) {
-                                                                    if (data56 && typeof data56 == "object" && !Array.isArray(data56)) {
-                                                                      let missing20;
-                                                                      if (data56.state === void 0 && (missing20 = "state") || data56.value === void 0 && (missing20 = "value")) {
-                                                                        const err116 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing20 }, message: "must have required property '" + missing20 + "'" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err116];
-                                                                        } else {
-                                                                          vErrors.push(err116);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        const _errs161 = errors;
-                                                                        for (const key20 in data56) {
-                                                                          if (!(key20 === "state" || key20 === "value")) {
-                                                                            const err117 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key20 }, message: "must NOT have additional properties" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err117];
-                                                                            } else {
-                                                                              vErrors.push(err117);
-                                                                            }
-                                                                            errors++;
-                                                                            break;
-                                                                          }
-                                                                        }
-                                                                        if (_errs161 === errors) {
-                                                                          if (data56.state !== void 0) {
-                                                                            const _errs162 = errors;
-                                                                            if ("documented" !== data56.state) {
-                                                                              const err118 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err118];
-                                                                              } else {
-                                                                                vErrors.push(err118);
-                                                                              }
-                                                                              errors++;
-                                                                            }
-                                                                            var valid44 = _errs162 === errors;
-                                                                          } else {
-                                                                            var valid44 = true;
-                                                                          }
-                                                                          if (valid44) {
-                                                                            if (data56.value !== void 0) {
-                                                                              let data59 = data56.value;
-                                                                              const _errs163 = errors;
-                                                                              if (errors === _errs163) {
-                                                                                if (typeof data59 === "string") {
-                                                                                  if (func2(data59) > 4e3) {
-                                                                                    const err119 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err119];
-                                                                                    } else {
-                                                                                      vErrors.push(err119);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  } else {
-                                                                                    if (func2(data59) < 1) {
-                                                                                      const err120 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err120];
-                                                                                      } else {
-                                                                                        vErrors.push(err120);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    } else {
-                                                                                      if (!pattern7.test(data59)) {
-                                                                                        const err121 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err121];
-                                                                                        } else {
-                                                                                          vErrors.push(err121);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      }
-                                                                                    }
-                                                                                  }
-                                                                                } else {
-                                                                                  const err122 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err122];
-                                                                                  } else {
-                                                                                    vErrors.push(err122);
-                                                                                  }
-                                                                                  errors++;
-                                                                                }
-                                                                              }
-                                                                              var valid44 = _errs163 === errors;
-                                                                            } else {
-                                                                              var valid44 = true;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    } else {
-                                                                      const err123 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err123];
-                                                                      } else {
-                                                                        vErrors.push(err123);
-                                                                      }
-                                                                      errors++;
-                                                                    }
-                                                                  }
-                                                                  var _valid8 = _errs159 === errors;
-                                                                  if (_valid8 && valid42) {
-                                                                    valid42 = false;
-                                                                    passing8 = [passing8, 1];
-                                                                  } else {
-                                                                    if (_valid8) {
-                                                                      valid42 = true;
-                                                                      passing8 = 1;
-                                                                      if (props7 !== true) {
-                                                                        props7 = true;
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                  if (!valid42) {
-                                                                    const err124 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing8 }, message: "must match exactly one schema in oneOf" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err124];
-                                                                    } else {
-                                                                      vErrors.push(err124);
-                                                                    }
-                                                                    errors++;
-                                                                  } else {
-                                                                    errors = _errs154;
-                                                                    if (vErrors !== null) {
-                                                                      if (_errs154) {
-                                                                        vErrors.length = _errs154;
-                                                                      } else {
-                                                                        vErrors = null;
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                  var valid32 = _errs152 === errors;
+                                                                  var valid8 = _errs68 === errors;
                                                                 } else {
-                                                                  var valid32 = true;
+                                                                  var valid8 = true;
                                                                 }
-                                                                if (valid32) {
-                                                                  if (data43.recipients !== void 0) {
-                                                                    let data60 = data43.recipients;
-                                                                    const _errs165 = errors;
-                                                                    const _errs167 = errors;
-                                                                    let valid46 = false;
-                                                                    let passing9 = null;
-                                                                    const _errs168 = errors;
-                                                                    if (errors === _errs168) {
-                                                                      if (data60 && typeof data60 == "object" && !Array.isArray(data60)) {
-                                                                        let missing21;
-                                                                        if (data60.state === void 0 && (missing21 = "state")) {
-                                                                          const err125 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing21 }, message: "must have required property '" + missing21 + "'" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err125];
-                                                                          } else {
-                                                                            vErrors.push(err125);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          const _errs170 = errors;
-                                                                          for (const key21 in data60) {
-                                                                            if (!(key21 === "state")) {
-                                                                              const err126 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key21 }, message: "must NOT have additional properties" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err126];
-                                                                              } else {
-                                                                                vErrors.push(err126);
-                                                                              }
-                                                                              errors++;
-                                                                              break;
-                                                                            }
-                                                                          }
-                                                                          if (_errs170 === errors) {
-                                                                            if (data60.state !== void 0) {
-                                                                              if ("unknown" !== data60.state) {
-                                                                                const err127 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err127];
-                                                                                } else {
-                                                                                  vErrors.push(err127);
-                                                                                }
-                                                                                errors++;
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      } else {
-                                                                        const err128 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err128];
-                                                                        } else {
-                                                                          vErrors.push(err128);
-                                                                        }
-                                                                        errors++;
-                                                                      }
+                                                                if (valid8) {
+                                                                  if (data25.recipients !== void 0) {
+                                                                    const _errs69 = errors;
+                                                                    if (!validate53(data25.recipients, { instancePath: instancePath + "/activities/" + i2 + "/recipients", parentData: data25, parentDataProperty: "recipients", rootData, dynamicAnchors })) {
+                                                                      vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                      errors = vErrors.length;
                                                                     }
-                                                                    var _valid9 = _errs168 === errors;
-                                                                    if (_valid9) {
-                                                                      valid46 = true;
-                                                                      passing9 = 0;
-                                                                      var props8 = true;
-                                                                    }
-                                                                    const _errs172 = errors;
-                                                                    if (errors === _errs172) {
-                                                                      if (data60 && typeof data60 == "object" && !Array.isArray(data60)) {
-                                                                        let missing22;
-                                                                        if (data60.state === void 0 && (missing22 = "state") || data60.value === void 0 && (missing22 = "value")) {
-                                                                          const err129 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing22 }, message: "must have required property '" + missing22 + "'" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err129];
-                                                                          } else {
-                                                                            vErrors.push(err129);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          const _errs174 = errors;
-                                                                          for (const key22 in data60) {
-                                                                            if (!(key22 === "state" || key22 === "value")) {
-                                                                              const err130 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key22 }, message: "must NOT have additional properties" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err130];
-                                                                              } else {
-                                                                                vErrors.push(err130);
-                                                                              }
-                                                                              errors++;
-                                                                              break;
-                                                                            }
-                                                                          }
-                                                                          if (_errs174 === errors) {
-                                                                            if (data60.state !== void 0) {
-                                                                              const _errs175 = errors;
-                                                                              if ("documented" !== data60.state) {
-                                                                                const err131 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err131];
-                                                                                } else {
-                                                                                  vErrors.push(err131);
-                                                                                }
-                                                                                errors++;
-                                                                              }
-                                                                              var valid48 = _errs175 === errors;
-                                                                            } else {
-                                                                              var valid48 = true;
-                                                                            }
-                                                                            if (valid48) {
-                                                                              if (data60.value !== void 0) {
-                                                                                let data63 = data60.value;
-                                                                                const _errs176 = errors;
-                                                                                if (errors === _errs176) {
-                                                                                  if (typeof data63 === "string") {
-                                                                                    if (func2(data63) > 4e3) {
-                                                                                      const err132 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err132];
-                                                                                      } else {
-                                                                                        vErrors.push(err132);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    } else {
-                                                                                      if (func2(data63) < 1) {
-                                                                                        const err133 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err133];
-                                                                                        } else {
-                                                                                          vErrors.push(err133);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      } else {
-                                                                                        if (!pattern7.test(data63)) {
-                                                                                          const err134 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err134];
-                                                                                          } else {
-                                                                                            vErrors.push(err134);
-                                                                                          }
-                                                                                          errors++;
-                                                                                        }
-                                                                                      }
-                                                                                    }
-                                                                                  } else {
-                                                                                    const err135 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err135];
-                                                                                    } else {
-                                                                                      vErrors.push(err135);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                }
-                                                                                var valid48 = _errs176 === errors;
-                                                                              } else {
-                                                                                var valid48 = true;
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      } else {
-                                                                        const err136 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err136];
-                                                                        } else {
-                                                                          vErrors.push(err136);
-                                                                        }
-                                                                        errors++;
-                                                                      }
-                                                                    }
-                                                                    var _valid9 = _errs172 === errors;
-                                                                    if (_valid9 && valid46) {
-                                                                      valid46 = false;
-                                                                      passing9 = [passing9, 1];
-                                                                    } else {
-                                                                      if (_valid9) {
-                                                                        valid46 = true;
-                                                                        passing9 = 1;
-                                                                        if (props8 !== true) {
-                                                                          props8 = true;
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                    if (!valid46) {
-                                                                      const err137 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing9 }, message: "must match exactly one schema in oneOf" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err137];
-                                                                      } else {
-                                                                        vErrors.push(err137);
-                                                                      }
-                                                                      errors++;
-                                                                    } else {
-                                                                      errors = _errs167;
-                                                                      if (vErrors !== null) {
-                                                                        if (_errs167) {
-                                                                          vErrors.length = _errs167;
-                                                                        } else {
-                                                                          vErrors = null;
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                    var valid32 = _errs165 === errors;
+                                                                    var valid8 = _errs69 === errors;
                                                                   } else {
-                                                                    var valid32 = true;
+                                                                    var valid8 = true;
                                                                   }
-                                                                  if (valid32) {
-                                                                    if (data43.transfers !== void 0) {
-                                                                      let data64 = data43.transfers;
-                                                                      const _errs178 = errors;
-                                                                      const _errs180 = errors;
-                                                                      let valid50 = false;
-                                                                      let passing10 = null;
-                                                                      const _errs181 = errors;
-                                                                      if (errors === _errs181) {
-                                                                        if (data64 && typeof data64 == "object" && !Array.isArray(data64)) {
-                                                                          let missing23;
-                                                                          if (data64.state === void 0 && (missing23 = "state")) {
-                                                                            const err138 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing23 }, message: "must have required property '" + missing23 + "'" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err138];
-                                                                            } else {
-                                                                              vErrors.push(err138);
-                                                                            }
-                                                                            errors++;
-                                                                          } else {
-                                                                            const _errs183 = errors;
-                                                                            for (const key23 in data64) {
-                                                                              if (!(key23 === "state")) {
-                                                                                const err139 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key23 }, message: "must NOT have additional properties" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err139];
-                                                                                } else {
-                                                                                  vErrors.push(err139);
-                                                                                }
-                                                                                errors++;
-                                                                                break;
-                                                                              }
-                                                                            }
-                                                                            if (_errs183 === errors) {
-                                                                              if (data64.state !== void 0) {
-                                                                                if ("unknown" !== data64.state) {
-                                                                                  const err140 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err140];
-                                                                                  } else {
-                                                                                    vErrors.push(err140);
-                                                                                  }
-                                                                                  errors++;
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        } else {
-                                                                          const err141 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err141];
-                                                                          } else {
-                                                                            vErrors.push(err141);
-                                                                          }
-                                                                          errors++;
-                                                                        }
+                                                                  if (valid8) {
+                                                                    if (data25.transfers !== void 0) {
+                                                                      const _errs70 = errors;
+                                                                      if (!validate53(data25.transfers, { instancePath: instancePath + "/activities/" + i2 + "/transfers", parentData: data25, parentDataProperty: "transfers", rootData, dynamicAnchors })) {
+                                                                        vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                        errors = vErrors.length;
                                                                       }
-                                                                      var _valid10 = _errs181 === errors;
-                                                                      if (_valid10) {
-                                                                        valid50 = true;
-                                                                        passing10 = 0;
-                                                                        var props9 = true;
-                                                                      }
-                                                                      const _errs185 = errors;
-                                                                      if (errors === _errs185) {
-                                                                        if (data64 && typeof data64 == "object" && !Array.isArray(data64)) {
-                                                                          let missing24;
-                                                                          if (data64.state === void 0 && (missing24 = "state") || data64.value === void 0 && (missing24 = "value")) {
-                                                                            const err142 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing24 }, message: "must have required property '" + missing24 + "'" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err142];
-                                                                            } else {
-                                                                              vErrors.push(err142);
-                                                                            }
-                                                                            errors++;
-                                                                          } else {
-                                                                            const _errs187 = errors;
-                                                                            for (const key24 in data64) {
-                                                                              if (!(key24 === "state" || key24 === "value")) {
-                                                                                const err143 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key24 }, message: "must NOT have additional properties" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err143];
-                                                                                } else {
-                                                                                  vErrors.push(err143);
-                                                                                }
-                                                                                errors++;
-                                                                                break;
-                                                                              }
-                                                                            }
-                                                                            if (_errs187 === errors) {
-                                                                              if (data64.state !== void 0) {
-                                                                                const _errs188 = errors;
-                                                                                if ("documented" !== data64.state) {
-                                                                                  const err144 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err144];
-                                                                                  } else {
-                                                                                    vErrors.push(err144);
-                                                                                  }
-                                                                                  errors++;
-                                                                                }
-                                                                                var valid52 = _errs188 === errors;
-                                                                              } else {
-                                                                                var valid52 = true;
-                                                                              }
-                                                                              if (valid52) {
-                                                                                if (data64.value !== void 0) {
-                                                                                  let data67 = data64.value;
-                                                                                  const _errs189 = errors;
-                                                                                  if (errors === _errs189) {
-                                                                                    if (typeof data67 === "string") {
-                                                                                      if (func2(data67) > 4e3) {
-                                                                                        const err145 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err145];
-                                                                                        } else {
-                                                                                          vErrors.push(err145);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      } else {
-                                                                                        if (func2(data67) < 1) {
-                                                                                          const err146 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err146];
-                                                                                          } else {
-                                                                                            vErrors.push(err146);
-                                                                                          }
-                                                                                          errors++;
-                                                                                        } else {
-                                                                                          if (!pattern7.test(data67)) {
-                                                                                            const err147 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err147];
-                                                                                            } else {
-                                                                                              vErrors.push(err147);
-                                                                                            }
-                                                                                            errors++;
-                                                                                          }
-                                                                                        }
-                                                                                      }
-                                                                                    } else {
-                                                                                      const err148 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err148];
-                                                                                      } else {
-                                                                                        vErrors.push(err148);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    }
-                                                                                  }
-                                                                                  var valid52 = _errs189 === errors;
-                                                                                } else {
-                                                                                  var valid52 = true;
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        } else {
-                                                                          const err149 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err149];
-                                                                          } else {
-                                                                            vErrors.push(err149);
-                                                                          }
-                                                                          errors++;
-                                                                        }
-                                                                      }
-                                                                      var _valid10 = _errs185 === errors;
-                                                                      if (_valid10 && valid50) {
-                                                                        valid50 = false;
-                                                                        passing10 = [passing10, 1];
-                                                                      } else {
-                                                                        if (_valid10) {
-                                                                          valid50 = true;
-                                                                          passing10 = 1;
-                                                                          if (props9 !== true) {
-                                                                            props9 = true;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                      if (!valid50) {
-                                                                        const err150 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing10 }, message: "must match exactly one schema in oneOf" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err150];
-                                                                        } else {
-                                                                          vErrors.push(err150);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        errors = _errs180;
-                                                                        if (vErrors !== null) {
-                                                                          if (_errs180) {
-                                                                            vErrors.length = _errs180;
-                                                                          } else {
-                                                                            vErrors = null;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                      var valid32 = _errs178 === errors;
+                                                                      var valid8 = _errs70 === errors;
                                                                     } else {
-                                                                      var valid32 = true;
+                                                                      var valid8 = true;
                                                                     }
-                                                                    if (valid32) {
-                                                                      if (data43.securityMeasures !== void 0) {
-                                                                        let data68 = data43.securityMeasures;
-                                                                        const _errs191 = errors;
-                                                                        const _errs193 = errors;
-                                                                        let valid54 = false;
-                                                                        let passing11 = null;
-                                                                        const _errs194 = errors;
-                                                                        if (errors === _errs194) {
-                                                                          if (data68 && typeof data68 == "object" && !Array.isArray(data68)) {
-                                                                            let missing25;
-                                                                            if (data68.state === void 0 && (missing25 = "state")) {
-                                                                              const err151 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing25 }, message: "must have required property '" + missing25 + "'" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err151];
-                                                                              } else {
-                                                                                vErrors.push(err151);
-                                                                              }
-                                                                              errors++;
-                                                                            } else {
-                                                                              const _errs196 = errors;
-                                                                              for (const key25 in data68) {
-                                                                                if (!(key25 === "state")) {
-                                                                                  const err152 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key25 }, message: "must NOT have additional properties" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err152];
-                                                                                  } else {
-                                                                                    vErrors.push(err152);
-                                                                                  }
-                                                                                  errors++;
-                                                                                  break;
-                                                                                }
-                                                                              }
-                                                                              if (_errs196 === errors) {
-                                                                                if (data68.state !== void 0) {
-                                                                                  if ("unknown" !== data68.state) {
-                                                                                    const err153 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err153];
-                                                                                    } else {
-                                                                                      vErrors.push(err153);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          } else {
-                                                                            const err154 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err154];
-                                                                            } else {
-                                                                              vErrors.push(err154);
-                                                                            }
-                                                                            errors++;
-                                                                          }
+                                                                    if (valid8) {
+                                                                      if (data25.securityMeasures !== void 0) {
+                                                                        const _errs71 = errors;
+                                                                        if (!validate53(data25.securityMeasures, { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", parentData: data25, parentDataProperty: "securityMeasures", rootData, dynamicAnchors })) {
+                                                                          vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                          errors = vErrors.length;
                                                                         }
-                                                                        var _valid11 = _errs194 === errors;
-                                                                        if (_valid11) {
-                                                                          valid54 = true;
-                                                                          passing11 = 0;
-                                                                          var props10 = true;
-                                                                        }
-                                                                        const _errs198 = errors;
-                                                                        if (errors === _errs198) {
-                                                                          if (data68 && typeof data68 == "object" && !Array.isArray(data68)) {
-                                                                            let missing26;
-                                                                            if (data68.state === void 0 && (missing26 = "state") || data68.value === void 0 && (missing26 = "value")) {
-                                                                              const err155 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing26 }, message: "must have required property '" + missing26 + "'" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err155];
-                                                                              } else {
-                                                                                vErrors.push(err155);
-                                                                              }
-                                                                              errors++;
-                                                                            } else {
-                                                                              const _errs200 = errors;
-                                                                              for (const key26 in data68) {
-                                                                                if (!(key26 === "state" || key26 === "value")) {
-                                                                                  const err156 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key26 }, message: "must NOT have additional properties" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err156];
-                                                                                  } else {
-                                                                                    vErrors.push(err156);
-                                                                                  }
-                                                                                  errors++;
-                                                                                  break;
-                                                                                }
-                                                                              }
-                                                                              if (_errs200 === errors) {
-                                                                                if (data68.state !== void 0) {
-                                                                                  const _errs201 = errors;
-                                                                                  if ("documented" !== data68.state) {
-                                                                                    const err157 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err157];
-                                                                                    } else {
-                                                                                      vErrors.push(err157);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                  var valid56 = _errs201 === errors;
-                                                                                } else {
-                                                                                  var valid56 = true;
-                                                                                }
-                                                                                if (valid56) {
-                                                                                  if (data68.value !== void 0) {
-                                                                                    let data71 = data68.value;
-                                                                                    const _errs202 = errors;
-                                                                                    if (errors === _errs202) {
-                                                                                      if (typeof data71 === "string") {
-                                                                                        if (func2(data71) > 4e3) {
-                                                                                          const err158 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err158];
-                                                                                          } else {
-                                                                                            vErrors.push(err158);
-                                                                                          }
-                                                                                          errors++;
-                                                                                        } else {
-                                                                                          if (func2(data71) < 1) {
-                                                                                            const err159 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err159];
-                                                                                            } else {
-                                                                                              vErrors.push(err159);
-                                                                                            }
-                                                                                            errors++;
-                                                                                          } else {
-                                                                                            if (!pattern7.test(data71)) {
-                                                                                              const err160 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                              if (vErrors === null) {
-                                                                                                vErrors = [err160];
-                                                                                              } else {
-                                                                                                vErrors.push(err160);
-                                                                                              }
-                                                                                              errors++;
-                                                                                            }
-                                                                                          }
-                                                                                        }
-                                                                                      } else {
-                                                                                        const err161 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err161];
-                                                                                        } else {
-                                                                                          vErrors.push(err161);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      }
-                                                                                    }
-                                                                                    var valid56 = _errs202 === errors;
-                                                                                  } else {
-                                                                                    var valid56 = true;
-                                                                                  }
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          } else {
-                                                                            const err162 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err162];
-                                                                            } else {
-                                                                              vErrors.push(err162);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                        }
-                                                                        var _valid11 = _errs198 === errors;
-                                                                        if (_valid11 && valid54) {
-                                                                          valid54 = false;
-                                                                          passing11 = [passing11, 1];
-                                                                        } else {
-                                                                          if (_valid11) {
-                                                                            valid54 = true;
-                                                                            passing11 = 1;
-                                                                            if (props10 !== true) {
-                                                                              props10 = true;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                        if (!valid54) {
-                                                                          const err163 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing11 }, message: "must match exactly one schema in oneOf" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err163];
-                                                                          } else {
-                                                                            vErrors.push(err163);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          errors = _errs193;
-                                                                          if (vErrors !== null) {
-                                                                            if (_errs193) {
-                                                                              vErrors.length = _errs193;
-                                                                            } else {
-                                                                              vErrors = null;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                        var valid32 = _errs191 === errors;
+                                                                        var valid8 = _errs71 === errors;
                                                                       } else {
-                                                                        var valid32 = true;
+                                                                        var valid8 = true;
                                                                       }
-                                                                      if (valid32) {
-                                                                        if (data43.internalNotes !== void 0) {
-                                                                          let data72 = data43.internalNotes;
-                                                                          const _errs204 = errors;
-                                                                          if (errors === _errs204) {
-                                                                            if (typeof data72 === "string") {
-                                                                              if (func2(data72) > 4e3) {
-                                                                                const err164 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/0/properties/internalNotes/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
+                                                                      if (valid8) {
+                                                                        if (data25.internalNotes !== void 0) {
+                                                                          let data39 = data25.internalNotes;
+                                                                          const _errs72 = errors;
+                                                                          if (errors === _errs72) {
+                                                                            if (typeof data39 === "string") {
+                                                                              if (func2(data39) > 4e3) {
+                                                                                const err21 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/0/properties/internalNotes/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
                                                                                 if (vErrors === null) {
-                                                                                  vErrors = [err164];
+                                                                                  vErrors = [err21];
                                                                                 } else {
-                                                                                  vErrors.push(err164);
+                                                                                  vErrors.push(err21);
                                                                                 }
                                                                                 errors++;
                                                                               } else {
-                                                                                if (!pattern30.test(data72)) {
-                                                                                  const err165 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/0/properties/internalNotes/pattern", keyword: "pattern", params: { pattern: "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
+                                                                                if (!pattern19.test(data39)) {
+                                                                                  const err22 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/0/properties/internalNotes/pattern", keyword: "pattern", params: { pattern: "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
                                                                                   if (vErrors === null) {
-                                                                                    vErrors = [err165];
+                                                                                    vErrors = [err22];
                                                                                   } else {
-                                                                                    vErrors.push(err165);
+                                                                                    vErrors.push(err22);
                                                                                   }
                                                                                   errors++;
                                                                                 }
                                                                               }
                                                                             } else {
-                                                                              const err166 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/0/properties/internalNotes/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                              const err23 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/0/properties/internalNotes/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                               if (vErrors === null) {
-                                                                                vErrors = [err166];
+                                                                                vErrors = [err23];
                                                                               } else {
-                                                                                vErrors.push(err166);
+                                                                                vErrors.push(err23);
                                                                               }
                                                                               errors++;
                                                                             }
                                                                           }
-                                                                          var valid32 = _errs204 === errors;
+                                                                          var valid8 = _errs72 === errors;
                                                                         } else {
-                                                                          var valid32 = true;
+                                                                          var valid8 = true;
                                                                         }
-                                                                        if (valid32) {
-                                                                          if (data43.role !== void 0) {
-                                                                            const _errs206 = errors;
-                                                                            if ("controller" !== data43.role) {
-                                                                              const err167 = { instancePath: instancePath + "/activities/" + i2 + "/role", schemaPath: "#/properties/activities/items/oneOf/0/properties/role/const", keyword: "const", params: { allowedValue: "controller" }, message: "must be equal to constant" };
+                                                                        if (valid8) {
+                                                                          if (data25.role !== void 0) {
+                                                                            const _errs74 = errors;
+                                                                            if ("controller" !== data25.role) {
+                                                                              const err24 = { instancePath: instancePath + "/activities/" + i2 + "/role", schemaPath: "#/properties/activities/items/oneOf/0/properties/role/const", keyword: "const", params: { allowedValue: "controller" }, message: "must be equal to constant" };
                                                                               if (vErrors === null) {
-                                                                                vErrors = [err167];
+                                                                                vErrors = [err24];
                                                                               } else {
-                                                                                vErrors.push(err167);
+                                                                                vErrors.push(err24);
                                                                               }
                                                                               errors++;
                                                                             }
-                                                                            var valid32 = _errs206 === errors;
+                                                                            var valid8 = _errs74 === errors;
                                                                           } else {
-                                                                            var valid32 = true;
+                                                                            var valid8 = true;
                                                                           }
-                                                                          if (valid32) {
-                                                                            if (data43.purposes !== void 0) {
-                                                                              let data74 = data43.purposes;
-                                                                              const _errs207 = errors;
-                                                                              if (errors === _errs207) {
-                                                                                if (Array.isArray(data74)) {
-                                                                                  if (data74.length > 20) {
-                                                                                    const err168 = { instancePath: instancePath + "/activities/" + i2 + "/purposes", schemaPath: "#/properties/activities/items/oneOf/0/properties/purposes/maxItems", keyword: "maxItems", params: { limit: 20 }, message: "must NOT have more than 20 items" };
+                                                                          if (valid8) {
+                                                                            if (data25.purposes !== void 0) {
+                                                                              let data41 = data25.purposes;
+                                                                              const _errs75 = errors;
+                                                                              if (errors === _errs75) {
+                                                                                if (Array.isArray(data41)) {
+                                                                                  if (data41.length > 20) {
+                                                                                    const err25 = { instancePath: instancePath + "/activities/" + i2 + "/purposes", schemaPath: "#/properties/activities/items/oneOf/0/properties/purposes/maxItems", keyword: "maxItems", params: { limit: 20 }, message: "must NOT have more than 20 items" };
                                                                                     if (vErrors === null) {
-                                                                                      vErrors = [err168];
+                                                                                      vErrors = [err25];
                                                                                     } else {
-                                                                                      vErrors.push(err168);
+                                                                                      vErrors.push(err25);
                                                                                     }
                                                                                     errors++;
                                                                                   } else {
-                                                                                    var valid57 = true;
-                                                                                    const len5 = data74.length;
+                                                                                    var valid13 = true;
+                                                                                    const len5 = data41.length;
                                                                                     for (let i7 = 0; i7 < len5; i7++) {
-                                                                                      const _errs209 = errors;
-                                                                                      if (!validate21(data74[i7], { instancePath: instancePath + "/activities/" + i2 + "/purposes/" + i7, parentData: data74, parentDataProperty: i7, rootData, dynamicAnchors })) {
-                                                                                        vErrors = vErrors === null ? validate21.errors : vErrors.concat(validate21.errors);
+                                                                                      const _errs77 = errors;
+                                                                                      if (!validate65(data41[i7], { instancePath: instancePath + "/activities/" + i2 + "/purposes/" + i7, parentData: data41, parentDataProperty: i7, rootData, dynamicAnchors })) {
+                                                                                        vErrors = vErrors === null ? validate65.errors : vErrors.concat(validate65.errors);
                                                                                         errors = vErrors.length;
                                                                                       }
-                                                                                      var valid57 = _errs209 === errors;
-                                                                                      if (!valid57) {
+                                                                                      var valid13 = _errs77 === errors;
+                                                                                      if (!valid13) {
                                                                                         break;
                                                                                       }
                                                                                     }
                                                                                   }
                                                                                 } else {
-                                                                                  const err169 = { instancePath: instancePath + "/activities/" + i2 + "/purposes", schemaPath: "#/properties/activities/items/oneOf/0/properties/purposes/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                                                                                  const err26 = { instancePath: instancePath + "/activities/" + i2 + "/purposes", schemaPath: "#/properties/activities/items/oneOf/0/properties/purposes/type", keyword: "type", params: { type: "array" }, message: "must be array" };
                                                                                   if (vErrors === null) {
-                                                                                    vErrors = [err169];
+                                                                                    vErrors = [err26];
                                                                                   } else {
-                                                                                    vErrors.push(err169);
+                                                                                    vErrors.push(err26);
                                                                                   }
                                                                                   errors++;
                                                                                 }
                                                                               }
-                                                                              var valid32 = _errs207 === errors;
+                                                                              var valid8 = _errs75 === errors;
                                                                             } else {
-                                                                              var valid32 = true;
+                                                                              var valid8 = true;
                                                                             }
                                                                           }
                                                                         }
@@ -4290,234 +1616,234 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                 }
                                               }
                                             } else {
-                                              const err170 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+                                              const err27 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
                                               if (vErrors === null) {
-                                                vErrors = [err170];
+                                                vErrors = [err27];
                                               } else {
-                                                vErrors.push(err170);
+                                                vErrors.push(err27);
                                               }
                                               errors++;
                                             }
                                           }
-                                          var _valid6 = _errs121 === errors;
-                                          if (_valid6) {
-                                            valid31 = true;
-                                            passing6 = 0;
+                                          var _valid0 = _errs49 === errors;
+                                          if (_valid0) {
+                                            valid7 = true;
+                                            passing0 = 0;
                                             var props11 = true;
                                           }
-                                          const _errs210 = errors;
-                                          if (errors === _errs210) {
-                                            if (data43 && typeof data43 == "object" && !Array.isArray(data43)) {
-                                              let missing27;
-                                              if (data43.id === void 0 && (missing27 = "id") || data43.workspaceId === void 0 && (missing27 = "workspaceId") || data43.title === void 0 && (missing27 = "title") || data43.status === void 0 && (missing27 = "status") || data43.systemIds === void 0 && (missing27 = "systemIds") || data43.participantIds === void 0 && (missing27 = "participantIds") || data43.dataCategories === void 0 && (missing27 = "dataCategories") || data43.dataSubjects === void 0 && (missing27 = "dataSubjects") || data43.recipients === void 0 && (missing27 = "recipients") || data43.transfers === void 0 && (missing27 = "transfers") || data43.securityMeasures === void 0 && (missing27 = "securityMeasures") || data43.internalNotes === void 0 && (missing27 = "internalNotes") || data43.role === void 0 && (missing27 = "role") || data43.controllerIds === void 0 && (missing27 = "controllerIds") || data43.operations === void 0 && (missing27 = "operations") || data43.instructions === void 0 && (missing27 = "instructions")) {
-                                                const err171 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/1/required", keyword: "required", params: { missingProperty: missing27 }, message: "must have required property '" + missing27 + "'" };
+                                          const _errs78 = errors;
+                                          if (errors === _errs78) {
+                                            if (data25 && typeof data25 == "object" && !Array.isArray(data25)) {
+                                              let missing5;
+                                              if (data25.id === void 0 && (missing5 = "id") || data25.workspaceId === void 0 && (missing5 = "workspaceId") || data25.title === void 0 && (missing5 = "title") || data25.status === void 0 && (missing5 = "status") || data25.systemIds === void 0 && (missing5 = "systemIds") || data25.participantIds === void 0 && (missing5 = "participantIds") || data25.dataCategories === void 0 && (missing5 = "dataCategories") || data25.dataSubjects === void 0 && (missing5 = "dataSubjects") || data25.recipients === void 0 && (missing5 = "recipients") || data25.transfers === void 0 && (missing5 = "transfers") || data25.securityMeasures === void 0 && (missing5 = "securityMeasures") || data25.internalNotes === void 0 && (missing5 = "internalNotes") || data25.role === void 0 && (missing5 = "role") || data25.controllerIds === void 0 && (missing5 = "controllerIds") || data25.operations === void 0 && (missing5 = "operations") || data25.instructions === void 0 && (missing5 = "instructions")) {
+                                                const err28 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/1/required", keyword: "required", params: { missingProperty: missing5 }, message: "must have required property '" + missing5 + "'" };
                                                 if (vErrors === null) {
-                                                  vErrors = [err171];
+                                                  vErrors = [err28];
                                                 } else {
-                                                  vErrors.push(err171);
+                                                  vErrors.push(err28);
                                                 }
                                                 errors++;
                                               } else {
-                                                const _errs212 = errors;
-                                                for (const key27 in data43) {
-                                                  if (!func1.call(schema31.properties.activities.items.oneOf[1].properties, key27)) {
-                                                    const err172 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key27 }, message: "must NOT have additional properties" };
+                                                const _errs80 = errors;
+                                                for (const key5 in data25) {
+                                                  if (!func1.call(schema19.properties.activities.items.oneOf[1].properties, key5)) {
+                                                    const err29 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" };
                                                     if (vErrors === null) {
-                                                      vErrors = [err172];
+                                                      vErrors = [err29];
                                                     } else {
-                                                      vErrors.push(err172);
+                                                      vErrors.push(err29);
                                                     }
                                                     errors++;
                                                     break;
                                                   }
                                                 }
-                                                if (_errs212 === errors) {
-                                                  if (data43.id !== void 0) {
-                                                    let data76 = data43.id;
-                                                    const _errs213 = errors;
-                                                    if (errors === _errs213) {
-                                                      if (typeof data76 === "string") {
-                                                        if (!pattern4.test(data76)) {
-                                                          const err173 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/1/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                if (_errs80 === errors) {
+                                                  if (data25.id !== void 0) {
+                                                    let data43 = data25.id;
+                                                    const _errs81 = errors;
+                                                    if (errors === _errs81) {
+                                                      if (typeof data43 === "string") {
+                                                        if (!pattern3.test(data43)) {
+                                                          const err30 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/1/properties/id/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                           if (vErrors === null) {
-                                                            vErrors = [err173];
+                                                            vErrors = [err30];
                                                           } else {
-                                                            vErrors.push(err173);
+                                                            vErrors.push(err30);
                                                           }
                                                           errors++;
                                                         }
                                                       } else {
-                                                        const err174 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/1/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                        const err31 = { instancePath: instancePath + "/activities/" + i2 + "/id", schemaPath: "#/properties/activities/items/oneOf/1/properties/id/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                         if (vErrors === null) {
-                                                          vErrors = [err174];
+                                                          vErrors = [err31];
                                                         } else {
-                                                          vErrors.push(err174);
+                                                          vErrors.push(err31);
                                                         }
                                                         errors++;
                                                       }
                                                     }
-                                                    var valid58 = _errs213 === errors;
+                                                    var valid14 = _errs81 === errors;
                                                   } else {
-                                                    var valid58 = true;
+                                                    var valid14 = true;
                                                   }
-                                                  if (valid58) {
-                                                    if (data43.workspaceId !== void 0) {
-                                                      let data77 = data43.workspaceId;
-                                                      const _errs215 = errors;
-                                                      if (errors === _errs215) {
-                                                        if (typeof data77 === "string") {
-                                                          if (!pattern4.test(data77)) {
-                                                            const err175 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/1/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                  if (valid14) {
+                                                    if (data25.workspaceId !== void 0) {
+                                                      let data44 = data25.workspaceId;
+                                                      const _errs83 = errors;
+                                                      if (errors === _errs83) {
+                                                        if (typeof data44 === "string") {
+                                                          if (!pattern3.test(data44)) {
+                                                            const err32 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/1/properties/workspaceId/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                             if (vErrors === null) {
-                                                              vErrors = [err175];
+                                                              vErrors = [err32];
                                                             } else {
-                                                              vErrors.push(err175);
+                                                              vErrors.push(err32);
                                                             }
                                                             errors++;
                                                           }
                                                         } else {
-                                                          const err176 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/1/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                          const err33 = { instancePath: instancePath + "/activities/" + i2 + "/workspaceId", schemaPath: "#/properties/activities/items/oneOf/1/properties/workspaceId/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                           if (vErrors === null) {
-                                                            vErrors = [err176];
+                                                            vErrors = [err33];
                                                           } else {
-                                                            vErrors.push(err176);
+                                                            vErrors.push(err33);
                                                           }
                                                           errors++;
                                                         }
                                                       }
-                                                      var valid58 = _errs215 === errors;
+                                                      var valid14 = _errs83 === errors;
                                                     } else {
-                                                      var valid58 = true;
+                                                      var valid14 = true;
                                                     }
-                                                    if (valid58) {
-                                                      if (data43.title !== void 0) {
-                                                        let data78 = data43.title;
-                                                        const _errs217 = errors;
-                                                        if (errors === _errs217) {
-                                                          if (typeof data78 === "string") {
-                                                            if (func2(data78) > 160) {
-                                                              const err177 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" };
+                                                    if (valid14) {
+                                                      if (data25.title !== void 0) {
+                                                        let data45 = data25.title;
+                                                        const _errs85 = errors;
+                                                        if (errors === _errs85) {
+                                                          if (typeof data45 === "string") {
+                                                            if (func2(data45) > 160) {
+                                                              const err34 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/maxLength", keyword: "maxLength", params: { limit: 160 }, message: "must NOT have more than 160 characters" };
                                                               if (vErrors === null) {
-                                                                vErrors = [err177];
+                                                                vErrors = [err34];
                                                               } else {
-                                                                vErrors.push(err177);
+                                                                vErrors.push(err34);
                                                               }
                                                               errors++;
                                                             } else {
-                                                              if (func2(data78) < 1) {
-                                                                const err178 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
+                                                              if (func2(data45) < 1) {
+                                                                const err35 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
                                                                 if (vErrors === null) {
-                                                                  vErrors = [err178];
+                                                                  vErrors = [err35];
                                                                 } else {
-                                                                  vErrors.push(err178);
+                                                                  vErrors.push(err35);
                                                                 }
                                                                 errors++;
                                                               } else {
-                                                                if (!pattern7.test(data78)) {
-                                                                  const err179 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
+                                                                if (!pattern6.test(data45)) {
+                                                                  const err36 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
                                                                   if (vErrors === null) {
-                                                                    vErrors = [err179];
+                                                                    vErrors = [err36];
                                                                   } else {
-                                                                    vErrors.push(err179);
+                                                                    vErrors.push(err36);
                                                                   }
                                                                   errors++;
                                                                 }
                                                               }
                                                             }
                                                           } else {
-                                                            const err180 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                            const err37 = { instancePath: instancePath + "/activities/" + i2 + "/title", schemaPath: "#/properties/activities/items/oneOf/1/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                             if (vErrors === null) {
-                                                              vErrors = [err180];
+                                                              vErrors = [err37];
                                                             } else {
-                                                              vErrors.push(err180);
+                                                              vErrors.push(err37);
                                                             }
                                                             errors++;
                                                           }
                                                         }
-                                                        var valid58 = _errs217 === errors;
+                                                        var valid14 = _errs85 === errors;
                                                       } else {
-                                                        var valid58 = true;
+                                                        var valid14 = true;
                                                       }
-                                                      if (valid58) {
-                                                        if (data43.status !== void 0) {
-                                                          let data79 = data43.status;
-                                                          const _errs219 = errors;
-                                                          if (!(data79 === "draft" || data79 === "active" || data79 === "archived")) {
-                                                            const err181 = { instancePath: instancePath + "/activities/" + i2 + "/status", schemaPath: "#/properties/activities/items/oneOf/1/properties/status/enum", keyword: "enum", params: { allowedValues: schema31.properties.activities.items.oneOf[1].properties.status.enum }, message: "must be equal to one of the allowed values" };
+                                                      if (valid14) {
+                                                        if (data25.status !== void 0) {
+                                                          let data46 = data25.status;
+                                                          const _errs87 = errors;
+                                                          if (!(data46 === "draft" || data46 === "active" || data46 === "archived")) {
+                                                            const err38 = { instancePath: instancePath + "/activities/" + i2 + "/status", schemaPath: "#/properties/activities/items/oneOf/1/properties/status/enum", keyword: "enum", params: { allowedValues: schema19.properties.activities.items.oneOf[1].properties.status.enum }, message: "must be equal to one of the allowed values" };
                                                             if (vErrors === null) {
-                                                              vErrors = [err181];
+                                                              vErrors = [err38];
                                                             } else {
-                                                              vErrors.push(err181);
+                                                              vErrors.push(err38);
                                                             }
                                                             errors++;
                                                           }
-                                                          var valid58 = _errs219 === errors;
+                                                          var valid14 = _errs87 === errors;
                                                         } else {
-                                                          var valid58 = true;
+                                                          var valid14 = true;
                                                         }
-                                                        if (valid58) {
-                                                          if (data43.systemIds !== void 0) {
-                                                            let data80 = data43.systemIds;
-                                                            const _errs220 = errors;
-                                                            if (errors === _errs220) {
-                                                              if (Array.isArray(data80)) {
-                                                                if (data80.length > 200) {
-                                                                  const err182 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
+                                                        if (valid14) {
+                                                          if (data25.systemIds !== void 0) {
+                                                            let data47 = data25.systemIds;
+                                                            const _errs88 = errors;
+                                                            if (errors === _errs88) {
+                                                              if (Array.isArray(data47)) {
+                                                                if (data47.length > 200) {
+                                                                  const err39 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
                                                                   if (vErrors === null) {
-                                                                    vErrors = [err182];
+                                                                    vErrors = [err39];
                                                                   } else {
-                                                                    vErrors.push(err182);
+                                                                    vErrors.push(err39);
                                                                   }
                                                                   errors++;
                                                                 } else {
-                                                                  var valid59 = true;
-                                                                  const len6 = data80.length;
+                                                                  var valid15 = true;
+                                                                  const len6 = data47.length;
                                                                   for (let i8 = 0; i8 < len6; i8++) {
-                                                                    let data81 = data80[i8];
-                                                                    const _errs222 = errors;
-                                                                    if (errors === _errs222) {
-                                                                      if (typeof data81 === "string") {
-                                                                        if (!pattern4.test(data81)) {
-                                                                          const err183 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i8, schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                                    let data48 = data47[i8];
+                                                                    const _errs90 = errors;
+                                                                    if (errors === _errs90) {
+                                                                      if (typeof data48 === "string") {
+                                                                        if (!pattern3.test(data48)) {
+                                                                          const err40 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i8, schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                                           if (vErrors === null) {
-                                                                            vErrors = [err183];
+                                                                            vErrors = [err40];
                                                                           } else {
-                                                                            vErrors.push(err183);
+                                                                            vErrors.push(err40);
                                                                           }
                                                                           errors++;
                                                                         }
                                                                       } else {
-                                                                        const err184 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i8, schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                        const err41 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds/" + i8, schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                         if (vErrors === null) {
-                                                                          vErrors = [err184];
+                                                                          vErrors = [err41];
                                                                         } else {
-                                                                          vErrors.push(err184);
+                                                                          vErrors.push(err41);
                                                                         }
                                                                         errors++;
                                                                       }
                                                                     }
-                                                                    var valid59 = _errs222 === errors;
-                                                                    if (!valid59) {
+                                                                    var valid15 = _errs90 === errors;
+                                                                    if (!valid15) {
                                                                       break;
                                                                     }
                                                                   }
-                                                                  if (valid59) {
-                                                                    let i9 = data80.length;
+                                                                  if (valid15) {
+                                                                    let i9 = data47.length;
                                                                     let j2;
                                                                     if (i9 > 1) {
                                                                       const indices2 = {};
                                                                       for (; i9--; ) {
-                                                                        let item2 = data80[i9];
+                                                                        let item2 = data47[i9];
                                                                         if (typeof item2 !== "string") {
                                                                           continue;
                                                                         }
                                                                         if (typeof indices2[item2] == "number") {
                                                                           j2 = indices2[item2];
-                                                                          const err185 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/uniqueItems", keyword: "uniqueItems", params: { i: i9, j: j2 }, message: "must NOT have duplicate items (items ## " + j2 + " and " + i9 + " are identical)" };
+                                                                          const err42 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/uniqueItems", keyword: "uniqueItems", params: { i: i9, j: j2 }, message: "must NOT have duplicate items (items ## " + j2 + " and " + i9 + " are identical)" };
                                                                           if (vErrors === null) {
-                                                                            vErrors = [err185];
+                                                                            vErrors = [err42];
                                                                           } else {
-                                                                            vErrors.push(err185);
+                                                                            vErrors.push(err42);
                                                                           }
                                                                           errors++;
                                                                           break;
@@ -4528,82 +1854,82 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                                   }
                                                                 }
                                                               } else {
-                                                                const err186 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                                                                const err43 = { instancePath: instancePath + "/activities/" + i2 + "/systemIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/systemIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
                                                                 if (vErrors === null) {
-                                                                  vErrors = [err186];
+                                                                  vErrors = [err43];
                                                                 } else {
-                                                                  vErrors.push(err186);
+                                                                  vErrors.push(err43);
                                                                 }
                                                                 errors++;
                                                               }
                                                             }
-                                                            var valid58 = _errs220 === errors;
+                                                            var valid14 = _errs88 === errors;
                                                           } else {
-                                                            var valid58 = true;
+                                                            var valid14 = true;
                                                           }
-                                                          if (valid58) {
-                                                            if (data43.participantIds !== void 0) {
-                                                              let data82 = data43.participantIds;
-                                                              const _errs224 = errors;
-                                                              if (errors === _errs224) {
-                                                                if (Array.isArray(data82)) {
-                                                                  if (data82.length > 200) {
-                                                                    const err187 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
+                                                          if (valid14) {
+                                                            if (data25.participantIds !== void 0) {
+                                                              let data49 = data25.participantIds;
+                                                              const _errs92 = errors;
+                                                              if (errors === _errs92) {
+                                                                if (Array.isArray(data49)) {
+                                                                  if (data49.length > 200) {
+                                                                    const err44 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
                                                                     if (vErrors === null) {
-                                                                      vErrors = [err187];
+                                                                      vErrors = [err44];
                                                                     } else {
-                                                                      vErrors.push(err187);
+                                                                      vErrors.push(err44);
                                                                     }
                                                                     errors++;
                                                                   } else {
-                                                                    var valid61 = true;
-                                                                    const len7 = data82.length;
+                                                                    var valid17 = true;
+                                                                    const len7 = data49.length;
                                                                     for (let i10 = 0; i10 < len7; i10++) {
-                                                                      let data83 = data82[i10];
-                                                                      const _errs226 = errors;
-                                                                      if (errors === _errs226) {
-                                                                        if (typeof data83 === "string") {
-                                                                          if (!pattern4.test(data83)) {
-                                                                            const err188 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i10, schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                                      let data50 = data49[i10];
+                                                                      const _errs94 = errors;
+                                                                      if (errors === _errs94) {
+                                                                        if (typeof data50 === "string") {
+                                                                          if (!pattern3.test(data50)) {
+                                                                            const err45 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i10, schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                                             if (vErrors === null) {
-                                                                              vErrors = [err188];
+                                                                              vErrors = [err45];
                                                                             } else {
-                                                                              vErrors.push(err188);
+                                                                              vErrors.push(err45);
                                                                             }
                                                                             errors++;
                                                                           }
                                                                         } else {
-                                                                          const err189 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i10, schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                          const err46 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds/" + i10, schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                           if (vErrors === null) {
-                                                                            vErrors = [err189];
+                                                                            vErrors = [err46];
                                                                           } else {
-                                                                            vErrors.push(err189);
+                                                                            vErrors.push(err46);
                                                                           }
                                                                           errors++;
                                                                         }
                                                                       }
-                                                                      var valid61 = _errs226 === errors;
-                                                                      if (!valid61) {
+                                                                      var valid17 = _errs94 === errors;
+                                                                      if (!valid17) {
                                                                         break;
                                                                       }
                                                                     }
-                                                                    if (valid61) {
-                                                                      let i11 = data82.length;
+                                                                    if (valid17) {
+                                                                      let i11 = data49.length;
                                                                       let j3;
                                                                       if (i11 > 1) {
                                                                         const indices3 = {};
                                                                         for (; i11--; ) {
-                                                                          let item3 = data82[i11];
+                                                                          let item3 = data49[i11];
                                                                           if (typeof item3 !== "string") {
                                                                             continue;
                                                                           }
                                                                           if (typeof indices3[item3] == "number") {
                                                                             j3 = indices3[item3];
-                                                                            const err190 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/uniqueItems", keyword: "uniqueItems", params: { i: i11, j: j3 }, message: "must NOT have duplicate items (items ## " + j3 + " and " + i11 + " are identical)" };
+                                                                            const err47 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/uniqueItems", keyword: "uniqueItems", params: { i: i11, j: j3 }, message: "must NOT have duplicate items (items ## " + j3 + " and " + i11 + " are identical)" };
                                                                             if (vErrors === null) {
-                                                                              vErrors = [err190];
+                                                                              vErrors = [err47];
                                                                             } else {
-                                                                              vErrors.push(err190);
+                                                                              vErrors.push(err47);
                                                                             }
                                                                             errors++;
                                                                             break;
@@ -4614,1147 +1940,192 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                                     }
                                                                   }
                                                                 } else {
-                                                                  const err191 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                                                                  const err48 = { instancePath: instancePath + "/activities/" + i2 + "/participantIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/participantIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
                                                                   if (vErrors === null) {
-                                                                    vErrors = [err191];
+                                                                    vErrors = [err48];
                                                                   } else {
-                                                                    vErrors.push(err191);
+                                                                    vErrors.push(err48);
                                                                   }
                                                                   errors++;
                                                                 }
                                                               }
-                                                              var valid58 = _errs224 === errors;
+                                                              var valid14 = _errs92 === errors;
                                                             } else {
-                                                              var valid58 = true;
+                                                              var valid14 = true;
                                                             }
-                                                            if (valid58) {
-                                                              if (data43.dataCategories !== void 0) {
-                                                                let data84 = data43.dataCategories;
-                                                                const _errs228 = errors;
-                                                                const _errs230 = errors;
-                                                                let valid64 = false;
-                                                                let passing12 = null;
-                                                                const _errs231 = errors;
-                                                                if (errors === _errs231) {
-                                                                  if (data84 && typeof data84 == "object" && !Array.isArray(data84)) {
-                                                                    let missing28;
-                                                                    if (data84.state === void 0 && (missing28 = "state")) {
-                                                                      const err192 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing28 }, message: "must have required property '" + missing28 + "'" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err192];
-                                                                      } else {
-                                                                        vErrors.push(err192);
-                                                                      }
-                                                                      errors++;
-                                                                    } else {
-                                                                      const _errs233 = errors;
-                                                                      for (const key28 in data84) {
-                                                                        if (!(key28 === "state")) {
-                                                                          const err193 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key28 }, message: "must NOT have additional properties" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err193];
-                                                                          } else {
-                                                                            vErrors.push(err193);
-                                                                          }
-                                                                          errors++;
-                                                                          break;
-                                                                        }
-                                                                      }
-                                                                      if (_errs233 === errors) {
-                                                                        if (data84.state !== void 0) {
-                                                                          if ("unknown" !== data84.state) {
-                                                                            const err194 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err194];
-                                                                            } else {
-                                                                              vErrors.push(err194);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                  } else {
-                                                                    const err195 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err195];
-                                                                    } else {
-                                                                      vErrors.push(err195);
-                                                                    }
-                                                                    errors++;
-                                                                  }
+                                                            if (valid14) {
+                                                              if (data25.dataCategories !== void 0) {
+                                                                const _errs96 = errors;
+                                                                if (!validate53(data25.dataCategories, { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", parentData: data25, parentDataProperty: "dataCategories", rootData, dynamicAnchors })) {
+                                                                  vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                  errors = vErrors.length;
                                                                 }
-                                                                var _valid12 = _errs231 === errors;
-                                                                if (_valid12) {
-                                                                  valid64 = true;
-                                                                  passing12 = 0;
-                                                                  var props12 = true;
-                                                                }
-                                                                const _errs235 = errors;
-                                                                if (errors === _errs235) {
-                                                                  if (data84 && typeof data84 == "object" && !Array.isArray(data84)) {
-                                                                    let missing29;
-                                                                    if (data84.state === void 0 && (missing29 = "state") || data84.value === void 0 && (missing29 = "value")) {
-                                                                      const err196 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing29 }, message: "must have required property '" + missing29 + "'" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err196];
-                                                                      } else {
-                                                                        vErrors.push(err196);
-                                                                      }
-                                                                      errors++;
-                                                                    } else {
-                                                                      const _errs237 = errors;
-                                                                      for (const key29 in data84) {
-                                                                        if (!(key29 === "state" || key29 === "value")) {
-                                                                          const err197 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key29 }, message: "must NOT have additional properties" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err197];
-                                                                          } else {
-                                                                            vErrors.push(err197);
-                                                                          }
-                                                                          errors++;
-                                                                          break;
-                                                                        }
-                                                                      }
-                                                                      if (_errs237 === errors) {
-                                                                        if (data84.state !== void 0) {
-                                                                          const _errs238 = errors;
-                                                                          if ("documented" !== data84.state) {
-                                                                            const err198 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err198];
-                                                                            } else {
-                                                                              vErrors.push(err198);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                          var valid66 = _errs238 === errors;
-                                                                        } else {
-                                                                          var valid66 = true;
-                                                                        }
-                                                                        if (valid66) {
-                                                                          if (data84.value !== void 0) {
-                                                                            let data87 = data84.value;
-                                                                            const _errs239 = errors;
-                                                                            if (errors === _errs239) {
-                                                                              if (typeof data87 === "string") {
-                                                                                if (func2(data87) > 4e3) {
-                                                                                  const err199 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err199];
-                                                                                  } else {
-                                                                                    vErrors.push(err199);
-                                                                                  }
-                                                                                  errors++;
-                                                                                } else {
-                                                                                  if (func2(data87) < 1) {
-                                                                                    const err200 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err200];
-                                                                                    } else {
-                                                                                      vErrors.push(err200);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  } else {
-                                                                                    if (!pattern7.test(data87)) {
-                                                                                      const err201 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err201];
-                                                                                      } else {
-                                                                                        vErrors.push(err201);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    }
-                                                                                  }
-                                                                                }
-                                                                              } else {
-                                                                                const err202 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err202];
-                                                                                } else {
-                                                                                  vErrors.push(err202);
-                                                                                }
-                                                                                errors++;
-                                                                              }
-                                                                            }
-                                                                            var valid66 = _errs239 === errors;
-                                                                          } else {
-                                                                            var valid66 = true;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                  } else {
-                                                                    const err203 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err203];
-                                                                    } else {
-                                                                      vErrors.push(err203);
-                                                                    }
-                                                                    errors++;
-                                                                  }
-                                                                }
-                                                                var _valid12 = _errs235 === errors;
-                                                                if (_valid12 && valid64) {
-                                                                  valid64 = false;
-                                                                  passing12 = [passing12, 1];
-                                                                } else {
-                                                                  if (_valid12) {
-                                                                    valid64 = true;
-                                                                    passing12 = 1;
-                                                                    if (props12 !== true) {
-                                                                      props12 = true;
-                                                                    }
-                                                                  }
-                                                                }
-                                                                if (!valid64) {
-                                                                  const err204 = { instancePath: instancePath + "/activities/" + i2 + "/dataCategories", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing12 }, message: "must match exactly one schema in oneOf" };
-                                                                  if (vErrors === null) {
-                                                                    vErrors = [err204];
-                                                                  } else {
-                                                                    vErrors.push(err204);
-                                                                  }
-                                                                  errors++;
-                                                                } else {
-                                                                  errors = _errs230;
-                                                                  if (vErrors !== null) {
-                                                                    if (_errs230) {
-                                                                      vErrors.length = _errs230;
-                                                                    } else {
-                                                                      vErrors = null;
-                                                                    }
-                                                                  }
-                                                                }
-                                                                var valid58 = _errs228 === errors;
+                                                                var valid14 = _errs96 === errors;
                                                               } else {
-                                                                var valid58 = true;
+                                                                var valid14 = true;
                                                               }
-                                                              if (valid58) {
-                                                                if (data43.dataSubjects !== void 0) {
-                                                                  let data88 = data43.dataSubjects;
-                                                                  const _errs241 = errors;
-                                                                  const _errs243 = errors;
-                                                                  let valid68 = false;
-                                                                  let passing13 = null;
-                                                                  const _errs244 = errors;
-                                                                  if (errors === _errs244) {
-                                                                    if (data88 && typeof data88 == "object" && !Array.isArray(data88)) {
-                                                                      let missing30;
-                                                                      if (data88.state === void 0 && (missing30 = "state")) {
-                                                                        const err205 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing30 }, message: "must have required property '" + missing30 + "'" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err205];
-                                                                        } else {
-                                                                          vErrors.push(err205);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        const _errs246 = errors;
-                                                                        for (const key30 in data88) {
-                                                                          if (!(key30 === "state")) {
-                                                                            const err206 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key30 }, message: "must NOT have additional properties" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err206];
-                                                                            } else {
-                                                                              vErrors.push(err206);
-                                                                            }
-                                                                            errors++;
-                                                                            break;
-                                                                          }
-                                                                        }
-                                                                        if (_errs246 === errors) {
-                                                                          if (data88.state !== void 0) {
-                                                                            if ("unknown" !== data88.state) {
-                                                                              const err207 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err207];
-                                                                              } else {
-                                                                                vErrors.push(err207);
-                                                                              }
-                                                                              errors++;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    } else {
-                                                                      const err208 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err208];
-                                                                      } else {
-                                                                        vErrors.push(err208);
-                                                                      }
-                                                                      errors++;
-                                                                    }
+                                                              if (valid14) {
+                                                                if (data25.dataSubjects !== void 0) {
+                                                                  const _errs97 = errors;
+                                                                  if (!validate53(data25.dataSubjects, { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", parentData: data25, parentDataProperty: "dataSubjects", rootData, dynamicAnchors })) {
+                                                                    vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                    errors = vErrors.length;
                                                                   }
-                                                                  var _valid13 = _errs244 === errors;
-                                                                  if (_valid13) {
-                                                                    valid68 = true;
-                                                                    passing13 = 0;
-                                                                    var props13 = true;
-                                                                  }
-                                                                  const _errs248 = errors;
-                                                                  if (errors === _errs248) {
-                                                                    if (data88 && typeof data88 == "object" && !Array.isArray(data88)) {
-                                                                      let missing31;
-                                                                      if (data88.state === void 0 && (missing31 = "state") || data88.value === void 0 && (missing31 = "value")) {
-                                                                        const err209 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing31 }, message: "must have required property '" + missing31 + "'" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err209];
-                                                                        } else {
-                                                                          vErrors.push(err209);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        const _errs250 = errors;
-                                                                        for (const key31 in data88) {
-                                                                          if (!(key31 === "state" || key31 === "value")) {
-                                                                            const err210 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key31 }, message: "must NOT have additional properties" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err210];
-                                                                            } else {
-                                                                              vErrors.push(err210);
-                                                                            }
-                                                                            errors++;
-                                                                            break;
-                                                                          }
-                                                                        }
-                                                                        if (_errs250 === errors) {
-                                                                          if (data88.state !== void 0) {
-                                                                            const _errs251 = errors;
-                                                                            if ("documented" !== data88.state) {
-                                                                              const err211 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err211];
-                                                                              } else {
-                                                                                vErrors.push(err211);
-                                                                              }
-                                                                              errors++;
-                                                                            }
-                                                                            var valid70 = _errs251 === errors;
-                                                                          } else {
-                                                                            var valid70 = true;
-                                                                          }
-                                                                          if (valid70) {
-                                                                            if (data88.value !== void 0) {
-                                                                              let data91 = data88.value;
-                                                                              const _errs252 = errors;
-                                                                              if (errors === _errs252) {
-                                                                                if (typeof data91 === "string") {
-                                                                                  if (func2(data91) > 4e3) {
-                                                                                    const err212 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err212];
-                                                                                    } else {
-                                                                                      vErrors.push(err212);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  } else {
-                                                                                    if (func2(data91) < 1) {
-                                                                                      const err213 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err213];
-                                                                                      } else {
-                                                                                        vErrors.push(err213);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    } else {
-                                                                                      if (!pattern7.test(data91)) {
-                                                                                        const err214 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err214];
-                                                                                        } else {
-                                                                                          vErrors.push(err214);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      }
-                                                                                    }
-                                                                                  }
-                                                                                } else {
-                                                                                  const err215 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err215];
-                                                                                  } else {
-                                                                                    vErrors.push(err215);
-                                                                                  }
-                                                                                  errors++;
-                                                                                }
-                                                                              }
-                                                                              var valid70 = _errs252 === errors;
-                                                                            } else {
-                                                                              var valid70 = true;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                    } else {
-                                                                      const err216 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err216];
-                                                                      } else {
-                                                                        vErrors.push(err216);
-                                                                      }
-                                                                      errors++;
-                                                                    }
-                                                                  }
-                                                                  var _valid13 = _errs248 === errors;
-                                                                  if (_valid13 && valid68) {
-                                                                    valid68 = false;
-                                                                    passing13 = [passing13, 1];
-                                                                  } else {
-                                                                    if (_valid13) {
-                                                                      valid68 = true;
-                                                                      passing13 = 1;
-                                                                      if (props13 !== true) {
-                                                                        props13 = true;
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                  if (!valid68) {
-                                                                    const err217 = { instancePath: instancePath + "/activities/" + i2 + "/dataSubjects", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing13 }, message: "must match exactly one schema in oneOf" };
-                                                                    if (vErrors === null) {
-                                                                      vErrors = [err217];
-                                                                    } else {
-                                                                      vErrors.push(err217);
-                                                                    }
-                                                                    errors++;
-                                                                  } else {
-                                                                    errors = _errs243;
-                                                                    if (vErrors !== null) {
-                                                                      if (_errs243) {
-                                                                        vErrors.length = _errs243;
-                                                                      } else {
-                                                                        vErrors = null;
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                  var valid58 = _errs241 === errors;
+                                                                  var valid14 = _errs97 === errors;
                                                                 } else {
-                                                                  var valid58 = true;
+                                                                  var valid14 = true;
                                                                 }
-                                                                if (valid58) {
-                                                                  if (data43.recipients !== void 0) {
-                                                                    let data92 = data43.recipients;
-                                                                    const _errs254 = errors;
-                                                                    const _errs256 = errors;
-                                                                    let valid72 = false;
-                                                                    let passing14 = null;
-                                                                    const _errs257 = errors;
-                                                                    if (errors === _errs257) {
-                                                                      if (data92 && typeof data92 == "object" && !Array.isArray(data92)) {
-                                                                        let missing32;
-                                                                        if (data92.state === void 0 && (missing32 = "state")) {
-                                                                          const err218 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing32 }, message: "must have required property '" + missing32 + "'" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err218];
-                                                                          } else {
-                                                                            vErrors.push(err218);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          const _errs259 = errors;
-                                                                          for (const key32 in data92) {
-                                                                            if (!(key32 === "state")) {
-                                                                              const err219 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key32 }, message: "must NOT have additional properties" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err219];
-                                                                              } else {
-                                                                                vErrors.push(err219);
-                                                                              }
-                                                                              errors++;
-                                                                              break;
-                                                                            }
-                                                                          }
-                                                                          if (_errs259 === errors) {
-                                                                            if (data92.state !== void 0) {
-                                                                              if ("unknown" !== data92.state) {
-                                                                                const err220 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err220];
-                                                                                } else {
-                                                                                  vErrors.push(err220);
-                                                                                }
-                                                                                errors++;
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      } else {
-                                                                        const err221 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err221];
-                                                                        } else {
-                                                                          vErrors.push(err221);
-                                                                        }
-                                                                        errors++;
-                                                                      }
+                                                                if (valid14) {
+                                                                  if (data25.recipients !== void 0) {
+                                                                    const _errs98 = errors;
+                                                                    if (!validate53(data25.recipients, { instancePath: instancePath + "/activities/" + i2 + "/recipients", parentData: data25, parentDataProperty: "recipients", rootData, dynamicAnchors })) {
+                                                                      vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                      errors = vErrors.length;
                                                                     }
-                                                                    var _valid14 = _errs257 === errors;
-                                                                    if (_valid14) {
-                                                                      valid72 = true;
-                                                                      passing14 = 0;
-                                                                      var props14 = true;
-                                                                    }
-                                                                    const _errs261 = errors;
-                                                                    if (errors === _errs261) {
-                                                                      if (data92 && typeof data92 == "object" && !Array.isArray(data92)) {
-                                                                        let missing33;
-                                                                        if (data92.state === void 0 && (missing33 = "state") || data92.value === void 0 && (missing33 = "value")) {
-                                                                          const err222 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing33 }, message: "must have required property '" + missing33 + "'" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err222];
-                                                                          } else {
-                                                                            vErrors.push(err222);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          const _errs263 = errors;
-                                                                          for (const key33 in data92) {
-                                                                            if (!(key33 === "state" || key33 === "value")) {
-                                                                              const err223 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key33 }, message: "must NOT have additional properties" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err223];
-                                                                              } else {
-                                                                                vErrors.push(err223);
-                                                                              }
-                                                                              errors++;
-                                                                              break;
-                                                                            }
-                                                                          }
-                                                                          if (_errs263 === errors) {
-                                                                            if (data92.state !== void 0) {
-                                                                              const _errs264 = errors;
-                                                                              if ("documented" !== data92.state) {
-                                                                                const err224 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err224];
-                                                                                } else {
-                                                                                  vErrors.push(err224);
-                                                                                }
-                                                                                errors++;
-                                                                              }
-                                                                              var valid74 = _errs264 === errors;
-                                                                            } else {
-                                                                              var valid74 = true;
-                                                                            }
-                                                                            if (valid74) {
-                                                                              if (data92.value !== void 0) {
-                                                                                let data95 = data92.value;
-                                                                                const _errs265 = errors;
-                                                                                if (errors === _errs265) {
-                                                                                  if (typeof data95 === "string") {
-                                                                                    if (func2(data95) > 4e3) {
-                                                                                      const err225 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err225];
-                                                                                      } else {
-                                                                                        vErrors.push(err225);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    } else {
-                                                                                      if (func2(data95) < 1) {
-                                                                                        const err226 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err226];
-                                                                                        } else {
-                                                                                          vErrors.push(err226);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      } else {
-                                                                                        if (!pattern7.test(data95)) {
-                                                                                          const err227 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err227];
-                                                                                          } else {
-                                                                                            vErrors.push(err227);
-                                                                                          }
-                                                                                          errors++;
-                                                                                        }
-                                                                                      }
-                                                                                    }
-                                                                                  } else {
-                                                                                    const err228 = { instancePath: instancePath + "/activities/" + i2 + "/recipients/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err228];
-                                                                                    } else {
-                                                                                      vErrors.push(err228);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                }
-                                                                                var valid74 = _errs265 === errors;
-                                                                              } else {
-                                                                                var valid74 = true;
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                      } else {
-                                                                        const err229 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err229];
-                                                                        } else {
-                                                                          vErrors.push(err229);
-                                                                        }
-                                                                        errors++;
-                                                                      }
-                                                                    }
-                                                                    var _valid14 = _errs261 === errors;
-                                                                    if (_valid14 && valid72) {
-                                                                      valid72 = false;
-                                                                      passing14 = [passing14, 1];
-                                                                    } else {
-                                                                      if (_valid14) {
-                                                                        valid72 = true;
-                                                                        passing14 = 1;
-                                                                        if (props14 !== true) {
-                                                                          props14 = true;
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                    if (!valid72) {
-                                                                      const err230 = { instancePath: instancePath + "/activities/" + i2 + "/recipients", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing14 }, message: "must match exactly one schema in oneOf" };
-                                                                      if (vErrors === null) {
-                                                                        vErrors = [err230];
-                                                                      } else {
-                                                                        vErrors.push(err230);
-                                                                      }
-                                                                      errors++;
-                                                                    } else {
-                                                                      errors = _errs256;
-                                                                      if (vErrors !== null) {
-                                                                        if (_errs256) {
-                                                                          vErrors.length = _errs256;
-                                                                        } else {
-                                                                          vErrors = null;
-                                                                        }
-                                                                      }
-                                                                    }
-                                                                    var valid58 = _errs254 === errors;
+                                                                    var valid14 = _errs98 === errors;
                                                                   } else {
-                                                                    var valid58 = true;
+                                                                    var valid14 = true;
                                                                   }
-                                                                  if (valid58) {
-                                                                    if (data43.transfers !== void 0) {
-                                                                      let data96 = data43.transfers;
-                                                                      const _errs267 = errors;
-                                                                      const _errs269 = errors;
-                                                                      let valid76 = false;
-                                                                      let passing15 = null;
-                                                                      const _errs270 = errors;
-                                                                      if (errors === _errs270) {
-                                                                        if (data96 && typeof data96 == "object" && !Array.isArray(data96)) {
-                                                                          let missing34;
-                                                                          if (data96.state === void 0 && (missing34 = "state")) {
-                                                                            const err231 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing34 }, message: "must have required property '" + missing34 + "'" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err231];
-                                                                            } else {
-                                                                              vErrors.push(err231);
-                                                                            }
-                                                                            errors++;
-                                                                          } else {
-                                                                            const _errs272 = errors;
-                                                                            for (const key34 in data96) {
-                                                                              if (!(key34 === "state")) {
-                                                                                const err232 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key34 }, message: "must NOT have additional properties" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err232];
-                                                                                } else {
-                                                                                  vErrors.push(err232);
-                                                                                }
-                                                                                errors++;
-                                                                                break;
-                                                                              }
-                                                                            }
-                                                                            if (_errs272 === errors) {
-                                                                              if (data96.state !== void 0) {
-                                                                                if ("unknown" !== data96.state) {
-                                                                                  const err233 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err233];
-                                                                                  } else {
-                                                                                    vErrors.push(err233);
-                                                                                  }
-                                                                                  errors++;
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        } else {
-                                                                          const err234 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err234];
-                                                                          } else {
-                                                                            vErrors.push(err234);
-                                                                          }
-                                                                          errors++;
-                                                                        }
+                                                                  if (valid14) {
+                                                                    if (data25.transfers !== void 0) {
+                                                                      const _errs99 = errors;
+                                                                      if (!validate53(data25.transfers, { instancePath: instancePath + "/activities/" + i2 + "/transfers", parentData: data25, parentDataProperty: "transfers", rootData, dynamicAnchors })) {
+                                                                        vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                        errors = vErrors.length;
                                                                       }
-                                                                      var _valid15 = _errs270 === errors;
-                                                                      if (_valid15) {
-                                                                        valid76 = true;
-                                                                        passing15 = 0;
-                                                                        var props15 = true;
-                                                                      }
-                                                                      const _errs274 = errors;
-                                                                      if (errors === _errs274) {
-                                                                        if (data96 && typeof data96 == "object" && !Array.isArray(data96)) {
-                                                                          let missing35;
-                                                                          if (data96.state === void 0 && (missing35 = "state") || data96.value === void 0 && (missing35 = "value")) {
-                                                                            const err235 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing35 }, message: "must have required property '" + missing35 + "'" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err235];
-                                                                            } else {
-                                                                              vErrors.push(err235);
-                                                                            }
-                                                                            errors++;
-                                                                          } else {
-                                                                            const _errs276 = errors;
-                                                                            for (const key35 in data96) {
-                                                                              if (!(key35 === "state" || key35 === "value")) {
-                                                                                const err236 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key35 }, message: "must NOT have additional properties" };
-                                                                                if (vErrors === null) {
-                                                                                  vErrors = [err236];
-                                                                                } else {
-                                                                                  vErrors.push(err236);
-                                                                                }
-                                                                                errors++;
-                                                                                break;
-                                                                              }
-                                                                            }
-                                                                            if (_errs276 === errors) {
-                                                                              if (data96.state !== void 0) {
-                                                                                const _errs277 = errors;
-                                                                                if ("documented" !== data96.state) {
-                                                                                  const err237 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err237];
-                                                                                  } else {
-                                                                                    vErrors.push(err237);
-                                                                                  }
-                                                                                  errors++;
-                                                                                }
-                                                                                var valid78 = _errs277 === errors;
-                                                                              } else {
-                                                                                var valid78 = true;
-                                                                              }
-                                                                              if (valid78) {
-                                                                                if (data96.value !== void 0) {
-                                                                                  let data99 = data96.value;
-                                                                                  const _errs278 = errors;
-                                                                                  if (errors === _errs278) {
-                                                                                    if (typeof data99 === "string") {
-                                                                                      if (func2(data99) > 4e3) {
-                                                                                        const err238 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err238];
-                                                                                        } else {
-                                                                                          vErrors.push(err238);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      } else {
-                                                                                        if (func2(data99) < 1) {
-                                                                                          const err239 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err239];
-                                                                                          } else {
-                                                                                            vErrors.push(err239);
-                                                                                          }
-                                                                                          errors++;
-                                                                                        } else {
-                                                                                          if (!pattern7.test(data99)) {
-                                                                                            const err240 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err240];
-                                                                                            } else {
-                                                                                              vErrors.push(err240);
-                                                                                            }
-                                                                                            errors++;
-                                                                                          }
-                                                                                        }
-                                                                                      }
-                                                                                    } else {
-                                                                                      const err241 = { instancePath: instancePath + "/activities/" + i2 + "/transfers/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err241];
-                                                                                      } else {
-                                                                                        vErrors.push(err241);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    }
-                                                                                  }
-                                                                                  var valid78 = _errs278 === errors;
-                                                                                } else {
-                                                                                  var valid78 = true;
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          }
-                                                                        } else {
-                                                                          const err242 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err242];
-                                                                          } else {
-                                                                            vErrors.push(err242);
-                                                                          }
-                                                                          errors++;
-                                                                        }
-                                                                      }
-                                                                      var _valid15 = _errs274 === errors;
-                                                                      if (_valid15 && valid76) {
-                                                                        valid76 = false;
-                                                                        passing15 = [passing15, 1];
-                                                                      } else {
-                                                                        if (_valid15) {
-                                                                          valid76 = true;
-                                                                          passing15 = 1;
-                                                                          if (props15 !== true) {
-                                                                            props15 = true;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                      if (!valid76) {
-                                                                        const err243 = { instancePath: instancePath + "/activities/" + i2 + "/transfers", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing15 }, message: "must match exactly one schema in oneOf" };
-                                                                        if (vErrors === null) {
-                                                                          vErrors = [err243];
-                                                                        } else {
-                                                                          vErrors.push(err243);
-                                                                        }
-                                                                        errors++;
-                                                                      } else {
-                                                                        errors = _errs269;
-                                                                        if (vErrors !== null) {
-                                                                          if (_errs269) {
-                                                                            vErrors.length = _errs269;
-                                                                          } else {
-                                                                            vErrors = null;
-                                                                          }
-                                                                        }
-                                                                      }
-                                                                      var valid58 = _errs267 === errors;
+                                                                      var valid14 = _errs99 === errors;
                                                                     } else {
-                                                                      var valid58 = true;
+                                                                      var valid14 = true;
                                                                     }
-                                                                    if (valid58) {
-                                                                      if (data43.securityMeasures !== void 0) {
-                                                                        let data100 = data43.securityMeasures;
-                                                                        const _errs280 = errors;
-                                                                        const _errs282 = errors;
-                                                                        let valid80 = false;
-                                                                        let passing16 = null;
-                                                                        const _errs283 = errors;
-                                                                        if (errors === _errs283) {
-                                                                          if (data100 && typeof data100 == "object" && !Array.isArray(data100)) {
-                                                                            let missing36;
-                                                                            if (data100.state === void 0 && (missing36 = "state")) {
-                                                                              const err244 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing36 }, message: "must have required property '" + missing36 + "'" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err244];
-                                                                              } else {
-                                                                                vErrors.push(err244);
-                                                                              }
-                                                                              errors++;
-                                                                            } else {
-                                                                              const _errs285 = errors;
-                                                                              for (const key36 in data100) {
-                                                                                if (!(key36 === "state")) {
-                                                                                  const err245 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key36 }, message: "must NOT have additional properties" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err245];
-                                                                                  } else {
-                                                                                    vErrors.push(err245);
-                                                                                  }
-                                                                                  errors++;
-                                                                                  break;
-                                                                                }
-                                                                              }
-                                                                              if (_errs285 === errors) {
-                                                                                if (data100.state !== void 0) {
-                                                                                  if ("unknown" !== data100.state) {
-                                                                                    const err246 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err246];
-                                                                                    } else {
-                                                                                      vErrors.push(err246);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          } else {
-                                                                            const err247 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err247];
-                                                                            } else {
-                                                                              vErrors.push(err247);
-                                                                            }
-                                                                            errors++;
-                                                                          }
+                                                                    if (valid14) {
+                                                                      if (data25.securityMeasures !== void 0) {
+                                                                        const _errs100 = errors;
+                                                                        if (!validate53(data25.securityMeasures, { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", parentData: data25, parentDataProperty: "securityMeasures", rootData, dynamicAnchors })) {
+                                                                          vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                          errors = vErrors.length;
                                                                         }
-                                                                        var _valid16 = _errs283 === errors;
-                                                                        if (_valid16) {
-                                                                          valid80 = true;
-                                                                          passing16 = 0;
-                                                                          var props16 = true;
-                                                                        }
-                                                                        const _errs287 = errors;
-                                                                        if (errors === _errs287) {
-                                                                          if (data100 && typeof data100 == "object" && !Array.isArray(data100)) {
-                                                                            let missing37;
-                                                                            if (data100.state === void 0 && (missing37 = "state") || data100.value === void 0 && (missing37 = "value")) {
-                                                                              const err248 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing37 }, message: "must have required property '" + missing37 + "'" };
-                                                                              if (vErrors === null) {
-                                                                                vErrors = [err248];
-                                                                              } else {
-                                                                                vErrors.push(err248);
-                                                                              }
-                                                                              errors++;
-                                                                            } else {
-                                                                              const _errs289 = errors;
-                                                                              for (const key37 in data100) {
-                                                                                if (!(key37 === "state" || key37 === "value")) {
-                                                                                  const err249 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key37 }, message: "must NOT have additional properties" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err249];
-                                                                                  } else {
-                                                                                    vErrors.push(err249);
-                                                                                  }
-                                                                                  errors++;
-                                                                                  break;
-                                                                                }
-                                                                              }
-                                                                              if (_errs289 === errors) {
-                                                                                if (data100.state !== void 0) {
-                                                                                  const _errs290 = errors;
-                                                                                  if ("documented" !== data100.state) {
-                                                                                    const err250 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err250];
-                                                                                    } else {
-                                                                                      vErrors.push(err250);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                  var valid82 = _errs290 === errors;
-                                                                                } else {
-                                                                                  var valid82 = true;
-                                                                                }
-                                                                                if (valid82) {
-                                                                                  if (data100.value !== void 0) {
-                                                                                    let data103 = data100.value;
-                                                                                    const _errs291 = errors;
-                                                                                    if (errors === _errs291) {
-                                                                                      if (typeof data103 === "string") {
-                                                                                        if (func2(data103) > 4e3) {
-                                                                                          const err251 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err251];
-                                                                                          } else {
-                                                                                            vErrors.push(err251);
-                                                                                          }
-                                                                                          errors++;
-                                                                                        } else {
-                                                                                          if (func2(data103) < 1) {
-                                                                                            const err252 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err252];
-                                                                                            } else {
-                                                                                              vErrors.push(err252);
-                                                                                            }
-                                                                                            errors++;
-                                                                                          } else {
-                                                                                            if (!pattern7.test(data103)) {
-                                                                                              const err253 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                              if (vErrors === null) {
-                                                                                                vErrors = [err253];
-                                                                                              } else {
-                                                                                                vErrors.push(err253);
-                                                                                              }
-                                                                                              errors++;
-                                                                                            }
-                                                                                          }
-                                                                                        }
-                                                                                      } else {
-                                                                                        const err254 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err254];
-                                                                                        } else {
-                                                                                          vErrors.push(err254);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      }
-                                                                                    }
-                                                                                    var valid82 = _errs291 === errors;
-                                                                                  } else {
-                                                                                    var valid82 = true;
-                                                                                  }
-                                                                                }
-                                                                              }
-                                                                            }
-                                                                          } else {
-                                                                            const err255 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                            if (vErrors === null) {
-                                                                              vErrors = [err255];
-                                                                            } else {
-                                                                              vErrors.push(err255);
-                                                                            }
-                                                                            errors++;
-                                                                          }
-                                                                        }
-                                                                        var _valid16 = _errs287 === errors;
-                                                                        if (_valid16 && valid80) {
-                                                                          valid80 = false;
-                                                                          passing16 = [passing16, 1];
-                                                                        } else {
-                                                                          if (_valid16) {
-                                                                            valid80 = true;
-                                                                            passing16 = 1;
-                                                                            if (props16 !== true) {
-                                                                              props16 = true;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                        if (!valid80) {
-                                                                          const err256 = { instancePath: instancePath + "/activities/" + i2 + "/securityMeasures", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing16 }, message: "must match exactly one schema in oneOf" };
-                                                                          if (vErrors === null) {
-                                                                            vErrors = [err256];
-                                                                          } else {
-                                                                            vErrors.push(err256);
-                                                                          }
-                                                                          errors++;
-                                                                        } else {
-                                                                          errors = _errs282;
-                                                                          if (vErrors !== null) {
-                                                                            if (_errs282) {
-                                                                              vErrors.length = _errs282;
-                                                                            } else {
-                                                                              vErrors = null;
-                                                                            }
-                                                                          }
-                                                                        }
-                                                                        var valid58 = _errs280 === errors;
+                                                                        var valid14 = _errs100 === errors;
                                                                       } else {
-                                                                        var valid58 = true;
+                                                                        var valid14 = true;
                                                                       }
-                                                                      if (valid58) {
-                                                                        if (data43.internalNotes !== void 0) {
-                                                                          let data104 = data43.internalNotes;
-                                                                          const _errs293 = errors;
-                                                                          if (errors === _errs293) {
-                                                                            if (typeof data104 === "string") {
-                                                                              if (func2(data104) > 4e3) {
-                                                                                const err257 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/1/properties/internalNotes/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
+                                                                      if (valid14) {
+                                                                        if (data25.internalNotes !== void 0) {
+                                                                          let data56 = data25.internalNotes;
+                                                                          const _errs101 = errors;
+                                                                          if (errors === _errs101) {
+                                                                            if (typeof data56 === "string") {
+                                                                              if (func2(data56) > 4e3) {
+                                                                                const err49 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/1/properties/internalNotes/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
                                                                                 if (vErrors === null) {
-                                                                                  vErrors = [err257];
+                                                                                  vErrors = [err49];
                                                                                 } else {
-                                                                                  vErrors.push(err257);
+                                                                                  vErrors.push(err49);
                                                                                 }
                                                                                 errors++;
                                                                               } else {
-                                                                                if (!pattern30.test(data104)) {
-                                                                                  const err258 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/1/properties/internalNotes/pattern", keyword: "pattern", params: { pattern: "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
+                                                                                if (!pattern19.test(data56)) {
+                                                                                  const err50 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/1/properties/internalNotes/pattern", keyword: "pattern", params: { pattern: "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
                                                                                   if (vErrors === null) {
-                                                                                    vErrors = [err258];
+                                                                                    vErrors = [err50];
                                                                                   } else {
-                                                                                    vErrors.push(err258);
+                                                                                    vErrors.push(err50);
                                                                                   }
                                                                                   errors++;
                                                                                 }
                                                                               }
                                                                             } else {
-                                                                              const err259 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/1/properties/internalNotes/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                              const err51 = { instancePath: instancePath + "/activities/" + i2 + "/internalNotes", schemaPath: "#/properties/activities/items/oneOf/1/properties/internalNotes/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                               if (vErrors === null) {
-                                                                                vErrors = [err259];
+                                                                                vErrors = [err51];
                                                                               } else {
-                                                                                vErrors.push(err259);
+                                                                                vErrors.push(err51);
                                                                               }
                                                                               errors++;
                                                                             }
                                                                           }
-                                                                          var valid58 = _errs293 === errors;
+                                                                          var valid14 = _errs101 === errors;
                                                                         } else {
-                                                                          var valid58 = true;
+                                                                          var valid14 = true;
                                                                         }
-                                                                        if (valid58) {
-                                                                          if (data43.role !== void 0) {
-                                                                            const _errs295 = errors;
-                                                                            if ("processor" !== data43.role) {
-                                                                              const err260 = { instancePath: instancePath + "/activities/" + i2 + "/role", schemaPath: "#/properties/activities/items/oneOf/1/properties/role/const", keyword: "const", params: { allowedValue: "processor" }, message: "must be equal to constant" };
+                                                                        if (valid14) {
+                                                                          if (data25.role !== void 0) {
+                                                                            const _errs103 = errors;
+                                                                            if ("processor" !== data25.role) {
+                                                                              const err52 = { instancePath: instancePath + "/activities/" + i2 + "/role", schemaPath: "#/properties/activities/items/oneOf/1/properties/role/const", keyword: "const", params: { allowedValue: "processor" }, message: "must be equal to constant" };
                                                                               if (vErrors === null) {
-                                                                                vErrors = [err260];
+                                                                                vErrors = [err52];
                                                                               } else {
-                                                                                vErrors.push(err260);
+                                                                                vErrors.push(err52);
                                                                               }
                                                                               errors++;
                                                                             }
-                                                                            var valid58 = _errs295 === errors;
+                                                                            var valid14 = _errs103 === errors;
                                                                           } else {
-                                                                            var valid58 = true;
+                                                                            var valid14 = true;
                                                                           }
-                                                                          if (valid58) {
-                                                                            if (data43.controllerIds !== void 0) {
-                                                                              let data106 = data43.controllerIds;
-                                                                              const _errs296 = errors;
-                                                                              if (errors === _errs296) {
-                                                                                if (Array.isArray(data106)) {
-                                                                                  if (data106.length > 200) {
-                                                                                    const err261 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
+                                                                          if (valid14) {
+                                                                            if (data25.controllerIds !== void 0) {
+                                                                              let data58 = data25.controllerIds;
+                                                                              const _errs104 = errors;
+                                                                              if (errors === _errs104) {
+                                                                                if (Array.isArray(data58)) {
+                                                                                  if (data58.length > 200) {
+                                                                                    const err53 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/maxItems", keyword: "maxItems", params: { limit: 200 }, message: "must NOT have more than 200 items" };
                                                                                     if (vErrors === null) {
-                                                                                      vErrors = [err261];
+                                                                                      vErrors = [err53];
                                                                                     } else {
-                                                                                      vErrors.push(err261);
+                                                                                      vErrors.push(err53);
                                                                                     }
                                                                                     errors++;
                                                                                   } else {
-                                                                                    var valid83 = true;
-                                                                                    const len8 = data106.length;
+                                                                                    var valid19 = true;
+                                                                                    const len8 = data58.length;
                                                                                     for (let i12 = 0; i12 < len8; i12++) {
-                                                                                      let data107 = data106[i12];
-                                                                                      const _errs298 = errors;
-                                                                                      if (errors === _errs298) {
-                                                                                        if (typeof data107 === "string") {
-                                                                                          if (!pattern4.test(data107)) {
-                                                                                            const err262 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds/" + i12, schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
+                                                                                      let data59 = data58[i12];
+                                                                                      const _errs106 = errors;
+                                                                                      if (errors === _errs106) {
+                                                                                        if (typeof data59 === "string") {
+                                                                                          if (!pattern3.test(data59)) {
+                                                                                            const err54 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds/" + i12, schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/items/pattern", keyword: "pattern", params: { pattern: "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$" }, message: 'must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"' };
                                                                                             if (vErrors === null) {
-                                                                                              vErrors = [err262];
+                                                                                              vErrors = [err54];
                                                                                             } else {
-                                                                                              vErrors.push(err262);
+                                                                                              vErrors.push(err54);
                                                                                             }
                                                                                             errors++;
                                                                                           }
                                                                                         } else {
-                                                                                          const err263 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds/" + i12, schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
+                                                                                          const err55 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds/" + i12, schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
                                                                                           if (vErrors === null) {
-                                                                                            vErrors = [err263];
+                                                                                            vErrors = [err55];
                                                                                           } else {
-                                                                                            vErrors.push(err263);
+                                                                                            vErrors.push(err55);
                                                                                           }
                                                                                           errors++;
                                                                                         }
                                                                                       }
-                                                                                      var valid83 = _errs298 === errors;
-                                                                                      if (!valid83) {
+                                                                                      var valid19 = _errs106 === errors;
+                                                                                      if (!valid19) {
                                                                                         break;
                                                                                       }
                                                                                     }
-                                                                                    if (valid83) {
-                                                                                      let i13 = data106.length;
+                                                                                    if (valid19) {
+                                                                                      let i13 = data58.length;
                                                                                       let j4;
                                                                                       if (i13 > 1) {
                                                                                         const indices4 = {};
                                                                                         for (; i13--; ) {
-                                                                                          let item4 = data106[i13];
+                                                                                          let item4 = data58[i13];
                                                                                           if (typeof item4 !== "string") {
                                                                                             continue;
                                                                                           }
                                                                                           if (typeof indices4[item4] == "number") {
                                                                                             j4 = indices4[item4];
-                                                                                            const err264 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/uniqueItems", keyword: "uniqueItems", params: { i: i13, j: j4 }, message: "must NOT have duplicate items (items ## " + j4 + " and " + i13 + " are identical)" };
+                                                                                            const err56 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/uniqueItems", keyword: "uniqueItems", params: { i: i13, j: j4 }, message: "must NOT have duplicate items (items ## " + j4 + " and " + i13 + " are identical)" };
                                                                                             if (vErrors === null) {
-                                                                                              vErrors = [err264];
+                                                                                              vErrors = [err56];
                                                                                             } else {
-                                                                                              vErrors.push(err264);
+                                                                                              vErrors.push(err56);
                                                                                             }
                                                                                             errors++;
                                                                                             break;
@@ -5765,422 +2136,40 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                                                     }
                                                                                   }
                                                                                 } else {
-                                                                                  const err265 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
+                                                                                  const err57 = { instancePath: instancePath + "/activities/" + i2 + "/controllerIds", schemaPath: "#/properties/activities/items/oneOf/1/properties/controllerIds/type", keyword: "type", params: { type: "array" }, message: "must be array" };
                                                                                   if (vErrors === null) {
-                                                                                    vErrors = [err265];
+                                                                                    vErrors = [err57];
                                                                                   } else {
-                                                                                    vErrors.push(err265);
+                                                                                    vErrors.push(err57);
                                                                                   }
                                                                                   errors++;
                                                                                 }
                                                                               }
-                                                                              var valid58 = _errs296 === errors;
+                                                                              var valid14 = _errs104 === errors;
                                                                             } else {
-                                                                              var valid58 = true;
+                                                                              var valid14 = true;
                                                                             }
-                                                                            if (valid58) {
-                                                                              if (data43.operations !== void 0) {
-                                                                                let data108 = data43.operations;
-                                                                                const _errs300 = errors;
-                                                                                const _errs302 = errors;
-                                                                                let valid86 = false;
-                                                                                let passing17 = null;
-                                                                                const _errs303 = errors;
-                                                                                if (errors === _errs303) {
-                                                                                  if (data108 && typeof data108 == "object" && !Array.isArray(data108)) {
-                                                                                    let missing38;
-                                                                                    if (data108.state === void 0 && (missing38 = "state")) {
-                                                                                      const err266 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing38 }, message: "must have required property '" + missing38 + "'" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err266];
-                                                                                      } else {
-                                                                                        vErrors.push(err266);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    } else {
-                                                                                      const _errs305 = errors;
-                                                                                      for (const key38 in data108) {
-                                                                                        if (!(key38 === "state")) {
-                                                                                          const err267 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key38 }, message: "must NOT have additional properties" };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err267];
-                                                                                          } else {
-                                                                                            vErrors.push(err267);
-                                                                                          }
-                                                                                          errors++;
-                                                                                          break;
-                                                                                        }
-                                                                                      }
-                                                                                      if (_errs305 === errors) {
-                                                                                        if (data108.state !== void 0) {
-                                                                                          if ("unknown" !== data108.state) {
-                                                                                            const err268 = { instancePath: instancePath + "/activities/" + i2 + "/operations/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err268];
-                                                                                            } else {
-                                                                                              vErrors.push(err268);
-                                                                                            }
-                                                                                            errors++;
-                                                                                          }
-                                                                                        }
-                                                                                      }
-                                                                                    }
-                                                                                  } else {
-                                                                                    const err269 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err269];
-                                                                                    } else {
-                                                                                      vErrors.push(err269);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
+                                                                            if (valid14) {
+                                                                              if (data25.operations !== void 0) {
+                                                                                const _errs108 = errors;
+                                                                                if (!validate53(data25.operations, { instancePath: instancePath + "/activities/" + i2 + "/operations", parentData: data25, parentDataProperty: "operations", rootData, dynamicAnchors })) {
+                                                                                  vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                                  errors = vErrors.length;
                                                                                 }
-                                                                                var _valid17 = _errs303 === errors;
-                                                                                if (_valid17) {
-                                                                                  valid86 = true;
-                                                                                  passing17 = 0;
-                                                                                  var props17 = true;
-                                                                                }
-                                                                                const _errs307 = errors;
-                                                                                if (errors === _errs307) {
-                                                                                  if (data108 && typeof data108 == "object" && !Array.isArray(data108)) {
-                                                                                    let missing39;
-                                                                                    if (data108.state === void 0 && (missing39 = "state") || data108.value === void 0 && (missing39 = "value")) {
-                                                                                      const err270 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing39 }, message: "must have required property '" + missing39 + "'" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err270];
-                                                                                      } else {
-                                                                                        vErrors.push(err270);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    } else {
-                                                                                      const _errs309 = errors;
-                                                                                      for (const key39 in data108) {
-                                                                                        if (!(key39 === "state" || key39 === "value")) {
-                                                                                          const err271 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key39 }, message: "must NOT have additional properties" };
-                                                                                          if (vErrors === null) {
-                                                                                            vErrors = [err271];
-                                                                                          } else {
-                                                                                            vErrors.push(err271);
-                                                                                          }
-                                                                                          errors++;
-                                                                                          break;
-                                                                                        }
-                                                                                      }
-                                                                                      if (_errs309 === errors) {
-                                                                                        if (data108.state !== void 0) {
-                                                                                          const _errs310 = errors;
-                                                                                          if ("documented" !== data108.state) {
-                                                                                            const err272 = { instancePath: instancePath + "/activities/" + i2 + "/operations/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err272];
-                                                                                            } else {
-                                                                                              vErrors.push(err272);
-                                                                                            }
-                                                                                            errors++;
-                                                                                          }
-                                                                                          var valid88 = _errs310 === errors;
-                                                                                        } else {
-                                                                                          var valid88 = true;
-                                                                                        }
-                                                                                        if (valid88) {
-                                                                                          if (data108.value !== void 0) {
-                                                                                            let data111 = data108.value;
-                                                                                            const _errs311 = errors;
-                                                                                            if (errors === _errs311) {
-                                                                                              if (typeof data111 === "string") {
-                                                                                                if (func2(data111) > 4e3) {
-                                                                                                  const err273 = { instancePath: instancePath + "/activities/" + i2 + "/operations/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                                  if (vErrors === null) {
-                                                                                                    vErrors = [err273];
-                                                                                                  } else {
-                                                                                                    vErrors.push(err273);
-                                                                                                  }
-                                                                                                  errors++;
-                                                                                                } else {
-                                                                                                  if (func2(data111) < 1) {
-                                                                                                    const err274 = { instancePath: instancePath + "/activities/" + i2 + "/operations/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                                    if (vErrors === null) {
-                                                                                                      vErrors = [err274];
-                                                                                                    } else {
-                                                                                                      vErrors.push(err274);
-                                                                                                    }
-                                                                                                    errors++;
-                                                                                                  } else {
-                                                                                                    if (!pattern7.test(data111)) {
-                                                                                                      const err275 = { instancePath: instancePath + "/activities/" + i2 + "/operations/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                                      if (vErrors === null) {
-                                                                                                        vErrors = [err275];
-                                                                                                      } else {
-                                                                                                        vErrors.push(err275);
-                                                                                                      }
-                                                                                                      errors++;
-                                                                                                    }
-                                                                                                  }
-                                                                                                }
-                                                                                              } else {
-                                                                                                const err276 = { instancePath: instancePath + "/activities/" + i2 + "/operations/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                                if (vErrors === null) {
-                                                                                                  vErrors = [err276];
-                                                                                                } else {
-                                                                                                  vErrors.push(err276);
-                                                                                                }
-                                                                                                errors++;
-                                                                                              }
-                                                                                            }
-                                                                                            var valid88 = _errs311 === errors;
-                                                                                          } else {
-                                                                                            var valid88 = true;
-                                                                                          }
-                                                                                        }
-                                                                                      }
-                                                                                    }
-                                                                                  } else {
-                                                                                    const err277 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err277];
-                                                                                    } else {
-                                                                                      vErrors.push(err277);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  }
-                                                                                }
-                                                                                var _valid17 = _errs307 === errors;
-                                                                                if (_valid17 && valid86) {
-                                                                                  valid86 = false;
-                                                                                  passing17 = [passing17, 1];
-                                                                                } else {
-                                                                                  if (_valid17) {
-                                                                                    valid86 = true;
-                                                                                    passing17 = 1;
-                                                                                    if (props17 !== true) {
-                                                                                      props17 = true;
-                                                                                    }
-                                                                                  }
-                                                                                }
-                                                                                if (!valid86) {
-                                                                                  const err278 = { instancePath: instancePath + "/activities/" + i2 + "/operations", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing17 }, message: "must match exactly one schema in oneOf" };
-                                                                                  if (vErrors === null) {
-                                                                                    vErrors = [err278];
-                                                                                  } else {
-                                                                                    vErrors.push(err278);
-                                                                                  }
-                                                                                  errors++;
-                                                                                } else {
-                                                                                  errors = _errs302;
-                                                                                  if (vErrors !== null) {
-                                                                                    if (_errs302) {
-                                                                                      vErrors.length = _errs302;
-                                                                                    } else {
-                                                                                      vErrors = null;
-                                                                                    }
-                                                                                  }
-                                                                                }
-                                                                                var valid58 = _errs300 === errors;
+                                                                                var valid14 = _errs108 === errors;
                                                                               } else {
-                                                                                var valid58 = true;
+                                                                                var valid14 = true;
                                                                               }
-                                                                              if (valid58) {
-                                                                                if (data43.instructions !== void 0) {
-                                                                                  let data112 = data43.instructions;
-                                                                                  const _errs313 = errors;
-                                                                                  const _errs315 = errors;
-                                                                                  let valid90 = false;
-                                                                                  let passing18 = null;
-                                                                                  const _errs316 = errors;
-                                                                                  if (errors === _errs316) {
-                                                                                    if (data112 && typeof data112 == "object" && !Array.isArray(data112)) {
-                                                                                      let missing40;
-                                                                                      if (data112.state === void 0 && (missing40 = "state")) {
-                                                                                        const err279 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf/0/required", keyword: "required", params: { missingProperty: missing40 }, message: "must have required property '" + missing40 + "'" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err279];
-                                                                                        } else {
-                                                                                          vErrors.push(err279);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      } else {
-                                                                                        const _errs318 = errors;
-                                                                                        for (const key40 in data112) {
-                                                                                          if (!(key40 === "state")) {
-                                                                                            const err280 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key40 }, message: "must NOT have additional properties" };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err280];
-                                                                                            } else {
-                                                                                              vErrors.push(err280);
-                                                                                            }
-                                                                                            errors++;
-                                                                                            break;
-                                                                                          }
-                                                                                        }
-                                                                                        if (_errs318 === errors) {
-                                                                                          if (data112.state !== void 0) {
-                                                                                            if ("unknown" !== data112.state) {
-                                                                                              const err281 = { instancePath: instancePath + "/activities/" + i2 + "/instructions/state", schemaPath: "#/$defs/knowledge/oneOf/0/properties/state/const", keyword: "const", params: { allowedValue: "unknown" }, message: "must be equal to constant" };
-                                                                                              if (vErrors === null) {
-                                                                                                vErrors = [err281];
-                                                                                              } else {
-                                                                                                vErrors.push(err281);
-                                                                                              }
-                                                                                              errors++;
-                                                                                            }
-                                                                                          }
-                                                                                        }
-                                                                                      }
-                                                                                    } else {
-                                                                                      const err282 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err282];
-                                                                                      } else {
-                                                                                        vErrors.push(err282);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    }
+                                                                              if (valid14) {
+                                                                                if (data25.instructions !== void 0) {
+                                                                                  const _errs109 = errors;
+                                                                                  if (!validate53(data25.instructions, { instancePath: instancePath + "/activities/" + i2 + "/instructions", parentData: data25, parentDataProperty: "instructions", rootData, dynamicAnchors })) {
+                                                                                    vErrors = vErrors === null ? validate53.errors : vErrors.concat(validate53.errors);
+                                                                                    errors = vErrors.length;
                                                                                   }
-                                                                                  var _valid18 = _errs316 === errors;
-                                                                                  if (_valid18) {
-                                                                                    valid90 = true;
-                                                                                    passing18 = 0;
-                                                                                    var props18 = true;
-                                                                                  }
-                                                                                  const _errs320 = errors;
-                                                                                  if (errors === _errs320) {
-                                                                                    if (data112 && typeof data112 == "object" && !Array.isArray(data112)) {
-                                                                                      let missing41;
-                                                                                      if (data112.state === void 0 && (missing41 = "state") || data112.value === void 0 && (missing41 = "value")) {
-                                                                                        const err283 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf/1/required", keyword: "required", params: { missingProperty: missing41 }, message: "must have required property '" + missing41 + "'" };
-                                                                                        if (vErrors === null) {
-                                                                                          vErrors = [err283];
-                                                                                        } else {
-                                                                                          vErrors.push(err283);
-                                                                                        }
-                                                                                        errors++;
-                                                                                      } else {
-                                                                                        const _errs322 = errors;
-                                                                                        for (const key41 in data112) {
-                                                                                          if (!(key41 === "state" || key41 === "value")) {
-                                                                                            const err284 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key41 }, message: "must NOT have additional properties" };
-                                                                                            if (vErrors === null) {
-                                                                                              vErrors = [err284];
-                                                                                            } else {
-                                                                                              vErrors.push(err284);
-                                                                                            }
-                                                                                            errors++;
-                                                                                            break;
-                                                                                          }
-                                                                                        }
-                                                                                        if (_errs322 === errors) {
-                                                                                          if (data112.state !== void 0) {
-                                                                                            const _errs323 = errors;
-                                                                                            if ("documented" !== data112.state) {
-                                                                                              const err285 = { instancePath: instancePath + "/activities/" + i2 + "/instructions/state", schemaPath: "#/$defs/knowledge/oneOf/1/properties/state/const", keyword: "const", params: { allowedValue: "documented" }, message: "must be equal to constant" };
-                                                                                              if (vErrors === null) {
-                                                                                                vErrors = [err285];
-                                                                                              } else {
-                                                                                                vErrors.push(err285);
-                                                                                              }
-                                                                                              errors++;
-                                                                                            }
-                                                                                            var valid92 = _errs323 === errors;
-                                                                                          } else {
-                                                                                            var valid92 = true;
-                                                                                          }
-                                                                                          if (valid92) {
-                                                                                            if (data112.value !== void 0) {
-                                                                                              let data115 = data112.value;
-                                                                                              const _errs324 = errors;
-                                                                                              if (errors === _errs324) {
-                                                                                                if (typeof data115 === "string") {
-                                                                                                  if (func2(data115) > 4e3) {
-                                                                                                    const err286 = { instancePath: instancePath + "/activities/" + i2 + "/instructions/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/maxLength", keyword: "maxLength", params: { limit: 4e3 }, message: "must NOT have more than 4000 characters" };
-                                                                                                    if (vErrors === null) {
-                                                                                                      vErrors = [err286];
-                                                                                                    } else {
-                                                                                                      vErrors.push(err286);
-                                                                                                    }
-                                                                                                    errors++;
-                                                                                                  } else {
-                                                                                                    if (func2(data115) < 1) {
-                                                                                                      const err287 = { instancePath: instancePath + "/activities/" + i2 + "/instructions/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/minLength", keyword: "minLength", params: { limit: 1 }, message: "must NOT have fewer than 1 characters" };
-                                                                                                      if (vErrors === null) {
-                                                                                                        vErrors = [err287];
-                                                                                                      } else {
-                                                                                                        vErrors.push(err287);
-                                                                                                      }
-                                                                                                      errors++;
-                                                                                                    } else {
-                                                                                                      if (!pattern7.test(data115)) {
-                                                                                                        const err288 = { instancePath: instancePath + "/activities/" + i2 + "/instructions/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/pattern", keyword: "pattern", params: { pattern: "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$" }, message: 'must match pattern "^(?=[\\s\\S]*\\S)[^\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\u007f-\\u009f\\u202a-\\u202e\\u2066-\\u2069]*$"' };
-                                                                                                        if (vErrors === null) {
-                                                                                                          vErrors = [err288];
-                                                                                                        } else {
-                                                                                                          vErrors.push(err288);
-                                                                                                        }
-                                                                                                        errors++;
-                                                                                                      }
-                                                                                                    }
-                                                                                                  }
-                                                                                                } else {
-                                                                                                  const err289 = { instancePath: instancePath + "/activities/" + i2 + "/instructions/value", schemaPath: "#/$defs/knowledge/oneOf/1/properties/value/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                                                                                                  if (vErrors === null) {
-                                                                                                    vErrors = [err289];
-                                                                                                  } else {
-                                                                                                    vErrors.push(err289);
-                                                                                                  }
-                                                                                                  errors++;
-                                                                                                }
-                                                                                              }
-                                                                                              var valid92 = _errs324 === errors;
-                                                                                            } else {
-                                                                                              var valid92 = true;
-                                                                                            }
-                                                                                          }
-                                                                                        }
-                                                                                      }
-                                                                                    } else {
-                                                                                      const err290 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                                                                                      if (vErrors === null) {
-                                                                                        vErrors = [err290];
-                                                                                      } else {
-                                                                                        vErrors.push(err290);
-                                                                                      }
-                                                                                      errors++;
-                                                                                    }
-                                                                                  }
-                                                                                  var _valid18 = _errs320 === errors;
-                                                                                  if (_valid18 && valid90) {
-                                                                                    valid90 = false;
-                                                                                    passing18 = [passing18, 1];
-                                                                                  } else {
-                                                                                    if (_valid18) {
-                                                                                      valid90 = true;
-                                                                                      passing18 = 1;
-                                                                                      if (props18 !== true) {
-                                                                                        props18 = true;
-                                                                                      }
-                                                                                    }
-                                                                                  }
-                                                                                  if (!valid90) {
-                                                                                    const err291 = { instancePath: instancePath + "/activities/" + i2 + "/instructions", schemaPath: "#/$defs/knowledge/oneOf", keyword: "oneOf", params: { passingSchemas: passing18 }, message: "must match exactly one schema in oneOf" };
-                                                                                    if (vErrors === null) {
-                                                                                      vErrors = [err291];
-                                                                                    } else {
-                                                                                      vErrors.push(err291);
-                                                                                    }
-                                                                                    errors++;
-                                                                                  } else {
-                                                                                    errors = _errs315;
-                                                                                    if (vErrors !== null) {
-                                                                                      if (_errs315) {
-                                                                                        vErrors.length = _errs315;
-                                                                                      } else {
-                                                                                        vErrors = null;
-                                                                                      }
-                                                                                    }
-                                                                                  }
-                                                                                  var valid58 = _errs313 === errors;
+                                                                                  var valid14 = _errs109 === errors;
                                                                                 } else {
-                                                                                  var valid58 = true;
+                                                                                  var valid14 = true;
                                                                                 }
                                                                               }
                                                                             }
@@ -6200,60 +2189,60 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
                                                 }
                                               }
                                             } else {
-                                              const err292 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
+                                              const err58 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
                                               if (vErrors === null) {
-                                                vErrors = [err292];
+                                                vErrors = [err58];
                                               } else {
-                                                vErrors.push(err292);
+                                                vErrors.push(err58);
                                               }
                                               errors++;
                                             }
                                           }
-                                          var _valid6 = _errs210 === errors;
-                                          if (_valid6 && valid31) {
-                                            valid31 = false;
-                                            passing6 = [passing6, 1];
+                                          var _valid0 = _errs78 === errors;
+                                          if (_valid0 && valid7) {
+                                            valid7 = false;
+                                            passing0 = [passing0, 1];
                                           } else {
-                                            if (_valid6) {
-                                              valid31 = true;
-                                              passing6 = 1;
+                                            if (_valid0) {
+                                              valid7 = true;
+                                              passing0 = 1;
                                               if (props11 !== true) {
                                                 props11 = true;
                                               }
                                             }
                                           }
-                                          if (!valid31) {
-                                            const err293 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf", keyword: "oneOf", params: { passingSchemas: passing6 }, message: "must match exactly one schema in oneOf" };
+                                          if (!valid7) {
+                                            const err59 = { instancePath: instancePath + "/activities/" + i2, schemaPath: "#/properties/activities/items/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
                                             if (vErrors === null) {
-                                              vErrors = [err293];
+                                              vErrors = [err59];
                                             } else {
-                                              vErrors.push(err293);
+                                              vErrors.push(err59);
                                             }
                                             errors++;
-                                            validate20.errors = vErrors;
+                                            validate52.errors = vErrors;
                                             return false;
                                           } else {
-                                            errors = _errs120;
+                                            errors = _errs48;
                                             if (vErrors !== null) {
-                                              if (_errs120) {
-                                                vErrors.length = _errs120;
+                                              if (_errs48) {
+                                                vErrors.length = _errs48;
                                               } else {
                                                 vErrors = null;
                                               }
                                             }
                                           }
-                                          var valid30 = _errs119 === errors;
-                                          if (!valid30) {
+                                          var valid6 = _errs47 === errors;
+                                          if (!valid6) {
                                             break;
                                           }
                                         }
                                       }
                                     } else {
-                                      validate20.errors = [{ instancePath: instancePath + "/activities", schemaPath: "#/properties/activities/type", keyword: "type", params: { type: "array" }, message: "must be array" }];
+                                      validate52.errors = [{ instancePath: instancePath + "/activities", schemaPath: "#/properties/activities/type", keyword: "type", params: { type: "array" }, message: "must be array" }];
                                       return false;
                                     }
                                   }
-                                  var valid0 = _errs117 === errors;
+                                  var valid0 = _errs45 === errors;
                                 } else {
                                   var valid0 = true;
                                 }
@@ -6271,14 +2260,14 @@ function validate20(data, { instancePath = "", parentData, parentDataProperty, r
         }
       }
     } else {
-      validate20.errors = [{ instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
+      validate52.errors = [{ instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" }];
       return false;
     }
   }
-  validate20.errors = vErrors;
+  validate52.errors = vErrors;
   return errors === 0;
 }
-validate20.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
+validate52.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
 export {
   master_validator_generated_default as default,
   validate

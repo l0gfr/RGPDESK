@@ -3,7 +3,7 @@
   import { FILING_FOLDERS, suggestedDocumentPath } from "../document-filing";
   import DocumentFingerprint from "./DocumentFingerprint.svelte";
   import Icon from "./Icon.svelte";
-  let { draft = $bindable(), documents }: { draft: EvidenceReference; documents: EvidenceReference[] } = $props();
+  let { draft = $bindable(), documents, onReuse }: { draft: EvidenceReference; documents: EvidenceReference[]; onReuse:(doc:EvidenceReference)=>void } = $props();
   let folder = $state<string>(FILING_FOLDERS[0].path), message = $state("");
   const path = $derived(suggestedDocumentPath(draft, folder));
   function allocate() {
@@ -23,7 +23,7 @@
       <button type="button" class="secondary" disabled={!!draft.internalRef.trim()} onclick={() => draft.internalRef = path}>Utiliser la suggestion comme localisation</button>
       {#if draft.internalRef.trim()}<p class="help">La localisation déjà renseignée est conservée. Modifiez-la directement dans le champ au-dessus si nécessaire.</p>{/if}
     {/if}
-    <DocumentFingerprint bind:draft recordedVersion={documents.find(d => d.id === draft.id)?.fingerprint?.version ?? null} />
+    <DocumentFingerprint {documents} {onReuse} bind:draft recordedVersion={documents.find(d => d.id === draft.id)?.fingerprint?.version ?? null} />
   </div>
 </details>
 <style>

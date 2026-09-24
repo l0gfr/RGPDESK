@@ -18,7 +18,7 @@ Le menu reste accessible pendant la lecture et la saisie d’une fiche, d’un d
 
 Chaque rubrique a un lien direct : par exemple [le registre](/app/privacy/#registre), [l’AIPD](/app/privacy/#aipd) ou [le registre de démonstration](/app/privacy/#demo/registre). Copiez l’adresse affichée après avoir ouvert la rubrique. **Le lien désigne un écran, pas un dossier client.** Son destinataire doit ouvrir son propre coffre ; aucun contenu ni identifiant de coffre n’est placé dans l’adresse. Les liens de démo ouvrent un nouvel exercice fictif. Retour et Avancer suivent les rubriques visitées et protègent les changements non enregistrés.
 
-Les commandes **Enregistrer** et **Fermer** sont placées en haut du dossier et restent accessibles au défilement. Dans une fiche, **Annuler l’édition** abandonne explicitement le brouillon. Le verrouillage de sécurité conserve son fonctionnement : il efface les saisies non enregistrées, y compris lorsqu’une fenêtre de recherche ou de navigation est ouverte.
+Les commandes **Enregistrer** et **Fermer** sont placées en haut du dossier et restent accessibles au défilement. Dans une fiche, **Annuler l’édition** abandonne explicitement le brouillon. Le verrouillage retire les saisies de l’écran. Dans un coffre personnel, la dernière copie chiffrée protégée peut être reprise à la prochaine ouverture ; attendez le message de protection avant de compter sur cette copie. La démo ne conserve aucun brouillon après sa fermeture.
 
 ## 2. Votre premier registre, pas à pas
 
@@ -67,7 +67,7 @@ Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emp
 
 Vous avez terminé ce premier parcours lorsque vous pouvez verrouiller, rouvrir le coffre, retrouver la fiche et restaurer votre sauvegarde dans un profil navigateur distinct. Une fiche renseignée n’établit pas à elle seule la conformité du traitement.
 
-**À chaque séance :** enregistrer les fiches modifiées, vérifier les questions nouvelles, sauvegarder la révision actuelle, puis verrouiller. Les formulaires ne sont pas enregistrés automatiquement à chaque frappe.
+**À chaque séance :** enregistrer les fiches modifiées, vérifier les questions nouvelles, sauvegarder la révision actuelle, puis verrouiller. Une copie de récupération chiffrée est préparée après une courte pause dans les formulaires pris en charge. Elle ne remplace ni **Enregistrer** ni votre sauvegarde téléchargée.
 
 ## 3. Comprendre et remplir une fiche
 
@@ -406,7 +406,7 @@ Le navigateur ou son utilisateur peut effacer ce stockage. Le mode privé n’es
 
 ### Quand le coffre se verrouille-t-il ?
 
-Utilisez **Verrouiller le coffre** en quittant votre poste. Le verrouillage intervient aussi après 15 minutes d’inactivité ou 1 minute en arrière-plan. Les modifications non enregistrées sont abandonnées. Une mise en veille peut donc conduire au verrouillage lors de la reprise.
+Utilisez **Verrouiller le coffre** en quittant votre poste. Le verrouillage intervient aussi après 15 minutes d’inactivité ou 1 minute en arrière-plan. Une mise en veille peut conduire au verrouillage lors de la reprise. Les saisies quittent l’écran ; seule une copie déjà protégée peut être récupérée ensuite. Une interruption pendant le chiffrement peut faire perdre les derniers caractères.
 
 Utilisez un seul onglet pour modifier un coffre. En cas de conflit entre onglets, le logiciel refuse l’écriture devenue obsolète. Verrouillez puis rouvrez la version enregistrée avant de reprendre ; ne multipliez pas les essais de sauvegarde en parallèle.
 
@@ -554,3 +554,69 @@ Dans **Sauvegarde**, **Vérifier sans restaurer** relit le fichier choisi avec s
 Dans **Partager un dossier**, choisissez d’abord le périmètre et le destinataire. Ouvrez les options de synthèse, puis cochez **Ouvrir le rapport par une lecture pour la direction**. Rédigez deux messages courts : **Ce qui change** et **Arbitrages demandés**. Sélectionnez les actions déjà consignées à communiquer : leurs responsables et échéances sont repris sans ressaisie.
 
 Le rapport commence par cette synthèse. Les trois premières actions sélectionnées y figurent ; les autres restent dans les suites détaillées. Les flux choisis et fiches suivent. Relisez tous les textes avant confirmation : le partage est en clair. La longueur imprimée dépend du contenu et des réglages d’impression. Ce résumé ne constitue ni un score ni une validation juridique. Le profil **Extrait client** exclut cette extension.
+
+
+## 15. Lire, demander et reprendre son travail
+
+### Lire une activité sans modifier les faits
+
+Dans **Registre**, choisissez **Lire** devant l’activité. La fiche rassemble objectifs, données, flux, protections, moyens et justificatifs. Les commandes **Modifier les données**, **Modifier les flux** ou **Modifier les protections** ouvrent directement la partie concernée. Une recherche d’activité ouvre aussi cette lecture. Les informations encore inconnues restent visibles.
+
+### Préparer une demande de réponses ou de pièces
+
+Dans **Actions & décisions**, choisissez **Demandes aux métiers**, puis **Préparer une demande de réponses et de pièces**. Indiquez un destinataire, filtrez éventuellement par responsable, puis cochez les questions utiles (30 au maximum). Les questions réutilisent le travail enregistré : points documentaires, actions ouvertes et questions d’entretien.
+
+**Relire la demande** montre le texte exact. Les chemins des pièces, notes internes et historiques ne sont pas copiés automatiquement. Les questions libres et intitulés peuvent néanmoins être sensibles : relisez le destinataire et chaque question. Après votre confirmation, un fichier texte en clair est téléchargé. Son envoi reste à votre initiative ; RGPDESK n’envoie aucun message. La préparation peut être reprise comme brouillon chiffré dans un coffre personnel. L’import CSV ne dispose pas de copie automatique de récupération.
+
+### Relire ce qu’une preuve modifiée remet en question
+
+Dans **Ma mission**, les passages à réexaminer sont regroupés par document. Dépliez une pièce pour retrouver les questions concernées, les versions citées et les appréciations précédentes. Chaque **Réexaminer ce passage** demande une relecture et un motif propres ; aucune validation collective n’est effectuée. Le regroupement ne transforme pas un changement documentaire en conclusion juridique.
+
+### Voir le rapport avant de le remettre
+
+Dans **Partager un dossier**, définissez votre sélection puis choisissez **Prévisualiser le dossier**. Vous voyez la présentation graphique du rapport correspondant à cette sélection. **Examiner tous les champs du dossier** donne accès au détail. L’aperçu agrandit les petits caractères pour l’écran ; le contenu et les schémas reprennent la même sélection que le fichier téléchargé. Le téléchargement et son inscription dans l’historique demandent toujours votre confirmation.
+
+### Récupérer une saisie interrompue
+
+Dans un coffre personnel, RGPDESK prépare une copie chiffrée après une courte pause dans la saisie. Le message **Brouillon chiffré protégé sur cet appareil** indique qu’une copie est écrite. Cela couvre les fiches, dossiers DPO, études AIPD, références, organisation, intervenants, systèmes, actions, décisions en préparation, demandes aux métiers, réponses, liens documentaires et relectures de preuves. Les cases de confirmation ne sont pas conservées.
+
+Après fermeture ou verrouillage, rouvrez le même coffre : **Saisies à reprendre** présente les copies disponibles. **Reprendre ce brouillon** rétablit le formulaire. Relisez puis enregistrez-le. Une décision, un événement ou une revue reste à consigner explicitement. **Abandonner cette copie** supprime uniquement ce brouillon après confirmation.
+
+Si le dossier a été enregistré depuis dans un autre onglet, la reprise est bloquée : vous pouvez relire les textes de l’ancienne saisie et les rapprocher vous-même de la version actuelle. Aucune fusion automatique n’est faite.
+
+Ces copies dépendent du même navigateur, profil et appareil que le coffre. Elles ne survivent pas à l’effacement de son stockage. Un échec de protection est signalé ; les derniers caractères peuvent être perdus si vous quittez pendant le chiffrement. Dix copies au maximum sont conservées par coffre : traitez les anciennes copies si la protection est refusée.
+
+**La sauvegarde téléchargeable contient le dossier enregistré, sans les brouillons de récupération.** Reprenez et enregistrez ceux que vous voulez conserver avant de préparer votre sauvegarde. L’effacement local supprime aussi les copies de récupération. En démo, elles ne sont jamais écrites sur l’appareil.
+
+
+## 16. Suivre les réponses, réutiliser les preuves et comparer les dossiers
+
+### Garder le fil d’une demande aux métiers
+
+Dans **Actions & décisions → Demandes aux métiers**, préparez votre sélection et choisissez éventuellement une échéance. Après relecture, **Conserver le suivi dans le coffre** garde le destinataire et les questions telles qu’elles ont été préparées. **Télécharger la demande** produit un texte en clair, à transmettre par vos moyens habituels. Ni le téléchargement ni l’enregistrement ne prouvent un envoi. Une demande conservée peut être téléchargée à nouveau depuis **Relire le texte à transmettre**, après une nouvelle confirmation.
+
+Dépliez une demande puis choisissez **Consigner une réponse**. Gardez le texte reçu, son auteur déclaré et, si utile, les références des pièces déjà présentes dans ce coffre. La date affichée est celle de la consignation sur cet appareil. Les réponses précédentes restent conservées ; un complément se consigne dans une nouvelle réponse.
+
+**Relire pour compléter la fiche** permet ensuite de reprendre une réponse dans un champ factuel de l’activité associée. Choisissez le champ, comparez **Avant** et **Après**, indiquez l’auteur de la relecture et confirmez. Le texte remplace ce champ uniquement. Aucun fondement juridique, délai de conservation ni conclusion n’est choisi. Les pièces associées à la réponse restent des références ; elles ne deviennent pas automatiquement des citations dans une analyse.
+
+Une réponse consignée ne résout pas automatiquement la question. **Clôturer cette demande** conserve votre motif, y compris les points encore ouverts, sans effacer les échanges. Une demande clôturée ne peut plus être modifiée : préparez une nouvelle demande pour poursuivre. Limites du coffre : 40 demandes, 30 questions par demande, 8 réponses par question et 20 références par réponse, sous réserve de la taille totale disponible.
+
+### Réutiliser une pièce déjà connue
+
+Dans une référence documentaire, **Classer et reconnaître cette pièce** permet de choisir un fichier local. Si son empreinte et sa taille correspondent à une autre référence du coffre, RGPDESK propose **Réutiliser** cette référence. Vérifiez le titre et la version avant de la choisir. Le fichier n’est ni joint ni envoyé, et une correspondance ne valide pas son auteur ou son contenu.
+
+Une référence peut couvrir plusieurs activités : cochez-les dans **Activités couvertes**. Pour relier le même passage à plusieurs arguments, utilisez **Citer** dans la liste des références. Choisissez jusqu’à 20 questions, indiquez le passage précis et ce qu’il permet d’établir, puis relisez les liens. Cette opération réutilise une seule référence et ajoute les liens aux activités concernées. Elle ne copie pas les conclusions et ne réécrit pas les anciennes revues. Un passage déjà cité dans une question doit être examiné dans cette question avant toute modification.
+
+### Voir la portée d’un changement avant de l’enregistrer
+
+Lors de la modification d’un intervenant ou d’un système déjà enregistré, **Ce changement sera partagé** indique les activités, flux, études AIPD et dossiers DPO explicitement liés. Dépliez le détail pour les ouvrir. Si vous avez une saisie en cours, RGPDESK vous laisse la reprendre ou l’abandonner avant de naviguer.
+
+Cette liste aide à examiner les conséquences d’un changement. Elle ne recherche pas les noms saisis en texte libre et ne conclut pas que tous les éléments liés sont à refaire. Les anciennes revues conservent leur contexte.
+
+### Comparer deux versions réellement préparées pour le partage
+
+Dans **Partager un dossier**, dès que deux livraisons sont conservées, ouvrez **Comparer deux dossiers conservés**. Choisissez les versions puis **Comparer les contenus remis**. La comparaison lit les deux instantanés, sans les recalculer avec le registre actuel.
+
+Les profils, destinataires et périmètres différents sont signalés. Les activités sont rapprochées seulement si leur intitulé et leur rôle sont identiques et uniques ; les homonymes restent signalés comme ambigus. Un changement de nom n’est pas deviné. L’ordre et les identifiants propres à chaque livraison ne créent pas d’écarts artificiels.
+
+Une activité, un flux ou une suite qui n’apparaît plus dans un dossier peut avoir été exclu de sa sélection. Cela ne prouve ni sa suppression dans le registre, ni la clôture d’une action. Cette comparaison concerne les dossiers du registre conservés dans ce coffre ; les restitutions AIPD distinctes ne sont pas comparées ici.

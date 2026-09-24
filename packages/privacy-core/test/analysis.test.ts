@@ -13,7 +13,7 @@ function fixture() {
 describe("internal analysis and explicitly declared flows", () => {
   it("starts with unknown facts, no flow or legal decision, and validates the current version", () => {
     const { master, activity } = fixture(); assertWorkspace(master);
-    expect(master.format).toBe("rgpd-master-v7"); expect(activity.flows).toEqual([]);
+    expect(master.format).toBe("rgpd-master-v8"); expect(activity.flows).toEqual([]);
     expect(activity.purposes[0]!.legalBasis).toEqual(unknown());
     expect(activity.analysis.notes).toHaveLength(8);
     for (const note of activity.analysis.notes) for (const field of ["facts", "evidence", "objections", "assessment", "followUp"] as const) expect(note[field]).toEqual(unknown());

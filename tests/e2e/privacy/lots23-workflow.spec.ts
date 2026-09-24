@@ -46,7 +46,8 @@ test("offline lot 2 to lot 3: CSV, contract reference, action closure, reviewed 
   await page.getByRole("button", { name: "Enregistrer la clôture", exact: true }).click(); await expect(page.getByText(/CANARY_CLOSURE_23 Critère/)).toBeVisible();
   await navigate(page, "Partager un dossier"); await page.getByLabel("Destinataire déclaré", { exact: true }).fill("Comité fictif"); await page.getByLabel("Périmètre public de cette livraison", { exact: true }).fill("Gestion des bénévoles, revue de travail."); await page.getByLabel("Bénévoles • exemple fictif · Responsable", { exact: true }).check();
   await page.getByLabel("Réserves à communiquer", { exact: true }).fill("Conservation à examiner."); await page.getByRole("button", { name: "Prévisualiser le dossier", exact: true }).click();
-  await expect(page.getByRole("table")).toContainText("Conservation à examiner."); await expect(page.getByRole("table")).not.toContainText("CANARY_");
+  await page.getByText("Examiner tous les champs du dossier",{exact:true}).click();
+  await expect(page.getByRole("table",{name:"Contenu exact à partager",exact:true})).toContainText("Conservation à examiner."); await expect(page.getByRole("table",{name:"Contenu exact à partager",exact:true})).not.toContainText("CANARY_");
   await expect(page.getByRole("button", { name: "Confirmer et télécharger le dossier", exact: true })).toBeDisabled();
   await page.getByLabel("J’ai relu ce contenu en clair").check(); const downloadPromise = page.waitForEvent("download"); await page.getByRole("button", { name: "Confirmer et télécharger le dossier", exact: true }).click(); const downloaded = await downloadPromise;
   expect(downloaded.suggestedFilename()).toBe("rgpdesk-dossier.zip"); const path = (await downloaded.path())!; const bytes = await readFile(path); const zip = await JSZip.loadAsync(bytes);

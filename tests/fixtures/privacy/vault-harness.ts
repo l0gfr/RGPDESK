@@ -6,6 +6,11 @@ import * as persistence from "../../../apps/web/src/features/privacy/persistence
 import * as encryption from "../../../apps/web/src/features/privacy/persistence/crypto";
 import { encryptLocalPayloadBatch } from "../../../apps/web/src/lib/local-encryption";
 
-const api = { ...verifier, ...domain, ...persistence, ...encryption, encryptLocalPayloadBatch };
+import { RecoveryWriter } from "../../../apps/web/src/features/privacy/persistence/recovery-writer";
+
+import { reportBody } from "../../../apps/web/src/features/privacy/report-preview";
+import { createDemoWorkspace } from "../../../apps/web/src/features/privacy/demo";
+
+const api = { reportBody, createDemoWorkspace, RecoveryWriter, ...verifier, ...domain, ...persistence, ...encryption, encryptLocalPayloadBatch };
 declare global { interface Window { privacyTest: typeof api } }
 window.privacyTest = api;

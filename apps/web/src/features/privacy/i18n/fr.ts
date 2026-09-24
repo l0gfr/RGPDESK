@@ -12,7 +12,7 @@ export const fr = {
   },
   unknown: "Inconnu / à examiner",
   saved: "Enregistré dans le coffre chiffré.",
-  locked: "Coffre verrouillé. Les modifications non enregistrées ont été abandonnées.",
+  locked: "Coffre verrouillé. Rouvrez-le pour retrouver les brouillons dont la protection était terminée.",
   errors: {
     INVALID: "Données ou format invalides. Vérifiez les champs et les limites indiquées.",
     LIMIT: "Limite dépassée : 200 activités et 2 Mio de contenu par espace, 8 instantanés de 512 Kio, 12 Mio par sauvegarde.",

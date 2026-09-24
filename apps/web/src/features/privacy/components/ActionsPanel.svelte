@@ -1,10 +1,12 @@
 <script lang="ts">
+  import type { RecoveryForm } from "../persistence/recovery";
   import { CATALOG, evaluateWorkspace, createAction, closeAction, addDecision, reviewNeeded, type Finding, type Workspace } from "@rgpdesk/privacy-core";
-  import { untrack } from "svelte";
+  import { untrack, tick } from "svelte";
   import { questionPlaybook } from "../guidance";
   import Icon from "./Icon.svelte";
+  import CollectionRequests from "./CollectionRequests.svelte";
   import Emblem from "./Emblem.svelte";
-  let { workspace, busy, initialActivityId = "", onSave }: { workspace: Workspace; busy: boolean; initialActivityId?: string; onSave: (next: Workspace) => Promise<void> } = $props();
+  let { workspace, busy, initialActivityId = "", onSave, onLeave, tab=$bindable<"actions"|"requests">("actions") }: { tab?:"actions"|"requests"; onLeave:(action:()=>void)=>void; workspace: Workspace; busy: boolean; initialActivityId?: string; onSave: (next: Workspace) => Promise<void> } = $props();
   let scope = $state(untrack(() => initialActivityId)); let ownerFilter = $state(""); let dueFilter = $state(""); let ruleFilter = $state("");
   let selected: Finding | null = $state(null); let owner = $state(""); let due = $state(""); let closing = $state(""); let author = $state(""); let justification = $state("");
   let showDecision = $state(false); let decisionRule = $state("R-009"); let decisionActivity = $state(""); let conclusion = $state("");
@@ -12,7 +14,14 @@
   let findings = $derived(evaluateWorkspace(workspace, now().slice(0, 10)));
   let visible = $derived(findings.filter((f) => (!scope || f.activityId === scope) && (!ruleFilter || f.ruleId === ruleFilter)));
   let actions = $derived(workspace.actions.filter((a) => (!scope || a.activityId === scope) && (!ownerFilter || a.owner.toLocaleLowerCase().includes(ownerFilter.toLocaleLowerCase())) && (!dueFilter || a.due !== null && a.due <= dueFilter)));
+  let requests:CollectionRequests|undefined=$state();
+  function switchTab(value:typeof tab){onLeave(()=>{selected=null;closing="";showDecision=false;tab=value;});}
+  export function hasUnsavedChanges(){if(tab==="requests")return !!requests?.getRecovery();return !!(selected||closing||showDecision);}
+  export function getRecovery():RecoveryForm|null{if(tab==="requests")return requests?.getRecovery()??null;return hasUnsavedChanges()?{kind:'actions',selectedKey:selected?.key??'',owner,due,closing,author,justification,showDecision,decisionRule,decisionActivity,conclusion}:null;}
+  export async function restoreRecovery(f:RecoveryForm){if(f.kind==='request-prepare'||f.kind==='request-reply'){tab='requests';await tick();await requests?.restoreRecovery(f);return;}if(f.kind!=='actions')return;selected=findings.find(x=>x.key===f.selectedKey)??null;owner=f.owner;due=f.due;closing=f.closing;author=f.author;justification=f.justification;showDecision=f.showDecision;decisionRule=f.decisionRule;decisionActivity=f.decisionActivity;conclusion=f.conclusion;}
 </script>
+<nav class="section-tabs" aria-label="Suivi de la mission"><button class:active={tab==='actions'} aria-pressed={tab==='actions'} onclick={()=>switchTab('actions')}>Actions et décisions</button><button class:active={tab==='requests'} aria-pressed={tab==='requests'} onclick={()=>switchTab('requests')}>Demandes aux métiers <span class="count">{workspace.collections?.length??0}</span></button></nav>
+{#if tab==='requests'}<CollectionRequests bind:this={requests} {workspace} {busy} {onSave} {onLeave}/>{:else}
 <section class="panel">
   <div class="section-heading"><div><p class="eyebrow">Suivi documentaire</p><h2>Chaque question trouve sa suite.</h2></div><Emblem name="actions" /></div>
   <p class="help">Choisissez une question à clarifier, identifiez la personne qui peut y répondre et fixez votre prochaine étape. Une action clôturée reste dans l’historique.</p>
@@ -32,3 +41,5 @@
   {#each workspace.decisions as d}<article class="subpanel"><span class="tag">{reviewNeeded(d, workspace) ? "À réexaminer" : "Déclaration sur cette révision"}</span><h4>{d.conclusion}</h4><p>{d.justification}</p><small>{d.author} · {d.createdAt} · révision {d.revision}</small></article>{/each}
   <details class="subpanel"><summary>Comprendre les questions et leurs sources</summary><p class="help">Ces repères vous aident à examiner votre dossier. Ils ne remplacent pas l’analyse de votre situation ni des règles propres à votre secteur. Consultez les textes pour motiver vos choix et revoyez-les lorsque le traitement évolue.</p>{#each CATALOG as rule}<article><h4>{rule.id} · {rule.title}</h4><p>{rule.explanation}</p><p class="help">Informations à réunir : {rule.facts}.</p><a href={rule.source} target="_blank" rel="noreferrer noopener">Source CNIL · articles {rule.article}</a></article>{/each}</details>
 </section>
+
+{/if}

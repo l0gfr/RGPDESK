@@ -1,3 +1,4 @@
+import { assertCollectionHistory } from "./collections";
 import { assertDocumentHistory } from "./document-filing";
 import { assertDpoHistory } from "./dpo";
 import { assertPiaHistory } from "./pia";
@@ -6,7 +7,7 @@ import { assertWorkspace, PrivacyError } from "./validation";
 
 export function createWorkspace(id: string, name: string, now: string): Workspace {
   const master: Workspace = {
-    format: "rgpd-master-v7", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
+    format: "rgpd-master-v8", impactAssessments: [], dpoCases: [], piaPublications: [], id, revision: 1, createdAt: now, updatedAt: now,
     language: "fr", jurisdiction: unknown(), scope: unknown(),
     organization: { name: name.trim(), contact: unknown(), dpo: unknown(), representatives: unknown() },
     parties: [], systems: [], activities: [], documents: [], decisions: [], actions: [], imports: [], deliveries: [],
@@ -30,9 +31,9 @@ export function createActivity(workspaceId: string, id: string, role: Activity["
     : { ...base, role, controllerIds: [], operations: unknown(), instructions: unknown() };
 }
 
-export function reviseWorkspace(master: Workspace, expectedRevision: number, now: string, changes: Partial<Pick<Workspace, "workCheckpoint" | "citationReviews" | "dpoCases" | "piaPublications" | "impactAssessments" | "organization" | "scope" | "jurisdiction" | "parties" | "systems" | "activities" | "documents" | "decisions" | "actions" | "imports" | "deliveries">>): Workspace {
+export function reviseWorkspace(master: Workspace, expectedRevision: number, now: string, changes: Partial<Pick<Workspace, "collections" | "workCheckpoint" | "citationReviews" | "dpoCases" | "piaPublications" | "impactAssessments" | "organization" | "scope" | "jurisdiction" | "parties" | "systems" | "activities" | "documents" | "decisions" | "actions" | "imports" | "deliveries">>): Workspace {
   assertWorkspace(master);
-  const allowed = new Set(["workCheckpoint", "citationReviews", "dpoCases", "piaPublications", "impactAssessments", "organization", "scope", "jurisdiction", "parties", "systems", "activities", "documents", "decisions", "actions", "imports", "deliveries"]);
+  const allowed = new Set(["collections", "workCheckpoint", "citationReviews", "dpoCases", "piaPublications", "impactAssessments", "organization", "scope", "jurisdiction", "parties", "systems", "activities", "documents", "decisions", "actions", "imports", "deliveries"]);
   if (Object.keys(changes).some((key) => !allowed.has(key))) throw new PrivacyError("INVALID");
   if (master.revision !== expectedRevision) throw new PrivacyError("CONFLICT");
   if (now < master.updatedAt) throw new PrivacyError("INVALID");
@@ -47,6 +48,7 @@ export function reviseWorkspace(master: Workspace, expectedRevision: number, now
     return !next || (item.closure !== null && JSON.stringify(item) !== JSON.stringify(next))
       || (item.findingKey !== next.findingKey || item.createdAt !== next.createdAt);
   })) throw new PrivacyError("INVALID");
+  if ("collections" in changes) assertCollectionHistory(master.collections ?? [], changes.collections ?? []);
   if (changes.documents) assertDocumentHistory(master.documents, changes.documents);
   if (changes.impactAssessments) assertPiaHistory(master, changes.impactAssessments, now);
   if (changes.dpoCases) assertDpoHistory(master, changes.dpoCases, now);

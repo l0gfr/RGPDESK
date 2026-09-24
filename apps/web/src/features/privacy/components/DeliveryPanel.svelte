@@ -3,8 +3,10 @@
   import { documentaryActionLabel, resolvedFlows, knowledgeText, projectShare, PROFILE_LABELS, COVERAGE_LABELS, SHARE_LIMITATION, shareRows, type ShareOptions, type SharedRegister, type Workspace } from "@rgpdesk/privacy-core";
   import { packageFiles } from "@rgpdesk/privacy-verifier";
   import Icon from "./Icon.svelte";
+  import DeliveryComparison from "./DeliveryComparison.svelte";
+  import ReportPreview from "./ReportPreview.svelte";
   export interface PreparedDelivery { workspaceId: string; revision: number; register: SharedRegister; files: Record<string, string>; manifestHash: string }
-  let { workspace, busy, demo = false, onDeliver, onDownload }: { workspace: Workspace; busy: boolean; demo?: boolean; onDeliver: (prepared: PreparedDelivery) => Promise<void>; onDownload: (id: string) => Promise<void> } = $props();
+  let { workspace, busy, demo = false, onDeliver, onDownload, onRead }: { workspace: Workspace; busy: boolean; demo?: boolean; onDeliver: (prepared: PreparedDelivery) => Promise<void>; onRead: (id:string)=>Promise<SharedRegister>; onDownload: (id: string) => Promise<void> } = $props();
   let options = $state<ShareOptions>({ profile: "article30-controller", recipient: "", scope: "", reservations: [], activityIds: [], documentIds: [], clientId: null });
   let reservations = $state(""); let prepared = $state<PreparedDelivery | null>(null); let confirmed = $state(false); let preparing = $state(false); let error = $state(""); let generation = 0;
   let eligible = $derived(workspace.activities.filter((a) => options.profile === "article30-controller" ? a.role === "controller" : options.profile === "internal-review" ? true : a.role === "processor" && (options.profile !== "client-excerpt" || a.controllerIds.length === 1 && a.controllerIds[0] === options.clientId)));
@@ -52,7 +54,8 @@
   </fieldset></form>{:else}
     <div class="review-banner"><Icon name="eye" size={26} /><div><strong>{COVERAGE_LABELS[prepared.register.coverage]}</strong><p>{PROFILE_LABELS[prepared.register.profile]} · Destinataire : {prepared.register.recipient} · Révision examinée : {prepared.revision}</p></div></div>
     <p class="help">Le rapport HTML présente une vue d’ensemble et des fiches visuelles, générées à partir de cette sélection. Voici le contenu qui alimentera les fichiers JSON, CSV et HTML. Les rubriques renseignées ne constituent pas une conclusion juridique. Les identifiants visibles sont propres à cette livraison.</p>
-    <div class="table-scroll preview-table"><table><caption>Contenu exact à partager</caption><thead><tr><th>Rubrique</th><th>Déclaration</th></tr></thead><tbody>{#each shareRows(prepared.register) as row}<tr><th scope="row">{row[0]}</th><td>{row[1]}</td></tr>{/each}</tbody></table></div>
+    <ReportPreview register={prepared.register}/>
+    <details><summary>Examiner tous les champs du dossier</summary><div class="table-scroll preview-table"><table><caption>Contenu exact à partager</caption><thead><tr><th>Rubrique</th><th>Déclaration</th></tr></thead><tbody>{#each shareRows(prepared.register) as row}<tr><th scope="row">{row[0]}</th><td>{row[1]}</td></tr>{/each}</tbody></table></div></details>
     <p class="help">{SHARE_LIMITATION}</p>
     <label class="check"><input type="checkbox" disabled={busy} bind:checked={confirmed} />J’ai relu ce contenu en clair, ses réserves et son destinataire. Je confirme ce partage pour cette révision.</label>
     <div class="actions"><button disabled={busy || !confirmed} onclick={() => { if (prepared) void onDeliver($state.snapshot(prepared)); }}>Confirmer et télécharger le dossier</button><button disabled={busy} class="secondary" onclick={() => { prepared = null; confirmed = false; }}>Modifier le partage</button></div>
@@ -61,5 +64,6 @@
 </section>
 <section class="panel delivery-history"><div class="section-heading"><div><p class="eyebrow">{demo ? "Historique de cette visite" : "Historique chiffré"}</p><h2>Les versions remises restent intactes.</h2></div><a class="button secondary" href="/app/privacy/verify/" target="_blank" rel="noreferrer noopener"><Icon name="shield" />Vérifier un dossier</a></div><p class="help">Instantanés historiques, sans mise à jour automatique. Un téléchargement préparé ne prouve pas sa réception par le destinataire.</p>
   {#if !workspace.deliveries.length}<p class="empty">Aucune livraison conservée pour le moment.</p>{/if}
+  <DeliveryComparison {workspace} {busy} {onRead}/>
   <ul class="records">{#each workspace.deliveries as d}<li><span class="record-icon"><Icon name="delivery" /></span><div class="grow"><strong>{PROFILE_LABELS[d.profile]} · {d.recipient}</strong><p>{d.createdAt} · révision {d.revision}</p></div><button disabled={busy} class="secondary" onclick={() => onDownload(d.id)}>Télécharger l’instantané</button></li>{/each}</ul>
 </section>

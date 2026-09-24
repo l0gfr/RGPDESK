@@ -1,11 +1,13 @@
 <script lang="ts">
+  import type { RecoveryForm } from "../persistence/recovery";
   import Emblem from "./Emblem.svelte";
   import Icon from "./Icon.svelte";
   import { canonicalJson, unknown, type Party, type System, type Workspace } from "@rgpdesk/privacy-core";
+  import EntityChangePreview from "./EntityChangePreview.svelte";
   import EntityDossier from "./EntityDossier.svelte";
   import KnowledgeField from "./KnowledgeField.svelte";
-  let { workspace, busy, kind, onSaveParty, onSaveSystem, onLeave, onActivity, onDocument, onActions, initialId = "" }: {
-    initialId?: string; onLeave:(action:()=>void)=>void; onActivity:(id:string)=>void; onDocument:(id:string)=>void; onActions:(id:string)=>void; workspace: Workspace; busy: boolean; kind: "parties" | "systems";
+  let { workspace, busy, kind, onSaveParty, onSaveSystem, onLeave, onActivity, onDocument, onActions, onAnalysis, onPia, onCase, initialId = "" }: {
+    initialId?: string; onPia:(id:string)=>void; onCase:(id:string)=>void; onAnalysis:(id:string)=>void; onLeave:(action:()=>void)=>void; onActivity:(id:string)=>void; onDocument:(id:string)=>void; onActions:(id:string)=>void; workspace: Workspace; busy: boolean; kind: "parties" | "systems";
     onSaveParty: (party: Party) => Promise<void>; onSaveSystem: (system: System) => Promise<void>;
   } = $props();
   let party: Party | null = $state(null);
@@ -20,6 +22,8 @@
     if (kind === "parties") party = { ...base, contact: unknown() };
     else system = { ...base, description: unknown() };
   }
+  export function getRecovery():RecoveryForm|null{return hasUnsavedChanges()?(party?{kind:'party',draft:$state.snapshot(party)}:system?{kind:'system',draft:$state.snapshot(system)}:null):null;}
+  export function restoreRecovery(f:RecoveryForm){selected='';if(f.kind==='party')party=structuredClone(f.draft);if(f.kind==='system')system=structuredClone(f.draft);}
 </script>
 <section class="panel">
   <div class="section-heading"><div><p class="eyebrow">L’inventaire partagé</p><h2>{kind === "parties" ? "Intervenants" : "Systèmes"}</h2></div><Emblem name={kind} /></div>
@@ -32,6 +36,7 @@
     <form class="subpanel" onsubmit={(event) => { event.preventDefault(); if (party) void onSaveParty($state.snapshot(party)); }}><fieldset disabled={busy}>
       <label class="field"><span>Nom de l’intervenant</span><input required maxlength="160" bind:value={party.name} /></label>
       <KnowledgeField label="Coordonnées utiles" bind:value={party.contact} />
+      <EntityChangePreview {workspace} draft={party} kind="party" {busy} {onActivity} {onDocument} {onAnalysis} {onPia} {onCase}/>
       <button type="submit">Enregistrer l’intervenant</button>
       <button type="button" class="secondary" onclick={()=>onLeave(()=>{party=system=null;})}>Fermer la saisie</button>
     </fieldset></form>
@@ -39,6 +44,7 @@
     <form class="subpanel" onsubmit={(event) => { event.preventDefault(); if (system) void onSaveSystem($state.snapshot(system)); }}><fieldset disabled={busy}>
       <label class="field"><span>Nom du système</span><input required maxlength="160" bind:value={system.name} /></label>
       <KnowledgeField label="Description du système" bind:value={system.description} />
+      <EntityChangePreview {workspace} draft={system} kind="system" {busy} {onActivity} {onDocument} {onAnalysis} {onPia} {onCase}/>
       <button type="submit">Enregistrer le système</button>
       <button type="button" class="secondary" onclick={()=>onLeave(()=>{party=system=null;})}>Fermer la saisie</button>
     </fieldset></form>

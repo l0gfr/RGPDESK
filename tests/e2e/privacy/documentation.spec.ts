@@ -29,7 +29,8 @@ test("guide is readable without JavaScript and every local link and chapter reso
     await page.goto("/app/privacy/guide/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Menez l’entretien.");
     const chapters = page.getByRole("navigation", { name: "Sommaire du guide" }).getByRole("link");
-    await expect(chapters).toHaveCount(19);
+    await expect(chapters).toHaveCount(21);
+    await expect(chapters.filter({ hasText: "Suivre les réponses, réutiliser les preuves et comparer les dossiers" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Un inventaire, quatre lectures" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Comprendre ce qu’un changement remet en question" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Les dossiers du DPO" })).toHaveCount(1);
@@ -107,7 +108,7 @@ test("FAQ works without JavaScript and the mobile navigation stays local", async
     const origins: string[] = [];
     page.on("request", (request) => origins.push(new URL(request.url()).origin));
     await page.goto("/app/privacy/faq/");
-    await expect(page.locator(".faq-question")).toHaveCount(24);
+    await expect(page.locator(".faq-question")).toHaveCount(25);
     await page.locator("#sauvegarde > summary").press("Enter");
     await expect(page.locator("#sauvegarde .faq-answer")).toBeVisible();
     await expect(page.locator("#sauvegarde .faq-answer")).toContainText("les sauvegardes du serveur ne contiennent pas les coffres");

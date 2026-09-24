@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { RecoveryForm } from "../persistence/recovery";
   import { onDestroy, tick, untrack } from "svelte";
   import { appendDpoEvent, canonicalJson, createDpoCase, dpoChanges, dpoChangeDetails, knowledge, knowledgeText, putDpoCase, recordDpoReview, rightsDeadline, breachDeadline, type DpoCase, type DpoKind, type DpoReview, type Workspace } from "@rgpdesk/privacy-core";
   import { DPO_TITLES, DPO_INTRO, DPO_METHODS } from "../dpo-methods";
@@ -59,6 +60,8 @@
       if (await onSave(next)) { draft = structuredClone(next.dpoCases.find((c) => c.id === draft!.id)!); error = ""; if (which === "event") eventAt = eventAuthor = eventText = eventEvidence = ""; else { reviewAuthor = reviewReason = ""; outcome = "rework"; } }
     } catch { error = "Ajout refusé. Renseignez l’auteur, le contenu, une date UTC valide pour l’événement et vérifiez les limites d’historique."; }
   }
+  export function getRecovery():RecoveryForm|null{return draft&&hasUnsavedChanges()?{kind:'dpo',draft:$state.snapshot(draft),step,reviewAuthor,reviewReason,eventAt,eventAuthor,eventText,eventEvidence,outcome}:null;}
+  export function restoreRecovery(f:RecoveryForm){if(f.kind!=='dpo')return;draft=structuredClone(f.draft);kind=draft.kind;step=f.step;reviewAuthor=f.reviewAuthor;reviewReason=f.reviewReason;eventAt=f.eventAt;eventAuthor=f.eventAuthor;eventText=f.eventText;eventEvidence=f.eventEvidence;outcome=f.outcome;historical='';onEditing(true);}
 </script>
 <section class="dpo-workbench" aria-label="Dossiers du DPO">
   {#if error}<p class="notice error" role="alert">{error}</p>{/if}
