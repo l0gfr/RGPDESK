@@ -27,3 +27,11 @@ Sources et portée juridique : SOURCES.md et METHODE-GRILLES.md. Les exemples de
 ## Régressions ciblées
 
 Tests de migration stricte, sauvegarde/restauration avec WebCrypto et IndexedDB réels, brouillons v1/v2, liens et historique, projections par liste blanche, échappement, repères stables et promotion risques → AIPD. Parcours navigateur : décrire un groupe avant le fondement, conserver les champs ouverts pendant la saisie et restituer uniquement la rubrique sélectionnée.
+
+## Suggestions locales de déclarations
+
+Le volet de réutilisation projette les champs explicitement autorisés du coffre ouvert et de l’activité en cours. Le brouillon remplace sa version enregistrée dans la projection. Une activité d’un autre espace, un coffre verrouillé ou une activité archivée ne fournit aucun candidat. Pas de cache global, de persistance supplémentaire, de réseau ou de nouveau schéma.
+
+Les valeurs identiques sont dédupliquées par texte (NFC, sans fusion de valeurs de casse différente) ; la provenance et le nombre d’occurrences sont affichés. Douze résultats au maximum sont rendus, les autres restent recherchables. La recherche est littérale et bornée ; le rendu est du texte Svelte échappé. Aucune décision juridique, note privée ou revue historique n’alimente les suggestions. Les noms d’entités déjà liées ne deviennent pas des copies libres.
+
+Une sélection remplit uniquement le champ choisi. Un contenu existant demande confirmation avant remplacement. Les durées ne sont jamais préremplies, leur déclencheur reste distinct. Les régressions vérifient réutilisation en cours de saisie et entre fiches, maintien des identifiants et liens, isolation des clients, verrouillage et absence de contenu métier clair dans IndexedDB, les stockages Web et les URL.

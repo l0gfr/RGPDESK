@@ -113,6 +113,20 @@ Examinez ensuite la protection, puis le fondement juridique par sous-finalité �
 
 Les tableaux de groupes sont repris dans la relecture, le dossier d’intérêt légitime lié et le contexte AIPD. Dans **Restitution AIPD**, cochez explicitement **Groupes de données, flux et minimisation** pour les inclure dans le rapport partagé. Ils décrivent les faits et les examens saisis ; ils ne constituent pas une attestation de conformité. Leur organisation s’inspire des tableaux de données et de conservation des [modèles CNIL de février 2018, pages 5–6](https://cnil.fr/sites/cnil/files/atoms/files/cnil-pia-2-fr-modeles.pdf). Ce rapport n’est pas un fichier importable dans le logiciel PIA de la CNIL.
 
+### Réutiliser une déclaration sans la ressaisir
+
+Sous les catégories de données et de personnes, les sous-finalités, les destinataires et les champs de conservation, ouvrez **Réutiliser une déclaration**. Ce même volet existe pour les descriptions libres des flux : origine, destination, opération, canal, lieux et habilitations.
+
+1. Cherchez un mot du texte ou de sa fiche d’origine. Le volet utilise uniquement le coffre ouvert, y compris les réponses de votre saisie en cours. Les activités archivées ne sont pas proposées.
+2. Relisez la déclaration et sa provenance, puis choisissez **Reprendre ce texte**. Si le champ contient déjà une réponse, choisissez explicitement **Remplacer le contenu** ou **Garder mon texte**.
+3. Adaptez le texte à ce traitement, puis enregistrez la fiche comme d’habitude.
+
+Une déclaration reprise est une **copie modifiable** : changer le texte ici ne modifie pas les autres fiches. Les sous-finalités conservent leurs propres identifiants et les groupes doivent être reliés aux bonnes sous-finalités. Pour les intervenants et systèmes, utilisez les sélecteurs de liens existants dans les flux.
+
+Une durée déjà déclarée n’est pas une recommandation pour un autre groupe. Son événement de départ est montré lorsqu’il est connu, mais n’est pas copié avec elle : vérifiez séparément la durée, son déclencheur et l’effacement. Aucun fondement juridique, avis, examen de minimisation ou garantie n’est proposé automatiquement.
+
+La liste se reconstitue à partir des déclarations du coffre. Aucun historique de recherche ni bibliothèque partagée entre clients n’est conservé. Les nouveaux textes sont protégés par l’enregistrement et le brouillon chiffrés habituels ; dans la démo, ils restent temporaires.
+
 ### Examiner les risques avant une AIPD
 
 Dans **Risques & mesures**, choisissez un ensemble de traitement. Décrivez les scénarios, leurs conséquences pour les personnes, vos appréciations motivées et les mesures. Cette entrée est utilisable sans déclarer une AIPD. Elle concerne les risques pour les personnes ; le dossier **Sécurité** reste disponible pour les éléments relatifs au système d’information.

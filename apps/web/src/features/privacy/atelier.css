@@ -1243,3 +1243,28 @@
  .rgpdesk .activity-views { display:grid; grid-template-columns:1fr; }
  .rgpdesk .activity-views button { justify-content:flex-start; min-width:0; min-height:44px; white-space:normal; word-break:normal; overflow-wrap:normal; }
 }
+
+/* In-vault declaration reuse: a bounded, keyboard-accessible shelf beside a field. */
+.rgpdesk .declaration-picker { min-width:0; margin:.35rem 0 0; border:1px solid #bdcbd6; border-radius:4px 14px 4px 4px; background:linear-gradient(115deg,#e8eff4,#f5f7fa); }
+.rgpdesk .declaration-picker>summary { display:flex; align-items:center; gap:.55rem; padding:.65rem .8rem; cursor:pointer; color:#344f62; font-size:.9rem; font-weight:600; list-style:none; }
+.rgpdesk .declaration-picker>summary::-webkit-details-marker { display:none; }
+.rgpdesk .declaration-picker>summary::after { content:"+"; margin-left:auto; }
+.rgpdesk .declaration-picker[open]>summary::after { content:"−"; }
+.rgpdesk .declaration-picker>summary:focus-visible { outline:2px solid #4b6b85; outline-offset:3px; }
+.rgpdesk .declaration-body { padding:0 .85rem .85rem; min-width:0; }
+.rgpdesk .declaration-body label { display:block; margin:.8rem 0 .4rem; font-size:.9rem; }
+.rgpdesk .declaration-help,.rgpdesk .declaration-count,.rgpdesk .declaration-caution { font-size:.9rem; line-height:1.55; margin:.6rem 0; color:#435b6e; }
+.rgpdesk .declaration-caution { padding:.7rem; border-left:3px solid #758b9d; background:#f8fafc; }
+.rgpdesk .declaration-options { display:grid; gap:.55rem; max-height:22rem; overflow-y:auto; overscroll-behavior:contain; padding:.25rem; margin:.5rem 0 0; list-style:none; }
+.rgpdesk .declaration-options li { min-width:0; }
+.rgpdesk .declaration-options .declaration-option { display:grid; gap:.45rem; width:100%; text-align:left; padding:.8rem; background:#fbfcfe; color:#243e52; border:1px solid #b2c4d2; box-shadow:none; white-space:normal; }
+.rgpdesk .declaration-options .declaration-option:hover,.rgpdesk .declaration-options .declaration-option:focus-visible { background:#dce8f0; color:#192e40; border-color:#58748a; }
+.rgpdesk .declaration-text,.rgpdesk .declaration-preview p { white-space:pre-wrap; overflow-wrap:anywhere; font-size:1rem; font-weight:500; line-height:1.5; margin:0; }
+.rgpdesk .declaration-origin,.rgpdesk .declaration-preview small { color:#4c6173; font-size:.875rem; line-height:1.5; overflow-wrap:anywhere; font-weight:400; }
+.rgpdesk .declaration-action { display:flex; align-items:center; gap:.4rem; font-size:.875rem; }
+.rgpdesk .declaration-preview { display:grid; gap:.7rem; padding:.8rem; background:#fbfcfe; border:1px solid #b2c4d2; margin-bottom:.7rem; max-height:24rem; overflow:auto; }
+@media (max-width:600px) { .rgpdesk .declaration-body { padding:0 .65rem .65rem; }.rgpdesk .declaration-body .actions { flex-wrap:wrap; }.rgpdesk .declaration-body .actions button { white-space:normal; } }
+
+.rgpdesk .reusable-field { align-self:start; align-content:start; }
+
+.rgpdesk .declaration-help,.rgpdesk .declaration-count,.rgpdesk .declaration-caution { font-weight:400; }

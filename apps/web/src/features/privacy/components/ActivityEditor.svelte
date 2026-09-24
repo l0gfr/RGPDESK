@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { DECLARATIONS_CONTEXT, reusableDeclarations, type DeclarationSource } from "../reusable-declarations";
   import type { RecoveryForm } from "../persistence/recovery";
-  import { onMount, tick, untrack } from "svelte";
+  import { onMount, tick, untrack, setContext } from "svelte";
   import { activityFacts, purposeRetention, canonicalJson, createPurpose, knowledgeText, type Activity, type Workspace } from "@rgpdesk/privacy-core";
   import { fieldHints, type StartingPoint } from "../guidance";
   import DataGroupsEditor from "./DataGroupsEditor.svelte";
@@ -19,6 +20,7 @@
     onSave: (activity: Activity, documentIds: string[]) => Promise<void>; onCancel: () => void;
   } = $props();
   let draft: Activity = $state(untrack(() => structuredClone(initial)));
+  setContext<DeclarationSource>(DECLARATIONS_CONTEXT, kind => reusableDeclarations(workspace, draft, kind));
   let section = $state<"record" | "analysis" | "flows" | "evidence" | "interview">(untrack(() => initialSection));
   let documentIds = $state(untrack(() => workspace.documents.filter((doc) => doc.activityIds.includes(initial.id)).map((doc) => doc.id)));
   const initialDraft = untrack(() => canonicalJson(initial));
@@ -104,7 +106,7 @@
         {#each draft.purposes as purpose, index (purpose.id)}
           <div class="subpanel">
             <h4>Sous-finalité {index + 1}</h4>
-            <KnowledgeField label={`Sous-finalité ${index + 1}`} bind:value={purpose.description} hint={fieldHints.purpose} />
+            <KnowledgeField label={`Sous-finalité ${index + 1}`} bind:value={purpose.description} reuse="purpose" hint={fieldHints.purpose} />
           </div>
         {/each}
         {#if draft.purposes.length === 0}<p class="empty">Commencez par un objectif concret : à quoi servent ces données dans cette activité ? Ajoutez une finalité pour le décrire.</p>{/if}
@@ -126,14 +128,14 @@
       <DataGroupsEditor bind:activity={draft} {workspace} />
       <details class="subpanel" open={!draft.dataGroups?.length && (draft.flows.length > 0 || draft.dataCategories.state === "documented" || draft.dataSubjects.state === "documented")}><summary>Descriptions générales et flux déjà saisis</summary><p class="help">Vos anciennes déclarations sont conservées. Elles ne sont pas réparties automatiquement entre les groupes. Vous pouvez les relire ici ; les nouveaux groupes se décrivent ci-dessus.</p>
       <FlowEditor activity={draft} {workspace} bind:flows={draft.flows} compact />
-      {#if draft.role === "controller"}{#each draft.purposes as purpose,index}<div class="grid-two"><KnowledgeField label={`Durée ou critère de conservation ${index + 1} (description générale)`} bind:value={purpose.retention.period}/><KnowledgeField label={`Événement de départ ${index + 1} (description générale)`} bind:value={purpose.retention.trigger}/></div>{/each}{/if}
+      {#if draft.role === "controller"}{#each draft.purposes as purpose,index}<div class="grid-two"><KnowledgeField label={`Durée ou critère de conservation ${index + 1} (description générale)`} bind:value={purpose.retention.period} reuse="period"/><KnowledgeField label={`Événement de départ ${index + 1} (description générale)`} bind:value={purpose.retention.trigger} reuse="trigger"/></div>{/each}{/if}
       <h3>Personnes, données et destinataires</h3>
       <p class="help">Rubriques article 30 pour le responsable ; compléments de documentation pour le sous-traitant.</p>
       <div class="grid-two">
-        <KnowledgeField label="Catégories de personnes" bind:value={draft.dataSubjects} hint={fieldHints.subjects} />
-        <KnowledgeField label="Catégories de données" bind:value={draft.dataCategories} hint={fieldHints.data} />
+        <KnowledgeField label="Catégories de personnes" bind:value={draft.dataSubjects} reuse="people" hint={fieldHints.subjects} />
+        <KnowledgeField label="Catégories de données" bind:value={draft.dataCategories} reuse="data" hint={fieldHints.data} />
       </div>
-      <KnowledgeField label="Catégories de destinataires" bind:value={draft.recipients} hint={fieldHints.recipients} />
+      <KnowledgeField label="Catégories de destinataires" bind:value={draft.recipients} reuse="recipients" hint={fieldHints.recipients} />
       <aside class="method-callout"><Icon name="flows" size={25} /><div><strong>Les flux et le registre décrivent la même activité.</strong><p>La carte utilise les flux ci-dessus. Les catégories de personnes, données et destinataires restent votre synthèse de l’activité ; aucun rôle ni transfert n’est déduit automatiquement d’un flux.</p></div></aside>
       </details>
       {/if}

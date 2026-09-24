@@ -1,0 +1,128 @@
+import { expect, test, type Page } from "@playwright/test";
+function field(page: Page, label: string) { return page.locator('.field').filter({has:page.getByRole('textbox',{name:label,exact:true})}).filter({visible:true}); }
+async function picker(page: Page, label: string, query: string) {
+  const root=field(page,label);await root.locator('.declaration-picker > summary').click();
+  await root.getByRole('searchbox').fill(query);
+  await root.getByRole('searchbox').press('Enter');
+  await expect(root.getByRole('searchbox')).toBeVisible();return root;
+}
+
+test('reuse works across groups, objectives and flows without automatic retention or silent replacement',async({page})=>{
+ const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/app/privacy/#demo/registre');
+ await page.getByRole('button',{name:'Modifier Accès aux locaux par badge · projet fictif',exact:true}).click();
+ const steps=page.getByRole('navigation',{name:'Étapes de la fiche',exact:true});
+ await steps.getByRole('button').nth(2).click();
+ const first=page.locator('.data-group-card').nth(0);await first.locator('summary').first().click();
+ const data='Coordonnées fictives RÉUTILISABLES <em>texte</em>';
+ await page.getByLabel('D1 · Catégories de données',{exact:true}).fill(data);
+ await first.locator('.group-examination > summary').filter({hasText:'Conservation et effacement'}).click();
+ await page.getByLabel('D1 · Durée ou critère de conservation',{exact:true}).fill('Durée FICTIVE à réexaminer');
+ await page.getByLabel('D1 · Événement de départ',{exact:true}).fill('Événement fictif de départ');
+ await first.locator('.analysis-question > summary').click();
+ await first.getByLabel('Flux 1 · Canal ou support',{exact:true}).fill('CANAL_FICTIF_REUTILISABLE');
+ await page.getByRole('button',{name:'Ajouter un groupe de données',exact:true}).click();
+ await expect(page.getByLabel('D3 · Catégories de données',{exact:true})).toHaveValue('');
+ let root=await picker(page,'D3 · Catégories de données','reutilisables');
+ await expect(root.locator('.declaration-options em')).toHaveCount(0);
+ const dataBox=await page.getByLabel('D3 · Catégories de données',{exact:true}).boundingBox();
+ const peopleBox=await page.getByLabel('D3 · Personnes concernées',{exact:true}).boundingBox();
+ expect(dataBox && peopleBox && Math.abs(dataBox.y-peopleBox.y)<4).toBe(true);
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+ await page.setViewportSize({width:1280,height:800});
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(page.getByLabel('D3 · Catégories de données',{exact:true})).toHaveValue(data);
+ await expect(page.getByLabel('D3 · Catégories de données',{exact:true})).toBeFocused();
+ await expect(page.getByLabel('D1 · Catégories de données',{exact:true})).toHaveValue(data);
+ const third=page.locator('.data-group-card').nth(2);
+ await third.locator('.group-examination > summary').filter({hasText:'Conservation et effacement'}).click();
+ await expect(page.getByLabel('D3 · Durée ou critère de conservation',{exact:true})).toHaveValue('');
+ root=await picker(page,'D3 · Durée ou critère de conservation','FICTIVE');
+ await expect(root).toContainText('Une durée déjà saisie n’est pas une recommandation');
+ await expect(root).toContainText('Événement fictif de départ');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(page.getByLabel('D3 · Durée ou critère de conservation',{exact:true})).toHaveValue('Durée FICTIVE à réexaminer');
+ await expect(page.getByLabel('D3 · Événement de départ',{exact:true})).toHaveValue('');
+ await third.getByRole('button',{name:'Ajouter un flux',exact:true}).click();
+ await third.locator('.flow-detail > summary').click();
+ root=await picker(page,'Flux 3 · Canal ou support','CANAL_FICTIF');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(third.getByLabel('Flux 3 · Canal ou support',{exact:true})).toHaveValue('CANAL_FICTIF_REUTILISABLE');
+ await expect(third.getByRole('group',{name:'D3 · Sous-finalités concernées'}).getByRole('checkbox').filter({visible:true}).first()).not.toBeChecked();
+ await page.getByLabel('D3 · Catégories de données',{exact:true}).fill('Mon texte fictif à garder');
+ root=await picker(page,'D3 · Catégories de données','reutilisables');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(page.getByLabel('D3 · Catégories de données',{exact:true})).toHaveValue('Mon texte fictif à garder');
+ await root.getByRole('button',{name:'Garder mon texte',exact:true}).click();
+ await root.getByRole('searchbox').press('Escape');
+ await expect(root.locator('summary')).toBeFocused();
+ root=await picker(page,'D3 · Catégories de données','reutilisables');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await root.getByRole('button',{name:'Remplacer le contenu',exact:true}).click();
+ await expect(page.getByLabel('D3 · Catégories de données',{exact:true})).toHaveValue(data);
+ await steps.getByRole('button').nth(1).click();
+ await page.getByRole('button',{name:'Ajouter une finalité',exact:true}).click();
+ root=await picker(page,'Sous-finalité 3','habilitation');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(page.getByLabel('Sous-finalité 3',{exact:true})).toHaveValue('Vérifier l’habilitation à entrer dans une zone.');
+ await steps.getByRole('button').nth(4).click();
+ await expect(field(page,'Fondement juridique documenté 3 (complément)').locator('.declaration-picker')).toHaveCount(0);
+ await expect(page.getByLabel('Fondement juridique documenté 3 (complément)',{exact:true})).toHaveValue('');
+ await steps.getByRole('button').nth(2).click();
+ await page.getByText('Descriptions générales et flux déjà saisis',{exact:true}).click();
+ await page.getByLabel('Catégories de destinataires',{exact:true}).fill('DESTINATAIRES_FICTIFS_REUTILISABLES');
+ await page.getByRole('button',{name:'Enregistrer la fiche',exact:true}).click();
+ await page.getByRole('button',{name:'Modifier Recrutement · exemple fictif',exact:true}).click();
+ await steps.getByRole('button').nth(2).click();
+ await page.getByRole('button',{name:'Ajouter un groupe de données',exact:true}).click();
+ root=await picker(page,'D1 · Catégories de données','reutilisables');
+ await expect(root).toContainText('Accès aux locaux par badge');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(page.getByLabel('D1 · Catégories de données',{exact:true})).toHaveValue(data);
+ await page.getByText('Descriptions générales et flux déjà saisis',{exact:true}).click();
+ root=await picker(page,'Catégories de destinataires','DESTINATAIRES_FICTIFS');
+ await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await root.getByRole('button',{name:'Remplacer le contenu',exact:true}).click();
+ await expect(page.getByLabel('Catégories de destinataires',{exact:true})).toHaveValue('DESTINATAIRES_FICTIFS_REUTILISABLES');
+ expect(errors).toEqual([]);
+});
+
+test('reused declarations stay encrypted and cannot cross client vaults or survive locking in the UI',async({page})=>{
+ test.setTimeout(90000);
+ const requests:string[]=[];page.on('request',r=>requests.push(r.url()+(r.postData() ?? '')));
+ await page.goto('/app/privacy/');await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
+ const phrase='Phrase fictive pour isolation 2026!';const marker='DECLARATION_CLIENT_A_FICTIVE';
+ async function create(name:string){
+  await page.getByLabel('Nom de l’organisme',{exact:true}).fill(name);
+  await page.getByLabel('Nouvelle phrase secrète',{exact:true}).fill(phrase);
+  await page.getByLabel('Confirmer la phrase secrète',{exact:true}).fill(phrase);
+  await page.getByLabel('Je comprends qu’une phrase perdue').check();
+  await page.getByRole('button',{name:'Créer le coffre chiffré',exact:true}).click();
+  await page.getByRole('button',{name:'Registre',exact:true}).click();
+  await page.getByRole('button',{name:'Ajouter une activité responsable',exact:true}).click();
+  await page.getByLabel('Nom de l’activité',{exact:true}).fill('Ensemble fictif');
+  await page.getByRole('navigation',{name:'Étapes de la fiche'}).getByRole('button').nth(2).click();
+  await page.getByRole('button',{name:'Ajouter un groupe de données',exact:true}).click();
+ }
+ await create('Client A fictif');
+ await page.getByLabel('D1 · Catégories de données',{exact:true}).fill(marker);
+ await page.getByRole('button',{name:'Enregistrer la fiche',exact:true}).click();
+ await page.getByRole('button',{name:'Verrouiller le coffre',exact:true}).click();
+ await expect(page.locator('.declaration-picker')).toHaveCount(0);
+ await expect(page.locator('body')).not.toContainText(marker);
+ await create('Client B fictif');
+ const root=await picker(page,'D1 · Catégories de données','CLIENT_A');
+ await expect(root).toContainText('Aucune autre déclaration');
+ await expect(root.locator('.declaration-option')).toHaveCount(0);
+ const local=await page.evaluate(async()=>{
+  const databases=await indexedDB.databases();const stored:string[]=[];
+  for(const dbInfo of databases){if(!dbInfo.name?.includes('rgpdesk'))continue;
+   const db=await new Promise<IDBDatabase>((resolve,reject)=>{const r=indexedDB.open(dbInfo.name!);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+   for(const name of Array.from(db.objectStoreNames)){const rows=await new Promise<unknown>((resolve,reject)=>{const r=db.transaction(name).objectStore(name).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});stored.push(JSON.stringify(rows));}db.close();
+  }
+  return {stored:stored.join(''),local:JSON.stringify(localStorage),session:JSON.stringify(sessionStorage),url:location.href};
+ });
+ expect(local.stored.length).toBeGreaterThan(0);
+ for(const value of [...Object.values(local),...requests])expect(value).not.toContain(marker);
+});
