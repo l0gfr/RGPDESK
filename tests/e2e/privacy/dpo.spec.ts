@@ -1,6 +1,25 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 
+test("register shortcuts open the existing rights and breach records without creating duplicates",async({page})=>{
+ await page.goto('/app/privacy/#demo/registre');
+ const shortcuts=page.getByRole('navigation',{name:'Autres registres du DPO',exact:true});
+ for(const [name,kind] of [['Registre d’exercice des droits','Demandes de droits'],['Registre des violations','Violations']]){
+  const shortcut=shortcuts.getByRole('button',{name:new RegExp(name!)});
+  await expect(shortcut).toContainText('1 dossier(s)');
+  await page.setViewportSize({width:320,height:900});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await shortcut.click();
+  await expect(page.getByRole('navigation',{name:'Types de dossiers'}).getByRole('button',{name:kind,exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('.dpo-workbench .records > li')).toHaveCount(1);
+  await page.locator('.dpo-workbench .records > li').getByRole('button').click();
+  await expect(page.getByRole('button',{name:'03 Chronologie',exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Fermer le dossier',exact:true}).click();
+  await page.getByRole('button',{name:'Retrouver les activités du registre',exact:false}).click();
+  await expect(shortcut).toContainText('1 dossier(s)');
+ }
+});
+
 test("DPO cases work offline with saved chronology, reviews and responsive labelled controls", async ({ page, context }, info) => {
   await page.goto("/app/privacy/"); await expect(page.locator('[data-rgpdesk-ready="true"]')).toBeVisible();
   await page.getByRole("button", { name: "Explorer la démo", exact: true }).click();

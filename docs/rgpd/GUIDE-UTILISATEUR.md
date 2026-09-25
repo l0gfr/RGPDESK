@@ -115,11 +115,15 @@ Les tableaux de groupes sont repris dans la relecture, le dossier d’intérêt 
 
 ### Réutiliser une déclaration sans la ressaisir
 
-Sous les catégories de données et de personnes, les sous-finalités, les destinataires et les champs de conservation, ouvrez **Réutiliser une déclaration**. Ce même volet existe pour les descriptions libres des flux : origine, destination, opération, canal, lieux et habilitations.
+Sous les catégories de données et de personnes, les sous-finalités, les destinataires et les champs de conservation, ouvrez **Réutiliser une déclaration**. Ce même volet existe pour les descriptions libres d’origine, de destination et d’opération des flux, ainsi que pour nommer un nouveau support.
 
 1. Cherchez un mot du texte ou de sa fiche d’origine. Le volet utilise uniquement le coffre ouvert, y compris les réponses de votre saisie en cours. Les activités archivées ne sont pas proposées.
 2. Relisez la déclaration et sa provenance, puis choisissez **Reprendre ce texte**. Si le champ contient déjà une réponse, choisissez explicitement **Remplacer le contenu** ou **Garder mon texte**.
 3. Adaptez le texte à ce traitement, puis enregistrez la fiche comme d’habitude.
+
+Pour les **canaux**, les **lieux de stockage** et les **habilitations**, ouvrez **Choisir des déclarations déjà saisies**. Cochez plusieurs réponses puis **Ajouter la sélection** : elles sont ajoutées à votre texte, une par ligne, sans effacer ce que vous avez écrit. Une déclaration déjà présente n’est pas proposée à nouveau. Si l’ajout dépasse 4 000 caractères, réduisez votre sélection ; aucun texte n’est tronqué.
+
+Les lieux décrivent où les données sont conservées ; précisez aussi les pays d’accès à distance lorsqu’ils diffèrent. Les habilitations décrivent qui peut faire quoi. Reprendre ces textes ne crée pas de nouvelles opérations : ajoutez une étape ou un parcours lorsqu’un usage ou un destinataire diffère. La carte se construit à partir de ces liens explicites, sans inventer toutes les combinaisons possibles.
 
 Une déclaration reprise est une **copie modifiable** : changer le texte ici ne modifie pas les autres fiches. Les sous-finalités conservent leurs propres identifiants et les groupes doivent être reliés aux bonnes sous-finalités. Pour les intervenants et systèmes, utilisez les sélecteurs de liens existants dans les flux.
 
@@ -390,6 +394,8 @@ Décrivez le périmètre, les entités, les pays, les accès à distance et les 
 
 ### Demandes de droits : préparer et suivre la réponse
 
+Dans **Registre**, ouvrez **Registre d’exercice des droits** pour retrouver les demandes de ce client. Le même suivi reste accessible par **Dossiers DPO → Demandes de droits** : il s’agit des mêmes dossiers, sans double saisie.
+
 Utilisez une référence de dossier, choisissez les activités concernées et décrivez la demande. Examinez la vérification d’identité uniquement lorsqu’un doute raisonnable la justifie ; ne conservez pas de copie de pièce ici. Le carnet organise les recherches, les restrictions motivées, le projet de réponse et les références d’envoi. La réponse est rédigée et relue par vous ; aucun envoi n’est réalisé. [RGPD, articles 12 et 15 à 23](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
 Le calcul du régime général nécessite une date de réception, le choix explicite de ce régime et la confirmation du calendrier applicable. Le mois est calendaire, avec report au prochain jour ouvrable si le dernier jour est un samedi, dimanche ou jour férié que vous avez renseigné. Une prolongation d’un ou deux mois supplémentaires ne modifie le résultat qu’avec un motif et une date d’information déclarée dans le délai initial. Le calcul n’atteste pas que cette information a été envoyée. [CEPD, lignes directrices 01/2022, version 2.1, §160 à 164](https://www.edpb.europa.eu/system/files/documents/2023-04/edpb_guidelines_202201_data_subject_rights_access_v2_en.pdf).
@@ -397,6 +403,8 @@ Le calcul du régime général nécessite une date de réception, le choix expli
 Pour un régime particulier ou une situation qui appelle un autre calcul, utilisez **Échéance manuelle motivée** et expliquez votre fondement. Sans paramètres suffisants, l’échéance reste à déterminer. Aucune suspension n’est déduite automatiquement d’un échange. Répondez dans les meilleurs délais ; l’échéance affichée n’est pas une invitation à attendre.
 
 ### Violations : consigner aussi les cas non notifiés
+
+Dans **Registre**, ouvrez **Registre des violations**. Ce raccourci affiche les dossiers déjà conservés dans **Dossiers DPO → Violations**. Vous pouvez ouvrir un nouveau dossier ou reprendre son suivi à partir de cette liste.
 
 Distinguez détection et prise de connaissance, faits établis et hypothèses. Documentez les catégories de données et de personnes, les volumes estimés, les conséquences, les mesures et les décisions d’information. Un responsable dispose d’un repère de 72 heures écoulées à partir de la prise de connaissance renseignée ; ce repère ne décide pas si la notification est nécessaire. Le sous-traitant doit informer le responsable dans les meilleurs délais : l’application ne lui attribue pas un délai standard de 72 heures. [RGPD, article 33](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
@@ -678,3 +686,15 @@ Dans **Partager un dossier**, dès que deux livraisons sont conservées, ouvrez 
 Les profils, destinataires et périmètres différents sont signalés. Les activités sont rapprochées seulement si leur intitulé et leur rôle sont identiques et uniques ; les homonymes restent signalés comme ambigus. Un changement de nom n’est pas deviné. L’ordre et les identifiants propres à chaque livraison ne créent pas d’écarts artificiels.
 
 Une activité, un flux ou une suite qui n’apparaît plus dans un dossier peut avoir été exclu de sa sélection. Cela ne prouve ni sa suppression dans le registre, ni la clôture d’une action. Cette comparaison concerne les dossiers du registre conservés dans ce coffre ; les restitutions AIPD distinctes ne sont pas comparées ici.
+
+## 17. Partir des faits et des droits dans une analyse d’impact
+
+Dans **AIPD / PIA → Principes généraux**, les sous-finalités, fondements déclarés et durées se lisent directement depuis le registre. Les tableaux D1/D2 complètent ce contexte avec les liens déjà décrits. Corrigez un fait commun dans le registre ; motivez les appréciations propres à l’étude dans ses notes. Une déclaration reprise n’est pas une conclusion de conformité.
+
+Dans **Nécessité**, ouvrez **Approfondir la nécessité et la proportionnalité** pour explorer le besoin, les limitations de libertés, le bilan et les garanties. Cette synthèse du guide d’Estelle De Marco est une aide de lecture, pas un deuxième formulaire. Les notes et le tableau des alternatives restent les endroits où conserver votre raisonnement. L’aide est facultative ; l’évaluation prévue par l’article 35 §7 b) dans l’AIPD ne l’est pas.
+
+Dans **Risques humains**, ou **Risques & mesures** sans AIPD, ouvrez **Partir des droits à protéger**. Cherchez une notion, filtrez éventuellement par article de la Convention européenne et choisissez une piste. Chaque fiche indique sa question, sa portée, l’édition du guide et les paragraphes utiles.
+
+**Décrire un scénario pour ce droit** ajoute un titre et un droit à examiner avec sa référence. Rien n’est encore conclu. Décrivez les personnes concernées, la situation redoutée, les conséquences et les garanties, puis motivez vos appréciations de gravité et de vraisemblance. Examinez aussi le fonctionnement prévu : des données exactes, disponibles et confidentielles n’excluent pas un effet sur les libertés.
+
+Les douze pistes sont des points de départ, sans couverture exhaustive ni qualification automatique. Utilisez le scénario libre pour les autres situations. La recherche reste sur cet appareil ; seule l’ouverture volontaire d’un lien consulte le site de la source. Les guides CEDH ne lient pas la Cour, et l’application de leurs repères à votre organisme doit être contextualisée.

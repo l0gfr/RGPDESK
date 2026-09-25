@@ -30,6 +30,11 @@ test("a private section link requires an explicit vault and does not create or s
   await expect(page.getByText("Ce lien mène à « Registre ».", {exact:false})).toBeVisible();
   await expect(page.getByRole("button",{name:"Créer le coffre chiffré",exact:true})).toBeVisible();
   await expect(page.getByRole("button",{name:"Verrouiller le coffre",exact:true})).toHaveCount(0);
+  const shortcut=page.getByRole("button",{name:/Choisir un coffre/});
+  await shortcut.focus(); await shortcut.press("Enter");
+  await expect(page.getByRole("heading",{name:"Reprendre votre travail",exact:true})).toBeFocused();
+  await expect(page.getByRole("heading",{name:"Reprendre votre travail",exact:true})).toBeInViewport();
+  await expect(page).toHaveURL(/#registre$/);
   await page.getByLabel("Nom de l’organisme", {exact:true}).fill("FICTIONAL ANCHOR VAULT");
   await page.getByLabel("Nouvelle phrase secrète", {exact:true}).fill("Fictional anchor phrase 2026!");
   await page.getByLabel("Confirmer la phrase secrète", {exact:true}).fill("Fictional anchor phrase 2026!");
@@ -51,6 +56,18 @@ test("a private section link requires an explicit vault and does not create or s
   }
   await expect(page).toHaveURL(/#registre$/);
   expect(new URL(page.url()).search).toBe("");
+  await page.getByRole("button",{name:"Verrouiller le coffre",exact:true}).click();
+  await page.goto("/app/privacy/#registre");
+  await page.reload();
+  await page.setViewportSize({width:390,height:844});
+  await shortcut.click();
+  await expect(page.getByRole("heading",{name:"Reprendre votre travail",exact:true})).toBeInViewport();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.locator("#client-vaults .records > li").first().getByRole("button").click();
+  await page.getByLabel("Phrase secrète du coffre",{exact:true}).fill("Fictional anchor phrase 2026!");
+  await page.getByRole("button",{name:"Déverrouiller",exact:true}).click();
+  await expect(page.getByRole("heading",{name:"Votre registre RGPD.",exact:true})).toBeVisible();
+  await expect(page).toHaveURL(/#registre$/);
 });
 
 test("the final demonstration dossier is immediately readable without JavaScript and uses the real passive reports", async ({ browser, baseURL }) => {

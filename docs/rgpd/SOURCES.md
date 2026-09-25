@@ -142,6 +142,8 @@ La relecture humaine reste à réaliser. L’application n’adopte pas les appr
 
 ## Sources du parcours AIPD
 
+Complément du 25 septembre 2026 : le catalogue local `rights-catalogue.ts` référence les guides officiels du greffe de la CEDH avec édition, langue, paragraphes et pages pour chaque piste. [Index des guides](https://ks.echr.coe.int/fr/web/echr-ks/all-case-law-guides). Questions adaptées par RGPDESK ; ni exhaustivité, ni conclusion d’applicabilité, ni validation par la Cour. La correspondance avec le guide N&P et les limites de cette première intégration figurent dans [la note méthodologique du 25 septembre](AIPD-METHODOLOGIE-2026-09-25.md).
+
 Revue documentaire : 22 septembre 2026. Version de la trame : `aipd-2026-09-22.1`. Questions originales et références embarquées dans `pia-method.ts` ; aucune récupération distante lors de l’usage du coffre.
 
 | Source | Nature, version, portée | Usage dans RGPDESK |

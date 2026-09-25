@@ -29,7 +29,7 @@ export const PIA_PRINCIPLE_QUESTIONS: readonly ReviewQuestion[] = [
   question("transfers", "Examiner les transferts", "Quels transferts ou accès depuis un pays tiers existent ? Pour chacun, documentez le régime applicable, le mécanisme examiné, ses conditions et les mesures complémentaires nécessaires, sans déduire la licéité du seul contrat.", "Carte des flux, pays, destinataires, analyse du transfert et références vérifiables.", "RGPD · articles 44 à 49"),
   question("accuracy", "Maîtriser la qualité et la conservation", "Comment l’exactitude, la mise à jour et la suppression sont-elles assurées en pratique ? Justifiez les durées et leurs déclencheurs par finalité, y compris les copies, traces et archives.", "Règles documentées, tests de correction et de purge, traitement des exceptions.", "RGPD · article 5 §1 d), e) et §2"),
 ];
-export const PIA_STEPS = ["Déclenchement", "Contexte & droits", "Nécessité", "Risques humains", "Mesures", "Avis & décision", "Dossier & historique"];
+export const PIA_STEPS = ["Déclenchement", "Principes généraux", "Nécessité", "Risques humains", "Mesures", "Avis & décision", "Dossier & historique"];
 export const PIA_OUTCOMES = { rework: "Réexaminer le projet", stop: "Renoncer au projet", "refer-authority": "Préparer une consultation préalable", proceed: "Poursuite décidée par le responsable" } as const;
 export const PIA_LEVELS = { unknown: "Non apprécié", "1": "1 · Négligeable", "2": "2 · Limité", "3": "3 · Important", "4": "4 · Maximal" } as const;
 export const PIA_RISK_FIELDS = {

@@ -35,7 +35,7 @@ test("declared flows, analysis and clause notes stay private, encrypted and usab
   await page.getByText("Préciser le canal, les pays et les habilitations", { exact: true }).click();
   await page.getByLabel("Flux 1 · Accès et habilitations", { exact: true }).fill("PRIVATE_ACCESS_DPO");
   await expect(page.locator(".flow-map img")).toHaveCount(0);
-  await expect(page.getByLabel("Flux 1 · Lieux et accès à distance", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Flux 1 · Lieux de stockage", { exact: true })).toHaveValue("");
   await expect(page.getByLabel("Catégories de destinataires", { exact: true })).toHaveValue("");
   await page.getByRole("button", { name: "Les flux", exact: true }).click();
   await expect(page.locator(".flow-editor .analysis-question")).toHaveCount(1);

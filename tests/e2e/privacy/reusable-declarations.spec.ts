@@ -47,7 +47,8 @@ test('reuse works across groups, objectives and flows without automatic retentio
  await third.getByRole('button',{name:'Ajouter un parcours',exact:true}).click();
  await third.locator('.journey-context > summary').click();
  root=await picker(page,'Parcours 3a · Étape 1 · Canal','CANAL_FICTIF');
- await root.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await root.getByRole('checkbox',{name:/CANAL_FICTIF_REUTILISABLE/}).check();
+ await root.getByRole('button',{name:'Ajouter la sélection (1)',exact:true}).click();
  await expect(third.getByLabel('Parcours 3a · Étape 1 · Canal',{exact:true})).toHaveValue('CANAL_FICTIF_REUTILISABLE');
  await expect(third.getByRole('group',{name:'D3 · Sous-finalités concernées'}).getByRole('checkbox').filter({visible:true}).first()).not.toBeChecked();
  await page.getByLabel('D3 · Catégories de données',{exact:true}).fill('Mon texte fictif à garder');
@@ -86,6 +87,67 @@ test('reuse works across groups, objectives and flows without automatic retentio
  await root.getByRole('button',{name:'Remplacer le contenu',exact:true}).click();
  await expect(page.getByLabel('Catégories de destinataires',{exact:true})).toHaveValue('DESTINATAIRES_FICTIFS_REUTILISABLES');
  expect(errors).toEqual([]);
+});
+
+test('several locations and permissions can be added without losing text, and supports are reused explicitly',async({page})=>{
+ await page.goto('/app/privacy/#demo/registre');
+ await page.getByRole('button',{name:'Modifier Accès aux locaux par badge · projet fictif',exact:true}).click();
+ const steps=page.getByRole('navigation',{name:'Étapes de la fiche',exact:true});
+ await steps.getByRole('button').nth(2).click();
+ for(const i of [1,2]){
+  const group=page.locator('.data-group-card').nth(i-1);
+  await group.locator('summary').first().click();
+  await group.locator('.analysis-question > summary').click();
+  await group.getByLabel(`Flux ${i} · Lieux de stockage`,{exact:true}).fill(`AJOUT_TEST_FICTIF site ${i}`);
+  await group.getByLabel(`Flux ${i} · Accès et habilitations`,{exact:true}).fill(`AJOUT_TEST_FICTIF rôle ${i} : lecture`);
+ }
+ await page.getByRole('button',{name:'Ajouter un groupe de données',exact:true}).click();
+ const third=page.locator('.data-group-card').nth(2);
+ await third.getByRole('button',{name:'Ajouter un parcours',exact:true}).click();
+ await third.locator('.journey-context > summary').click();
+ for(const [label,values] of [
+  ['Lieux de stockage',['AJOUT_TEST_FICTIF site 1','AJOUT_TEST_FICTIF site 2']],
+  ['Qui intervient et pour quoi',['AJOUT_TEST_FICTIF rôle 1 : lecture','AJOUT_TEST_FICTIF rôle 2 : lecture']],
+ ] as const){
+  const full=`Parcours 3a · Étape 1 · ${label}`;
+  await third.getByLabel(full,{exact:true}).fill('Ma précision à garder');
+  let root=await picker(page,full,'AJOUT_TEST_FICTIF');
+  await expect(root.getByRole('checkbox')).toHaveCount(2);
+  for(const checkbox of await root.getByRole('checkbox').all())await checkbox.check();
+  await page.setViewportSize({width:320,height:900});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await root.getByRole('button',{name:'Ajouter la sélection (2)',exact:true}).click();
+  await expect(third.getByLabel(full,{exact:true})).toHaveValue('Ma précision à garder\n'+values.join('\n'));
+  root=await picker(page,full,'AJOUT_TEST_FICTIF');
+  await expect(root.getByRole('checkbox')).toHaveCount(0);
+  await root.getByRole('searchbox').press('Escape');
+ }
+ await page.setViewportSize({width:1280,height:900});
+ await expect(third.locator('.journey-step')).toHaveCount(1);
+ await expect(third.getByRole('group',{name:'Parcours 3a · Sous-finalités',exact:true}).getByRole('checkbox').first()).not.toBeChecked();
+ await third.locator('.journey-supports > summary').click();
+ await third.getByLabel('Nouveau support · parcours 3a',{exact:true}).fill('Support réutilisable fictif');
+ await third.getByRole('button',{name:'Créer le support',exact:true}).click();
+ await page.getByRole('button',{name:'Enregistrer la fiche',exact:true}).click();
+ await page.getByRole('button',{name:'Modifier Recrutement · exemple fictif',exact:true}).click();
+ await steps.getByRole('button').nth(2).click();
+ await page.getByRole('button',{name:'Ajouter un groupe de données',exact:true}).click();
+ await page.getByRole('button',{name:'Ajouter un parcours',exact:true}).click();
+ const first=page.locator('.data-group-card').first();
+ await first.locator('.journey-supports > summary').click();
+ const supports=first.locator('.journey-supports');
+ await supports.locator('.declaration-picker > summary').click();
+ await supports.getByRole('searchbox').fill('réutilisable fictif');
+ await supports.getByRole('button',{name:/Reprendre ce texte/}).click();
+ await expect(supports.getByLabel('Nouveau support · parcours 1a',{exact:true})).toHaveValue('Support réutilisable fictif');
+ await expect(first.getByRole('group',{name:'Parcours 1a · Étape 1 · Supports utilisés',exact:true}).getByRole('checkbox')).toHaveCount(0);
+ await supports.getByRole('button',{name:'Créer le support',exact:true}).click();
+ const supportChoice=first.getByRole('group',{name:'Parcours 1a · Étape 1 · Supports utilisés',exact:true}).getByRole('checkbox');
+ await expect(supportChoice).not.toBeChecked();
+ await supportChoice.check();
+ await first.locator('.journey-preview > summary').click();
+ await expect(first.getByRole('region',{name:'Parcours 1a',exact:true})).toContainText('Support réutilisable fictif');
+ await page.getByRole('button',{name:'Enregistrer la fiche',exact:true}).click();
 });
 
 test('reused declarations stay encrypted and cannot cross client vaults or survive locking in the UI',async({page})=>{

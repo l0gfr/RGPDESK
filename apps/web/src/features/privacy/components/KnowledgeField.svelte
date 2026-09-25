@@ -16,6 +16,6 @@
   <textarea bind:this={input} id={fieldId} aria-describedby={`${fieldId}-hint`} rows="2" maxlength="4000" value={knowledgeText(value)} placeholder={fr.unknown}
     oninput={(event) => { value = knowledge(event.currentTarget.value); reused = false; }}></textarea>
   <small id={`${fieldId}-hint`}>{value.state === "unknown" ? fr.unknown : "Information déclarée"}{hint ? ` · ${hint}` : ""}</small>
-  {#if reuse}<DeclarationPicker kind={reuse} {label} current={knowledgeText(value)} onUse={(text) => void useDeclaration(text)} />{/if}
+  {#if reuse}<DeclarationPicker kind={reuse} {label} current={knowledgeText(value)} multiple={reuse === "channel" || reuse === "location" || reuse === "access"} onUse={(text) => void useDeclaration(text)} />{/if}
   {#if reused}<small role="status">Texte repris dans ce champ, à adapter à votre situation.</small>{/if}
 </div>

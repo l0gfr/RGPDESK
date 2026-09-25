@@ -1229,6 +1229,30 @@
 .rgpdesk .reusable-field { align-self:start; align-content:start; }
 
 .rgpdesk .declaration-help,.rgpdesk .declaration-count,.rgpdesk .declaration-caution { font-weight:400; }
+.rgpdesk .declaration-options .declaration-choice { display:flex; align-items:flex-start; gap:.8rem; margin:0; cursor:pointer; }
+.rgpdesk .declaration-choice input { flex:none; margin:.25rem 0 0; }
+.rgpdesk .declaration-choice>span { display:grid; gap:.4rem; min-width:0; }
+.rgpdesk .declaration-choice:has(:checked) { background:#e2ecf2; border-color:#59798e; }
+.rgpdesk .declaration-choice:focus-within { outline:2px solid #4b6b85; outline-offset:2px; }
+.rgpdesk .declaration-options+button { margin-top:.8rem; }
+
+.rgpdesk button.notice.vault-shortcut { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:1rem; width:100%; padding:1rem 1.25rem; text-align:left; white-space:normal; color:#314961; background:linear-gradient(110deg,#e6edf5,#f1f4f8); border:1px solid #b7c8d8; border-left:3px solid #627b9a; box-shadow:none; }
+.rgpdesk .vault-shortcut>span>span { display:block; font-weight:400; margin-top:.15rem; }
+.rgpdesk .vault-shortcut .vault-shortcut-action { display:flex; gap:.6rem; align-items:center; font-weight:600; }
+.rgpdesk button.notice.vault-shortcut:hover,.rgpdesk button.notice.vault-shortcut:focus-visible { color:#23394c; background:#dce7f1; border-color:#688399; }
+.rgpdesk .vault-shortcut:focus-visible { outline:2px solid #496982; outline-offset:4px; }
+.rgpdesk #client-vaults { scroll-margin-top:1.5rem; }
+.rgpdesk .dpo-register-shortcuts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.rgpdesk .dpo-register-shortcuts>button { display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:1rem; text-align:left; white-space:normal; padding:1.25rem; color:#2e475b; background:linear-gradient(120deg,#e3edf3,#f5f5f3); border:1px solid #b6c8d5; border-radius:5px 18px 5px 5px; }
+.rgpdesk .dpo-register-shortcuts strong,.rgpdesk .dpo-register-shortcuts small { display:block; overflow-wrap:anywhere; }
+.rgpdesk .dpo-register-shortcuts strong { font-size:1rem; line-height:1.5; }
+.rgpdesk .dpo-register-shortcuts small { font-size:.875rem; line-height:1.5; font-weight:400; margin-top:.3rem; }
+.rgpdesk .dpo-register-shortcuts>button:hover,.rgpdesk .dpo-register-shortcuts>button:focus-visible { color:#20384b; background:#dae7ef; border-color:#678497; }
+@media(max-width:700px) {
+  .rgpdesk .dpo-register-shortcuts { grid-template-columns:minmax(0,1fr); }
+  .rgpdesk button.notice.vault-shortcut { grid-template-columns:auto minmax(0,1fr); }
+  .rgpdesk .vault-shortcut .vault-shortcut-action { grid-column:2; }
+}
 
 /* Ordered journeys: readable cards, linked inventory, no graph engine. */
 .rgpdesk .journey-supports,.rgpdesk .journey-preview { padding:1rem 1.2rem; margin:1rem 0; border:1px solid #b7c8d5; border-radius:5px 18px 5px 5px; background:linear-gradient(110deg,#e4edf3,#f2f5f8); }

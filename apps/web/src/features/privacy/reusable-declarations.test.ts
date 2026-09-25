@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createActivity, createDataFlow, createDataGroup, createPurpose, createWorkspace, knowledge, unknown } from "@rgpdesk/privacy-core";
-import { DECLARATION_LIMIT, filterDeclarations, reusableDeclarations } from "./reusable-declarations";
+import { appendDeclarations, containsDeclaration, DECLARATION_LIMIT, filterDeclarations, reusableDeclarations } from "./reusable-declarations";
 const at = "2026-09-24T15:00:00.000Z";
 function fixture() {
   const workspace = createWorkspace(crypto.randomUUID(), "Client fictif", at);
@@ -16,6 +16,28 @@ function fixture() {
   return { workspace, activity, group };
 }
 describe("reusable declarations scoped to the open vault", () => {
+  it("collects support names without importing their references or other clients", () => {
+    const {workspace,activity}=fixture();
+    activity.flowSupports=[{id:crypto.randomUUID(),code:1,name:"Support fictif <b>texte</b>"}];
+    const found=reusableDeclarations(workspace,null,"support");
+    expect(found).toEqual([{text:"Support fictif <b>texte</b>",sources:["Ensemble fictif · Support 1"],occurrences:1}]);
+    expect(JSON.stringify(found)).not.toContain(activity.flowSupports[0]!.id);
+    const other=createWorkspace(crypto.randomUUID(),"Autre client fictif",at);
+    expect(reusableDeclarations(other,null,"support")).toEqual([]);
+    expect(reusableDeclarations(null,activity,"support")).toEqual([]);
+    activity.status="archived";expect(reusableDeclarations(workspace,null,"support")).toEqual([]);
+  });
+  it("adds whole declarations once without erasing, interpreting or truncating text", () => {
+    const current="Mon texte à garder  ";
+    expect(appendDeclarations(current,["Site A","Site B","Site A"])).toBe(current+"\nSite A\nSite B");
+    expect(appendDeclarations("Site A\n",["Site A","<b>Site B</b>"])).toBe("Site A\n<b>Site B</b>");
+    expect(appendDeclarations("Accès interdit au Site A",["Site A"])).toBe("Accès interdit au Site A\nSite A");
+    expect(appendDeclarations("",["Rôle A\nSeulement en lecture"])).toBe("Rôle A\nSeulement en lecture");
+    expect(containsDeclaration("Rôle A\nSeulement en lecture","Rôle A\nSeulement en lecture")).toBe(true);
+    expect(appendDeclarations("x".repeat(3998),["y"])).toHaveLength(4000);
+    expect(appendDeclarations("x".repeat(3999),["y"])).toBeNull();
+    expect(appendDeclarations("",["x".repeat(4001)])).toBeNull();
+  });
   it("only collects the requested category and current documented values", () => {
     const { workspace, activity, group } = fixture();
     activity.recipients = knowledge("Service fictif");

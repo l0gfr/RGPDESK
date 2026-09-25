@@ -74,6 +74,7 @@
   let wipeConfirmation = $state("");
   let showWipe = $state(false);
   let dpoCaseId = $state("");
+  let dpoKind = $state<"interest" | "rights" | "breach">("interest");
   let documentId = $state("");
   let documentActivityId = $state("");
   let piaActivityId = $state("");
@@ -158,6 +159,7 @@
     else proceed();
   }
   function resetEditor() {
+    dpoKind = "interest";
     actionsTab="actions";readingActivityId="";
     editorStep=0; dpoSection="scope"; entityId="";
     editor = null; piaEditing = false; piaStep = 0; lensPia = false; securityActivityId = "";
@@ -166,6 +168,13 @@
   }
   function navigateTo(next: typeof panel) {
     requestNavigation(() => { resetEditor(); panel = next; });
+  }
+  function openDpoRegister(kind: "rights" | "breach") {
+    requestNavigation(() => { resetEditor(); dpoKind = kind; panel = "dpo"; });
+  }
+  function showVaults() {
+    document.getElementById("client-vaults-title")?.focus({ preventScroll: true });
+    document.getElementById("client-vaults")?.scrollIntoView({ block: "start" });
   }
   let missingOnly = $state(false);
   let registerRole = $state("");
@@ -703,7 +712,7 @@
   {#if stale}<a class="button" href="/app/privacy/">Recharger l’application</a>{/if}
   {#if inventoryStatus === "loading"}<p role="status">Lecture des coffres de ce navigateur…</p>{/if}
 
-  {#if !master && linkedPanel}<p class="notice">Ce lien mène à « {PRIVACY_ROUTES[linkedPanel][1]} ». Ouvrez le coffre souhaité pour y accéder ; le lien ne contient aucune donnée de votre registre.</p>{/if}
+  {#if !master && linkedPanel}<button type="button" class="notice vault-shortcut" onclick={showVaults}><Icon name="key" size={24}/><span><strong>Ce lien mène à « {PRIVACY_ROUTES[linkedPanel][1]} ».</strong><span>Choisissez le coffre à ouvrir pour retrouver cette rubrique. Ce lien ne contient aucune donnée de votre registre.</span></span><span class="vault-shortcut-action">Choisir un coffre <Icon name="arrow" size={20}/></span></button>{/if}
   {#if master}
     <div class="desk-layout">
     <aside class="desk-sidebar"><div class="sidebar-caption"><span class="workspace-avatar">{master.organization.name.slice(0, 1).toUpperCase()}</span><div><small>{demo ? "DOSSIER FICTIF" : "VOTRE ESPACE"}</small><h2>{master.organization.name}</h2><small>{master.activities.length} fiche(s) dans votre registre</small></div></div>
@@ -738,7 +747,7 @@
       {#if demo && master.workCheckpoint}<section class="panel resume-checkpoint"><p class="eyebrow">Votre dernière étape enregistrée pour cette visite</p><button disabled={busy} onclick={resumeCheckpoint}>Reprendre là où j’ai enregistré<Icon name="arrow" /></button></section>{/if}
       <ReexaminationQueue bind:this={reexaminationGuard} workspace={master} {busy} onSave={async next=>{await saveNext(next);return master?.revision===next.revision;}} />
     {:else if panel === "dpo"}
-      {#key searchNavigation}<DpoCases bind:this={dpoGuard} onLeave={requestNavigation} workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} initialCaseId={dpoCaseId} initialSection={dpoSection} initialKind={securityActivityId ? "security" : "interest"} initialActivityId={securityActivityId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
+      {#key searchNavigation}<DpoCases bind:this={dpoGuard} onLeave={requestNavigation} workspace={master} {busy} onDocument={(id) => { documentId = id; panel = "documents"; }} initialCaseId={dpoCaseId} initialSection={dpoSection} initialKind={securityActivityId ? "security" : dpoKind} initialActivityId={securityActivityId} onActions={(id) => { actionActivityId = id; panel = "actions"; }} onEditing={(value) => piaEditing = value} onRegister={() => panel = "register"} onSave={async (next) => { await saveNext(next); return master?.revision === next.revision; }} />{/key}
     {:else if panel === "pia-sharing"}
       {#key master.revision}<PiaSharing workspace={$state.snapshot(master)} {busy} onDeliver={deliverPia} onDownload={downloadPia} />{/key}
     {:else if panel === "pia" || panel === "risks"}
@@ -746,6 +755,10 @@
     {:else if panel === "analysis" || panel === "flows"}
       {#key panel}<AnalysisOverview workspace={master} mode={panel} initialActivityId={demo ? master.impactAssessments[0]?.activityId : undefined} {busy} onRisks={(id) => { resetEditor(); piaActivityId = id; piaStep = 3; panel = "risks"; }} onPia={(id, step = 0) => { resetEditor(); piaActivityId = id; piaStep = step; lensPia = true; panel = "pia"; }} onSecurity={(id) => { resetEditor(); securityActivityId = id; panel = "dpo"; }} onRegister={() => panel = "register"} onEdit={(activity, section) => { editorSection = section; editorExample = undefined; editor = structuredClone($state.snapshot(activity)); }} />{/key}
     {:else if panel === "register"}
+      <nav class="dpo-register-shortcuts" aria-label="Autres registres du DPO">
+        <button class="secondary" disabled={busy} onclick={() => openDpoRegister("rights")}><Icon name="rights" size={28}/><span><strong>Registre d’exercice des droits</strong><small>Demandes reçues, réponses et suivi · {master.dpoCases.filter(c => c.kind === "rights").length} dossier(s)</small></span><Icon name="arrow" size={20}/></button>
+        <button class="secondary" disabled={busy} onclick={() => openDpoRegister("breach")}><Icon name="incident" size={28}/><span><strong>Registre des violations</strong><small>Faits, conséquences et mesures prises · {master.dpoCases.filter(c => c.kind === "breach").length} dossier(s)</small></span><Icon name="arrow" size={20}/></button>
+      </nav>
       {#if lastActivityId && master.activities.some((a) => a.id === lastActivityId)}<aside class="saved-next"><Icon name="check" size={24} /><div><h2>Votre fiche est enregistrée. Préparez la suite de l’entretien.</h2><p>Retrouvez les réponses qui manquent, les questions à poser et les documents à demander pour cette activité.</p><div class="actions"><button disabled={busy} onclick={() => { actionActivityId = lastActivityId; panel = "actions"; }}>Préparer les questions de cette activité<Icon name="arrow" /></button><button class="secondary" disabled={busy} onclick={() => { documentId = ""; documentActivityId = lastActivityId; panel = "documents"; }}>Référencer un document pour cette activité<Icon name="documents" /></button></div></div></aside>{/if}
       {#if master.activities.length === 0 || showStarters}<ActivityStarter busy={busy || master.activities.length >= 200} onStart={startActivity} />{/if}
       {#if master.activities.length > 0}<DocumentProgress activities={master.activities}/>{/if}
@@ -785,11 +798,11 @@
     <p class="business-entry"><Icon name="book" size={20} /><a href="/app/privacy/guide/#trames-metier" target="_blank" rel="noopener noreferrer">Préparer un entretien : {startingPoints.length} trames métier sourcées</a><span>RH · Commercial · Achats · Accueil · Sécurité · Prestations</span></p>
     <section class="use-cases" aria-label="Ce que vous pouvez faire avec RGPDESK">
       <article><Pictogram kind="register" /><p class="eyebrow">01 / Décrire</p><h2>Un registre structuré.</h2><p>Une fiche par activité : pourquoi ces données, pour quelles personnes, avec quels intervenants et quelles mesures.</p></article>
-      <article><Pictogram kind="analysis" /><p class="eyebrow">02 / Examiner</p><h2>Des choix argumentés.</h2><p>Des flux à l’AIPD : comparez les alternatives, examinez les risques pour les personnes et reliez vos sources aux mesures et à une revue motivée.</p></article>
-      <article><Pictogram kind="delivery" /><p class="eyebrow">03 / Communiquer</p><h2>Un dossier choisi et relu.</h2><p>Sélectionnez le destinataire et les activités, relisez le contenu, puis téléchargez un dossier HTML, CSV et JSON.</p></article>
+      <article><Pictogram kind="analysis" /><p class="eyebrow">02 / Examiner</p><h2>Des choix argumentés.</h2><p>Comparez les solutions possibles, examinez les risques pour les personnes et expliquez vos décisions en vous appuyant sur les documents qui les justifient.</p></article>
+      <article><Pictogram kind="delivery" /><p class="eyebrow">03 / Communiquer</p><h2>Un dossier choisi et relu.</h2><p>Choisissez les éléments du registre ou de l’AIPD à transmettre et leur destinataire. Vérifiez le contenu du dossier avant de le télécharger et de le remettre.</p></article>
     </section>
     <div class="onboarding-note"><div><h2>Votre travail reste sur votre appareil.</h2><p>Le coffre protège votre registre dans ce navigateur. Sans compte ni synchronisation, vous gardez la main sur vos sauvegardes chiffrées et vos partages.</p></div><a href="/app/privacy/guide/#2-votre-premier-registre-pas-à-pas" target="_blank" rel="noopener noreferrer">Me guider pour commencer <Icon name="arrow" size={17} /></a></div>
-    <aside class="cabinet-intro"><span class="cabinet-monogram" aria-hidden="true"><Icon name="organization" size={34} /></span><div><p class="eyebrow">Un organisme, un espace dédié</p><h2>Plusieurs clients. Des registres séparés.</h2><p>DPO externe : créez un coffre par client. Chaque organisation garde ses activités, ses analyses et sa sauvegarde. Ouvrez le coffre du client concerné pour reprendre sa mission.</p><p class="help">Les noms restent chiffrés jusqu’à l’ouverture. Notez le repère de chaque coffre avec sa phrase dans votre gestionnaire de mots de passe. La recherche porte uniquement sur le client ouvert.</p></div></aside>
+    <aside class="cabinet-intro"><span class="cabinet-monogram" aria-hidden="true"><Icon name="organization" size={34} /></span><div><p class="eyebrow">Un organisme, un espace dédié</p><h2>Plusieurs clients. Des registres séparés.</h2><p>DPO externe : créez un coffre par client. Chaque organisation garde ses activités, ses analyses et sa sauvegarde. Ouvrez le coffre du client concerné pour reprendre son dossier.</p><p class="help">Les noms restent chiffrés jusqu’à l’ouverture. Notez le repère de chaque coffre avec sa phrase dans votre gestionnaire de mots de passe. Quand vous cherchez une information, la recherche consulte seulement le dossier du client dont le coffre est ouvert, sans parcourir ceux des autres clients.</p></div></aside>
     <div class="grid-two vault-panels">
       <section class="panel vault-card vault-card-create" id="creer-registre"><header class="vault-card-heading"><span class="vault-card-icon"><Icon name="register" size={34} /></span><div><p class="eyebrow">01 / Ouvrir un espace</p><h2>Créer le registre de mon organisation</h2></div><span class="vault-card-stamp" aria-hidden="true">R.</span></header><p class="help">Choisissez la phrase qui chiffre votre espace de travail. Conservez-la : elle sera nécessaire pour rouvrir le coffre et restaurer une sauvegarde.</p>
         <form onsubmit={(event) => { event.preventDefault(); void create(); }}><fieldset disabled={!ready || busy || stale}>

@@ -41,6 +41,17 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await atelier.getByRole("button", { name: "Annuler le dernier retrait", exact: true }).click();
   await expect(atelier.getByLabel("R1 · Droits et libertés affectés", { exact: true })).toHaveValue(marker);
   await expect(atelier.getByLabel("Échelles, hypothèses et méthode d’appréciation", { exact: true })).toHaveValue("Méthode fictive modifiée après retrait");
+  await atelier.locator(".rights-explorer > summary").click();
+  await atelier.getByLabel("Chercher un droit ou un effet", { exact: true }).fill("bancaires");
+  await expect(atelier.getByLabel("Piste à examiner", { exact: true })).toHaveValue("");
+  await atelier.getByLabel("Piste à examiner", { exact: true }).selectOption("banking");
+  await expect(atelier.getByText(/Il ne consacre pas un secret bancaire absolu/)).toBeVisible();
+  await atelier.getByRole("button", { name: "Décrire un scénario pour ce droit", exact: true }).click();
+  await expect(atelier.getByLabel("Scénario 2 · Nom", { exact: true })).toBeFocused();
+  await expect(atelier.getByLabel("R2 · Droits et libertés affectés", { exact: true })).toHaveValue(/Droit à examiner : Données bancaires/);
+  await expect(atelier.getByLabel("R2 · Événement redouté", { exact: true })).toHaveValue("");
+  await expect(atelier.getByRole("combobox", { name: "R2 · Gravité initiale", exact: true })).toHaveValue("unknown");
+  await expect(atelier.getByLabel("R1 · Droits et libertés affectés", { exact: true })).toHaveValue(marker);
   await atelier.getByRole("button", { name: "Enregistrer l’étude", exact: true }).click();
   await expect(atelier.getByText("Étude enregistrée dans le coffre", { exact: true })).toBeVisible();
   await atelier.getByRole("button", { name: /Avis & décision/ }).click();
@@ -82,4 +93,8 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await atelier.getByLabel("Version du dossier").selectOption("0");
   await expect(atelier.locator(".pia-history").getByText("Vérifier les effets du projet avant toute décision.", { exact: true })).toBeVisible();
   await expect(atelier.getByRole("article").getByRole("heading", { name: "Recrutement fictif avant revue", exact: true })).toBeVisible();
+  const dossier = atelier.getByRole("article", { name: "Dossier AIPD en lecture" });
+  await dossier.getByRole("button", { name: /Les risques/ }).click();
+  await dossier.getByText("R2 · Données bancaires et vie privée · à examiner", { exact: true }).click();
+  await expect(dossier.getByText(/Droit à examiner : Données bancaires/)).toBeVisible();
 });

@@ -1,6 +1,6 @@
-import { flowSteps, knowledgeText, type Activity, type Knowledge, type Workspace } from "@rgpdesk/privacy-core";
+import { flowSteps, knowledge, knowledgeText, type Activity, type Knowledge, type Workspace } from "@rgpdesk/privacy-core";
 
-export type DeclarationKind = "data" | "people" | "purpose" | "recipients" | "period" | "trigger" | "deletion" | "endpoint" | "operation" | "channel" | "location" | "access";
+export type DeclarationKind = "data" | "people" | "purpose" | "recipients" | "period" | "trigger" | "deletion" | "endpoint" | "operation" | "channel" | "location" | "access" | "support";
 export interface ReusableDeclaration { text: string; sources: string[]; occurrences: number }
 export type DeclarationSource = (kind: DeclarationKind) => ReusableDeclaration[];
 // Only a context key is shared. Decrypted content belongs to one mounted editor.
@@ -29,6 +29,7 @@ export function reusableDeclarations(workspace: Workspace | null, draft: Activit
   for (const a of activities) {
     if (a.workspaceId !== workspace.id || a.status === "archived") continue;
     const source = `${a.title || "Ensemble à nommer"}${a.id === draft?.id ? " · saisie en cours" : ""}`;
+    if (kind === "support") for (const support of a.flowSupports ?? []) add(knowledge(support.name), `${source} · Support ${support.code}`);
     if (kind === "data") add(a.dataCategories, source + " · description générale");
     if (kind === "people") add(a.dataSubjects, source + " · description générale");
     if (kind === "recipients") add(a.recipients, source + " · destinataires");
@@ -66,4 +67,21 @@ export function filterDeclarations(entries: ReusableDeclaration[], query: string
   const words = normalize(query.slice(0, 160)).split(/\s+/u).filter(Boolean);
   const matches = entries.filter(item => item.text !== current.trim() && words.every(word => normalize([item.text, ...item.sources].join(" ")).includes(word)));
   return { total: matches.length, items: matches.slice(0, DECLARATION_LIMIT) };
+}
+
+/** Join explicitly chosen declarations without replacing the user's text or
+ * splitting a declaration into inferred roles, locations or permissions. */
+export function appendDeclarations(current: string, selected: readonly string[]): string | null {
+  let result = current;
+  for (const value of selected) {
+    const text = value.trim();
+    if (!text || containsDeclaration(result, text)) continue;
+    result += `${result && !result.endsWith("\n") ? "\n" : ""}${text}`;
+    if (result.length > 4000) return null;
+  }
+  return result.length <= 4000 ? result : null;
+}
+
+export function containsDeclaration(current: string, text: string): boolean {
+  return `\n${current.trim()}\n`.includes(`\n${text.trim()}\n`);
 }

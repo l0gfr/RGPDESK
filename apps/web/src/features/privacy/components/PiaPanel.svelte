@@ -1,5 +1,9 @@
 <script lang="ts">
   import DataGroupsTable from "./DataGroupsTable.svelte";
+  import PiaRegisterFacts from "./PiaRegisterFacts.svelte";
+  import NecessityReading from "./NecessityReading.svelte";
+  import RightsExplorer from "./RightsExplorer.svelte";
+  import { riskFromRightsPrompt } from "../rights-catalogue";
   import type { RecoveryForm } from "../persistence/recovery";
   import { activityFacts, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, resolvedFlows, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
@@ -35,6 +39,23 @@
   let beforeRemoval: ({ kind: "alternatives"; item: PiaAlternative; index: number } | { kind: "risks"; item: PiaRisk; index: number } | { kind: "measures"; item: PiaMeasure; index: number }) | null = $state(null);
   let draftHeading: HTMLHeadingElement | undefined = $state();
   let stepHeading: HTMLHeadingElement | undefined = $state();
+  let riskNames: (HTMLInputElement | undefined)[] = [];
+  const riskFieldOrder = ["rights", "people", "event", "impacts", "threats", "supports", "existingMeasures"] as const;
+  const riskHints: Partial<Record<keyof typeof PIA_RISK_FIELDS, string>> = {
+    rights: "Quel droit veut-on protéger ? Motivez son lien avec le traitement et les personnes. Une piste du catalogue reste à examiner.",
+    event: "Décrivez la situation redoutée : usage prévu du traitement, détournement ou incident. Une atteinte ne suppose pas une défaillance technique.",
+    impacts: "Que pourrait subir la personne ? Considérez notamment ses choix, sa participation à la vie sociale, sa situation matérielle et ses recours.",
+    threats: "Expliquez comment la situation pourrait se produire, y compris par une règle métier ou un accès autorisé. Distinguez faits, hypothèses et incertitudes.",
+  };
+  async function startRightsRisk(promptId: string) {
+    if (!draft || busy || draft.content.risks.length >= 30) return;
+    const risk = riskFromRightsPrompt(promptId, crypto.randomUUID());
+    if (!risk) return;
+    draft.content.risks.push(risk);
+    const index = draft.content.risks.length - 1;
+    await tick();
+    riskNames[index]?.focus();
+  }
   let selected = $derived(workspace.activities.find((a) => a.id === activityId) ?? workspace.activities[0]);
   let saved = $derived.by(() => draft ? workspace.impactAssessments.find((p) => p.id === draft!.id) : undefined);
   let dirty = $derived.by(() => draft ? !saved || (draft.scope ?? "aipd") !== (saved.scope ?? "aipd") || canonicalJson(draft.content) !== canonicalJson(saved.content) : false);
@@ -93,7 +114,7 @@
 </script>
 <section class="panel pia-workbench" aria-label={risksOnly ? "Analyse des risques" : "Atelier AIPD"}>
   {#if !draft}
-    {#if risksOnly}<div class="pia-cover"><div><p class="eyebrow">Article 32 · Protéger les personnes</p><h2>Les risques se travaillent dès le registre.</h2><p>Décrivez les scénarios, les conséquences pour les personnes et les mesures. Ce travail reste disponible même sans AIPD ; il sera repris dans celle-ci si vous l’engagez.</p></div><Emblem name="security"/></div>{:else}
+    {#if risksOnly}<div class="pia-cover"><div><p class="eyebrow">Droits et libertés · Protéger les personnes</p><h2>Les risques se travaillent dès le registre.</h2><p>Décrivez les scénarios, les conséquences pour les personnes et les mesures, dans l’usage prévu comme en cas d’incident. Ce travail reste disponible même sans AIPD ; il sera repris dans celle-ci si vous l’engagez.</p></div><Emblem name="security"/></div>{:else}
     <div class="pia-cover"><div><p class="eyebrow">L’atelier d’impact</p><h2>Une décision que l’on peut expliquer.</h2><p>Du traitement envisagé aux effets sur les personnes : confrontez vos hypothèses, comparez les options et gardez la trace des arbitrages.</p></div><span class="pia-cover-mark" aria-hidden="true"><Emblem name="impact" /></span></div>
     <ol class="pia-route">{#each [["Décrire", "Le traitement et ses usages"], ["Questionner", "Son utilité et les alternatives"], ["Protéger", "Les personnes et leurs droits"], ["Décider", "Avec des preuves et des réserves"]] as [title, text], index}<li><span>0{index + 1}</span><strong>{title}</strong><small>{text}</small></li>{/each}</ol>
     {/if}
@@ -121,7 +142,7 @@
       <label class="field">Position sur la réalisation de l’AIPD<select bind:value={draft.content.screeningDecision}><option value="unknown">Décision à instruire</option><option value="required">AIPD jugée requise</option><option value="voluntary">AIPD engagée volontairement</option><option value="not-required">AIPD jugée non requise, motif à conserver</option></select></label>
       <KnowledgeField label="Motivation de cette position" bind:value={draft.content.screeningReason} hint="Noms ou fonctions des personnes consultées, date, arguments, incertitudes et cas à réexaminer. Un critère seul peut déjà révéler un risque élevé." />
     {:else if step === 1}
-      <DataGroupsTable activity={context.activity} inventory={context}/>
+      <PiaRegisterFacts activity={context.activity} inventory={context}/>
       <p>Le registre et les flux ci-dessous forment le contexte actuel. Lors d’une revue, une copie de ce contexte est conservée avec la décision.</p>
       <dl class="analysis-summary"><div><dt>Personnes</dt><dd>{knowledgeText(activityFacts(context.activity, context).dataSubjects) || "À documenter dans le registre"}</dd></div><div><dt>Données</dt><dd>{knowledgeText(activityFacts(context.activity, context).dataCategories) || "À documenter dans le registre"}</dd></div></dl>
       {#if context.activity.flows.length}<FlowMap activity={context.activity} inventory={context} flows={resolvedFlows(context.activity, context)} />{:else}<p class="help">Aucun flux décrit. Retrouvez la cartographie dans la fiche de traitement.</p>{/if}
@@ -129,6 +150,8 @@
     {:else if step === 2}
       <p>Raisonnez par finalité et par opération. Examinez aussi les conséquences de ne pas traiter, la solidité des résultats attendus, les objections et les effets sur l’exercice des libertés.</p>
       <p class="help">Les faits restent liés au registre. Les appréciations de nécessité et de proportionnalité sont propres à cette étude ; elles ne sont pas déduites de l’analyse RGPD.</p>
+      <p class="help">L’<a href={PIA_SOURCES.law} target="_blank" rel="noopener noreferrer">article 35 §7 b)</a> prévoit cet examen dans l’AIPD. L’aide approfondie ci-dessous est facultative ; cela ne rend pas l’examen lui-même facultatif.</p>
+      <NecessityReading />
       <InventoryContext activities={[context.activity]} />
       {#if draft.content.necessity.operations.state === "documented" || draft.content.necessity.access.state === "documented"}<details><summary>Notes de périmètre conservées de cette étude</summary><p class="help">Ces notes appartiennent à l’étude. Les faits actuels sont ceux de l’inventaire ci-dessus.</p><KnowledgeField label="Opérations examinées dans l’AIPD" bind:value={draft.content.necessity.operations} /><KnowledgeField label="Accès examinés dans l’AIPD" bind:value={draft.content.necessity.access} /></details>{/if}
       <ReviewNotebook documents={context.documents} bind:notes={draft.content.necessity.notes} questions={PIA_NECESSITY_METHOD} guide="necessity" prefix="AIPD nécessité" />
@@ -139,10 +162,13 @@
     {:else if step === 3}
       <p>Décrivez ce qui pourrait arriver aux personnes, y compris lorsque le système fonctionne comme prévu : discrimination, exclusion, surveillance ou difficulté à exercer un droit. Examinez aussi l’accès illégitime, la modification non désirée et la disparition des données.</p>
       <p class="pia-sources"><a href={PIA_SOURCES.criteria + "#page=7"} target="_blank" rel="noopener noreferrer">G29, WP248 rév.01, droits et libertés</a> · <a href={PIA_SOURCES.models + "#page=20"} target="_blank" rel="noopener noreferrer">CNIL, modèles, appréciation des risques</a></p>
+      <RightsExplorer disabled={busy || draft.content.risks.length >= 30} onUse={(id) => void startRightsRisk(id)} />
+      {#if draft.content.risks.length >= 30}<p class="help">Cette étude contient déjà 30 scénarios. Complétez les scénarios existants avant d’en ajouter.</p>{/if}
+      <p class="help">Pour décrire les conséquences corporelles, matérielles ou morales, consultez aussi les <a href="https://www.cnil.fr/sites/default/files/atoms/files/cnil-pia-3-fr-basesdeconnaissances.pdf#page=8" target="_blank" rel="noopener noreferrer">bases de connaissances CNIL, février 2018, §1.4</a>. Leurs exemples ne déterminent pas le niveau de votre scénario.</p>
       <KnowledgeField label="Échelles, hypothèses et méthode d’appréciation" bind:value={draft.content.evaluationMethod} hint="Définissez pour votre contexte ce que signifient les quatre niveaux. Gravité : conséquences et capacité des personnes à y faire face. Vraisemblance : sources, possibilités d’action et faiblesses. Précisez les mesures prises en compte à chaque stade." />
       <div class="grid-two"><PiaRiskMap risks={draft.content.risks} /><PiaRiskMap risks={draft.content.risks} residual /></div>
-      {#each draft.content.risks as risk, index}<details class="pia-risk" open><summary>R{index + 1} · {risk.title}</summary><label class="field">Scénario {index + 1} · Nom<input maxlength="160" bind:value={risk.title} /></label>
-      {#each Object.entries(PIA_RISK_FIELDS).filter(([key]) => key !== "initialReason" && key !== "residualReason") as [key, label]}<KnowledgeField label={`R${index + 1} · ${label}`} bind:value={risk[key as keyof typeof PIA_RISK_FIELDS]} />{/each}
+      {#each draft.content.risks as risk, index}<details class="pia-risk" open><summary>R{index + 1} · {risk.title}</summary><label class="field">Scénario {index + 1} · Nom<input bind:this={riskNames[index]} maxlength="160" bind:value={risk.title} /></label>
+      {#each riskFieldOrder as key}<KnowledgeField label={`R${index + 1} · ${PIA_RISK_FIELDS[key]}`} bind:value={risk[key]} hint={riskHints[key]} />{/each}
       <div class="grid-two">{#each [["initialSeverity", "Gravité initiale"], ["initialLikelihood", "Vraisemblance initiale"], ["residualSeverity", "Gravité résiduelle"], ["residualLikelihood", "Vraisemblance résiduelle"]] as [key, label]}<label class="field">R{index + 1} · {label}<select bind:value={risk[key as "initialSeverity" | "initialLikelihood" | "residualSeverity" | "residualLikelihood"]}>{#each Object.entries(PIA_LEVELS) as [value, text]}<option {value}>{text}</option>{/each}</select></label>{/each}</div>
       <KnowledgeField label={`R${index + 1} · Justification initiale`} bind:value={risk.initialReason} /><KnowledgeField label={`R${index + 1} · Justification résiduelle`} bind:value={risk.residualReason} hint="Reliez toute réduction aux garanties réellement vérifiées. Aucun calcul ne rend un risque acceptable." />
       <label class="field">R{index + 1} · Le risque résiduel est-il élevé ?<select bind:value={risk.residualHigh}><option value="unknown">Appréciation à documenter</option><option value="yes">Oui, selon l’examen motivé</option><option value="no">Non, selon l’examen motivé</option></select></label>
