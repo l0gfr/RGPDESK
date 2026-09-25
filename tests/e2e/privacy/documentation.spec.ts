@@ -29,7 +29,8 @@ test("guide is readable without JavaScript and every local link and chapter reso
     await page.goto("/app/privacy/guide/");
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Menez l’entretien.");
     const chapters = page.getByRole("navigation", { name: "Sommaire du guide" }).getByRole("link");
-    await expect(chapters).toHaveCount(21);
+    await expect(chapters).toHaveCount(22);
+    await expect(chapters.filter({ hasText: "Partir des faits et des droits dans une analyse d’impact" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Suivre les réponses, réutiliser les preuves et comparer les dossiers" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Un inventaire, quatre lectures" })).toHaveCount(1);
     await expect(chapters.filter({ hasText: "Comprendre ce qu’un changement remet en question" })).toHaveCount(1);
