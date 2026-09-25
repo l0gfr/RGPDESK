@@ -1,14 +1,14 @@
 /* Public navigation and editorial pages: ink, pearl paper and engraved rules. */
-.rgpdesk .desk-header { position:relative; z-index:5; min-height:112px; padding-block:20px; gap:26px; border-bottom:1px solid #aebcc7; background:linear-gradient(110deg,#f5f4ef88,#e2e8ed60); }
+.rgpdesk .desk-header { position:relative; z-index:5; min-height:112px; padding-block:20px; gap:26px; border-bottom:1px solid #aebcc7; background:linear-gradient(110deg,#f9f6f0b3,#e1e9f273); }
 .rgpdesk .desk-header::after { content:""; position:absolute; bottom:-2px; left:clamp(20px,3.3vw,54px); width:48px; height:3px; background:#466175; }
 .rgpdesk .desk-header .wordmark { flex-shrink:0; display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
 .rgpdesk .desk-header .brand-logo { width:195px; height:auto; }
 .rgpdesk .desk-header .brand-suffix { color:#617281; font-size:.875rem; letter-spacing:.19em; max-width:none; padding-left:0; border:0; white-space:nowrap; }
-.rgpdesk .desk-nav { display:flex; align-items:stretch; gap:5px; }
-.rgpdesk .desk-nav a { display:flex; flex-direction:column; align-items:center; gap:7px; position:relative; padding:9px 15px; color:#485e6f; font-size:.875rem; font-weight:550; text-decoration:none; white-space:nowrap; border-radius:3px 10px 3px 3px; }
+.rgpdesk .desk-nav { display:flex; align-items:stretch; gap:5px; padding:5px; border:1px solid #b5c3d080; border-radius:12px; background:#f8faf85e; box-shadow:inset 0 1px #ffffffb3; }
+.rgpdesk .desk-nav a { display:flex; flex-direction:row; align-items:center; gap:10px; position:relative; padding:9px 14px; color:#485e6f; font-size:.875rem; font-weight:550; text-decoration:none; white-space:nowrap; border-radius:8px; }
 .rgpdesk .nav-glyph { display:inline-flex; align-items:center; justify-content:center; color:#526c80; }
-.rgpdesk .desk-nav a[aria-current="page"] { background:linear-gradient(130deg,#d7e0e7,#e5eaed); color:#213748; box-shadow:inset 0 0 0 1px #a8b8c34d; }
-.rgpdesk .desk-nav a[aria-current="page"]::after { content:""; width:14px; height:2px; background:#456578; position:absolute; bottom:0; }
+.rgpdesk .desk-nav a[aria-current="page"] { background:linear-gradient(130deg,#fafbf9,#e5ecf2); color:#213748; box-shadow:inset 0 0 0 1px #a8b8c37a,0 2px 5px #273c5312; }
+.rgpdesk .desk-nav a[aria-current="page"]::after { content:""; width:14px; height:2px; background:#456578; position:absolute; bottom:3px; left:calc(50% - 7px); }
 .rgpdesk .desk-nav a:hover { color:#1d3547; background:#dce4e9; }
 .rgpdesk .desk-nav a:hover .nav-glyph { color:#29475c; }
 .rgpdesk .desk-menu { display:none; border:0; margin:0; padding:0; }

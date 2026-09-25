@@ -2,6 +2,8 @@
   let { kind = "register" }: { kind?: "register" | "analysis" | "delivery" | "flows" | "book" } = $props();
 </script>
 <svg class="desk-pictogram" viewBox="0 0 104 96" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <circle cx="52" cy="45" r="40" fill="#e5ecf2" />
+  <path d="M12 45a40 40 0 0 1 40-40M52 85a40 40 0 0 0 40-40" stroke="#a4b8cb" stroke-width="1" />
   <path d="M8 76h88M16 84h72" stroke="#ced5e4" stroke-width="1.5" />
   {#if kind === "register" || kind === "book"}
     <path d="m36 14 48 7-8 58-48-7Z" fill="#b7cbd8" stroke="#273e50" stroke-width="2" />
