@@ -658,20 +658,19 @@
 .rgpdesk .site-nav a { font-weight:400; }
 .rgpdesk .welcome-hero { padding-block:44px 60px; gap:clamp(32px,5vw,74px); }
 .rgpdesk .welcome-hero > .intro { padding-left:28px; border-color:#c8cdd5; }
-.rgpdesk .welcome-hero > .intro::before { height:38px; top:1px; background:#566c89; }
+.rgpdesk .welcome-hero > .intro::before { height:38px; top:1px; background:var(--folio-copper); }
 .rgpdesk .welcome-hero > .intro::after { content:""; display:block; position:absolute; width:9px; height:9px; left:-5px; bottom:-5px; border:1px solid #8191a6; border-radius:50%; background:var(--canvas); }
 .rgpdesk .welcome-hero h1 { font-size:clamp(43px,4.7vw,68px); font-weight:500; letter-spacing:-.055em; line-height:1.04; }
 .rgpdesk .welcome-hero h1 em { color:#354b65; font-family:Georgia,"Times New Roman",serif; font-size:1.04em; font-weight:400; font-style:italic; letter-spacing:-.055em; margin-top:15px; }
-.rgpdesk .welcome-hero .eyebrow-line { height:1px; width:24px; background:#72829a; }
+.rgpdesk .welcome-hero .eyebrow-line { height:1px; width:24px; background:var(--folio-copper); }
 .rgpdesk .welcome-hero .intro > p:not(.eyebrow) { font-size:16px; max-width:48ch; line-height:1.85; }
 .rgpdesk .hero-actions .button:not(.secondary) { background:linear-gradient(110deg,#25374f,#3c5270); border-color:#33465f; }
 .rgpdesk .hero-actions .button:not(.secondary):hover { background:#1c2e45; }
 .rgpdesk .hero-actions .secondary { border-color:transparent; border-bottom-color:#aeb9c7; padding-inline:8px; }
 .rgpdesk .processing-atlas { overflow:visible; border:1px solid #566d89; border-radius:6px 30px 6px 6px; background:radial-gradient(ellipse at 100% 0,#6d86a266,transparent 70%),linear-gradient(155deg,#293e59,#17263c); box-shadow:6px 7px 0 -1px #edf0ef,6px 7px 0 0 #aebbc5,0 28px 60px -26px #20374b66; }
 .rgpdesk .processing-atlas::before { border-radius:inherit; background-image:radial-gradient(circle at 100% 0,transparent 0 27%,#dbe8fa12 27.1% 27.2%,transparent 27.3% 35%,#dbe8fa12 35.1% 35.2%,transparent 35.3% 43%,#dbe8fa12 43.1% 43.2%,transparent 43.3%),linear-gradient(110deg,#ffffff04,transparent 50%); }
-.rgpdesk .processing-atlas::after { content:""; position:absolute; right:26px; top:-8px; height:15px; width:57px; border:1px solid #8d9eaf; border-radius:2px; background:linear-gradient(110deg,#edf1f5,#d4dfeb); box-shadow:0 3px 6px #13233618; }
 .rgpdesk .processing-atlas figcaption { padding:20px 24px 17px; font-size:.875rem; border-bottom-color:#dbe5f031; }
-.rgpdesk .atlas-heading > span { color:#c1cede; font:italic 52px/1 Georgia,serif; letter-spacing:-.075em; }
+.rgpdesk .atlas-heading > span { color:var(--folio-copper-light); font:italic 52px/1 Georgia,serif; letter-spacing:-.075em; }
 .rgpdesk .atlas-heading h2 { font-size:21px; font-weight:400; color:#f8fafc; }
 .rgpdesk .atlas-heading p,.rgpdesk .atlas-caption-icon { color:#d0dae7; }
 .rgpdesk .atlas-node { border:1px solid #d2dce6; border-radius:4px 14px 4px 4px; background:#fafbf9; box-shadow:0 7px 16px #091a3026,inset 0 1px #fff; }
@@ -695,7 +694,7 @@
 /* Bound folio: inset content, engraved spine and pale index tabs. */
 .rgpdesk .desk-sidebar { position:relative; isolation:isolate; border:1px solid #42556e; border-radius:3px 24px 3px 3px; background:radial-gradient(ellipse at 95% 0,#657d9c70,transparent 44%),linear-gradient(165deg,#283e58,#182b43 75%); box-shadow:inset 4px 0 #152439,4px 4px 0 -1px var(--canvas),4px 4px 0 0 #bbc5d1; }
 .rgpdesk .desk-sidebar::before { content:""; position:absolute; pointer-events:none; left:8px; top:24px; bottom:24px; width:3px; border-inline:1px solid #98aec52b; }
-.rgpdesk .desk-sidebar::after { content:""; position:absolute; pointer-events:none; right:22px; top:-1px; width:43px; height:5px; background:linear-gradient(90deg,#b4c7dc 0 64%,#6d879f 64%); }
+.rgpdesk .desk-sidebar::after { content:""; position:absolute; pointer-events:none; right:22px; top:-1px; width:43px; height:5px; background:linear-gradient(90deg,var(--folio-copper-light) 0 64%,var(--folio-copper) 64%); }
 .rgpdesk .desk-sidebar .sidebar-caption { gap:13px; padding:5px 0 23px; margin:0 0 24px; border-color:#bdcddd36; align-items:flex-start; }
 .rgpdesk .desk-sidebar .sidebar-caption h2 { color:#f2f5fa; font:400 23px/1.2 Georgia,"Times New Roman",serif; letter-spacing:-.025em; margin:6px 0 7px; }
 .rgpdesk .desk-sidebar .sidebar-caption small { display:block; color:#c2d0df; font-size:.875rem; letter-spacing:.055em; line-height:1.7; }
