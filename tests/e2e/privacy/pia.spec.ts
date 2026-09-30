@@ -46,9 +46,11 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await expect(atelier.getByLabel("Piste à examiner", { exact: true })).toHaveValue("");
   await atelier.getByLabel("Piste à examiner", { exact: true }).selectOption("banking");
   await expect(atelier.getByText(/Il ne consacre pas un secret bancaire absolu/)).toBeVisible();
+  await atelier.getByRole("radio", { name: /^Exercice révélé/ }).check();
   await atelier.getByRole("button", { name: "Décrire un scénario pour ce droit", exact: true }).click();
   await expect(atelier.getByLabel("Scénario 2 · Nom", { exact: true })).toBeFocused();
   await expect(atelier.getByLabel("R2 · Droits et libertés affectés", { exact: true })).toHaveValue(/Droit à examiner : Données bancaires/);
+  await expect(atelier.getByLabel("R2 · Droits et libertés affectés", { exact: true })).toHaveValue(/Angle choisi, à examiner : Exercice révélé/);
   await expect(atelier.getByLabel("R2 · Événement redouté", { exact: true })).toHaveValue("");
   await expect(atelier.getByRole("combobox", { name: "R2 · Gravité initiale", exact: true })).toHaveValue("unknown");
   await expect(atelier.getByLabel("R1 · Droits et libertés affectés", { exact: true })).toHaveValue(marker);
@@ -97,4 +99,6 @@ test("AIPD stays local, saves a reasoned review, reopens and preserves its forme
   await dossier.getByRole("button", { name: /Les risques/ }).click();
   await dossier.getByText("R2 · Données bancaires et vie privée · à examiner", { exact: true }).click();
   await expect(dossier.getByText(/Droit à examiner : Données bancaires/)).toBeVisible();
+  await expect(dossier.getByText(/Angle choisi, à examiner : Exercice révélé/)).toBeVisible();
+  await expect(dossier.getByText(/Droit à examiner : Données bancaires/)).toContainText("#page=199");
 });

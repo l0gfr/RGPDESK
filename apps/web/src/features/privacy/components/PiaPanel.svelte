@@ -3,7 +3,9 @@
   import PiaRegisterFacts from "./PiaRegisterFacts.svelte";
   import NecessityReading from "./NecessityReading.svelte";
   import RightsExplorer from "./RightsExplorer.svelte";
+  import ConsequenceReading from "./ConsequenceReading.svelte";
   import { riskFromRightsPrompt } from "../rights-catalogue";
+  import type { RightsRiskAngle } from "../rights-risk-method";
   import type { RecoveryForm } from "../persistence/recovery";
   import { activityFacts, createImpactAssessment, createPiaAlternative, createPiaRisk, createPiaMeasure, putImpactAssessment, recordPiaReview, piaContext, piaReviewState, piaChanges, piaOpenPoints, resolvedFlows, knowledgeText, canonicalJson, type ImpactAssessment, type PiaAlternative, type PiaRisk, type PiaMeasure, type PiaReview, type Workspace } from "@rgpdesk/privacy-core";
   import { tick } from "svelte";
@@ -43,13 +45,13 @@
   const riskFieldOrder = ["rights", "people", "event", "impacts", "threats", "supports", "existingMeasures"] as const;
   const riskHints: Partial<Record<keyof typeof PIA_RISK_FIELDS, string>> = {
     rights: "Quel droit veut-on protéger ? Motivez son lien avec le traitement et les personnes. Une piste du catalogue reste à examiner.",
-    event: "Décrivez la situation redoutée : usage prévu du traitement, détournement ou incident. Une atteinte ne suppose pas une défaillance technique.",
+    event: "Décrivez ce qui empêche, réduit ou révèle l’exercice du droit : fonctionnement prévu du traitement, détournement ou incident. Une atteinte ne suppose pas une défaillance technique.",
     impacts: "Que pourrait subir la personne ? Considérez notamment ses choix, sa participation à la vie sociale, sa situation matérielle et ses recours.",
-    threats: "Expliquez comment la situation pourrait se produire, y compris par une règle métier ou un accès autorisé. Distinguez faits, hypothèses et incertitudes.",
+    threats: "Expliquez comment la situation pourrait se produire : opération, règle métier, acteur, accès prévu ou incident. Distinguez faits, hypothèses et incertitudes ; ne supposez pas nécessairement un attaquant.",
   };
-  async function startRightsRisk(promptId: string) {
+  async function startRightsRisk(promptId: string, angle?: RightsRiskAngle) {
     if (!draft || busy || draft.content.risks.length >= 30) return;
-    const risk = riskFromRightsPrompt(promptId, crypto.randomUUID());
+    const risk = riskFromRightsPrompt(promptId, crypto.randomUUID(), angle);
     if (!risk) return;
     draft.content.risks.push(risk);
     const index = draft.content.risks.length - 1;
@@ -158,13 +160,12 @@
       <div class="pia-alternatives"><p class="eyebrow">L’épreuve des alternatives</p><h4>La même finalité, un autre moyen.</h4><p>Comparez notamment une option sans traitement de données, si elle est envisageable. Une contrainte ou une efficacité supposée doit rester identifiable comme telle.</p>
       {#each draft.content.alternatives as alternative, index}<details class="subpanel" open><summary>Option {index + 1}</summary>{#each Object.entries(PIA_ALTERNATIVE_FIELDS) as [key, label]}<KnowledgeField label={`Option ${index + 1} · ${label}`} bind:value={alternative[key as keyof typeof PIA_ALTERNATIVE_FIELDS]} />{/each}<button class="secondary" onclick={() => removeDraftItem("alternatives", alternative.id)}>Retirer l’option {index + 1}</button></details>{/each}
       <button class="secondary" disabled={draft.content.alternatives.length >= 20} onclick={() => draft!.content.alternatives.push(createPiaAlternative(crypto.randomUUID()))}>Comparer une alternative</button></div>
-      <p class="pia-sources"><a href={PIA_SOURCES.course + "#page=74"} target="_blank" rel="noopener noreferrer">Éclairage méthodologique : Estelle De Marco, cours 2025-2026, p. 74–90</a>. Questions originales RGPDESK ; aucune validation de l’autrice n’est présumée.</p>
     {:else if step === 3}
       <p>Décrivez ce qui pourrait arriver aux personnes, y compris lorsque le système fonctionne comme prévu : discrimination, exclusion, surveillance ou difficulté à exercer un droit. Examinez aussi l’accès illégitime, la modification non désirée et la disparition des données.</p>
       <p class="pia-sources"><a href={PIA_SOURCES.criteria + "#page=7"} target="_blank" rel="noopener noreferrer">G29, WP248 rév.01, droits et libertés</a> · <a href={PIA_SOURCES.models + "#page=20"} target="_blank" rel="noopener noreferrer">CNIL, modèles, appréciation des risques</a></p>
-      <RightsExplorer disabled={busy || draft.content.risks.length >= 30} onUse={(id) => void startRightsRisk(id)} />
+      <RightsExplorer disabled={busy || draft.content.risks.length >= 30} onUse={(id, angle) => void startRightsRisk(id, angle)} />
       {#if draft.content.risks.length >= 30}<p class="help">Cette étude contient déjà 30 scénarios. Complétez les scénarios existants avant d’en ajouter.</p>{/if}
-      <p class="help">Pour décrire les conséquences corporelles, matérielles ou morales, consultez aussi les <a href="https://www.cnil.fr/sites/default/files/atoms/files/cnil-pia-3-fr-basesdeconnaissances.pdf#page=8" target="_blank" rel="noopener noreferrer">bases de connaissances CNIL, février 2018, §1.4</a>. Leurs exemples ne déterminent pas le niveau de votre scénario.</p>
+      <ConsequenceReading />
       <KnowledgeField label="Échelles, hypothèses et méthode d’appréciation" bind:value={draft.content.evaluationMethod} hint="Définissez pour votre contexte ce que signifient les quatre niveaux. Gravité : conséquences et capacité des personnes à y faire face. Vraisemblance : sources, possibilités d’action et faiblesses. Précisez les mesures prises en compte à chaque stade." />
       <div class="grid-two"><PiaRiskMap risks={draft.content.risks} /><PiaRiskMap risks={draft.content.risks} residual /></div>
       {#each draft.content.risks as risk, index}<details class="pia-risk" open><summary>R{index + 1} · {risk.title}</summary><label class="field">Scénario {index + 1} · Nom<input bind:this={riskNames[index]} maxlength="160" bind:value={risk.title} /></label>
@@ -177,7 +178,7 @@
     {:else if step === 4}
       <p>Pour chaque garantie, rendez visibles le responsable, l’échéance, les preuves et le contrôle de son efficacité. Une promesse de mise en œuvre ne réduit pas automatiquement un risque.</p>
       <p class="pia-sources"><a href={PIA_SOURCES.law} target="_blank" rel="noopener noreferrer">RGPD, articles 25, 32 et 35 §7 d)</a></p>
-      {#each draft.content.measures as measure, index}<details class="pia-risk" open><summary>Mesure {index + 1}</summary>{#each Object.entries(PIA_MEASURE_FIELDS) as [key, label]}<KnowledgeField label={`Mesure ${index + 1} · ${label}`} bind:value={measure[key as keyof typeof PIA_MEASURE_FIELDS]} />{/each}
+      {#each draft.content.measures as measure, index}<details class="pia-risk" open><summary>Mesure {index + 1}</summary>{#each Object.entries(PIA_MEASURE_FIELDS) as [key, label]}<KnowledgeField label={`Mesure ${index + 1} · ${label}`} bind:value={measure[key as keyof typeof PIA_MEASURE_FIELDS]} hint={key === "failure" ? "La garantie pourrait-elle être contournée, inapplicable ou indisponible ? Examinez aussi les risques qui pèseraient sur elle, puis ses effets sur les personnes." : undefined} />{/each}
       <div class="grid-two"><label class="field">Mesure {index + 1} · État<select bind:value={measure.status}><option value="planned">Prévue</option><option value="implemented">Mise en œuvre déclarée</option><option value="verified">Vérification déclarée</option></select></label><label class="field">Mesure {index + 1} · Échéance<input type="date" value={measure.due ?? ""} onchange={(e) => measure.due = e.currentTarget.value || null} /></label></div>
       <fieldset class="choices"><legend>Scénarios concernés par la mesure {index + 1}</legend>{#each draft.content.risks as risk, riskIndex}<label><input type="checkbox" checked={measure.riskIds.includes(risk.id)} onchange={(e) => measure.riskIds = e.currentTarget.checked ? [...measure.riskIds, risk.id] : measure.riskIds.filter((id) => id !== risk.id)} />R{riskIndex + 1} · {risk.title}</label>{/each}</fieldset><button class="secondary" onclick={() => removeDraftItem("measures", measure.id)}>Retirer la mesure {index + 1}</button></details>{/each}
       <button class="secondary" disabled={draft.content.measures.length >= 50} onclick={() => draft!.content.measures.push(createPiaMeasure(crypto.randomUUID()))}>Organiser une mesure</button>

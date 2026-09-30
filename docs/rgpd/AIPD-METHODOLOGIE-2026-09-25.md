@@ -2,6 +2,8 @@
 
 État du 25 septembre 2026. Cette note distingue les aides intégrées de la refonte encore à instruire avec l’autrice. Aucune validation d’Estelle De Marco n’est présumée.
 
+Complément du 30 septembre : le catalogue comporte désormais 22 pistes et une aide pour examiner disponibilité, intégrité et confidentialité de l’exercice d’une liberté. Les références, la distinction avec les conséquences CNIL et les limites figurent dans [la note sur les risques pour les libertés](RISQUES-LIBERTES-2026-09-30.md). L’état initial ci-dessous reste celui du 25 septembre.
+
 ## Parcours intégré
 
 1. **Principes généraux** : lecture des faits issus du registre, des sous-finalités, fondements déclarés et conservations. Les groupes D1/D2 et leurs flux restent reliés aux mêmes données. Les justifications et appréciations sont distinctes des faits : une fiche remplie ne produit pas une conclusion favorable.

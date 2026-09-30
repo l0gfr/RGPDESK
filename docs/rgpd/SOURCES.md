@@ -144,6 +144,8 @@ La relecture humaine reste à réaliser. L’application n’adopte pas les appr
 
 Complément du 25 septembre 2026 : le catalogue local `rights-catalogue.ts` référence les guides officiels du greffe de la CEDH avec édition, langue, paragraphes et pages pour chaque piste. [Index des guides](https://ks.echr.coe.int/fr/web/echr-ks/all-case-law-guides). Questions adaptées par RGPDESK ; ni exhaustivité, ni conclusion d’applicabilité, ni validation par la Cour. La correspondance avec le guide N&P et les limites de cette première intégration figurent dans [la note méthodologique du 25 septembre](AIPD-METHODOLOGIE-2026-09-25.md).
 
+Complément du 30 septembre 2026 : dix pistes ajoutées à partir du texte des guides article 8 (anglais) et article 10 (français), éditions du 28 février 2026. L’aide centrée sur l’exercice des libertés est attribuée au [support d’Estelle De Marco, v2.12, p. 199–201](https://www.inthemis.fr/ressources/supports/Esiea_Ethique_202601_v2.12.pdf#page=199) ; elle n’est pas attribuée à la CNIL ou à la CEDH. Les questions sur les conséquences sont adaptées de CNIL PIA, bases de connaissances, février 2018, §1.4 (PDF p. 8–9). Voir [provenance et portée de chaque ajout](RISQUES-LIBERTES-2026-09-30.md). Aucune nouvelle réponse ni conclusion n’est déduite dans les études historiques.
+
 Revue documentaire : 22 septembre 2026. Version de la trame : `aipd-2026-09-22.1`. Questions originales et références embarquées dans `pia-method.ts` ; aucune récupération distante lors de l’usage du coffre.
 
 | Source | Nature, version, portée | Usage dans RGPDESK |
