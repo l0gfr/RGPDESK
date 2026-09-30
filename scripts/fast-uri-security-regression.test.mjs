@@ -12,6 +12,15 @@ for (const [consumer, manifest] of [
   const ajvRequire = createRequire(consumerRequire.resolve("ajv/package.json"));
   const uri = ajvRequire("fast-uri");
 
+  test(`${consumer}: equivalent host spellings normalize consistently (GHSA-hrr3-gc8f-f4qj)`, () => {
+    // Reserved documentation names only; normalization never causes a request.
+    for (const input of ["//EXAMPLE.INVALID", "//%45XAMPLE.INVALID", "//example.invalid"]) {
+      assert.equal(uri.parse(input).host, "example.invalid");
+      assert.equal(uri.normalize(input), "//example.invalid");
+      assert.equal(uri.equal(input, "//example.invalid"), true);
+    }
+  });
+
   test(`${consumer}: malformed authority brackets fail closed (GHSA-58mr-gqgx-xq4g)`, () => {
     // Reserved documentation names only; these inputs never cause a request.
     for (const input of [
