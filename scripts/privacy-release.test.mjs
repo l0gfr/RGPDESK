@@ -4,6 +4,8 @@ import { mkdtempSync, mkdirSync, readFileSync, realpathSync, rmSync, symlinkSync
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
+import fs from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { collectPrivacyFiles, digest, privacyPages, readRegular, renderApache } from "./build-privacy-release.mjs";
 
 function fixture(t) {
@@ -55,6 +57,25 @@ test("symlink files and directory traversal are rejected", (t) => {
   assert.throws(() => readRegular(root, "../outside.js"));
   symlinkSync(join(root, "_astro"), join(root, "alias"));
   assert.throws(() => readRegular(root, "alias/shared.123.js"));
+});
+test("release input refuses a file replaced by a symlink immediately before opening", (t) => {
+  const { root, put } = fixture(t);
+  put("outside.js", "synthetic external content");
+  const target = join(root, "_astro/shared.123.js");
+  const originalOpen = fs.openSync;
+  let replaced = false;
+  t.mock.method(fs, "openSync", (path, ...args) => {
+    if (path === target && !replaced) {
+      replaced = true;
+      rmSync(target);
+      symlinkSync(join(root, "outside.js"), target);
+    }
+    return originalOpen(path, ...args);
+  });
+  syncBuiltinESMExports();
+  t.after(() => { t.mock.restoreAll(); syncBuiltinESMExports(); });
+  assert.throws(() => readRegular(root, "_astro/shared.123.js"));
+  assert.equal(replaced, true);
 });
 test("public entry pages must retain network and form policies", async (t) => {
   const { root, put } = fixture(t);

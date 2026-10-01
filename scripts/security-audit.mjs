@@ -1,5 +1,6 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { readBoundedRegularFile } from "./shared/bounded-file-read.mjs";
 
 const MINIMUM_SAFE_ASTRO_VERSION = [7, 1, 0];
 
@@ -185,12 +186,16 @@ function walk(dir) {
 
 function walkAll(dir) {
   if (!existsSync(dir)) return [];
+  const root = lstatSync(dir);
+  if (!root.isDirectory() || root.isSymbolicLink()) throw new Error("Artifact root must be a real non-symlink directory.");
   const files = [];
   for (const entry of readdirSync(dir)) {
     const path = join(dir, entry);
-    const stat = statSync(path);
+    const stat = lstatSync(path);
+    if (stat.isSymbolicLink()) throw new Error("Symlinks are forbidden in security-audit artifacts.");
     if (stat.isDirectory()) files.push(...walkAll(path));
-    else files.push(path);
+    else if (stat.isFile()) files.push(path);
+    else throw new Error("Non-regular security-audit artifact.");
   }
   return files;
 }
@@ -475,12 +480,17 @@ if (
   failed = true;
 }
 const deployManifestSource = readFileSync("scripts/create-deploy-manifest.mjs", "utf8");
+const boundedReadSource = readFileSync("scripts/shared/bounded-file-read.mjs", "utf8");
 const renderApacheSource = readFileSync("scripts/render-apache-conf.mjs", "utf8");
 const sharedCspSource = readFileSync("scripts/shared/csp.mjs", "utf8");
 if (
   !/entry\.isSymbolicLink\(\)/.test(deployManifestSource)
   || !/releaseComponents/.test(deployManifestSource)
-  || !/lstatSync\(path\)/.test(deployManifestSource)
+  || !/readBoundedRegularFile\(path, 32_000_000\)/.test(deployManifestSource)
+  || !/constants\.O_RDONLY \| constants\.O_NOFOLLOW \| constants\.O_NONBLOCK/.test(boundedReadSource)
+  || !/fstatSync\(descriptor, \{ bigint: true \}\)/.test(boundedReadSource)
+  || !/readSync\(descriptor,/.test(boundedReadSource)
+  || !/named\.dev !== before\.dev \|\| named\.ino !== before\.ino/.test(boundedReadSource)
   || !/forbiddenSecretPatterns/.test(deployManifestSource)
   || !/lstatSync\(distDir\)/.test(deployManifestSource)
   || !/distStat\.isSymbolicLink\(\)/.test(deployManifestSource)
@@ -555,7 +565,7 @@ if (
 for (const file of walkAll("artifacts")) {
   const normalizedFile = normalizePath(file);
   const suspiciousName = /private[-_.]?key|license-private/i.test(normalizedFile);
-  const content = statSync(file).size <= 1_000_000 ? readFileSync(file) : Buffer.alloc(0);
+  const content = readBoundedRegularFile(file, 1_000_000, { skipOversized: true }) ?? Buffer.alloc(0);
   if (suspiciousName || content.includes(Buffer.from("PRIVATE KEY"))) {
     console.error(`SECURITY AUDIT FAIL: private key material is forbidden under artifacts/: ${normalizedFile}`);
     failed = true;

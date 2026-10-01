@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { lstatSync, mkdirSync, mkdtempSync, realpathSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 import ts from "typescript";
 import JSZip from "jszip";
 import { extractBuildCsp } from "./shared/csp.mjs";
+import { readBoundedRegularFile } from "./shared/bounded-file-read.mjs";
 
 export const privacyPages = [
   "app/privacy/index.html",
@@ -28,14 +29,13 @@ export function readRegular(root, name) {
   let path = resolve(root);
   assert.ok(lstatSync(path).isDirectory() && !lstatSync(path).isSymbolicLink(), "Unsafe input root");
   const parts = name.split("/");
-  for (const [index, part] of parts.entries()) {
+  for (const part of parts.slice(0, -1)) {
     path = join(path, part);
     const stat = lstatSync(path);
     assert.ok(!stat.isSymbolicLink(), "Symlink in release input");
-    assert.ok(index === parts.length - 1 ? stat.isFile() : stat.isDirectory(), "Non-regular release input");
+    assert.ok(stat.isDirectory(), "Non-regular release input");
   }
-  assert.ok(lstatSync(path).size <= 5_000_000, "Oversized release input");
-  return readFileSync(path);
+  return readBoundedRegularFile(join(path, parts.at(-1)), 5_000_000);
 }
 
 function assertLiteralImports(path, content) {

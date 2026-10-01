@@ -1,9 +1,10 @@
 import { createHash } from "node:crypto";
-import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, lstatSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { execFileSync } from "node:child_process";
 import { TextDecoder } from "node:util";
 import JSZip from "jszip";
+import { readBoundedRegularFile } from "./shared/bounded-file-read.mjs";
 
 const distDir = process.argv[2] ?? "apps/web/dist";
 const outputPath = process.argv[3] ?? "artifacts/artifact-manifest.json";
@@ -260,10 +261,7 @@ for (const path of walkFiles(distDir).filter((candidate) => candidate !== output
   if (compressed && !allowedPublicArchives.has(publicPath)) {
     throw new Error(`Compressed public deployment file is forbidden: ${publicPath}`);
   }
-  if (compressed && lstatSync(path).size > 2_000_000) {
-    throw new Error(`Allowlisted public archive is too large: ${publicPath}`);
-  }
-  const content = readFileSync(path);
+  const content = readBoundedRegularFile(path, compressed ? 2_000_000 : 32_000_000);
   if (compressed) await assertAllowedArchive(publicPath, content);
   else assertNoEmbeddedSecrets(publicPath, content);
 
@@ -277,9 +275,7 @@ files.sort((left, right) => left.path.localeCompare(right.path));
 
 const releaseComponents = (publicOnly ? [] : releaseComponentPaths).map((path) => {
   if (!existsSync(path)) throw new Error(`Required release component is missing: ${path}`);
-  const stat = lstatSync(path);
-  if (stat.isSymbolicLink() || !stat.isFile()) throw new Error(`Release component must be a regular non-symlink file: ${path}`);
-  const content = readFileSync(path);
+  const content = readBoundedRegularFile(path, 32_000_000);
   assertNoEmbeddedSecrets(path, content);
   return { path, size: content.byteLength, sha256: sha256(content) };
 });

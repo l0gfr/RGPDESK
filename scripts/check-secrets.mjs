@@ -1,10 +1,9 @@
 import { execFileSync } from "node:child_process";
-import { closeSync, lstatSync, openSync, readFileSync, readSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readBoundedRegularFile } from "./shared/bounded-file-read.mjs";
 
 const MAX_SCANNED_FILE_BYTES = 10 * 1024 * 1024;
-const BINARY_PREFIX_BYTES = 8 * 1024;
 
 const secretRules = [
   { label: "private key PEM", pattern: /-----BEGIN (?:RSA |EC |OPENSSH |ENCRYPTED )?PRIVATE KEY-----/g },
@@ -37,17 +36,6 @@ export function isBinaryPrefix(content) {
   return content.includes(0);
 }
 
-function fileHasBinaryPrefix(absolutePath, size) {
-  const descriptor = openSync(absolutePath, "r");
-  try {
-    const prefix = Buffer.allocUnsafe(Math.min(size, BINARY_PREFIX_BYTES));
-    const bytesRead = readSync(descriptor, prefix, 0, prefix.length, 0);
-    return isBinaryPrefix(prefix.subarray(0, bytesRead));
-  } finally {
-    closeSync(descriptor);
-  }
-}
-
 export function scanVersionableFiles(repositoryRoot = process.cwd()) {
   const listed = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard", "-z"], {
     cwd: repositoryRoot,
@@ -63,14 +51,15 @@ export function scanVersionableFiles(repositoryRoot = process.cwd()) {
   for (const path of paths) {
     if (deleted.has(path)) continue;
     const absolutePath = resolve(repositoryRoot, path);
-    const metadata = lstatSync(absolutePath);
-    if (!metadata.isFile() || metadata.isSymbolicLink()) continue;
-    if (fileHasBinaryPrefix(absolutePath, metadata.size)) continue;
-    if (metadata.size > MAX_SCANNED_FILE_BYTES) {
+    let content;
+    try {
+      content = readBoundedRegularFile(absolutePath, MAX_SCANNED_FILE_BYTES, { skipBinary: true, skipNonRegular: true });
+    } catch (error) {
+      if (error.code !== "FILE_READ_LIMIT") throw error;
       findings.push({ file: path, label: "versionable file exceeds the secret-scan size limit" });
       continue;
     }
-    const content = readFileSync(absolutePath);
+    if (content === null) continue;
     for (const label of scanTextForSecrets(content.toString("utf8"))) {
       findings.push({ file: path, label });
     }
