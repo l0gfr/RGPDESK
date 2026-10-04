@@ -3119,7 +3119,7 @@ THE SOFTWARE.
 
 ## Packages
 
-- http-cache-semantics@4.2.0 — BSD-2-Clause — Kornel Lesiński <npms2@geekhood.net> (https://kornel.ski/) — git+https://github.com/kornelski/http-cache-semantics.git
+- http-cache-semantics@4.3.0 — BSD-2-Clause — Kornel Lesiński <kornel@geekhood.net> (https://kornel.ski/) — git+https://github.com/kornelski/http-cache-semantics.git
 
 ```text
 --- LICENSE ---

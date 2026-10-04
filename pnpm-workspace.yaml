@@ -3,6 +3,9 @@ packages:
   - "packages/*"
 
 minimumReleaseAge: 1440
+# Exact official tarball reviewed for the security update authorized on 2026-10-04.
+minimumReleaseAgeExclude:
+  - "http-cache-semantics@4.3.0"
 blockExoticSubdeps: true
 packageManagerStrictVersion: true
 strictDepBuilds: true
@@ -12,6 +15,7 @@ overrides:
   "@xmldom/xmldom": "0.9.12"
   devalue: "5.9.3"
   fast-uri: "3.1.8"
+  http-cache-semantics: "4.3.0"
   js-yaml: "4.3.2"
   postcss: "8.5.26"
   sharp: "0.35.4"
