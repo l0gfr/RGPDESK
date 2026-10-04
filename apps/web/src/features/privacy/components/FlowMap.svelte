@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { knowledgeText, type Activity, type Workspace, type DataFlow } from "@rgpdesk/privacy-core";
+  import { connectionText, knowledgeText, type Activity, type Workspace, type DataFlow } from "@rgpdesk/privacy-core";
   import JourneyMap from "./JourneyMap.svelte";
   import Icon from "./Icon.svelte";
   let { flows, onEdit, activity, inventory }: { flows: DataFlow[]; onEdit?: (id: string) => void; activity?:Activity; inventory?:Pick<Workspace,"parties"|"systems"> } = $props();
@@ -9,6 +9,7 @@
     {@const original=activity?.flows.find(f=>f.id===flow.id)}
     <li class="flow-route">
       <div class="flow-route-bar"><span>{original?.journey ? `PARCOURS ${original.journey.reference}` : `FLUX ${String(index + 1).padStart(2, "0")}`}</span>{#if onEdit}<button type="button" class="text-button" onclick={() => onEdit?.(flow.id)}>Modifier {original?.journey ? `le parcours ${original.journey.reference}` : `le flux ${index + 1}`}</button>{:else}<span>Déclaration de votre organisation</span>{/if}</div>
+      {#if original?.sequence && activity}<dl class="flow-facts"><div><dt>Avant</dt><dd>{connectionText(activity,original.sequence.previous,"previous")}</dd></div><div><dt>Après</dt><dd>{connectionText(activity,original.sequence.next,"next")}</dd></div></dl>{/if}
       {#if original?.journey && activity && inventory}<JourneyMap {activity} flow={original} {inventory}/>{:else}
       <div class="flow-route-nodes">
         <div class="flow-endpoint"><span class="flow-node-icon"><Icon name="systems" size={25} /></span><small>ORIGINE</small><strong>{knowledgeText(flow.source) || "Origine à préciser"}</strong></div>

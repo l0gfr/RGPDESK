@@ -57,7 +57,9 @@ Le 22 septembre 2026, le lancement global demandé par l’ancienne procédure a
 
 ### Retour arrière et formats des coffres
 
-La release précédente et son vhost permettent un retour arrière du site par l’opérateur après contrôle Apache. Cela ne restaure pas les coffres des visiteurs. Un enregistrement fait par la nouvelle application emploie `rgpd-master-v8`, qu’une application ancienne limitée à v7 ne sait pas lire. En cas de retour arrière du site, ne pas supprimer de coffre : conserver les sauvegardes, rétablir une version compatible v8 ou examiner une sauvegarde antérieure dans un profil distinct. Aucun script de déploiement ne modifie IndexedDB des visiteurs.
+La release précédente et son vhost permettent un retour arrière du site par l’opérateur après contrôle Apache. Cela ne restaure pas les coffres des visiteurs. La version courante emploie `rgpd-master-v12` et écrit les brouillons chiffrés au format `rgpd-draft-v5`. Une application limitée à master-v11 ou draft-v4 ne sait pas lire ces nouvelles écritures. En cas de retour arrière du site, ne pas supprimer de coffre : conserver les sauvegardes, rétablir une version compatible v12/v5 ou examiner une sauvegarde antérieure dans un profil distinct. Aucun script de déploiement ne modifie IndexedDB des visiteurs.
+
+L’ouverture d’un ancien coffre migre son contenu uniquement en mémoire. Son enregistrement explicite produit le nouveau format ; la récupération d’une saisie emploie le nouveau format de brouillon. Les schémas et validateurs historiques sont conservés, ainsi que les contrôles de contexte chiffré, de révision et d’époque. Les formats publics de partage et l’enveloppe chiffrée restent inchangés. Voir `FLUX-VARIANTES-INTERMEDIAIRES-2026-10-04.md` pour le périmètre et la qualification locale.
 
 
 ## Références documentaires v7

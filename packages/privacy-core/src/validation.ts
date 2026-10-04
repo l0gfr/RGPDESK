@@ -3,7 +3,7 @@ import { assertWorkbench } from "./workbench";
 import { assertLinkedFacts } from "./linked-facts";
 import { assertDpoWorkspace } from "./dpo";
 import { assertPiaWorkspace } from "./pia";
-import validate from "./generated/master-v11-validator.js";
+import validate from "./generated/master-v12-validator.js";
 import { assertCorrectiveActions } from "./corrective-actions";
 import { ANALYSIS_QUESTIONS, CONTRACT_QUESTIONS, type ReviewNote, type Workspace } from "./model";
 

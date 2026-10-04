@@ -76,6 +76,6 @@ describe('evidence-backed corrective actions',()=>{
  });
  it('sorts explicit priorities and dates; upgrades v10 without touching source data',()=>{
   const {w,g}=fixture(),p=plan(w,`group/${g.id}/data`,k('AFTER_DATA'));const items=[{...p.actions[0]!,id:id(),corrective:{...p.actions[0]!.corrective!,priority:'later' as const}},p.actions[0]!];expect(sortCorrectiveActions(items)[0]!.id).toBe(p.actions[0]!.id);
-  const old={...w,format:'rgpd-master-v10'},before=JSON.stringify(old);expect(migrateWorkspace(old)).toEqual({...old,format:'rgpd-master-v11'});expect(JSON.stringify(old)).toBe(before);expect(()=>migrateWorkspace({...p,format:'rgpd-master-v10'})).toThrow();
+  const old={...w,format:'rgpd-master-v10'},before=JSON.stringify(old);expect(migrateWorkspace(old)).toEqual({...old,format:'rgpd-master-v12'});expect(JSON.stringify(old)).toBe(before);expect(()=>migrateWorkspace({...p,format:'rgpd-master-v10'})).toThrow();
  });
 });

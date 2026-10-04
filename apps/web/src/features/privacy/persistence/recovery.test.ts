@@ -3,6 +3,7 @@ import { createWorkspace,createActivity, createDpoCase, createImpactAssessment }
 import { sealRecovery,openRecovery,openMaster,sealMaster,contextFor } from './crypto';
 import { encryptLocalPayloadBatch } from '../../../lib/local-encryption';
 import { parseRecovery,type RecoveryDraft } from './recovery';
+import { createDataFlow, setFlowConnection, knowledge } from '@rgpdesk/privacy-core';
 const phrase='Fictional recovery phrase 2026 correct';
 const master=()=>createWorkspace(crypto.randomUUID(),'Fictif','2026-09-24T10:00:00.000Z');
 const fixture=():RecoveryDraft=>{const w=master(),a=createActivity(w.id,crypto.randomUUID(),'controller');a.title='RECOVERY_CANARY';return {format:'rgpd-draft-v1',workspaceId:w.id,revision:1,id:crypto.randomUUID(),sequence:1,updatedAt:'2026-09-24T10:00:00.000Z',form:{kind:'activity',draft:a,documentIds:[],section:'record',step:0}};};
@@ -13,6 +14,17 @@ describe('separate encrypted recovery copies',()=>{
  it('validates plaintext even when correctly authenticated',async()=>{const d=fixture();const [e]=await encryptLocalPayloadBatch([{aad:contextFor(d.workspaceId,1,`draft:${d.id}:1`),value:{...d,form:{kind:'activity',draft:{bad:true}}}}],phrase);await expect(openRecovery(e,phrase,d.workspaceId,1,d.id,1)).rejects.toThrow();});
  it('refuses a draft from another workspace and overlong or unknown form values',()=>{const d=fixture();if(d.form.kind!=='activity')throw new Error();d.form.draft.workspaceId=crypto.randomUUID();expect(()=>parseRecovery(d)).toThrow();expect(()=>parseRecovery({...fixture(),form:{kind:'password',value:phrase}})).toThrow();});
  it('preserves pending DPO and AIPD text, never confirmation state',()=>{const d=fixture(),w=master(),a=createActivity(w.id,crypto.randomUUID(),'controller');d.workspaceId=w.id;d.form={kind:'dpo',draft:createDpoCase(w.id,crypto.randomUUID(),'breach'),step:'review',reviewAuthor:'Auteur fictif',reviewReason:'À relire',eventAt:'date en cours',eventAuthor:'',eventText:'',eventEvidence:'',outcome:'rework'};expect(parseRecovery(d)).toEqual(d);d.form={kind:'pia',draft:createImpactAssessment(w.id,a,crypto.randomUUID()),step:5,author:'Auteur fictif',reason:'À relire',outcome:'rework'};expect(parseRecovery(d)).toEqual(d);expect(()=>parseRecovery({...d,form:{...d.form,acknowledged:true}})).toThrow();});
+});
+
+it('v5 protects reciprocal flow links and retains strict v4 parsing',async()=>{
+ const d=fixture();d.format='rgpd-draft-v5';if(d.form.kind!=='activity')throw Error('fixture');
+ const a=d.form.draft;a.flows=[createDataFlow(crypto.randomUUID()),createDataFlow(crypto.randomUUID())];a.flows[0]!.operation=knowledge('PRIVATE_FLOW_DRAFT_CANARY');
+ d.form.draft=setFlowConnection(a,a.flows[0]!.id,'next',{state:'linked',flowIds:[a.flows[1]!.id]});
+ expect(parseRecovery(d)).toEqual(d);expect(()=>parseRecovery({...d,format:'rgpd-draft-v4'})).toThrow('INVALID');
+ const encrypted=await sealRecovery(d,phrase);expect(JSON.stringify(encrypted)).not.toContain('PRIVATE_FLOW_DRAFT');
+ expect(await openRecovery(encrypted,phrase,d.workspaceId,d.revision,d.id,d.sequence)).toEqual(d);
+ const legacy=fixture();legacy.format='rgpd-draft-v4';expect(parseRecovery(legacy)).toEqual(legacy);
+ const oldEncrypted=await sealRecovery(legacy,phrase);expect(await openRecovery(oldEncrypted,phrase,legacy.workspaceId,legacy.revision,legacy.id,legacy.sequence)).toEqual(legacy);
 });
 
 it('v2 recovery accepts data groups without weakening v1 and protects them with real WebCrypto',async()=>{

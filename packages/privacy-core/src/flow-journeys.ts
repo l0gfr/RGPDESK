@@ -1,6 +1,7 @@
 import { knowledge, knowledgeText, unknown, type Activity, type DataFlow, type DataGroup, type FlowStep, type StepReference, type Knowledge, type Workspace } from "./model";
 import { flowSubjects } from "./data-groups";
 import { PrivacyError } from "./validation";
+import { assertFlowConnections, flowOperationText } from "./flow-connections";
 type Inventory = Pick<Workspace, "parties" | "systems">;
 export const createFlowStep = (id: string): FlowStep => ({ id, source: unknown(), destination: unknown(), operation: unknown(), channel: unknown(), location: unknown(), access: unknown(), when: unknown(), supportIds: [] });
 export const flowSteps = (f: DataFlow): (FlowStep | DataFlow)[] => f.journey?.steps ?? [f];
@@ -37,12 +38,13 @@ export function resolveJourney(a: Activity, f: DataFlow, inventory: Inventory): 
   const steps=journeySteps(a,f,inventory), j=f.journey!;
   const lines=(key:"channel"|"location"|"access")=>knowledge(steps.map((s,i)=>`${i+1}. ${s[key]}${key==="channel" ? ` · ${s.supports}` : ""}`).join("\n"));
   return {id:f.id,source:knowledge(steps[0]?.source ?? ""),destination:knowledge(steps.at(-1)?.destination ?? ""),
-    operation:knowledge(`Parcours ${j.reference} · ${journeyPurposeText(a,f)}\n`+steps.map((s,i)=>`${i+1}. ${s.operation}${s.when ? ` · Quand / condition : ${s.when}` : ""}\n${s.source} → ${s.destination}`).join("\n")),
+    operation:flowOperationText(a,f,knowledge(`Parcours ${j.reference} · ${journeyPurposeText(a,f)}\n`+steps.map((s,i)=>`${i+1}. ${s.operation}${s.when ? ` · Quand / condition : ${s.when}` : ""}\n${s.source} → ${s.destination}`).join("\n"))),
     data:knowledge((a.dataGroups ?? []).filter(g=>f.dataGroupIds?.includes(g.id)).map(g=>`D${g.code} : ${knowledgeText(g.data)||"À documenter"}`).join(" ; ")),
     channel:lines("channel"),location:lines("location"),access:lines("access")};
 }
 /** Called for current and frozen contexts. Existing flat flows remain valid. */
 export function assertJourneys(a: Activity): void {
+  assertFlowConnections(a);
   const supports=a.flowSupports ?? [], supportIds=new Set(supports.map(s=>s.id));
   const ids=new Set([a.id,a.workspaceId,...a.flows.map(f=>f.id),...(a.dataGroups ?? []).map(g=>g.id),...(a.role==="controller" ? a.purposes.map(p=>p.id) : [])]);
   const unique=(id:string)=>{if(ids.has(id))throw new PrivacyError("INVALID");ids.add(id);};

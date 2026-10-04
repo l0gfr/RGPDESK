@@ -35,11 +35,11 @@
   onMount(() => { void tick().then(() => { if (draftHeading?.isConnected) { draftHeading.focus({ preventScroll: true }); draftHeading.scrollIntoView({ block: "start" }); } }); });
   let sectionTitle: HTMLHeadingElement | undefined = $state();
   let form: HTMLFormElement | undefined = $state();
-  const steps = ["L’ensemble", "Les objectifs", "Les données", "La protection", "Le fondement", "La relecture"];
+  const steps = ["L’ensemble", "Les objectifs", "Les flux", "La protection", "Le fondement", "La relecture"];
   const introductions = [
     "Donnez un nom concret à l’activité que vous décrivez, puis avancez avec les informations disponibles.",
     "Décrivez la finalité principale dans le nom de l’ensemble, puis ses sous-finalités ici. Le fondement juridique sera examiné après les données et leurs flux.",
-    "Suivez les informations : de qui parle-t-on, que recueille-t-on et qui peut les consulter ?",
+    "Déclarez les groupes de données, puis leurs flux : opérations, supports, lieux de stockage et personnes autorisées. Reliez les flux dans l’ordre que vous connaissez.",
     "Appuyez-vous sur l’équipe technique et les prestataires pour décrire les accès, les pays et les mesures réellement en place.",
     "À partir des données, destinataires, durées et garanties décrits, examinez le fondement juridique de chaque sous-finalité.",
     "Relisez votre description. Enregistrez même si certaines réponses manquent : vous retrouverez les questions ouvertes dans Actions & décisions.",

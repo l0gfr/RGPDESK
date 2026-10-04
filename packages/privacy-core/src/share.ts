@@ -1,6 +1,7 @@
 import { activityFacts, purposeRetention } from "./data-groups";
 import { documentaryActionLabel } from "./workbench";
 import { resolveFlow } from "./linked-facts";
+import { flowOperationText } from "./flow-connections";
 import { CATALOG_VERSION } from "./catalog";
 import { unknown, type Knowledge, type ShareProfile, type Workspace, type Purpose } from "./model";
 import { assertWorkspace, PrivacyError } from "./validation";
@@ -60,8 +61,10 @@ export function projectShare(master: Workspace, options: ShareOptions, id: () =>
       const flow = activity?.flows.find((f) => f.id === fid);
       if (!activity || !flow) throw new PrivacyError("INVALID");
       const f = resolveFlow(flow, activity, master);
+      const operation = flow.journey ? f.operation : flowOperationText(activity, flow, f.operation);
+      if ([f.source, f.destination, operation, f.data, f.channel, f.location, f.access].some(value => value.state === "documented" && value.value.length > 4000)) throw new PrivacyError("LIMIT");
       // Explicit projection: references, annotations and stable IDs never cross this boundary.
-      return {id:id(), activityId:activityMap.get(activity.id)!, source:k(f.source), destination:k(f.destination), operation:k(f.operation), data:k(f.data), channel:k(f.channel), location:k(f.location), access:k(f.access)};
+      return {id:id(), activityId:activityMap.get(activity.id)!, source:k(f.source), destination:k(f.destination), operation:k(operation), data:k(f.data), channel:k(f.channel), location:k(f.location), access:k(f.access)};
     });
     const publicActivity = (aid: string | null) => { if (aid && !activityMap.has(aid)) throw new PrivacyError("INVALID"); return aid ? activityMap.get(aid)! : null; };
     dto.positions = decisionIds.map((did) => {

@@ -1,4 +1,5 @@
 import { resolvedFlows } from "./linked-facts";
+import { connectionText, flowLabel } from "./flow-connections";
 import type { Knowledge, ReviewNote } from "./model";
 import type { PiaContent, PiaContext } from "./pia-model";
 import type { DpoContent } from "./dpo-model";
@@ -66,6 +67,10 @@ function contextFacts(contexts: PiaContext[], organization: PiaContext["organiza
       f.add(`${key}/guarantees`, title, "Garanties du groupe", "security", g.guarantees);
     }
     for (const flow of a.flows) if (flow.dataGroupIds?.length) f.add(`${base}/flows/${flow.id}/groups`, subject, "Groupes liés au flux", "flow", [...flow.dataGroupIds].sort());
+    for (const flow of a.flows) if (flow.sequence) for (const direction of ["previous", "next"] as const) {
+      const connection = flow.sequence[direction];
+      f.add(`${base}/flows/${flow.id}/${direction}`, `${subject} · ${flowLabel(a, flow.id)}`, direction === "previous" ? "Position précédente" : "Position suivante", "flow", connection?.state === "linked" ? [connection.state, ...connection.flowIds.slice().sort()] : connection?.state ?? "unknown", connectionText(a, connection, direction));
+    }
     f.add(`${base}/dataSubjects`, subject, "Personnes concernées", "people", a.dataSubjects);
     f.add(`${base}/dataCategories`, subject, "Catégories de données", "people", a.dataCategories);
     f.add(`${base}/recipients`, subject, "Destinataires", "flow", a.recipients);

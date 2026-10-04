@@ -61,7 +61,7 @@ Prévoyez un navigateur à jour, une phrase secrète longue et unique, et un emp
 2. Lisez l’avertissement sur la perte de la phrase et la sauvegarde. Cochez votre accord, puis **Créer le coffre chiffré**. Aucun compte ni adresse électronique ne sont demandés. Le coffre est l’espace chiffré qui contient votre travail.
 3. **Ma mission** vous présente le fil du travail. Commencez par **Décrire l’organisation** pour noter le périmètre et les contacts, ou par **Choisir ma première activité** si vous connaissez déjà ce cadre.
 4. Choisissez un point de départ dans **Registre** : candidatures, personnel, clients, adhésions, contact, prestation, prospection, fournisseurs, support, accès aux locaux, vidéosurveillance ou journalisation. Le filtre permet de retrouver une trame par activité ou équipe. Lisez les questions de préparation, puis choisissez explicitement le rôle de votre organisme. Seul le titre de départ est proposé dans la fiche ; aucune réponse juridique n’est ajoutée.
-5. Parcourez les six étapes : **L’activité**, **Les objectifs**, **Les données**, **La protection**, **Les précisions**, **La relecture**. Vous pouvez changer d’étape, choisir **Voir toute la fiche** et **Enregistrer la fiche** à tout moment. Les réponses manquantes restent à examiner. Attendez le message **Enregistré dans le coffre chiffré.**
+5. Parcourez les six étapes : **L’ensemble**, **Les objectifs**, **Les flux**, **La protection**, **Le fondement**, **La relecture**. Vous pouvez changer d’étape, choisir **Voir toute la fiche** et **Enregistrer la fiche** à tout moment. Les réponses manquantes restent à examiner. Attendez le message **Enregistré dans le coffre chiffré.**
 6. Ouvrez **Actions & décisions** pour examiner les questions documentaires et organiser la suite du travail.
 7. Ouvrez **Sauvegarde**, puis **Télécharger la sauvegarde chiffrée**. Vérifiez que le fichier `.rgpdesk` se trouve réellement dans vos téléchargements et placez-en une copie dans l’emplacement choisi.
 
@@ -98,9 +98,9 @@ Le RGPD distingue celui qui détermine les finalités et les moyens du traitemen
 
 ### Fiche responsable
 
-La fiche suit six étapes : **L’ensemble**, **Les objectifs**, **Les données**, **La protection**, **Le fondement**, **La relecture**. Le nom de l’ensemble exprime sa finalité principale. Dans les objectifs, décrivez ses sous-finalités ; le fondement juridique sera examiné après les faits, sans choix automatique. Cet ordre de documentation ne permet pas de commencer un traitement sans avoir établi sa licéité. [Articles 5 et 6](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
+La fiche suit six étapes : **L’ensemble**, **Les objectifs**, **Les flux**, **La protection**, **Le fondement**, **La relecture**. Le nom de l’ensemble exprime sa finalité principale. Dans les objectifs, décrivez ses sous-finalités ; le fondement juridique sera examiné après les faits, sans choix automatique. Cet ordre de documentation ne permet pas de commencer un traitement sans avoir établi sa licéité. [Articles 5 et 6](https://eur-lex.europa.eu/eli/reg/2016/679/oj?locale=fr).
 
-Dans **Les données**, créez vos groupes **D1, D2…**. Ces repères appartiennent à cet ensemble de traitement. Pour chacun :
+Dans **Les flux**, créez vos groupes **D1, D2…**. Ces repères appartiennent à cet ensemble de traitement. Pour chacun :
 
 1. Décrivez les catégories de données et de personnes.
 2. Cliquez sur **Ajouter un parcours** : 1a, 1b… pour D1, 2a, 2b… pour D2. Choisissez ses sous-finalités, puis ses opérations dans l’ordre. Elles reprennent les données du groupe sans les recopier. Les sous-finalités du groupe rassemblent les choix de ses parcours.
@@ -168,7 +168,7 @@ Les **destinataires** de la fiche et les **habilitations** de l’analyse répon
 
 ### Construire la carte des flux
 
-1. Dans la fiche du registre, ouvrez l’étape **Les données**. Les flux et la carte se renseignent directement pendant la saisie. Vous pouvez aussi les retrouver dans **Cartographie**, puis **Compléter la cartographie** : il s’agit des mêmes flux, sans copie ni nouvelle saisie.
+1. Dans la fiche du registre, ouvrez l’étape **Les flux**. Les flux et la carte se renseignent directement pendant la saisie. Vous pouvez aussi les retrouver dans **Cartographie**, puis **Compléter la cartographie** : il s’agit des mêmes flux, sans copie ni nouvelle saisie.
 2. Dans D1 ou D2, cliquez sur **Ajouter un parcours**. Cochez les sous-finalités de cet usage. Deux usages du même groupe peuvent avoir des destinataires et sous-finalités différents.
 3. Ouvrez **Les supports de cet ensemble**. Déclarez chaque fichier, boîte mail ou autre support une seule fois. Choisissez ensuite ces supports dans les étapes de vos parcours. Un renommage se répercute dans les liens de la fiche après enregistrement.
 4. Décrivez une opération par étape : recueillir, vérifier, enregistrer, consulter… Précisez le rôle autorisé et, si elle existe, la condition de cette opération. **Ajouter une étape** poursuit le même parcours ; **Ajouter un parcours** commence un autre usage du groupe. Les boutons Monter et Descendre changent l’ordre.
@@ -176,6 +176,18 @@ Les **destinataires** de la fiche et les **habilitations** de l’analyse répon
 6. Ouvrez **Relire le parcours** pour voir sa frise, puis enregistrez la fiche. La carte reprend ces déclarations. Limites par ensemble : 20 flux ou parcours au total, 20 supports et 8 étapes par parcours.
 
 Les anciens flux restent modifiables avec leurs champs habituels. Leur texte n’est pas découpé automatiquement. Un parcours nouveau reste distinct : si vous remplacez un ancien flux, relisez le nouveau avant de retirer l’ancien pour éviter un doublon. Le partage choisi reprend l’ordre des opérations et les supports sous forme textuelle dans le rendu de flux existant.
+
+### Décliner les flux et les relier
+
+Dans chaque flux, **Où se situe ce flux ?** permet de distinguer un point de départ (**Néant · point de départ / traitement 0**), une suite déjà décrite, une suite **à renseigner plus tard**, et une position encore **à examiner**. Sélectionnez les flux précédents et suivants connus. Le lien est repris à l’autre extrémité ; plusieurs flux peuvent se rejoindre. Retirer un flux remet ses liens isolés en attente, sans affirmer qu’il n’existe plus de suite.
+
+Ouvrez **Plusieurs opérations, supports ou lieux ?** pour déclarer des alternatives indépendantes, une par champ. Le nombre de flux résultants est affiché avant **Créer les flux parallèles**. Deux canaux et trois lieux donnent six combinaisons. Utilisez cette commande seulement lorsque ces combinaisons correspondent à votre description ; si un canal mène à un seul lieu précis, décrivez ces passages séparément. Les groupes de données et sous-finalités restent liés, sans ressaisie. Chaque variante est ensuite modifiable ; les liens déjà déclarés sont repris.
+
+Pour des opérations successives, ajoutez des étapes ou reliez les flux précédent et suivant. Une variante n’est pas automatiquement considérée comme la suite d’une autre. Le total reste limité à 20 flux ou parcours par ensemble ; aucun résultat partiel n’est créé si la limite est dépassée. Si un support désigne déjà l’origine ou la destination, vérifiez cette extrémité avant de décliner d’autres supports.
+
+**Y a-t-il un intermédiaire ?** scinde un passage en deux flux liés. Par exemple : personnes concernées → équipe de collecte → organisateurs. Décrivez la fonction de l’intermédiaire, puis choisissez **Scinder le flux avec cet intermédiaire**. Dans un parcours à plusieurs étapes, choisissez le passage concerné. Les groupes et sous-finalités sont conservés ; les opérations, canaux et habilitations qui ne sont pas connus pour le nouveau passage restent à renseigner. Les liens vers la suite du parcours sont conservés.
+
+Relisez les variantes et la carte, puis **Enregistrer la fiche**. Les changements de relations sont pris en compte dans les comparaisons avec les analyses déjà examinées. Les sauvegardes chiffrées conservent ces liens ; les exports sélectionnés les présentent sous forme textuelle, sans identifiants privés. Un texte de flux assemblé dépassant la limite d’export est refusé explicitement, sans être tronqué.
 
 La carte représente uniquement vos déclarations, activité par activité. Elle ne découvre pas le réseau, n’infère aucun lien entre systèmes et ne garantit pas l’exhaustivité des échanges. Elle reste privée dans le coffre et dans la sauvegarde chiffrée.
 

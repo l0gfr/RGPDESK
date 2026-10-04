@@ -45,7 +45,10 @@ export interface FlowStep {
   supportIds: string[];
 }
 export interface FlowJourney { reference: string; purposeIds: string[]; steps: FlowStep[] }
+export type FlowConnection = { state: "unknown" | "none" | "pending" } | { state: "linked"; flowIds: string[] };
+export interface FlowSequence { previous: FlowConnection; next: FlowConnection }
 export interface DataFlow {
+  sequence?: FlowSequence;
   journey?: FlowJourney;
   dataGroupIds?: string[];
   sourceRef?: FlowReference; destinationRef?: FlowReference; dataFromActivity?: boolean;
@@ -98,7 +101,7 @@ export interface Workspace {
   workCheckpoint?: WorkCheckpoint;
   citationReviews?: CitationReview[];
   collections?: CollectionRequest[];
-  format: "rgpd-master-v11";
+  format: "rgpd-master-v12";
   impactAssessments: ImpactAssessment[];
   dpoCases: DpoCase[];
   piaPublications: PiaPublication[];
