@@ -5531,7 +5531,7 @@ SOFTWARE.
 
 ## Packages
 
-- smol-toml@1.7.1 — BSD-3-Clause — Cynthia Rey <cynthia@cynthia.dev> — github:squirrelchat/smol-toml
+- smol-toml@1.9.0 — BSD-3-Clause — Cynthia Rey <cynthia@cynthia.dev> — github:squirrelchat/smol-toml
 
 ```text
 --- LICENSE ---
@@ -5563,7 +5563,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Packages
 
-- source-map-js@1.2.1 — BSD-3-Clause — Valentin 7rulnik Semirulnik <v7rulnik@gmail.com> — https://github.com/7rulnik/source-map-js
+- source-map-js@1.2.2 — BSD-3-Clause — Valentin 7rulnik Semirulnik <v7rulnik@gmail.com> — https://github.com/7rulnik/source-map-js
 
 ```text
 --- LICENSE ---
