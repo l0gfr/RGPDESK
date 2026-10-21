@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { lstatSync, readFileSync, readdirSync } from "node:fs";
+import { readdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { createContext, Script } from "node:vm";
+import { readBoundedRegularFile } from "./shared/bounded-file-read.mjs";
 
 const rootRequire = createRequire(new URL("../package.json", import.meta.url));
 const webRequire = createRequire(new URL("../apps/web/package.json", import.meta.url));
@@ -17,7 +18,7 @@ const bundles = new Map();
 
 for (const [consumer, require] of consumers) {
   const manifestPath = require.resolve("vite/package.json");
-  const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  const manifest = JSON.parse(readBoundedRegularFile(manifestPath, 100_000).toString("utf8"));
   test(`${consumer} resolves patched Vite 8.2.4`, () => {
     assert.equal(manifest.version, "8.2.4");
   });
@@ -28,13 +29,12 @@ function readBundle(packagePath) {
   const directory = path.join(path.dirname(packagePath), "dist/node/chunks");
   const files = readdirSync(directory).filter((name) => name.endsWith(".js"));
   assert.ok(files.length > 0 && files.length <= 64, "Unexpected Vite bundle inventory");
-  let bytes = 0;
+  let remainingBytes = 8_000_000;
   return files.map((name) => {
     const file = path.join(directory, name);
-    const stat = lstatSync(file);
-    bytes += stat.size;
-    assert.ok(stat.isFile() && bytes <= 8_000_000, "Unexpected Vite bundle size or type");
-    return readFileSync(file, "utf8");
+    const content = readBoundedRegularFile(file, remainingBytes);
+    remainingBytes -= content.length;
+    return content.toString("utf8");
   }).join("\n");
 }
 
