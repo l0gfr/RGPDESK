@@ -12,6 +12,32 @@ for (const [consumer, manifest] of [
   const ajvRequire = createRequire(consumerRequire.resolve("ajv/package.json"));
   const uri = ajvRequire("fast-uri");
 
+  test(`${consumer}: encoded schemes and ambiguous hosts fail closed`, () => {
+    for (const input of ["ht%74ps://example.invalid/", "%u0068ttps://example.invalid/"]) {
+      assert.equal(uri.parse(input).error, "URI scheme is malformed.");
+      assert.equal(uri.normalize(input), input);
+      assert.equal(uri.equal(input, "https://example.invalid/"), false);
+      assert.throws(() => uri.resolve("https://example.invalid/base/", input), /malformed/);
+    }
+    for (const input of ["https://a@b@example.invalid/", "https://exa\tmple.invalid/"]) {
+      assert.equal(uri.parse(input).error, "URI host is malformed.");
+      assert.equal(uri.equal(input, input), false);
+      assert.throws(() => uri.resolve("https://example.invalid/", input), /malformed/);
+    }
+  });
+
+  test(`${consumer}: relative and suffix normalization preserves reference meaning`, () => {
+    for (const input of ["../x", "a/../b", "x/..", "a/..//x", "./local:value"]) {
+      const normalized = uri.normalize(input);
+      assert.equal(uri.normalize(normalized), normalized);
+      assert.equal(uri.resolve("https://example.invalid/a/b/", normalized), uri.resolve("https://example.invalid/a/b/", input));
+    }
+    assert.equal(uri.equal("../x", "x"), false);
+    const suffix = uri.serialize({ scheme: "example", path: "local:value" }, { reference: "suffix" });
+    assert.equal(uri.parse(suffix).scheme, undefined);
+    assert.match(suffix, /local%3Avalue/i);
+  });
+
   test(`${consumer}: equivalent host spellings normalize consistently (GHSA-hrr3-gc8f-f4qj)`, () => {
     // Reserved documentation names only; normalization never causes a request.
     for (const input of ["//EXAMPLE.INVALID", "//%45XAMPLE.INVALID", "//example.invalid"]) {

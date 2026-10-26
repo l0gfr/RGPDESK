@@ -13,6 +13,8 @@ const astroPackagePath = webRequire.resolve("astro/package.json");
 const astroPackage = JSON.parse(readFileSync(astroPackagePath, "utf8"));
 const transitionModuleUrl = pathToFileURL(join(dirname(astroPackagePath), "dist/runtime/server/transition.js"));
 const { renderTransition } = await import(transitionModuleUrl.href);
+const { renderJSX } = await import(pathToFileURL(join(dirname(astroPackagePath), "dist/runtime/server/jsx.js")).href);
+const { jsx } = await import(webRequire.resolve("astro/jsx-runtime"));
 
 function runDevalueSubprocess(moduleUrl, scenario) {
   // Controlled fixtures only; strict rejection handling must also hold outside node:test.
@@ -139,7 +141,26 @@ function compareVersions(left, right) {
 }
 
 test("Astro stays on the patched View Transition release line", () => {
-  assert.ok(compareVersions(astroPackage.version, "7.1.0") >= 0);
+  assert.ok(compareVersions(astroPackage.version, "7.3.3") >= 0);
+});
+
+test("Astro escapes dynamic JSX text while preserving ordinary script and CSS text", async () => {
+  const marker = "<>&";
+  const script = String(await renderJSX({}, jsx("script", { children: marker })));
+  const style = String(await renderJSX({}, jsx("style", { children: marker })));
+  assert.equal(script, "<script>&lt;&gt;&amp;</script>");
+  assert.equal(style, "<style>\\3C >&</style>");
+  assert.equal(String(await renderJSX({}, jsx("style", { children: 'p { font-family: "Example"; }' }))), '<style>p { font-family: "Example"; }</style>');
+});
+
+test("Astro animation values escape CSS delimiters but preserve timing functions", () => {
+  const result = { _metadata: { extraHead: [] } };
+  renderTransition(result, "security-regression", { forwards: { old: { name: "local;{}", easing: "cubic-bezier(0, 0, 1, 1)", duration: "120ms" } } });
+  const style = String(result._metadata.extraHead[0]);
+  assert.ok(!style.includes("local;{}"));
+  assert.match(style, /local\\3B \\7B \\7D /);
+  assert.match(style, /cubic-bezier\(0, 0, 1, 1\)/);
+  assert.match(style, /120ms/);
 });
 
 test("Astro transition styles keep dynamic values inside the style context", () => {

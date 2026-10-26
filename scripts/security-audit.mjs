@@ -2,7 +2,7 @@ import { existsSync, lstatSync, readFileSync, readdirSync, statSync } from "node
 import { join } from "node:path";
 import { readBoundedRegularFile } from "./shared/bounded-file-read.mjs";
 
-const MINIMUM_SAFE_ASTRO_VERSION = [7, 1, 0];
+const MINIMUM_SAFE_ASTRO_VERSION = [7, 3, 3];
 
 function parseStableVersion(version) {
   const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
@@ -323,7 +323,7 @@ if (
   !versionIsAtLeast(declaredAstroFloor, MINIMUM_SAFE_ASTRO_VERSION)
   || !versionIsAtLeast(installedAstroPackageJson.version, MINIMUM_SAFE_ASTRO_VERSION)
 ) {
-  console.error("SECURITY AUDIT FAIL: Astro must remain at 7.1.0 or newer to close GHSA-4g3v-8h47-v7g6.");
+  console.error("SECURITY AUDIT FAIL: Astro must remain at 7.3.3 or newer to close GHSA-98hj-9722-w3j8 and GHSA-mpr7-6m5w-76rw.");
   failed = true;
 }
 if (
