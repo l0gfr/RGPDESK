@@ -6,7 +6,7 @@ Le navigateur (`/app/privacy/verify/`) et la CLI consomment le même `src/index.
 node packages/privacy-verifier/bin/rgpdesk-verify.mjs dossier.zip
 ```
 
-Node 22.23.2, installation du monorepo avec le lockfile. Codes de sortie : 0 pour intégrité technique vérifiée, 1 pour fichier refusé, 2 pour usage incorrect. La CLI refuse les liens symboliques, fichiers non réguliers, fichiers trop grands ou modifiés pendant la lecture. La sortie n’expose aucun contenu métier ni chemin de fichier.
+Node 22.23.5, installation du monorepo avec le lockfile. Codes de sortie : 0 pour intégrité technique vérifiée, 1 pour fichier refusé, 2 pour usage incorrect. La CLI refuse les liens symboliques, fichiers non réguliers, fichiers trop grands ou modifiés pendant la lecture. La sortie n’expose aucun contenu métier ni chemin de fichier.
 
 Contrat fermé `rgpd-share-v1` et manifeste `rgpd-manifest-v1`, schémas dans `packages/privacy-core/schemas`. Le ZIP contient exactement `manifest.json`, `register.json`, `register.csv`, `report.html`, `README.txt`. Pas de répertoire, commentaires, champs ZIP extra, ZIP64, entrées dupliquées, noms équivoques, plages chevauchantes ou octets cachés. Précontrôles adaptés du vérificateur BLACKPROOF au commit 211166d, sous licence AGPL-3.0-only, sans modifier ce dernier. JSZip 3.10.1 déjà verrouillé ; décompression par flux borné avec CRC32 vérifié.
 

@@ -1,0 +1,12 @@
+diff --git a/dist/path.js b/dist/path.js
+index 2e426bc251ab73fa0d164509bfa9a5037da291f0..3c588ebb5ab8f19becf4a86404b3824bbe6daaf8 100644
+--- a/dist/path.js
++++ b/dist/path.js
+@@ -206,3 +206,4 @@
+-	const fold = (p) => caseInsensitive ? p.toLowerCase() : p;
+-	const normalizedParent = appendForwardSlash(fold(slash(parentPath)));
+-	const normalizedChild = fold(slash(childPath));
++	// Backslashes are filename characters on POSIX, not path separators.
++	const normalize = (p) => caseInsensitive ? slash(p).toLowerCase() : p;
++	const normalizedParent = appendForwardSlash(normalize(parentPath));
++	const normalizedChild = normalize(childPath);

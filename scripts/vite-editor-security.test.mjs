@@ -19,8 +19,8 @@ const bundles = new Map();
 for (const [consumer, require] of consumers) {
   const manifestPath = require.resolve("vite/package.json");
   const manifest = JSON.parse(readBoundedRegularFile(manifestPath, 100_000).toString("utf8"));
-  test(`${consumer} resolves patched Vite 8.2.4`, () => {
-    assert.equal(manifest.version, "8.2.4");
+  test(`${consumer} resolves patched Vite 8.3.5`, () => {
+    assert.equal(manifest.version, "8.3.5");
   });
   if (!bundles.has(manifestPath)) bundles.set(manifestPath, manifest.version);
 }

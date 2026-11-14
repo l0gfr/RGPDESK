@@ -141,7 +141,7 @@ function compareVersions(left, right) {
 }
 
 test("Astro stays on the patched View Transition release line", () => {
-  assert.ok(compareVersions(astroPackage.version, "7.3.3") >= 0);
+  assert.ok(compareVersions(astroPackage.version, "7.4.7") >= 0);
 });
 
 test("Astro escapes dynamic JSX text while preserving ordinary script and CSS text", async () => {
