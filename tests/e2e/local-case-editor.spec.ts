@@ -872,52 +872,88 @@ test("an editor opened before deletion cannot recreate the deleted case", async 
   await listPage.close();
 });
 
-test("Panic Wipe invalidates an already-open editor and keeps IndexedDB empty", async ({ page, request }) => {
-  await page.goto("/app");
-  await page.getByLabel("Nom du dossier").fill("E2E Panic Wipe inter-onglets");
-  await analyzeAndOpenEditor(page);
+for (const deferWipeNotification of [false, true]) {
+  test(`Panic Wipe invalidates an already-open editor and keeps IndexedDB empty (${deferWipeNotification ? "deferred" : "normal"} notification)`, async ({ page, request }) => {
+    await page.goto("/app");
+    await page.getByLabel("Nom du dossier").fill("E2E Panic Wipe inter-onglets");
+    await analyzeAndOpenEditor(page);
 
-  const status = await (await request.get("/api/status.json")).json();
-  if (status.securityPosture?.knowledgeVault === "enabled-after-product-convergence") {
-    const knowledgeSearch = page.getByRole("button", { name: "Chercher dans la base personnelle" }).first();
-    await knowledgeSearch.click();
-    await page.getByLabel("Phrase secrète de la base personnelle", { exact: true }).fill("panic-wipe-vault-secret");
-    await page.getByLabel("Confirmer la phrase secrète de la base personnelle", { exact: true }).fill("panic-wipe-vault-secret");
-    await page.getByRole("button", { name: "Déverrouiller puis chercher" }).click();
-    await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-loaded", "true");
-    await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-secret-loaded", "true");
-  } else {
-    await expect(page.getByRole("button", { name: "Chercher dans la base personnelle" })).toHaveCount(0);
-  }
+    const status = await (await request.get("/api/status.json")).json();
+    if (status.securityPosture?.knowledgeVault === "enabled-after-product-convergence") {
+      const knowledgeSearch = page.getByRole("button", { name: "Chercher dans la base personnelle" }).first();
+      await knowledgeSearch.click();
+      await page.getByLabel("Phrase secrète de la base personnelle", { exact: true }).fill("panic-wipe-vault-secret");
+      await page.getByLabel("Confirmer la phrase secrète de la base personnelle", { exact: true }).fill("panic-wipe-vault-secret");
+      await page.getByRole("button", { name: "Déverrouiller puis chercher" }).click();
+      await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-loaded", "true");
+      await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-secret-loaded", "true");
+    } else {
+      await expect(page.getByRole("button", { name: "Chercher dans la base personnelle" })).toHaveCount(0);
+    }
 
-  const listPage = await page.context().newPage();
-  await listPage.goto("/app/cases");
-  await expect(listPage.locator('[data-blackproof-ready="true"]')).toBeVisible();
-  const confirmation = listPage.waitForEvent("dialog");
-  const wipe = listPage.getByRole("button", { name: "Effacer les données locales", exact: true }).click();
-  await (await confirmation).accept("EFFACER");
-  await wipe;
-  await expect(listPage.getByText("Dossiers, snapshots et coffre personnel supprimés de ce navigateur.", { exact: false })).toBeVisible();
-  await expect(page.getByText("Panic Wipe détecté dans un autre onglet. L’état en mémoire a été effacé et cet éditeur ne peut plus sauvegarder.")).toBeVisible();
-  await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-loaded", "false");
-  await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-secret-loaded", "false");
+    const listPage = await page.context().newPage();
+    if (deferWipeNotification) {
+      await listPage.addInitScript(() => {
+        const pending: Array<() => void> = [];
+        (window as unknown as { deferredWipeMessages: Array<() => void> }).deferredWipeMessages = pending;
+        const nativeAdd = BroadcastChannel.prototype.addEventListener;
+        const delayedAdd = function (
+          this: BroadcastChannel, type: string, listener: EventListenerOrEventListenerObject | null,
+          options?: boolean | AddEventListenerOptions,
+        ) {
+          if (this.name !== "blackproof-local-storage" || type !== "message" || !listener) {
+            return nativeAdd.call(this, type, listener, options);
+          }
+          return nativeAdd.call(this, type, (event: Event) => {
+            pending.push(() => {
+              if (typeof listener === "function") listener.call(this, event);
+              else listener.handleEvent(event);
+            });
+          }, options);
+        };
+        BroadcastChannel.prototype.addEventListener = delayedAdd as typeof nativeAdd;
+      });
+    }
+    await listPage.goto("/app/cases");
+    await expect(listPage.locator('[data-blackproof-ready="true"]')).toBeVisible();
+    const confirmation = listPage.waitForEvent("dialog");
+    const wipe = listPage.getByRole("button", { name: "Effacer les données locales", exact: true }).click();
+    await (await confirmation).accept("EFFACER");
+    await wipe;
+    if (deferWipeNotification) {
+      // Hold only notification delivery; the real wipe, epoch and encryption code run unchanged.
+      await expect(listPage.getByText("Dossiers, snapshots et coffre personnel supprimés de ce navigateur.", { exact: false })).toBeVisible();
+      await expect.poll(() => listPage.evaluate(() => (window as unknown as { deferredWipeMessages: Array<() => void> }).deferredWipeMessages.length)).toBeGreaterThan(0);
+      await listPage.evaluate(() => {
+        const pending = (window as unknown as { deferredWipeMessages: Array<() => void> }).deferredWipeMessages;
+        for (const deliver of pending.splice(0)) deliver();
+      });
+      await expect(listPage.getByText("Panic Wipe détecté : l’inventaire et tout fichier de restauration sélectionné ont été effacés de cette page.")).toBeVisible();
+      await expect(listPage.getByText("Dossiers, snapshots et coffre personnel supprimés de ce navigateur.", { exact: false })).toHaveCount(0);
+    }
+    // Either valid acknowledgement may arrive last. The security postconditions below are mandatory.
+    await expect(listPage.getByRole("status")).toContainText(/Dossiers, snapshots et coffre personnel supprimés de ce navigateur\.|Panic Wipe détecté : l’inventaire et tout fichier de restauration sélectionné ont été effacés de cette page\./);
+    await expect(page.getByText("Panic Wipe détecté dans un autre onglet. L’état en mémoire a été effacé et cet éditeur ne peut plus sauvegarder.")).toBeVisible();
+    await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-loaded", "false");
+    await expect(page.locator(".case-editor-shell")).toHaveAttribute("data-blackproof-knowledge-secret-loaded", "false");
 
-  const counts = await page.evaluate(async () => {
-    const database = await new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open("blackproof-local-first");
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
+    const counts = await page.evaluate(async () => {
+      const database = await new Promise<IDBDatabase>((resolve, reject) => {
+        const request = indexedDB.open("blackproof-local-first");
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+      const readCount = (storeName: string) => new Promise<number>((resolve, reject) => {
+        const request = database.transaction(storeName, "readonly").objectStore(storeName).count();
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      });
+      return { cases: await readCount("cases"), snapshots: await readCount("deliverySnapshots") };
     });
-    const readCount = (storeName: string) => new Promise<number>((resolve, reject) => {
-      const request = database.transaction(storeName, "readonly").objectStore(storeName).count();
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
-    });
-    return { cases: await readCount("cases"), snapshots: await readCount("deliverySnapshots") };
+    expect(counts).toEqual({ cases: 0, snapshots: 0 });
+    await listPage.close();
   });
-  expect(counts).toEqual({ cases: 0, snapshots: 0 });
-  await listPage.close();
-});
+}
 
 test("Panic Wipe clears secrets held by creation, import, crusher and verifier tabs", async ({ page }) => {
   const context = page.context();
